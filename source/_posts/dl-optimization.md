@@ -38,8 +38,7 @@ SGD是如今深度学习领域应用非常广泛的一种优化算法，它按�
 ### Momentum
 为了加速训练，Momentum积累了之前梯度指数级衰减的移动平均，并且继续沿该方向移动。Momentum主要目的为了解决Hessian矩阵的病态条件和随机梯度的方差。
 $$
-v\leftarrow \alpha v-\epsilon \bigtriangledown_{\theta}(\frac{1}{m}\sum_{i=1}^m L(f(x^{(i)};\theta),y^{(i)})
-
+v\leftarrow \alpha v-\epsilon \bigtriangledown_{\theta}(\frac{1}{m}\sum_{i=1}^m L(f(x^{(i)};\theta),y^{(i)})\\
 \theta\leftarrow \theta + v
 $$
 
@@ -53,8 +52,7 @@ $$
 ### Nesterov
 更新规则如下：
 $$
-v\leftarrow \alpha v-\epsilon \bigtriangledown_{\theta}(\frac{1}{m}\sum_{i=1}^m L(f(x^{(i)};\theta+\alpha v),y^{(i)})
-
+v\leftarrow \alpha v-\epsilon \bigtriangledown_{\theta}(\frac{1}{m}\sum_{i=1}^m L(f(x^{(i)};\theta+\alpha v),y^{(i)})\\
 \theta\leftarrow \theta+v
 $$
 Nesterov和标准Momentum之间的区别在于梯度计算上，Nesterov中，梯度计算在施加Momentum之后。
