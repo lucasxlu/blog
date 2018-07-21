@@ -22,6 +22,7 @@ $$
 
 Naive Bayes实际上学习到生成数据的机制，所以属于 __生成模型__。条件独立性假设等于是说 __用于分类的特征在类确定的情况下都是条件独立的__。
 
+## 公式推导
 $$
 P(Y=c_k|X=x)=\frac{P(X=x|Y=c_k)P(Y=c_k)}{\sum_{k}P(X=x|Y=c_k)P(Y=c_k)}=
 \frac{P(Y=c_k)\prod_j P(X^{(j)}=x^{(j)}|Y=c_k)}{\sum_k P(Y=c_k)\prod_j P(X^{(j)}=x^{(j)}|Y=c_k)}    
@@ -46,7 +47,7 @@ $$
 因此：
 $$
 f(x)=\mathop{argmin}\limits_{y\in \mathcal{Y}} \sum_{k=1}^KL(c_k,y)P(c_k|X=x)\\
-=\mathop{argmin}\limits_{y\in \mathcal{Y}} \sum_{k=1}^K P(y\neq c_k|X=x)\\=\mathop{argmin}\limits_{y\in \mathcal{Y}} (1-P(y=c_k|X=x))\\
+=\mathop{argmin}\limits_{y\in \mathcal{Y}} \sum_{k=1}^K P(y\neq c_k|X=x)=\mathop{argmin}\limits_{y\in \mathcal{Y}} (1-P(y=c_k|X=x))\\
 =\mathop{argmax}\limits_{y\in \mathcal{Y}} P(y=c_k|X=x)
 $$
 这样一来，根据期望风险最小化就得到了后验概率最大化准则：
