@@ -2,8 +2,7 @@
 title: "[DL] Optimization Algorithm in Deep Learning"
 catalog: false
 date: 2018-07-20 11:46:37
-subtitle:
-header-img: "https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-optimization/deep-learning.png"
+mathjax: true
 tags:
 - Machine Learning
 - Deep Learning

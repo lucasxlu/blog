@@ -1,8 +1,8 @@
 ---
 title: "[ML] Model Selection and Performance Metric"
 catalog: false
+mathjax: true
 date: 2018-07-19 11:02:28
-header-img: "Demo.png"
 tags:
 - Machine Learning
 - Data Science

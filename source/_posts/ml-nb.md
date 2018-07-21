@@ -3,8 +3,6 @@ title: "[ML] Naive Bayes"
 catalog: false
 mathjax: true
 date: 2018-07-19 16:17:20
-subtitle:
-header-img: "Demo.png"
 tags:
 - Machine Learning
 - Data Science

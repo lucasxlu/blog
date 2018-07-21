@@ -3,8 +3,6 @@ title: "[ML] KNN"
 catalog: false
 mathjax: true
 date: 2018-07-19 12:37:17
-subtitle:
-header-img: "Demo.png"
 tags:
 - Machine Learning
 - Data Science

@@ -1,5 +1,5 @@
 ---
-layout: "about me"
+layout: "about"
 title: "About Me"
 description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"

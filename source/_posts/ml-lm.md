@@ -3,7 +3,6 @@ title: "[ML] Linear Model"
 catalog: false
 mathjax: true
 date: 2018-07-18 12:23:24
-header-img: "Demo.png"
 tags:
 - Machine Learning
 - Data Science

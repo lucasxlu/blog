@@ -1,5 +1,5 @@
 ---
-layout: "project"
+layout: "projects"
 title: "Projects"
 header-img: "img/header_img/archive-bg.png"
 comments: false

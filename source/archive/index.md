@@ -1,5 +1,5 @@
 ---
-layout: "archive"
+layout: "archives"
 title: "Archives"
 header-img: 
 comments: false
