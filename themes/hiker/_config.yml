@@ -5,13 +5,14 @@
 # Header Menu
 menu:
   Home: /
-  Archives: archives
-  Categories: categories
-  Tags: tags
   About: about
+  Papers: papers
+  Prohjects: projects
+  Tags: tags
+  Archives: archives
 rss: /atom.xml
 
-since: 2013
+since: 2018
 
 # Set default keywords (Use a comma to separate)
 keywords: ""
@@ -75,15 +76,16 @@ widgets:
 # Key is the name of FontAwsome icon.
 # Value is the target link (E.g. GitHub: https://github.com/iTimeTraveler)
 social:
-  Github: https://github.com/iTimeTraveler
-  Weibo: http://www.yoursite.com
-  Twitter: 
-  Facebook: 
-  Google-plus: 
-  Instagram: 
-  Pinterest: 
-  Flickr: 
-  email:
+  Github: https://github.com/lucasxlu
+  Zhihu: https://www.zhihu.com/people/xulu-0620
+  email: xulu0620@gmail.com
+  # Weibo: 
+  # Twitter: 
+  # Facebook: 
+  # Google-plus: 
+  # Instagram: 
+  # Pinterest: 
+  # Flickr: 
 
 
 # Search
