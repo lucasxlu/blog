@@ -10,7 +10,7 @@ catagories:
 - Algorithm
 - Machine Learning
 ---
-## Feature Selection
+## Introduction
 * 当$p>n$时，无法使用Backward Selection，但Forward Selection可以。
 
 * $Precision=\frac{TP}{TP+FP}$  

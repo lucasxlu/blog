@@ -12,3 +12,9 @@ description: "Projects for ML/CV/AI/Data Science."
 
 * JiaYuan User Profile [[article](https://zhuanlan.zhihu.com/p/24515034)] [[code](https://github.com/lucasxlu/JiaYuan.git)] [[PDF](JiaYuan.pdf)]
     > A repository for web data crawling, user profile of [jiayuan.com](http://www.jiayuan.com/).
+
+* XiaoLu AI [[article-face beauty recognition](https://zhuanlan.zhihu.com/p/29399781)] [[article-mate face recognition](https://zhuanlan.zhihu.com/p/35135539)] [[code](https://github.com/lucasxlu/XiaoLuAI.git)]
+    > A repository in computer vision and NLP.
+
+* Zhihu Live Analysis [[article-1](https://zhuanlan.zhihu.com/p/30514792)] [[article-2](https://zhuanlan.zhihu.com/p/31651544)] [[code](https://github.com/lucasxlu/DataHouse.git)]
+    > A repository for data crawling, data analysis, data mining and data visualization.
