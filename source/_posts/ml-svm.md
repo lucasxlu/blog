@@ -44,4 +44,20 @@ SVM是一种非常经典的分类算法，也是很多机器学习面试中必�
 
   __如果$||w||=1，那么函数间隔和几何间隔相等$__。如果超平面参数$w$和$b$成比例地改变(超平面未变)，则函数间隔也按此比例改变，但是几何间隔不变。
 
-  
+
+最大间隔分离超平面  可以表示为下面的约束最优化问题：
+$$
+\mathop{max} \limits_{w,b} \gamma \\
+
+s.t.\quad y_i(\frac{w}{||w||}\cdot x_i+\frac{b}{||w||})\geq \gamma,\quad i=1,\cdots,N
+$$
+即我们希望最大化超平面$(w,b)$关于training set的几何间隔$\gamma$，约束条件表示的是超平面$(w,b)$关于每个training sample的几个间隔至少是$\gamma$。
+
+考虑几何间隔和函数间隔的关系，该问题等价于：
+$$
+\mathop{max} \limits_{w,b}\frac{\hat{\gamma}}{||w||} \\
+
+s.t.\quad y_i(w\cdot x_i+b)\geq \hat{\gamma}, \quad i=1,2,\cdots,N
+$$
+
+最大化$\frac{1}{||w||}$和最小化$\frac{1}{2}||w||^2$是等价的，于是就得到下面的线性可分SVM的最优化问题：
