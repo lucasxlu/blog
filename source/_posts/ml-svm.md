@@ -18,6 +18,8 @@ SVM是一种非常经典的分类算法，也是很多机器学习面试中必�
 
 当输入空间为欧式空间或离散集合、特征空间为希尔伯特空间时，核函数表示 __将输入从输入空间映射到特征空间得到的特征向量之间的内积，通过使用核函数可以学习非线性支持的SVM，等价于隐式地在高维的特征空间中学习线性SVM__。
 
+一般的，当training set线性可分时，存在无穷个分离超平面可将两类数据正确分开。MLP利用 __误分类最小策略__，求得分离超平面，不过这时的解有无穷多个。线性可分SVM利用 __间隔最大化__求得分离超平面，这时解是唯一的。
+
 ## 线性可分SVM与硬间隔最大化
 一般来说，一个点距离分离超平面的远近可以表示分类预测的确信程度。在超平面$w\cdot x+b=0$确定的情况下，$|w\cdot x+b|$能够相对地表示点$x$距离超平面的远近。而$w\cdot x+b$的符号与类标记$y$的符号是否一致能够表示分类是否正确。所以可以用量$y(w\cdot x+b)$来表示分类的正确性及确信程度，此为 __"函数间隔"__。
 
@@ -45,10 +47,9 @@ SVM是一种非常经典的分类算法，也是很多机器学习面试中必�
   __如果$||w||=1，那么函数间隔和几何间隔相等$__。如果超平面参数$w$和$b$成比例地改变(超平面未变)，则函数间隔也按此比例改变，但是几何间隔不变。
 
 
-最大间隔分离超平面  可以表示为下面的约束最优化问题：
-$$\mathop{max} \limits_{w,b} \gamma \newline \\
-s.t.\quad y_i(\frac{w}{||w||}\cdot x_i+\frac{b}{||w||})\geq \gamma,\quad i=1,\cdots,N
-$$
+最大间隔分离超平面  可以表示为下面的约束最优化问题：  
+$$\mathop{max} \limits_{w,b} \gamma s.t.\quad y_i(\frac{w}{||w||}\cdot x_i+\frac{b}{||w||})\geq \gamma,\quad i=1,\cdots,N$$
+
 即我们希望最大化超平面$(w,b)$关于training set的几何间隔$\gamma$，约束条件表示的是超平面$(w,b)$关于每个training sample的几个间隔至少是$\gamma$。
 
 考虑几何间隔和函数间隔的关系，该问题等价于：
@@ -68,4 +69,27 @@ $y_i(w\cdot x_i+b)-1=0$
 
 
 ### 学习的对偶算法
-为了求解线性可分SVM的
+为了求解线性可分SVM的最优化问题，将它作为原始最优化问题，应用拉格朗日对偶性，通过求解对偶问题得到原始问题的最优解，这就是线性可分SVM的对偶算法。这样做一来对偶问题更容易求解，二来自然引入Kernel Function，可以扩展到非线性分类问题。
+
+引入拉格朗日乘子$\alpha_i \geq 0, i=1,2,\cdots,N$，定义拉格朗日函数：
+$L(w,b,\alpha)=\frac{1}{2}||w||^2-\sum_{i=1}^N \alpha_i y_i(w\cdot x_i + b) + \sum_{i=1}^N \alpha_i$，其中，$\alpha=(\alpha_1,\alpha_2,\cdots,\alpha_N)^T$为拉格朗日乘子向量。
+
+根据拉格朗日对偶性，原始问题的对偶问题是极大极小值问题：
+$\mathop{max} \limits_{\alpha} \mathop{min} \limits_{w,b} L(w,b,\alpha)$，所以为了得到对偶问题的解，需要先求$L(w,b,\alpha)$对$w,b$的极小，再求对$\alpha$的极大。
+
+1. 求$\mathop{min} \limits_{w,b} L(w,b,\alpha)$：  
+   将拉格朗日函数$L(w,b,\alpha)$分别对$w,b$求偏导，并令其等于0。  
+   $\bigtriangledown_wL(w,b,\alpha)=w-\sum_{i=1}^N \alpha_i y_i x_i=0$
+
+   $\bigtriangledown_bL(w,b,\alpha)=\sum_{i=1}^N \alpha_i y_i=0$  
+  得:  
+  $w=\sum_{i=1}^N\alpha_i y_i x_i$  
+  $\sum_{i=1}^N\alpha_i y_i=0$  
+  可得:  
+  $\mathop{min} \limits_{w,b}L(w,b,\alpha)=-\frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i\cdot x_j) + \sum_{i=1}^N \alpha_i$
+
+2. 求解$\mathop{min} \limits_{w,b} L(w,b,\alpha)$对$\alpha$的极大，即是对偶问题  
+  $$\mathop{max} \limits_{\alpha}-\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j) + \sum_{i=1}^N \alpha_i,\quad s.t. \sum_{i=1}^N \alpha_i y_i=0 \quad \alpha_i \geq 0, i=1,2,\cdots,N $$  
+
+  可转换成下面等价的求极小值的对偶问题：
+  $$\mathop{min} \limits_{\alpha}-\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j) - \sum_{i=1}^N \alpha_i,\quad s.t. \sum_{i=1}^N \alpha_i y_i=0 \quad \alpha_i \geq 0, i=1,2,\cdots,N $$  
