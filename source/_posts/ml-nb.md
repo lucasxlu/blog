@@ -44,8 +44,8 @@ R_{exp}(f)=E_x \sum_{k=1}^K[L(c_k,f(X))]P(c_k|X)
 $$
 因此：
 $$
-f(x)=\mathop{argmin}\limits_{y\in \mathcal{Y}} \sum_{k=1}^KL(c_k,y)P(c_k|X=x) \newline
-=\mathop{argmin}\limits_{y\in \mathcal{Y}} \sum_{k=1}^K P(y\neq c_k|X=x)=\mathop{argmin}\limits_{y\in \mathcal{Y}} (1-P(y=c_k|X=x)) \newline
+f(x)=\mathop{argmin}\limits_{y\in \mathcal{Y}} \sum_{k=1}^KL(c_k,y)P(c_k|X=x) \\
+=\mathop{argmin}\limits_{y\in \mathcal{Y}} \sum_{k=1}^K P(y\neq c_k|X=x)=\mathop{argmin}\limits_{y\in \mathcal{Y}} (1-P(y=c_k|X=x)) \\
 =\mathop{argmax}\limits_{y\in \mathcal{Y}} P(y=c_k|X=x)
 $$
 这样一来，根据期望风险最小化就得到了后验概率最大化准则：

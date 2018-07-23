@@ -55,14 +55,14 @@ $$
 
 考虑几何间隔和函数间隔的关系，该问题等价于：
 $$
-\mathop{max} \limits_{w,b}\frac{\hat{\gamma}}{||w||} \newline
+\mathop{max} \limits_{w,b}\frac{\hat{\gamma}}{||w||}
 
 s.t.\quad y_i(w\cdot x_i+b)\geq \hat{\gamma}, \quad i=1,2,\cdots,N
 $$
 
 最大化$\frac{1}{||w||}$和最小化$\frac{1}{2}||w||^2$是等价的，于是就得到下面的线性可分SVM的最优化问题：
 $$
-\mathop{min} \limits_{w,b}\frac{1}{2}||w||^2 \newline
+\mathop{min} \limits_{w,b}\frac{1}{2}||w||^2
 
 s.t.\quad y_i(w\cdot x_i+b)-1\geq 0, \quad i=1,\cdots,N
 $$
