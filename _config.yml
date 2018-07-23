@@ -43,7 +43,25 @@ highlight:
   line_number: true
   auto_detect: false
   tab_replace:
-  
+
+
+math:
+  engine: 'mathjax' # or 'katex'
+  mathjax:
+    src: "//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" 
+    config: {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        processEscapes: true
+      },
+      TeX: {
+        equationNumbers: {
+          autoNumber: "AMS"
+        }
+      }
+    }
+
 # Home page setting
 # path: Root path for your blogs index page. (default = '')
 # per_page: Posts displayed per page. (0 = disable pagination)
