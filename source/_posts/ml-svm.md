@@ -93,3 +93,24 @@ $\mathop{max} \limits_{\alpha} \mathop{min} \limits_{w,b} L(w,b,\alpha)$，所�
 
   可转换成下面等价的求极小值的对偶问题：
   $$\mathop{min} \limits_{\alpha}-\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j) - \sum_{i=1}^N \alpha_i,\quad s.t. \sum_{i=1}^N \alpha_i y_i=0 \quad \alpha_i \geq 0, i=1,2,\cdots,N $$  
+
+#### 线性可分SVM的学习算法
+1. 构造并求解约束最优化问题:
+  $\mathop{min} \limits_{\alpha} \frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N\alpha_i \alpha_j y_i y_j (x_i\cdot x_j)-\sum_{i=1}^N \alpha_i, \quad s.t. \sum_{i=1}^N \alpha_i y_i=0, \alpha_i\geq 0$  
+  得到最优解$\alpha^*=(\alpha_1^*,\alpha_2^*,\cdots,\alpha_N^*)^T$
+
+2. 计算 $w^*=\sum_{i=1}^N\alpha_i^* y_ix_i$，并选择$\alpha^*$的一个正分量$\alpha_j^*>0$，计算:  
+  $b^*=y_j-\sum_{i=1}^N\alpha_i^* y_i(x_i\cdot x_j)$
+
+3. 求得分离超平面$w^*\cdot x+b^*=0$，分类决策函数$f(x)=sign(w^*\cdot x+b^*)$。
+
+## 线性SVM与软间隔最大化
+线性不可分意味着某些样本点$(x_i,y_i)$不能满足函数间隔大于等于1的约束条件，为了解决这个问题，可以对每个样本点$(x_i, y_i)$引入一个松弛变量$\xi_i \geq0$，使得函数间隔加上松弛变量大于等于1。这样，约束条件变为:  
+$y_i(w\cdot x_i+b)\geq 1-\xi_i$
+
+同时，对每个松弛变量，支付一个代价$\xi_i$，目标函数由原来的$\frac{1}{2}||w||^2$变成 $\frac{1}{2}||w||^2+C\sum_{i=1}^N\xi_i$。这里$C>0$称为惩罚参数，一般由问题决定。$C$值大时对误分类的惩罚加大，$C$值小时对误分类的惩罚变小。最小化Loss有两层含义：使$\frac{1}{2}||w||^2$尽量小即间隔尽量大，同时使得误分类点的个数尽量小，$C$是两者的调和系数。
+
+线性不可分的SVM学习问题变成如下凸二次规划问题：  
+$\mathop{min} \limits_{w,b,\xi} \frac{1}{2}||w||^2 + C\sum_{i=1}^N \xi_i \quad s.t. \quad y_i(w\cdot x_i + b)\geq 1-\xi_i, i=1,2,\cdots,N \quad \xi_i \geq0$
+   
+#### 学习的对偶算法

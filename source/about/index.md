@@ -7,8 +7,8 @@ header-img: "img/header_img/archive-bg.png"
 ## Self Introduction
 I am a second-year master major in machine learning and computer vision. My research interests include _Facial Attribute Analysis_, _Deep Learning_ and _Data Science_. 
 
-__Curriculum Vitae__: [[PDF-EN](./CV_LuXu.pdf)]  [[PDF-中文](./XuLu_resume-zh_CN.pdf)]
-
+<!-- __Curriculum Vitae__: [[PDF-EN](./CV_LuXu.pdf)]  [[PDF-中文](./XuLu_resume-zh_CN.pdf)] -->
+__Curriculum Vitae__: [[PDF-EN](./CV_LuXu.pdf)] 
 
 ## Academic Papers
 * CRNet: Classification and Regression Neural Network for Facial Beauty Prediction (Accepted by PCM2018) [[code](https://github.com/lucasxlu/CRNet.git)]  
