@@ -186,5 +186,45 @@ $\hat{c}_1=AVG(y_i|x_i\in R_1(j,s))$ 和 $\hat{c}_2=AVG(y_i|x_i\in R_2(j,s))$
 CART剪枝算法由两步组成：首先从生成算法产生的决策树$T_0$底端开始不断剪枝，直到$T_0$的根结点，形成一个子树序列$\{T_0,T_1,\cdots,T_n\}$然后通过交叉验证在validation set上进行测试，从中选择最优子树。
 
 1. 剪枝，形成一个子树序列：  
+   在剪枝过程中，计算子树的Loss Function：  
+   $C_{\alpha}(T)=C(T)+\alpha |T|$  
+   其中，$T$为任意子树，$C(T)$为对training set的预测误差(如Gini Index)，$|T|$为子树的叶结点个数，$\alpha \geq 0$为参数。
+
+   可以用递归的方法对树进行剪枝，将$\alpha$从小增大，$0=\alpha_0 < \alpha_1 < \alpha_2 < \cdots < \alpha_n < +\infty$，产生一系列的区间$[\alpha_i,\alpha_{i+1}),\quad i=0,1,\cdots,n$；剪枝得到的子树序列对应着区间$\alpha \in [\alpha_i, \alpha_{i+1}), \quad i=0,1,\cdots,n$的最优子树序列$\{T_0,T_1,\cdots,T_n\}$，序列中的子树是嵌套的。
+
+   具体的，从整体树$T_0$开始剪枝，对$T_0$的任意内部结点$t$，以$t$为单结点树的Loss Function是：  
+   $C_{\alpha}=C(t)+\alpha$
+
+   以$t$为根结点的子树$T_t$的Loss Function是：  
+   $C_{\alpha}(T_t)=C(T_t)+\alpha |T_t|$
+
+   当$\alpha=0$及$\alpha$充分小时，有不等式：  
+   $C_{\alpha}(T_t)<C_{\alpha}(t)$
+
+   当$\alpha$增大时，在某一$\alpha$有：  
+   $C_{\alpha}(T_t)=C_{\alpha}(t)$
+
+   当$\alpha$再增大时，不等式反向，只要$\alpha=\frac{C(t)-C(T_t)}{|T_t|-1}$，$T_t$与$t$有相同的Loss Function值，而$t$的结点少，因此$t$比$T_t$更可取，对$T_t$进行剪枝。
+
+   为此，对$T_0$中每一内部结点$t$，计算：  
+   $g(t)=\frac{C(t)-C(T_t)}{|T_t|-1}$  
+   它表示剪枝后整体Loss减少的程度，在$T_0$中剪去$g(t)$最小的$T_t$，将得到的子树作为$T_1$，同时将最小的$g(t)$设为$\alpha_1$，$T_1$为区间$[\alpha_1,\alpha_2)$的最优子树。如此剪枝下去，直至得到根结点。在这一过程中，不断增加$\alpha$的值，产生新的区间。
+
+2. 在剪枝得到的子树序列$T_0,T_1,\cdots,T_n$中通过交叉验证选取最优子树$T_{\alpha}$
+   利用validation set测试子树序列$T_1,\cdots,T_n$中各棵子树的MSE或Gini Index，值最小的为最优决策树。每棵子树$T_1,\cdots,T_n$都对应于一个参数$\alpha_1,\cdots,\alpha_n$。所以当最优子树$T_k$确定时，对应的$\alpha_k$也确定了，即得到最优决策树了。
+
+##### CART剪枝算法
+1. 设$k=0,T=T_0$
+2. 设$\alpha=+\infty$
+3. 自下而上地对各内部结点$t$计算$C(T_t)$，$|T_t|$以及  
+   $g(t)=\frac{C(t)-C(T_t)}{|T_t|-1} \qquad \alpha=min(\alpha,g(t))$  
+   $T_t$表示以$t$为根结点的子树，$C(T_t)$是对training set的预测误差，$|T_t|$是$T_t$的叶结点个数
+4. 自上而下地访问内部结点$t$，若有$g(t)=\alpha$，进行剪枝，并对叶结点$t$以多数表决法决定类别，得到树$T$。
+5. 设$k=k+1,\alpha_k=\alpha,T_k=T$
+6. 若$T$不是由根结点单独构成的树，则返回到步骤4
+7. 采用cross validation在子树序列中选取最优子树
+
+
+
 
 
