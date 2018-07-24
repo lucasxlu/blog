@@ -24,10 +24,13 @@ Loss Function是ML/DL领域一个非常关键的因素，很多时候，我们�
 2. __Huber Loss, Smooth Mean Absolute Error__   
    Huber loss is less sensitive to outliers in data than the squared error loss. It’s also differentiable at 0. It's basically absolute error, which becomes quadratic when error is small. How small that error has to be to make it quadratic depends on a hyperparameter, $\delta$ (delta), which can be tuned. Huber loss approaches MAE when $\delta\sim 0$ and MSE when $\delta \sim \infty$ (large numbers.)
 
-   $$L_{\delta}(y,f(x))=\begin{cases}
-       \frac{1}{2}(y-f(x))^2 & for |y-f(x)|\leq \delta \\
-       \delta|y-f(x)|-\frac{1}{2}\delta^2 & otherwise
-   \end{cases}$$
+   $$
+   L_{\delta}(y,f(x))=
+   \begin{cases}
+   \frac{1}{2}(y-f(x))^2 & for |y-f(x)|\leq \delta \\
+   \delta|y-f(x)|-\frac{1}{2}\delta^2 & otherwise 
+   \end{cases}
+   $$
 
    The choice of delta is critical because it determines what you're willing to consider as an outlier. Residuals larger than delta are minimized with $L_1$ (which is less sensitive to large outliers), while residuals smaller than delta are minimized "appropriately" with $L_2$.
 
@@ -44,7 +47,7 @@ Loss Function是ML/DL领域一个非常关键的因素，很多时候，我们�
 
    __Advantage__: $log(cosh(x))$ is approximately equal to $(x\star \star2)/2$ for small $x$ and to $abs(x)-log(2)$ for large $x$. This means that 'logcosh' works mostly like the mean squared error, but will not be so strongly affected by the occasional wildly incorrect prediction. It has all the advantages of Huber loss, and it's twice differentiable everywhere,unlike Huber loss.
 
-   __Why do we need a 2nd derivative?__ 
+   __Why do we need a 2nd derivative?__   
    Many ML model implementations like XGBoost use Newton's method to find the optimum, which is why the second derivative (Hessian) is needed. For ML frameworks like XGBoost, twice differentiable functions are more favorable.
 
    But Log-cosh loss isn't perfect. It still suffers from the problem of gradient and hessian for very large off-target predictions being constant, therefore resulting in the absence of splits for XGBoost.
@@ -52,7 +55,7 @@ Loss Function是ML/DL领域一个非常关键的因素，很多时候，我们�
 4. Quantile Loss
    Quantile loss functions turns out to be useful when we are interested in predicting an interval instead of only point predictions. Prediction interval from least square regression is based on an assumption that residuals ($y—\hat{y}$) have constant variance across values of independent variables. We can not trust linear regression models which violate this assumption. We can not also just throw away the idea of fitting linear regression model as baseline by saying that such situations would always be better modeled using non-linear functions or tree based models. This is where quantile loss and quantile regression come to rescue as regression based on quantile loss provides sensible prediction intervals even for residuals with non-constant variance or non-normal distribution.
 
-   __Understanding the quantile loss function__
+   __Understanding the quantile loss function__  
    The idea is to choose the quantile value based on whether we want to give more value to positive errors or negative errors. Loss function tries to give different penalties to overestimation and underestimation based on the value of chosen quantile ($\gamma$). For example, a quantile loss function of $\gamma=0.25$ gives more penalty to overestimation and tries to keep prediction values a little below median
 
    $L_{\gamma}(y,y^p)=\sum_{i=y_i<y^p_i}(\gamma-1)\cdot |y_i-y_i^p|+\sum_{i=y_i\geq y_i^p}(\gamma)\cdot|y_i-y_i^p|$
