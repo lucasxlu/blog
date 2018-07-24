@@ -18,3 +18,12 @@ description: "Projects for ML/CV/AI/Data Science."
 
 * Zhihu Live Analysis [[article-1](https://zhuanlan.zhihu.com/p/30514792)] [[article-2](https://zhuanlan.zhihu.com/p/31651544)] [[code](https://github.com/lucasxlu/DataHouse.git)]
     > A repository for data crawling, data analysis, data mining and data visualization.
+
+* Image Guard [[article](https://zhuanlan.zhihu.com/p/29016317)] [[code](https://github.com/lucasxlu/XiaoLuAI/tree/master/imgguarder)]
+    > A repository for pornography image recognition based on deep learning, and random forests with hand-crafted features.
+
+* Douban Sentiment Analysis [[code](https://github.com/lucasxlu/XiaoLuAI/tree/master/nlp)]
+    > A repository for sentiment analysis in douban comments based on TF-IDF weighted word2vec, deep AutoEncoder and SVM.
+
+* Web Data Mining [[article](https://zhuanlan.zhihu.com/p/28954770)] [[code](https://github.com/lucasxlu/DataHouse.git)]
+    > A repository for web data crawling, analysis and mining.
