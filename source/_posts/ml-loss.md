@@ -24,10 +24,10 @@ Loss Function是ML/DL领域一个非常关键的因素，很多时候，我们�
 2. __Huber Loss, Smooth Mean Absolute Error__   
    Huber loss is less sensitive to outliers in data than the squared error loss. It’s also differentiable at 0. It's basically absolute error, which becomes quadratic when error is small. How small that error has to be to make it quadratic depends on a hyperparameter, $\delta$ (delta), which can be tuned. Huber loss approaches MAE when $\delta\sim 0$ and MSE when $\delta \sim \infty$ (large numbers.)
 
-   $L_{\delta}(y,f(x))=\begin{cases}
+   $$L_{\delta}(y,f(x))=\begin{cases}
        \frac{1}{2}(y-f(x))^2 & for |y-f(x)|\leq \delta \\
        \delta|y-f(x)|-\frac{1}{2}\delta^2 & otherwise
-   \end{cases}$
+   \end{cases}$$
 
    The choice of delta is critical because it determines what you're willing to consider as an outlier. Residuals larger than delta are minimized with $L_1$ (which is less sensitive to large outliers), while residuals smaller than delta are minimized "appropriately" with $L_2$.
 
@@ -40,7 +40,7 @@ Loss Function是ML/DL领域一个非常关键的因素，很多时候，我们�
    Log-cosh is another function used in regression tasks that's smoother than L2. Log-cosh is the logarithm of the hyperbolic cosine of the prediction error.  
    $L(y,y^p)=\sum_{i=1}^n log(cosh(y_i^p-y_i))$ 
 
-   ![Log-Cosh]((https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ml-loss/log-cosh.png))
+   ![Log-Cosh](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ml-loss/log-cosh.png)
 
    __Advantage__: $log(cosh(x))$ is approximately equal to $(x\star \star2)/2$ for small $x$ and to $abs(x)-log(2)$ for large $x$. This means that 'logcosh' works mostly like the mean squared error, but will not be so strongly affected by the occasional wildly incorrect prediction. It has all the advantages of Huber loss, and it's twice differentiable everywhere,unlike Huber loss.
 
