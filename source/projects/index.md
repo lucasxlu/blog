@@ -10,6 +10,9 @@ description: "Projects for ML/CV/AI/Data Science."
 * Lagou Job Data Analysis [[article](https://www.zhihu.com/question/36132174/answer/94392659)] [[code](https://github.com/lucasxlu/LagouJob.git)] [[PDF](LagouJob.pdf)]
     > A repository for web data crawling, data storage, and data analysis of [lagou.com](https://www.lagou.com) based on Python3.
 
+* XCloud [[code](https://github.com/lucasxlu/CVLH.git)]
+    > An AI Cloud Platform with RESTful APIs.
+
 * JiaYuan User Profile [[article](https://zhuanlan.zhihu.com/p/24515034)] [[code](https://github.com/lucasxlu/JiaYuan.git)] [[PDF](JiaYuan.pdf)]
     > A repository for web data crawling, user profile of [jiayuan.com](http://www.jiayuan.com/).
 
@@ -27,3 +30,6 @@ description: "Projects for ML/CV/AI/Data Science."
 
 * Web Data Mining [[article](https://zhuanlan.zhihu.com/p/28954770)] [[code](https://github.com/lucasxlu/DataHouse.git)]
     > A repository for web data crawling, analysis and mining.
+
+* Ctrip Web Crawler [[code](https://github.com/lucasxlu/CtripPro.git)]
+    > A repository for multi-thread web crawler of Ctrip based on Java.
