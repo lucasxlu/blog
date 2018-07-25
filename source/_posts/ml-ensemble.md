@@ -115,13 +115,13 @@ $L(y,f_{m-1}(x) + T(x;\Theta_m))=[y-f_{m-1}(x)-T(x;\Theta_m)]^2=[r-T(x;\Theta_m)
 
 #### Gradient Boosting (GBDT)
 Boosting Tree利用加法模型与前向分步算法实现学习的优化过程，当Loss Function是MSE和指数Loss时，每一步的优化是很简单的。但对于一般的Loss Function而言，往往每一步优化并不容易，这一问题可以利用Gradient Boosting解决。这是利用Gradient Descend的近似方法，其关键是利用Loss Function的负梯度在当前模型的值：  
-$$-[\frac{\partial L(y,f(x_i))}{\partial f(x_i)}]_{f(x)=f_{m-1}(x)}$$
+$$-[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} ]_{f(x)=f_{m-1}(x)}$$
 作为回归问题提升树算法中的残差近似值，拟合一个回归树。
 
 1. 初始化$f_0(x)=\mathop{argmin} \limits_{c} \sum_{i=1}^N L(y_i,c)$
 2. 对$m=1,2,\cdots,M$
    * 对$i=1,2,\cdots,N$，计算：  
-     $r_{mi}=-[\frac{\partial L(y,f(x_i))}{\partial f(x_i)}]_{f(x)=f_{m-1}(x)}$
+     $r_{mi}=-[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} ]_{f(x)=f_{m-1}(x)}$
    * 对$r_{mi}$拟合一个回归树，得到第$m$棵树的叶结点区域$R_{mj},\quad j=1,2, \cdots,J$
    * 对$j=1,2,\cdots,J$计算：  
      $c_{mj}=\mathop{argmin} \limits_{c} \sum_{x_i\in R_{mj}} L(y_i,f_{m-1}(x_i)+c)$
