@@ -33,3 +33,8 @@ description: "Projects for ML/CV/AI/Data Science."
 
 * Ctrip Web Crawler [[code](https://github.com/lucasxlu/CtripPro.git)]
     > A repository for multi-thread web crawler of Ctrip based on Java.
+
+* MateFace (WeChat Mini Program) [[code](https://github.com/lucasxlu/mateface.git)]
+    > A WeChat Mini Program for mate face comparision.
+
+* Industry Analysis [[code][https://github.com/lucasxlu/DataHouse.git]] [[PDF](./IndustryReport.pdf)]

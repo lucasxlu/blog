@@ -45,7 +45,34 @@ $f(x)=\sum_{m=1}^M \alpha_m G_m(x)$
 $f(x)=sign(f(x))=sign\big(\sum_{m=1}^M \alpha_m G_m(x)\big)$  
 注：$\alpha_m$之和并不为1。
 
+#### AdaBoost算法的解释
+AdaBoost还可以认为是模型为加法模型、Loss Function为指数函数、学习算法为前向分步算法时的二分类学习方法。
 
+##### 前向分步算法
+考虑加法模型：  
+$f(x)=\sum_{m=1}^M \beta_m b(x;\gamma_m)$  
+其中，$b(x;\gamma_m)$为基函数的参数，$\beta_m$为基函数的系数。
 
+在给定training set及Loss Function $L(y,f(x))$的条件下，学习加法模型$f(x)$成为经验风险极小化即Loss Function极小化问题：  
+$\mathop{min} \limits_{\beta_m, \gamma_m} \sum_{i=1}^N L\big(y_i,\sum_{m=1}^M \beta_m b(x_i;\gamma_m)\big)$
+
+前向分步算法求解复杂优化问题的思想是：因为学习的是加法模型，如果能够从前往后，每一步只学习一个基函数及其系数，逐步逼近优化目标函数式，那么就可以简化优化的复杂度。具体的，每一步只需要优化以下Loss Function：  
+$\mathop{min} \limits_{\beta, \gamma}\sum_{i=1}^N L(y_i,\beta b(x_i;\gamma))$
+
+1. 初始化$f_0(x)=0$
+2. 对$m=1,2,\cdots,M$
+    * 极小化Loss：  
+      $(\beta_m, \gamma_m)=\mathop{argmin} \limits_{\beta, \gamma} \sum_{i=1}^N L\big(y_i,f_{m-1}(x_i)+\beta b(x_i;\gamma)\big)$  
+      得到参数$\beta_m, \gamma_m$
+
+    * 更新  
+      $f_m(x)=f_{m-1}(x)+\beta_m b(x;\gamma_m)$
+3. 得到加法模型  
+   $f(x)=f_M(x)=\sum_{m=1}^M \beta_m b(x;\gamma_m)$
+
+#### Boosting Tree
+Boosting方法实际采用加法模型(即基函数的线性组合)与前向分步算法，以决策树为基函数的Boosting方法称为Boosting Tree。Boosting Tree模型可以表示为决策树的加法模型：  
+$f_M(x)=\sum_{m=1}^M T(x;\Theta_m)$  
+其中$T(x;\Theta_m)$表示决策树，$\Theta_m$表示决策树参数，$T$为树的个数。
 
 

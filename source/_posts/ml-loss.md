@@ -60,4 +60,5 @@ Loss Function是ML/DL领域一个非常关键的因素，很多时候，我们�
 
    $L_{\gamma}(y,y^p)=\sum_{i=y_i<y^p_i}(\gamma-1)\cdot |y_i-y_i^p|+\sum_{i=y_i\geq y_i^p}(\gamma)\cdot|y_i-y_i^p|$
 
-
+5. Exponential Loss  
+   $L(y,f(x))=exp(-yf(x))$
