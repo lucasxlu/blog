@@ -37,4 +37,8 @@ description: "Projects for ML/CV/AI/Data Science."
 * MateFace (WeChat Mini Program) [[code](https://github.com/lucasxlu/mateface.git)]
     > A WeChat Mini Program for mate face comparision.
 
-* Industry Analysis [[code][https://github.com/lucasxlu/DataHouse.git]] [[PDF](./IndustryReport.pdf)]
+* Industry Analysis [[code](https://github.com/lucasxlu/DataHouse.git)] [[PDF](./IndustryReport.pdf)]
+    > A repository for industry analysis and report.
+
+* AI Career Analysis [[code](https://github.com/lucasxlu/DataHouse.git)] [[PDF](./MLJob.pdf)]
+    > A repository and report for career analysis in AI/ML.
