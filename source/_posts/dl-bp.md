@@ -85,5 +85,5 @@ $f(w,x)=\frac{1}{1+e^{-(w_0 x_0+w_1 x_1+w_2)}}$
 2. http://cs231n.github.io/optimization-2/
 3. http://cs231n.stanford.edu/slides/2018/cs231n_2018_lecture05.pdf
 4. https://medium.com/@karpathy/yes-you-should-understand-backprop-e2f06eab496b
-5. [Derivation of Backpropagation in Convolutional Neural Network (CNN)](./dl-bp/Derivation-of-CNN.pdf)
-6. [Backpropagation In Convolutional Neural Networks](./dl-bp/Backpropagation-In-Convolutional-Neural-Networks-DeepGrid.pdf)
+5. [Derivation of Backpropagation in Convolutional Neural Network (CNN)](https://github.com/lucasxlu/blog/blob/master/source/_posts/dl-bp/Derivation-of-CNN.pdf)
+6. [Backpropagation In Convolutional Neural Networks](https://github.com/lucasxlu/blog/blob/master/source/_posts/dl-bp/Backpropagation-In-Convolutional-Neural-Networks-DeepGrid.pdf)
