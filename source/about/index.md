@@ -5,7 +5,7 @@ description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
 ## Self Introduction
-I am a second-year master major in machine learning and computer vision. My research interests include _Facial Attribute Analysis_, _Deep Learning_ and _Data Science_. 
+I am a second-year master major in machine learning and computer vision. My research interests include Facial Attribute Analysis, Deep Learning and Data Science. 
 
 <!-- __Curriculum Vitae__: [[PDF-EN](./CV_LuXu.pdf)]  [[PDF-中文](./XuLu_resume-zh_CN.pdf)] -->
 __Curriculum Vitae__: [[PDF-EN](./CV_LuXu.pdf)] 
@@ -21,15 +21,15 @@ __Curriculum Vitae__: [[PDF-EN](./CV_LuXu.pdf)]
 * [XCloud](https://github.com/lucasxlu/CVLH.git)  
   An AI cloud platform based on Java, to provide RESTful APIs in web data crawling, text classification, sentiment analysis, document   similarity measuring, image classification and HTML5-based data visualization.
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
-  A repository for job data crawling and data analysis based on Python3. This repo has received over __200+ stars__ and __120+ forks__. More details can be read at [here](https://www.zhihu.com/question/36132174/answer/94392659).
+  A repository for job data crawling and data analysis based on Python3. This repo has received over **200 stars** and **120+ forks**. More details can be read at [here](https://www.zhihu.com/question/36132174/answer/94392659).
 
 ## Competition
-* My algorithm named _TreeNet_ ranks the 1st place on _Facial Expression Recognition Challenge_ on [Real-word Affective Face Database (RAF-DB)](http://www.whdeng.cn/raf/model1.html).
+* My algorithm named **TreeNet** ranks the 1st place on _Facial Expression Recognition Challenge_ on [Real-word Affective Face Database (RAF-DB)](http://www.whdeng.cn/raf/model1.html).
 
 
 ## Experience
 * [Pig Face Recognition](http://gd.people.com.cn/n2/2018/0323/c123932-31374601.html)  
-  Our team developed a _Pig Face Recognition System_ with [Guangzhou Yingzi Holding Co.,Ltd](http://www.yingzi.com/), to accurately recognize a pig and get its detailed information through captured photo. It achieves a mAP over 95%.   
+  Our team developed a **Pig Face Recognition System** with [Guangzhou Yingzi Holding Co.,Ltd](http://www.yingzi.com/), to accurately recognize a pig and get its detailed information through captured photo. It achieves a mAP over 95%.   
   * Building deep model and training on Amazon S3 GPU server.
   * Encapsulate RESTful API and web backend development.
   
