@@ -24,7 +24,7 @@ __Curriculum Vitae__: [[PDF-EN](./CV_LuXu.pdf)]
   A repository for job data crawling and data analysis based on Python3. This repo has received over **200 stars** and **120+ forks**. More details can be read at [here](https://www.zhihu.com/question/36132174/answer/94392659).
 
 ## Competition
-* My algorithm named **TreeNet** ranks the 1st place on _Facial Expression Recognition Challenge_ on [Real-word Affective Face Database (RAF-DB)](http://www.whdeng.cn/raf/model1.html).
+* My algorithm named **TreeNet** ranks the 1st place on **Facial Expression Recognition Challenge** on [Real-word Affective Face Database (RAF-DB)](http://www.whdeng.cn/raf/model1.html).
 
 
 ## Experience
