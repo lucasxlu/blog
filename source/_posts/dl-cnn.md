@@ -26,3 +26,6 @@ catagories:
 
 ## Pooling
 无论采用什么样的Pooling，当输入做少量变动时，Pooling能够 __帮助输入的表示近似不变__。Shift Invariant指得是当我们对输入进行少量平移时，经过Pooling后的大多数输出并不会发生改变。例如MaxPooling中，Pooling只对周围的最大值比较敏感，而不是对精确的位置。
+
+## Reference
+1. [Deep Learning--CNN](https://www.deeplearningbook.org/contents/convnets.html)
