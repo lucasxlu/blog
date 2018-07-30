@@ -14,6 +14,8 @@ Ensemble Learning是ML中一个非常热门的领域，也是很多比赛Top方�
 
 根据Base Learner的生成方式，目前的Ensemble Learning方法大致可以分为两大类：即base learner之间存在强依赖关系、必须串行生成的序列化方法，以及base learner间不存在强依赖关系、可同时生成的并行化方法；前者的代表是Boosting，后者的代表是Bagging和Random Forests。
 
+Boosting主要关注降低bias，因此Boosting能基于泛化性能相当弱的weak learner构建出很强的集成。而bagging主要降低variance，因此它在不剪枝决策树、NN等易受样本扰动的learner上效用更为明显。
+
 ## Ensemble Learning Algorithm
 ### Boosting
 Boosting是一种常用的统计学习方法，应用广泛且有效，在分类问题中，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行线性组合，提高分类性能。
