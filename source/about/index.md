@@ -11,7 +11,7 @@ I am a second-year master major in machine learning and computer vision. My rese
 __Curriculum Vitae__: [[PDF-EN](./CV_LuXu.pdf)] 
 
 ## Academic Papers
-* CRNet: Classification and Regression Neural Network for Facial Beauty Prediction (Accepted by PCM2018) [[code](https://github.com/lucasxlu/CRNet.git)]  
+* CRNet: Classification and Regression Neural Network for Facial Beauty Prediction (PCM2018, Poster) [[code](https://github.com/lucasxlu/CRNet.git)]  
 * Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition (submitted to ACM MM2018)  
 * Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform    
 * Transferring Rich Deep Features for Facial Beauty Prediction [[arxiv](https://arxiv.org/abs/1803.07253)]

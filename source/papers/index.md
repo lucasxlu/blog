@@ -7,7 +7,7 @@ date: 2018-07-18 12:28:56
 description: "Academic papers list."
 ---
 # Academic Papers List
-* CRNet: Classification and Regression Neural Network for Facial Beauty Prediction (Accepted by PCM2018) [[code](https://github.com/lucasxlu/CRNet.git)]  
+* CRNet: Classification and Regression Neural Network for Facial Beauty Prediction (PCM2018, Poster) [[code](https://github.com/lucasxlu/CRNet.git)]  
 * Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition (submitted to ACM MM2018)  
 * Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform    
 * Transferring Rich Deep Features for Facial Beauty Prediction [[arxiv](https://arxiv.org/abs/1803.07253)]
