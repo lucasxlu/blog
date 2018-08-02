@@ -70,3 +70,30 @@ $$
 
 ### Mixture of Gaussian
 与KMeans、LVQ采用原型向量来刻画聚类结构不同，Mixture-of-Gaussian采用概率模型来表达聚类原型。
+
+对$n$维样本空间$\chi$中的随机向量$x$，若$x$服从高斯分布，其概率密度函数为：
+$$
+p(x)=\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}e^{-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)}
+$$
+$\mu$是$n$维均值向量，$\Sigma$是$n\times n$的协方差矩阵。由上式可知，高斯分布完全由均值向量$\mu$和协方差矩阵$\Sigma$确定。我们将概率密度函数记为$p(x|\mu,\Sigma)$。
+
+我们可定义高斯混合分布：
+$$
+p_{\mathcal{M}}(x)=\sum_{i=1}^k \alpha_i\cdot p(x|\mu_i,\Sigma_i)
+$$
+该分布共由$k$个混合分布组成，每个混合成分对应一个高斯分布。其中$\mu_i$与$\Sigma_i$是第$i$个高斯混合成分的参数，而$\alpha_i>0$为相应的混合系数，$\sum_{i=1}^k \alpha_i=1$。
+
+假设样本的生成过程由高斯混合分布给出：首先，根据$\alpha_1,\alpha_2,\cdots,\alpha_k$定义的先验分布选择高斯混合成分，其中$\alpha_i$为选择的第$i$个混合成分的概率；然后根据被选择的混合成分的概率密度函数进行采样，从而生成相应的样本。
+
+若training set $D=\{x_1,x_2,\cdots,x_m\}$由上述过程生成，另随机变量$z_j\in \{1,2,\cdots,k\}$表示生成样本$x_j$的高斯混合成分。根据Bayesian Theorem，$z_j$的后验分布对应于：
+$$
+p_{\mathcal{M}}(z_j=i|x_j)=\frac{P(z_j=i)\cdot p_{\mathcal{M}}(x_j|z_j=i)}{p_{\mathcal{M}}(x_j)}=\frac{\alpha_i \cdot p(x_j|\mu_i,\Sigma_i)}{\sum_{l=1}^k \alpha_l \cdot p(x_j|\mu_l,\Sigma_l)}
+$$
+$p_{\mathcal{M}}(z_j=i|x_j)$给出了样本$x_j$由第$i$个高斯混合成分生成的后验概率，我们将其记作$\gamma_{ji}$。
+
+当高斯混合分布已知，高斯混合聚类将把样本$D$划分为$k$个簇$\mathcal{C}=\{C_1,C_2,\cdots,C_k\}$，每个样本$x_j$的簇标记如下确定：
+$$
+\lambda_j=\mathop{argmax} \limits_{i\in \{1,2,\cdots,k\}} \gamma_{ji}
+$$
+
+### Density-based Clustering
