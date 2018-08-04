@@ -1,6 +1,6 @@
 ---
 title: "[ML] Clustering"
-date: 2018-07-31 10:22:50
+date: 2018-07-30 22:01:45
 mathjax: true
 tags:
 - Machine Learning
@@ -96,4 +96,20 @@ $$
 \lambda_j=\mathop{argmax} \limits_{i\in \{1,2,\cdots,k\}} \gamma_{ji}
 $$
 
-### Density-based Clustering
+## Density-based Clustering
+基于密度的聚类假设聚类结构能通过样本分布的紧密程度确定。DBSCAN是一种著名的密度聚类算法，它基于一组“领域”参数$(\epsilon, MinPts)$来刻画样本分布的紧密程度。给定数据集$D=\{x_1,x_2,\cdots,x_m\}$，定义下面几个概念：
+* $\epsilon-$邻域：对$x_j\in D$，其$\epsilon-$邻域包含样本集$D$中与$x_j$的距离不大于$\epsilon$的样本，即$N_{\epsilon}(x_j)=\{x_i\in D|dist(x_i,x_j)\leq \epsilon\}$；
+* 核心对象：若$x_j$的$\epsilon-$邻域至少包含$MinPts$个样本，即$|N_{\epsilon}(x_j)|\geq MinPts$，则$x_j$是一个核心对象；
+* 密度直达：若$x_j$位于$x_i$的$\epsilon-$邻域内，且$x_i$是核心对象，则称$x_j$由$x_i$密度直达；
+* 密度可达：对$x_i$与$x_j$，若存在样本序列$p_1,p_2,\cdots,p_n$，其中$p_1=x_i,p_2=x_j$，且$p_{i+1}$由$p_i$密度直达，则称$x_j$由$x_i$密度可达；
+* 密度相连：对$x_i$与$x_j$，若存在$x_k$使得$x_i$与$x_j$均由$x_k$密度可达，则称$x_i$与$x_j$密度相连。
+
+基于以上概念，DBSCAN将“簇”定义为：由密度可达关系导出的最大的密度相连样本集合。形式化的说，给定邻域参数$(\epsilon,MinPts)$，簇$C\subseteq D$是满足以下性质的非空样本子集：
+* 连接性：$x_i\in C,x_j \in C, \implies x_i$与$x_j$密度相连
+* 最大性：$x_i\in C, x_j$由$x_i$密度可达$\implies$ $x_j \in C$
+
+## Hierarchical Clustering
+它先将数据集中的每个样本看作一个初始聚类簇，然后在算法运行的每一步中找出距离最近的两个聚类簇进行合并，该过程不断重复，直到达到预设的聚类簇个数。
+
+## Tips
+聚类簇数$k$通常需由用户提供，可运行不同的$k$值后选取最佳的结果。
