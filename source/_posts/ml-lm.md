@@ -49,6 +49,6 @@ catagories:
   
   VIF 最小为1，代表完全没有共线性，VIF大于5或10时代表有比较严重的共线性。
 
-* In high dimensions there is effectively a reduction in sample size. High dimensions result in a phenomenon in which a given observation has no nearby neighbors ——that is called __curse of dimensionality__. That is, the K observations that are nearest to a given test observation $x_0$ may be very far away from $x_0$ in p-dimensional space when p is large, leading to a very poor prediction of $f(x_0)$ and hence a pour KNN fit.
+* In high dimensions there is effectively a reduction in sample size. High dimensions result in a phenomenon in which a given observation has no nearby neighbors ——that is called __curse of dimensionality__. That is, the K observations that are nearest to a given test observation $x_0$ may be very far away from $x_0$ in p-dimensional space when p is large, leading to a very poor prediction of $f(x_0)$ and hence a poor KNN fit.
 
 * Generally, Parameter-Methods will tend to outperform non-parameter methods when there's a small number of observations per predictors.
