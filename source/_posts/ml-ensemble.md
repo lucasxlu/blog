@@ -130,3 +130,21 @@ $$-[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} ]_{f(x)=f_{m-1}(x)}$$
    * 更新$f_m(x)=f_{m-1}(x)+\sum_{j=1}^J c_{mj}I(x\in R_{mj})$
 3. 得到回归树：  
    $$\hat{f}(x)=f_M(x)=\sum_{m=1}^M \sum_{j=1}^J c_{mj} I(x\in R_{mj})$$
+
+### Bagging and Random Forests
+#### Bagging
+Bagging是并行式集成学习方法最著名的代表。它基于bootstrap sampling，给定包含$m$个样本的数据集，我们先随机取出一个样本放入采样集中，再把该样本放回初始数据集，使得下次采样时该样本仍有可能被选中，这样，经过$m$次随机采样，我们得到含有$m$个样本的采样集，初始训练集中有的样本在采样集里多次出现，有的则从未出现。
+
+这样，我们可采样出$T$个含有$m$个训练样本的采样集，然后基于每个采样集训练出一个base learner，再将这些base learner进行集成。在对预测输出进行结合时，Bagging通常对分类任务使用majority voting，对回归任务使用averaging。
+
+与AdaBoost只适用于binary classification不同，Bagging能不经修改地用于多分类、回归等任务。
+Bootstrap sampling还给Bagging带来了另一个优点：由于每个base learner只使用了初始训练集中约63.2%的样本，剩下约36.8%的样本可用于validation set来对泛化性能进行out-of-bag estimate。Bagging主要关注降低variance，因此它在不剪枝决策树、NN等易受样本扰动的学习器上效用更为明显。
+
+#### Random Forests
+Random Forests是Bagging的一个变体，RF在以Decision Tree为base learner构建Bagging集成的基础上，进一步在Decision Tree的训练过程中引入了 __随机属性选择__。传统Decision Tree在选择划分属性时是在当前结点的属性集合（假定有$d$个属性）中选择一个最优属性；而在Random Forests中，对base decision tree的每个结点，先从该结点的属性集合中随机选择一个包含$k$个属性的子集，然后再从这个子集中选择一个最优属性进行划分。这里参数$k$控制了随机性的引入程度；若$k=d$，则base learner的构建与传统decision tree相同；若$k=1$，则是随机选择一个属性用于划分。一般推荐$k=log_2d$。
+
+与Bagging中base learner的“多样性”仅通过样本扰动不同，__Random Forests中base learner不仅来自样本扰动，还来自属性扰动，这就使得最终集成的泛化性能可通过base learner之间差异度的增加而进一步提升__。
+
+Random Forests的训练效率通常优于Bagging，因为在base decision tree的构建过程中，Bagging使用的是“确定型”decision tree，在选择划分属性时要对结点的所有属性进行考察，而Random Forests使用的“随机型”decision tree则只需考察一个属性子集。
+
+### 结合策略
