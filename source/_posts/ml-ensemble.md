@@ -148,3 +148,47 @@ Random Forests是Bagging的一个变体，RF在以Decision Tree为base learner�
 Random Forests的训练效率通常优于Bagging，因为在base decision tree的构建过程中，Bagging使用的是“确定型”decision tree，在选择划分属性时要对结点的所有属性进行考察，而Random Forests使用的“随机型”decision tree则只需考察一个属性子集。
 
 ### 结合策略
+Learner的结合会从3方面带来好处：
+1. 从统计方面看，由于学习任务的假设空间往往很大，可能有多个假设在training set上达到同等性能，此时若使用单学习器可能因误选导致泛化性能不佳，结合多个learner则会减小这一风险。
+2. 从计算方面来看，learning algorithm往往会陷入局部极小，有的局部极小点所对应的泛化性能可能很糟糕，而通过多次运行之后进行结合，可降低陷入局部极小点的风险。
+3. 从表示的方面来看，某些学习任务的真实假设可能不在当前学习算法所考虑的假设空间中，此时若使用单学习器则肯定无效，而通过结合多个learner，由于相应的假设空间有所扩大，有可能学得到更好的近似。
+
+* Averaging
+$H(x)=\frac{1}{T}\sum_{i=1}^T h_i(x)$
+
+* Weighted Averaging
+$H(x)=\sum_{i=1}^Tw_i h_i(x)$
+其中$w_i$一般从training set中学习而得。在base learner性能相差较大时宜采用Weighted Averaging，而在base learner性能相差不大时宜采用Averaging。
+
+* Voting
+    * Majority Voting
+      $$
+      H(x)=\begin{cases}
+      c_j,\quad if \sum_{i=1}^Th_i^j(x)>\frac{1}{2}\sum_{k=1}^N\sum_{i=1}^T h_i^k(x), \\
+reject, \quad otherwise
+      \end{cases}
+      $$
+
+    * Plurality Voting
+      $H(x)=c_{\mathop{argmax} \limits_{j} \sum_{i=1}^T h_i^j(x)}$
+      即预测为得票数最多的标记，若同时有多个标记获最高票，则从中随机选取一个。
+      
+    * Weighted Voting
+      $H(x)=c_{\mathop{argmax} \limits_{j} \sum_{i=1}^T w_ih_i^j(x)}$
+
+* Stacking
+Stacking先从初始training set中训练出初级 learner，然后“生成”一个新数据集用于训练次级learner。在这个新数据集中，初级learner的输出被当作样例输入特征，而初始样本的标记仍被当作样例标记。
+
+### 多样性
+#### 多样性增强
+* 数据样本扰动
+给定初始数据集，可从中产生出不同的数据子集，再利用不同的数据子集训练出不同的个体学习器，数据样本扰动通常是基于采样法。数据样本扰动法对“不稳定学习器”（例如NN、Decision Tree等）很有效。但是对“稳定学习器”（例如SVM、KNN、Naive Bayes）等，需要使用 __输入属性扰动__。
+
+* 输入属性扰动
+从初始属性集中抽取出若干个属性子集，再基于每个属性子集训练一个base learner。对包含大量冗余属性的数据，子空间中训练base learner不仅能产生多样性大的个体，还会因属性数的减少而大幅节省时间开销。同时，由于冗余属性多，减少一些属性后训练出的base learner也不至于太差。
+
+* 输入表示扰动
+对输出表示进行操纵以增强多样性。可对training sample类标记稍作变动，如Flipping Out。
+
+* 算法参数扰动
+使用单一learner时通常需要cross validation来确定参数值，这事实上已经使用了不同参数训练出多个learner，只不过最终仅选择其中一个learner进行使用，而Ensemble Learning则相当于把这些learner都利用起来；由此可见，Ensemble Learning实际计算开销并不比使用单一learner大很多。
