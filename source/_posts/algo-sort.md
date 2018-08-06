@@ -97,5 +97,82 @@ public int[] shellSort(int[] input) {
 
 * 原地归并
 ```java
+private static void merge(Comparable[] input, int low, int mid, int high) {
+    int i = low, j = mid + 1;
+    for (int k = low; k <= high; k++) {  // copy input[low...high] to aux[low...high]
+        aux[k] = input[k];
+    }
 
+    for (int k = low; k <= high; k++) {  // merge back to input[low...high]
+        if (i > mid) input[k] = aux[j++];
+        else if (j > high) input[k] = aux[i++];
+        else if (aux[j].compareTo(aux[i]) < 0) input[k] = aux[j++];
+        else input[k] = aux[i++];
+    }
+}
 ```
+
+* 自顶向下归并
+```java
+public class Merge {
+    private static Comparable[] aux;
+
+    public static void sort(Comparable[] a) {
+        aux = new Comparable[a.length];
+        sort(a, 0, a.length - 1);
+    }
+
+    private static void merge(Comparable[] input, int low, int mid, int high) {
+        int i = low, j = mid + 1;
+        for (int k = low; k <= high; k++) {  // copy input[low...high] to aux[low...high]
+            aux[k] = input[k];
+        }
+
+        for (int k = low; k <= high; k++) {  // merge back to input[low...high]
+            if (i > mid) input[k] = aux[j++];
+            else if (j > high) input[k] = aux[i++];
+            else if (aux[j].compareTo(aux[i]) < 0) input[k] = aux[j++];
+            else input[k] = aux[i++];
+        }
+    }
+
+    private static void sort(Comparable[] a, int lo, int hi) {
+        // sort array a[lo...hi]
+        if (hi <= lo) return;
+        int mid = lo + (hi - lo) / 2;
+        sort(a, lo, mid);
+        sort(a, mid + 1, hi);
+        merge(a, lo, mid, hi);
+    }
+}
+```
+
+> 对于长度为$N$的任意数组，自顶向下的归并排序需要$\frac{1}{2}NlgN$至$NlgN$。
+
+* 自底向上归并  
+先归并那些微型数组，然后再成对归并得到的子数组，直到我们将整个数组归并在一起。
+```java
+public class MergeBU {
+    private static Comparable[] aux;
+
+    public static void sort(Comparable[] a) {
+        aux = new Comparable[a.length];
+        for (int sz = 1; sz < a.length; sz=sz+sz) {
+            for (int lo = 0; lo < a.length - sz; lo += sz + sz) {
+                merge(a, lo, lo + sz - 1, Math.min(lo + 2 * sz - 1, a.length - 1));
+            }
+
+        }
+    }
+}
+```
+
+### 快速排序
+快排的特点：它是原地排序；将长度为$N$的数组排序所需时间和$NlgN$成正比。其缺点是非常脆弱，其最坏情况下的性能只有平方级别。
+
+快排是一种分治算法。它将一个数组分成两个子数组，将两部分独立地排序，快排和归并是互补的：归并排序将将数组分成两个子数组分别排序，并将有序的子数组归并以将整个数组排序；而快排将数组排序的方式则是当两个子数组都有序时整个数组也就自然有序了。
+
+一般策略是：先随意地取 a[lo] 作为切分元素，即那个将会被排定的元素，然后我们从数组的左端开始向右扫描，直到找到一个大于等于它的元素，然后再从数组的右端向左开始扫描，直到找到一个小于等于它的元素。交换它们的位置。如此继续，我们就可以保证左指针 i 的左侧元素都不大于切分元素，右指针 j 的右侧元素都不小于切分元素。当两个指针相遇时，我们只需要将切分元素 a[lo]和左子数组最右侧的元素（a[j]）交换然后返回 j 即可。
+
+> 将长度为$N$的无重复数组排序，快排平均需要$\sim 2NlgN$次比较。最多需要$\frac{N^2}{2}$次比较，但随机打乱能预防这种情况。
+
