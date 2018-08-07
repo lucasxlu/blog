@@ -81,22 +81,22 @@ $$
 
 相比$L_2$ Regularization，$L_1$ Regularization会产生更稀疏的解(最优值中的一些参数为0)。
 
-### 作为约束的范数惩罚
+## 作为约束的范数惩罚
 $$
 \theta^{\star}=\mathop{argmin} \limits_{\theta} \mathcal{L}(\theta,\alpha^{\star})=\mathop{argmin} \limits_{\theta} J(\theta;X,y)+\alpha^{\star}\Omega(\theta)
 $$
 如果$\Omega$是$L_2$范数，那么权重就是被约束在一个$L_2$球中；如果$\Omega$是$L_1$范数，那么权重就是被约束在一个$L_1$范数限制的区域中。
 
-### Data Augmentation
+## Data Augmentation
 在NN的输入层注入噪声也可以看作Data Augmentation的一种方式。然而，NN对噪声不是很robust。改善NN robustness的方法之一是简单地将随机噪声添加到输入再训练。输入噪声注入是一些Unsupervised Learning Algorithm的一部分（例如Denoise Auto Encoder）。向hidden layer施加噪声也是可行的，这可以被看作在多个抽象层上进行的Data Augmentation。
 
-### Robustness of Noise
+## Robustness of Noise
 对某些模型而言，__向输入添加方差极小的噪声等价于对权重施加范数惩罚__。一般情况下，注入噪声远比简单地收缩参数强大，特别是噪声被添加到hidden units时会更加强大。
 
-### Multi-Task Learning
+## Multi-Task Learning
 MTL是通过合并几个任务中的样例(__可以视为对参数施加的软约束__)来提高泛化的一种方式。__当模型的一部分被多个额外的任务共享时，这部分将被约束为良好的值，通常会带来更好的泛化能力__。
 
-### Early Stopping
+## Early Stopping
 在训练中只返回使validation set error最低的参数设置，就可以获得使validation set更低的模型(并且因此有希望获得更好的test set error)。在每次validation set有所改善后，我们存储模型参数的副本。当训练算法终止时，我们返回这些参数而不是最新的参数。当validation set error在事先指定的循环次数内没有进一步改善时，算法就会终止。这种策略称为Early Stopping。
 
 对于weight decay，必须小心不能使用太多的weight decay，__以防止网络陷入不良局部极小点__。
@@ -107,12 +107,12 @@ Early Stopping需要validation set，这意味着某些training samples不能被
 
 ![Early Stopping](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-regularization/early_stopping.jpg)
 
-#### 为什么Early Stopping具有Regularization效果？
+### 为什么Early Stopping具有Regularization效果？
 Bishop __认为Early Stopping可以将优化过程的参数空间限制在初始参数值$\theta_0$的小领域内__。事实上，在二次误差的简单Linear Model和Gradient Descend情况下，我们可以展示Early Stopping相当于$L_2$ Regularization。
 
 ![Early Stopping As Regularization](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-regularization/es.jpg)
 
-### 参数绑定和参数共享
+## 参数绑定和参数共享
 假设有两个model执行两个分类任务，但输入分布稍有不同。这两个模型将输入映射到两个不同但相关的输出：$\hat{y}^{(A)}=f(w^{(A)},x)$和$\hat{y}^{(B)}=f(w^{(B)},x)$。
 
 我们可以想象，这些任务会足够相似，因此我们认为模型参数应彼此接近：$\forall_i,w_i^{(A)}$应该与$w_i^{(B)}$接近，我们可通过正则化利用此信息，即：$\Omega(w^{(A)},w^{(B)})=||w^{(A)}-w^{(B)}||_2^2$。这里使用$L_2$ Regularization，也可以使用其他Regularization。
@@ -121,7 +121,7 @@ Bishop __认为Early Stopping可以将优化过程的参数空间限制在初始
 
 CNN通过在多个位置共享参数来考虑 __平移不变性__。相同的特征(具有相同权重的hidden units)在输入的不同位置上计算获得，这意味着无论人脸在图像中的第$i$列或是$i+1$列，我们都可以使用相同的feature detector找到人脸。
 
-### Sparse Representation
+## Sparse Representation
 Weight decay是直接惩罚模型参数，另一种策略是惩罚NN中的激活单元，稀疏化激活单元。这种策略间接地对模型参数施加了复杂惩罚。
 
 表示的稀疏惩罚正则化是通过向Loss Function $J$ 添加对表示的范数惩罚来实现的，记作$\Omega(h)$：
@@ -136,8 +136,8 @@ $$
 $$
 其中$||h||_0$是$h$中非零项的个数。当$W$被约束为正交时，我们可以高效地解决这个问题。
 
-### Bagging和其他集成方法
-#### Why Model Averaging Works?
+## Bagging和其他集成方法
+### Why Model Averaging Works?
 假设我们有$k$个regression model，每个model在每个例子上的误差是$\epsilon_i$，这个误差服从零均值方差为$\mathbb{E}[\epsilon_i^2]=v$且协方差为$\mathbb{E}[\epsilon_i\epsilon_j]=c$的多维正态分布。通过所有集成模型的平均预测所得误差是$\frac{1}{k}\sum_i\epsilon_i$。集成模型的MSE期望是：
 $$
 \mathbb{E}[(\frac{1}{k}\sum_i \epsilon_i)^2]=\frac{1}{k^2}\mathbb{E}[\sum_i (\epsilon_i^2+\sum_{j\neq i}\epsilon_i \epsilon_j)]=\frac{v}{k}+\frac{k-1}{k}c
@@ -146,7 +146,7 @@ $$
 
 NN能找到足够多的不同解，意味着它们可以从Model Averaging中受益(即使所有模型都在同一个数据集上训练))。NN中随机初始化的差异、不同输出的非确定性往往足以使得ensemble中的不同成员具有部分独立的误差。
 
-### Dropout
+## Dropout
 Dropout可以被认为是集成大量DNN的实用Bagging。Dropout训练的ensemble包括所有从base NN除去非输出单元后形成的子网络。
 
 Dropout训练与Bagging训练不太一样，Bagging中所有模型都是独立的，在Dropout中所有模型共享参数。其中每个模型继承父神经网络参数的不同子集。参数共享使得在有限可用的内存下表示指数级数量的模型变得可能。
@@ -159,7 +159,7 @@ __DropConnect__ 是Dropout的一个特殊情况，其中一个标量权重和单
 
 __Batch Normalization__ 在训练时向hidden unit引入加性和乘性噪声重新参数化模型。BatchNorm主要目的是改善优化，但噪声具有正则化效果，有时没必要再使用Dropout。
 
-### Adverserial Training
+## Adverserial Training
 DNN对对抗样本非常不robust的主要原因之一是 __过度线性__。DNN主要是基于线性块构建的，因此在一些实验中，它们实现的整体函数被证明是高度线性的。这些线性函数很容易优化，不幸的是，如果一个线性函数具有许多输入，那么它的值可以非常迅速地改变。如果我们用$\epsilon$改变每个输入，那么权重为$w$的线性函数可以改变$\epsilon||w||_1$之多，如果$w$是高维的这会是一个非常大的数。Adverserial training通过鼓励网络在训练数据附近的局部区域恒定来限制这一高度敏感的局部线性行为。这可以看作一种明确地向监督NN引入局部恒定先验的方法。
 
 对抗样本也提供了一种实现semi-supervised learning的方法，在与数据集中的label不相关联的点$x$处，模型本身为其分配一些label $\hat{y}$。模型的label $\hat{y}$ 未必是真正的label，但如果模型是高品质的，那么$\hat{y}$提供正确标签的可能性很大。我们可以搜索一个对抗样本$x^{'}$，导致分类器输出一个标签$y^{'}$且$y^{'}\neq y$。不使用真正的label，而是由训练好的model提供label产生的adverserial samples被称为“虚拟对抗样本”。我们可以训练分类器为$x$和$x^{'}$分配相同的标签。__这鼓励classifier学习一个沿着未标注数据所在流形上任意微小变化都很robust的函数__。驱动这种方法的假设是，不同的类通常位于分离的流形上，并且小扰动不会使数据点从一个类的流形跳到另一个类的流形上。
