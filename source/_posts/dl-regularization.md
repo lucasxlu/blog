@@ -82,3 +82,33 @@ $$
 相比$L_2$ Regularization，$L_1$ Regularization会产生更稀疏的解(最优值中的一些参数为0)。
 
 ### 作为约束的范数惩罚
+$$
+\theta^{\star}=\mathop{argmin} \limits_{\theta} \mathcal{L}(\theta,\alpha^{\star})=\mathop{argmin} \limits_{\theta} J(\theta;X,y)+\alpha^{\star}\Omega(\theta)
+$$
+如果$\Omega$是$L_2$范数，那么权重就是被约束在一个$L_2$球中；如果$\Omega$是$L_1$范数，那么权重就是被约束在一个$L_1$范数限制的区域中。
+
+### Data Augmentation
+在NN的输入层注入噪声也可以看作Data Augmentation的一种方式。然而，NN对噪声不是很robust。改善NN robustness的方法之一是简单地将随机噪声添加到输入再训练。输入噪声注入是一些Unsupervised Learning Algorithm的一部分（例如Denoise Auto Encoder）。向hidden layer施加噪声也是可行的，这可以被看作在多个抽象层上进行的Data Augmentation。
+
+### Robustness of Noise
+对某些模型而言，__向输入添加方差极小的噪声等价于对权重施加范数惩罚__。一般情况下，注入噪声远比简单地收缩参数强大，特别是噪声被添加到hidden units时会更加强大。
+
+### Multi-Task Learning
+MTL是通过合并几个任务中的样例(__可以视为对参数施加的软约束__)来提高泛化的一种方式。__当模型的一部分被多个额外的任务共享时，这部分将被约束为良好的值，通常会带来更好的泛化能力__。
+
+### Early Stopping
+在训练中只返回使validation set error最低的参数设置，就可以获得使validation set更低的模型(并且因此有希望获得更好的test set error)。在每次validation set有所改善后，我们存储模型参数的副本。当训练算法终止时，我们返回这些参数而不是最新的参数。当validation set error在事先指定的循环次数内没有进一步改善时，算法就会终止。这种策略称为Early Stopping。
+
+对于weight decay，必须小心不能使用太多的weight decay，__以防止网络陷入不良局部极小点__。
+
+Early Stopping需要validation set，这意味着某些training samples不能被输入到模型。为了更好地利用这一额外数据，我们可以在完成Early Stopping的首次训练之后，进行额外的训练。在第二轮，即额外的训练步骤中，所有的training data都会被包括在内。
+* 一种策略是再次初始化模型，然后使用所有数据再次训练。在第二轮训练过程中，我们使用第一轮Early Stopping确定的 __最佳Epoch__。
+* 另一种策略是保持从第一轮训练获得的参数，__然后使用全部数据继续训练__。在这个阶段，已经没有validation set指导我们需要训练多少步停止。我们可以监控validation set的平均loss，并继续训练，直到它低于Early Stopping终止时的目标值。
+
+![Early Stopping](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-regularization/early_stopping.jpg)
+
+#### 为什么Early Stopping具有Regularization效果？
+Bishop __认为Early Stopping可以将优化过程的参数空间限制在初始参数值$\theta_0$的小领域内__。事实上，在二次误差的简单Linear Model和Gradient Descend情况下，我们可以展示Early Stopping相当于$L_2$ Regularization。
+
+![Early Stopping As Regularization](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-regularization/es.jpg)
+
