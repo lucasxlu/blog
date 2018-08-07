@@ -112,3 +112,54 @@ Bishop __认为Early Stopping可以将优化过程的参数空间限制在初始
 
 ![Early Stopping As Regularization](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-regularization/es.jpg)
 
+### 参数绑定和参数共享
+假设有两个model执行两个分类任务，但输入分布稍有不同。这两个模型将输入映射到两个不同但相关的输出：$\hat{y}^{(A)}=f(w^{(A)},x)$和$\hat{y}^{(B)}=f(w^{(B)},x)$。
+
+我们可以想象，这些任务会足够相似，因此我们认为模型参数应彼此接近：$\forall_i,w_i^{(A)}$应该与$w_i^{(B)}$接近，我们可通过正则化利用此信息，即：$\Omega(w^{(A)},w^{(B)})=||w^{(A)}-w^{(B)}||_2^2$。这里使用$L_2$ Regularization，也可以使用其他Regularization。
+
+正则化一个模型(监督模式下训练的分类器)的参数，使其接近另一个无监督模式下训练的模型参数，构造的这种架构使得分类模型中的许多参数能与无监督模型中对应的参数匹配。
+
+CNN通过在多个位置共享参数来考虑 __平移不变性__。相同的特征(具有相同权重的hidden units)在输入的不同位置上计算获得，这意味着无论人脸在图像中的第$i$列或是$i+1$列，我们都可以使用相同的feature detector找到人脸。
+
+### Sparse Representation
+Weight decay是直接惩罚模型参数，另一种策略是惩罚NN中的激活单元，稀疏化激活单元。这种策略间接地对模型参数施加了复杂惩罚。
+
+表示的稀疏惩罚正则化是通过向Loss Function $J$ 添加对表示的范数惩罚来实现的，记作$\Omega(h)$：
+$$
+\tilde{J}(\theta;X,y)=J(\theta;X,y)+\alpha\Omega(h)
+$$
+对表示元素的$L_1$惩罚诱导稀疏的表示：$\Omega(h)=||h||_1=\sum_i|h_i|$。
+
+还有一些其他方法通过激活值的硬性约束来获得表示稀疏，例如正交匹配跟踪通过解决以下约束优化问题将输入值$x$编码成表示$h$:
+$$
+\mathop{argmin} \limits_{h,||h||_0< k} ||x-Wh||^2
+$$
+其中$||h||_0$是$h$中非零项的个数。当$W$被约束为正交时，我们可以高效地解决这个问题。
+
+### Bagging和其他集成方法
+#### Why Model Averaging Works?
+假设我们有$k$个regression model，每个model在每个例子上的误差是$\epsilon_i$，这个误差服从零均值方差为$\mathbb{E}[\epsilon_i^2]=v$且协方差为$\mathbb{E}[\epsilon_i\epsilon_j]=c$的多维正态分布。通过所有集成模型的平均预测所得误差是$\frac{1}{k}\sum_i\epsilon_i$。集成模型的MSE期望是：
+$$
+\mathbb{E}[(\frac{1}{k}\sum_i \epsilon_i)^2]=\frac{1}{k^2}\mathbb{E}[\sum_i (\epsilon_i^2+\sum_{j\neq i}\epsilon_i \epsilon_j)]=\frac{v}{k}+\frac{k-1}{k}c
+$$
+在误差完全相关即$c=v$的情况下，MSE减少到$v$，所以模型平均没有任何帮助。在错误完全不相关即$c=0$的情况下，该集成模型MSE仅为$\frac{v}{k}$。这意味着集成MSE的期望会随着集成规模增大而线性减小。换言之，ensemble model至少与它的任何成员表现得一样好，并且如果成员的误差是独立的，ensemble将显著地比其他成员表现得更好。
+
+NN能找到足够多的不同解，意味着它们可以从Model Averaging中受益(即使所有模型都在同一个数据集上训练))。NN中随机初始化的差异、不同输出的非确定性往往足以使得ensemble中的不同成员具有部分独立的误差。
+
+### Dropout
+Dropout可以被认为是集成大量DNN的实用Bagging。Dropout训练的ensemble包括所有从base NN除去非输出单元后形成的子网络。
+
+Dropout训练与Bagging训练不太一样，Bagging中所有模型都是独立的，在Dropout中所有模型共享参数。其中每个模型继承父神经网络参数的不同子集。参数共享使得在有限可用的内存下表示指数级数量的模型变得可能。
+
+若使用0.5的keep_prob，权重比例规则一般相当于在训练结束后将权重除以2，然后像平常一样使用模型。实现相同结果的另一种方法是在训练期间将单元的状态乘以2。
+
+Dropout是一个Regularization技术，它减少了模型的有效容量，为了抵消这种影响，我们必须增大模型规模。当Dropout用于Linear Regression时，相当于每个输入特征具有不同weight decay系数的$L_2$ weight decay。每个特征的weight decay系数的大小是由其方差来确定的。其他Linear Model也有类似的结果。对于Deep Model而言，Dropout与weight decay是不等同的。
+
+__DropConnect__ 是Dropout的一个特殊情况，其中一个标量权重和单个hidden unit状态之间的每个乘积被认为是可以丢弃的一个单元。
+
+__Batch Normalization__ 在训练时向hidden unit引入加性和乘性噪声重新参数化模型。BatchNorm主要目的是改善优化，但噪声具有正则化效果，有时没必要再使用Dropout。
+
+### Adverserial Training
+DNN对对抗样本非常不robust的主要原因之一是 __过度线性__。DNN主要是基于线性块构建的，因此在一些实验中，它们实现的整体函数被证明是高度线性的。这些线性函数很容易优化，不幸的是，如果一个线性函数具有许多输入，那么它的值可以非常迅速地改变。如果我们用$\epsilon$改变每个输入，那么权重为$w$的线性函数可以改变$\epsilon||w||_1$之多，如果$w$是高维的这会是一个非常大的数。Adverserial training通过鼓励网络在训练数据附近的局部区域恒定来限制这一高度敏感的局部线性行为。这可以看作一种明确地向监督NN引入局部恒定先验的方法。
+
+对抗样本也提供了一种实现semi-supervised learning的方法，在与数据集中的label不相关联的点$x$处，模型本身为其分配一些label $\hat{y}$。模型的label $\hat{y}$ 未必是真正的label，但如果模型是高品质的，那么$\hat{y}$提供正确标签的可能性很大。我们可以搜索一个对抗样本$x^{'}$，导致分类器输出一个标签$y^{'}$且$y^{'}\neq y$。不使用真正的label，而是由训练好的model提供label产生的adverserial samples被称为“虚拟对抗样本”。我们可以训练分类器为$x$和$x^{'}$分配相同的标签。__这鼓励classifier学习一个沿着未标注数据所在流形上任意微小变化都很robust的函数__。驱动这种方法的假设是，不同的类通常位于分离的流形上，并且小扰动不会使数据点从一个类的流形跳到另一个类的流形上。
