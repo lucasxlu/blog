@@ -161,7 +161,7 @@ $\mathop{min} \limits_{w,b} \sum_{i=1}^N [1-y_i(w\cdot x_i+b)]_{+} + \lambda||w|
 $z=\phi(x)=((x^{(1)})^2,(x^{(2)})^2)^T$  
 经过变换$z=\phi(x)$，原空间$\chi \subset R^2$变换为新空间$\mathcal{Z}\subset R^2$，原空间中的点变为新空间中的点。从而原空间线性不可分的情形变为新空间里的线性可分问题。
 
-### kernel Function
+### Kernel Function
 设$\chi$是输入空间(欧式空间$R^n$或离散集合)，又设$\mathcal{H}$为特征空间(希尔伯特空间)，若存在一个从$\chi$到$\mathcal{H}$的映射:  
 $\phi(x):\chi \to \mathcal{H}$
 使得对所有$x,z\in \chi$，函数$K(x,z)$都满足：

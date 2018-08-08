@@ -46,7 +46,7 @@ SGD中步长只是梯度范数乘以学习率，现在步长取决于梯度序�
 $$
 \frac{\epsilon||g||}{1-\alpha}
 $$
-因此将Momentumc超参数视为$\frac{1}{1-\alpha}$有助于理解。例如$\alpha=0.9$ 对应着最大速度10倍于Gradient Descent。
+因此将Momentum超参数视为$\frac{1}{1-\alpha}$有助于理解。例如$\alpha=0.9$ 对应着最大速度10倍于Gradient Descent。
 
 ### Nesterov
 更新规则如下：
@@ -76,6 +76,8 @@ RMSProp修改AdaGrad以在非凸设定下效果更好，改变梯度积累为指
 
 ### Adam
 在Adam中，动量直接并入了梯度一阶矩(指数加权)的估计。将动量加入RMSProp最直接的方法是将动量应用于缩放后的梯度。结合缩放的动量使用没有明确的理论动机。其次，Adam包括偏置修正，修正从原点初始化的一阶矩(动量项)，和非中心的二阶矩的估计。
+
+![Adam](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-optimization/adam.jpg)
 
 ## 二阶近似方法
 ### 牛顿法
