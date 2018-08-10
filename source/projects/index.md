@@ -19,7 +19,7 @@ description: "Projects for ML/CV/AI/Data Science."
 * XiaoLu AI [[article-face beauty recognition](https://zhuanlan.zhihu.com/p/29399781)] [[article-mate face recognition](https://zhuanlan.zhihu.com/p/35135539)] [[code](https://github.com/lucasxlu/XiaoLuAI.git)]
     > A repository in computer vision and NLP.
 
-* Zhihu Live Analysis [[article-1](https://zhuanlan.zhihu.com/p/30514792)] [[article-2](https://zhuanlan.zhihu.com/p/31651544)] [[code](https://github.com/lucasxlu/DataHouse.git)]
+* Zhihu Live Analysis [[article-1](https://zhuanlan.zhihu.com/p/30514792)] [[article-2](https://zhuanlan.zhihu.com/p/31651544)] [[code](https://github.com/lucasxlu/ZhihuDataDriven.git)]
     > A repository for data crawling, data analysis, data mining and data visualization.
 
 * Image Guard [[article](https://zhuanlan.zhihu.com/p/29016317)] [[code](https://github.com/lucasxlu/XiaoLuAI/tree/master/imgguarder)]
