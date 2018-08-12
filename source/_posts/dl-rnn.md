@@ -78,3 +78,4 @@ $$
 
 ![RNN-BP](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/rnn-bp.jpg)
 
+### Recurrent Networks as Directed Graphical Models
