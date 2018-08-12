@@ -17,77 +17,77 @@ catagories:
 ### 简单文本
 当只有一两项数据需要分享时，简单文本是绝佳的沟通方法。考虑只用数字本身(尽可能突出)和一些辅助性文字来清晰地阐述观点。例如：
 
-![Original Report](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/report_original.png)
+![Original Report](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/report_original.png)
 > 上图用了相当多的文字和空间衬托仅仅两项数据。图表本身对数据的解读并没有多少帮助。
 
 修改后：  
-![Revised Report](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/report_revised.png)
+![Revised Report](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/report_revised.png)
 
 ### 表格
 使用表格时需要记住一点：让设计融入背景。__让数据占据核心地位__。不要让厚重的边框和阴影与数据争夺受众的注意力。要用窄边框或者空白来区分表格的元素。
-![Tables](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/tabels.png)
+![Tables](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/tabels.png)
 
 也可以使用 __热力图__ 辅助表格，这会使得极值更容易被观众捕捉：  
-![Heatmap](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/heatmap.png)
+![Heatmap](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/heatmap.png)
 
 ### 需要避开的陷阱
 * 不要使用饼图
 * 不要使用3D效果图
 * 不要使用双y轴的图，而是应该将它们分开成两个单独的图  
-![Double Y-axis](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/double-y-before.png)  
-![Revised Double Y-axis](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/double-y-revised.png)
+![Double Y-axis](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/double-y-before.png)  
+![Revised Double Y-axis](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/double-y-revised.png)
 
 ## 去除杂乱
 * 巧用留白
 * 用对比(颜色、字号)突出要表达的元素
 * 对齐使得页面更整洁
 * Less is More:  
-![Less is More](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/less-is-more.png)
+![Less is More](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/less-is-more.png)
 
 ## 聚焦观众视线
 ### 文字中的前注意属性
-![Preattentive Attributes](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/preattentive-attributes.png)
+![Preattentive Attributes](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/preattentive-attributes.png)
 
 ### 图表中的前注意属性
-![Without Preattentive Attributes in Graph](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/original-graph-no-attributes.png)
+![Without Preattentive Attributes in Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/original-graph-no-attributes.png)
 
 加入强调之后：  
-![With Preattentive Attributes in Graph](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/original-graph-with-attributes.png)
+![With Preattentive Attributes in Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/original-graph-with-attributes.png)
 
 ### 颜色
 使用少量的颜色。通常选择灰色做背景，再挑选一个大胆的颜色（例如蓝色）来吸引注意。
 
-![Color](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/color.png)
+![Color](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/color.png)
 
 ### 避免"意大利面"式的图表策略
 下图的折线图太过于杂乱，观众无法从中获取有用的信息。
-![Spaghetti Graph](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/spaghetti-graph.png)
+![Spaghetti Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/spaghetti-graph.png)
 
 对这类图表的改进可利用 __前注意属性一次强调一根线条__。然后从空间上隔离这些线条的图表：
 #### 一次只强调一根线 (颜色 + 线条粗细)
-![One Line Highlighted](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/one-line-highlighted.png)
+![One Line Highlighted](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/one-line-highlighted.png)
 
 #### 空间隔离
-![Vertically Apart](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/v-apart.png)
+![Vertically Apart](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/v-apart.png)
 
 #### 混合方法 (空间上分离 + 一次只强调一根线条)
-![Combined Approach](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/combined-approach-v.png)
+![Combined Approach](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/combined-approach-v.png)
 
-![Combined Approach](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/combined-approach-h.png)
+![Combined Approach](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/combined-approach-h.png)
 
 ### 饼图的替代方案
 未处理前的饼图：  
-![Pie Chart](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/pie-chart.png)
+![Pie Chart](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/pie-chart.png)
 
 #### 方案1: 直观展示数字
-![Show Numbers Directly](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/numbers.png)
+![Show Numbers Directly](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/numbers.png)
 
 #### 方案2: 简单条形图
-![Simple Bar Graph](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/bar.png)
+![Simple Bar Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/bar.png)
 
 #### 方案3: 水平堆叠条形图
-![Stacked Horizontal Bar Graph](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/h-bar.png)
+![Stacked Horizontal Bar Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/h-bar.png)
 
 #### 方案4: 斜率图
-![Slope Graph](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/slopegraph.png)
+![Slope Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/slopegraph.png)
 > 通过线条的斜率很容易看出项目前后每个类别百分比的 __变化__，易于 __对比来突出项目效果__。
