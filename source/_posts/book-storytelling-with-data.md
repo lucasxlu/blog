@@ -82,12 +82,12 @@ catagories:
 #### 方案1: 直观展示数字
 ![Show Numbers Directly](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/numbers.png)
 
-### 方案2: 简单条形图
+#### 方案2: 简单条形图
 ![Simple Bar Graph](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/bar.png)
 
-### 方案3: 水平堆叠条形图
+#### 方案3: 水平堆叠条形图
 ![Stacked Horizontal Bar Graph](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/h-bar.png)
 
-### 方案4: 斜率图
+#### 方案4: 斜率图
 ![Slope Graph](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/book-storytelling-with-data/slopegraph.png)
 > 通过线条的斜率很容易看出项目前后每个类别百分比的 __变化__，易于 __对比来突出项目效果__。
