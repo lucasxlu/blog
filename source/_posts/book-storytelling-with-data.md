@@ -11,7 +11,7 @@ catagories:
 - Presentation
 ---
 ## Introduction
-数据可视化(Data Visualization)是Data Science领域一个非常非常核心的内容，很多时候，我们往往会花很多力气去建模分析数据，然而最终给你的老板汇报，或者是编写分析报告的时候，通常会以图形化的方式展现。这个时候，若你能够 __利用数据讲故事__ ，那么你的汇报就会十分精彩。本文内容来自一本我个人非常喜欢的书，作者是Google工作多年、数据可视化领域的专家。若你也对数据可视化感兴趣，欢迎去阅读原著：《[Storytelling With Data](http://www.storytellingwithdata.com/book/)》
+数据可视化(Data Visualization)是Data Science领域一个非常非常核心的内容，很多时候，我们往往会花很多力气去建模分析数据，然而最终给你的老板汇报，或者是编写分析报告的时候，通常会以图形化的方式展现。这个时候，若你能够 __利用数据讲故事__ ，那么你的汇报就会十分精彩。本文内容来自一本我个人非常喜欢的书，作者是Google工作多年、数据可视化领域的专家。若你也对数据可视化感兴趣，欢迎去阅读原著：《[Storytelling With Data](http://www.storytellingwithdata.com/book/)》。
 
 ## 选择有效的图表
 ### 简单文本
@@ -25,7 +25,7 @@ catagories:
 
 ### 表格
 使用表格时需要记住一点：让设计融入背景。__让数据占据核心地位__。不要让厚重的边框和阴影与数据争夺受众的注意力。要用窄边框或者空白来区分表格的元素。
-![Tables](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/tabels.png)
+![Tables](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/tables.png)
 
 也可以使用 __热力图__ 辅助表格，这会使得极值更容易被观众捕捉：  
 ![Heatmap](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/heatmap.png)
@@ -46,13 +46,13 @@ catagories:
 
 ## 聚焦观众视线
 ### 文字中的前注意属性
-![Preattentive Attributes](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/preattentive-attributes.png)
+![Preattentive Attributes](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/preatten-attr.png)
 
 ### 图表中的前注意属性
-![Without Preattentive Attributes in Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/original-graph-no-attributes.png)
+![Without Preattentive Attributes in Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/no-attr.png)
 
 加入强调之后：  
-![With Preattentive Attributes in Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/original-graph-with-attributes.png)
+![With Preattentive Attributes in Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/with-attr.png)
 
 ### 颜色
 使用少量的颜色。通常选择灰色做背景，再挑选一个大胆的颜色（例如蓝色）来吸引注意。
@@ -89,5 +89,5 @@ catagories:
 ![Stacked Horizontal Bar Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/h-bar.png)
 
 #### 方案4: 斜率图
-![Slope Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/slopegraph.png)
+![Slope Graph](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/book-storytelling-with-data/slope.png)
 > 通过线条的斜率很容易看出项目前后每个类别百分比的 __变化__，易于 __对比来突出项目效果__。
