@@ -53,3 +53,9 @@ $$
 这迫使模型学习一个在$x$变化很小时目标也没有太大变化的函数。因为这个惩罚只对training data适用，它迫使AutoEncoder学习可以反映training data distribution information的特征。这样的正则化AutoEncoder称为Contractive AutoEncoder(CAE)。
 
 ## Details of Denosing AutoEncoder
+DAE是一类接受损坏数据作为输入，并训练来预测原始未被损坏数据作为输出的AutoEncoder。DAE的训练过程如下：我们引入一个损坏过程$C(\tilde{x}|x)$，这个条件分布代表给定数据样本$x$产生损坏样本$\tilde{x}$的概率。自编码器则根据以下过程，从训练数据对$(x,\tilde{x})$中学习重构分布$p_{reconstruct}(x|\tilde{x})$:
+1. 从training data中采一个训练样本$x$
+2. 从$C(\tilde{x}|x=x)$采一个损坏样本$\tilde{x}$
+3. 将$(x,\tilde{x})$作为训练样本来估计AutoEncoder的重构分布$p_{reconstruct}(x|\tilde{x})=p_{decoder}(x|h)$，其中$h$是Encoder$f(\tilde{x})$的输出，$p_{decoder}$根据解码函数$g(h)$定义。
+
+
