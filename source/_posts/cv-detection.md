@@ -98,11 +98,25 @@ SPPNet究竟有什么过人之处得到了Kaiming He大神的赏识呢？
 4. Training with variable-size images increases scale-invariance and reduces over-fitting.
 
 ### Details of SPPNet
+#### SPP Layer
 SPP Layer can maintain spatial information by pooling in local spatial bins. <font color="red">These spatial bins have sizes proportional to the image size, so the number of bins is fixed regardless of the image size.</font> This is in contrast to the sliding window pooling of the previous deep networks,where the number of sliding windows depends on the input size.
 
 ![SPP Layer](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/spp_layer.jpg)
 
-这样，通过不同spatial bin的feature concatenation，我们就可以得到fixed length的feature vector了，接下来是不是就可以愉快地用FC Layers/SVM等ML算法train了？
+这样，通过不同spatial bin pooling得到的k个 M-dimensional feature concatenation，我们就可以得到fixed length的feature vector了，接下来是不是就可以愉快地用FC Layers/SVM等ML算法train了？
+
+#### SPP for Detection
+RCNN需要从2K个Region Proposal中feedforwad Pretrained CNN去提取特征，这显然是非常低效的。SPPNet直接将整张image(possible multi-scale))作为输入，这样就可以只feedforwad一次CNN。然后在<font color="red">feature map层面</font>获取candidate window，SPP Layer pool到fixed-length feature representation of the window。
+
+![Pooling](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/pooling.jpg)
+
+Region Proposal生成阶段和RCNN比较相似，依然是[Selective Search](https://staff.fnwi.uva.nl/th.gevers/pub/GeversIJCV2013.pdf)生成2000个bbox candidate，然后将原始image resize使得$min(w, h)=s$，文中采用 4-level spatial pyramid ($1\times 1, 2\times 2, 3\times 3,6\times 6$, totally 50 bins) to pool the features。对于每个window，该Pooling操作得到一个12800-Dimensional (256×50) 的向量。这个向量作为FC Layers的输入，然后和RCNN一样训练linear SVM去做分类。
+
+训练SPP Detector时，正负样本的采样是基于groundtruth bbox为基准，$IOU\geq 0.3$为positive sample，反之为negative sample。
+
+
+## Fast RCNN
+下集预告：Fast RCNN ;-)
 
 
 ## Reference
