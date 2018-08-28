@@ -80,9 +80,31 @@ $$
 
 
 ## SPPNet
-下集预告：SPPNet
+> Paper: [Spatial pyramid pooling in deep convolutional networks for visual recognition.](https://arxiv.org/pdf/1406.4729v4.pdf)
+
+### What is SPPNet?
+SPPNet(Spatial Pyramid Pooling)是基于RCNN进行改进的一个Object Detection算法。介绍SPPNet之前，我们不妨先来看一下RCNN有什么问题？RCNN，即Region-based CNN，它需要CNN作为base network去做特征提取，而传统CNN需要固定的squared input，而为了满足这个条件，就需要手工地对原图进行裁剪、变形等操作，而这样势必会丢失信息。作者意识到这种现象的原因不在于卷积层，而在于FC Layers需要固定的输入尺寸，因此通过在feature map的SSPlayer可以满足对多尺度的feature map裁剪，从而concatenate得到固定尺寸的特征输入。取得了很好的效果，在detection任务上，region proposal直接在feature map上生成，而不是在原图上生成，因此可以仅仅通过一次特征提取，而不需要像RCNN那样提取2000次(2000个 Region Proposal)，这大大加速了检测效率。
+
+> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：现如今的Deep Architecture比较多采用Fully Convolutional Architecture(全卷积结构)，而不含Fully Connected Layers，在最后做分类或回归任务时，采用Global Average Pooling即可。
+
+![Crop/Warp VS SPP](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/cw_vs_spp.jpg)
+
+
+### Why SPPNet?
+SPPNet究竟有什么过人之处得到了Kaiming He大神的赏识呢？
+1. SPP可以在不顾input size的情况下获取fixed size output，这是sliding window做不到的。
+2. SPP uses multi-level spatial bins，而sliding window仅仅使用single window size。<font color="red">multi-level pooling对object deformation则十分地robust</font>。
+3. SPP can pool features extracted at variable scales thanks to the flexibility of input scales.
+4. Training with variable-size images increases scale-invariance and reduces over-fitting.
+
+### Details of SPPNet
+SPP Layer can maintain spatial information by pooling in local spatial bins. <font color="red">These spatial bins have sizes proportional to the image size, so the number of bins is fixed regardless of the image size.</font> This is in contrast to the sliding window pooling of the previous deep networks,where the number of sliding windows depends on the input size.
+
+![SPP Layer](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/spp_layer.jpg)
+
+这样，通过不同spatial bin的feature concatenation，我们就可以得到fixed length的feature vector了，接下来是不是就可以愉快地用FC Layers/SVM等ML算法train了？
 
 
 ## Reference
 1. Girshick, Ross, et al. ["Rich feature hierarchies for accurate object detection and semantic segmentation."](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
-2. 
+2. He, Kaiming, et al. ["Spatial pyramid pooling in deep convolutional networks for visual recognition."](https://arxiv.org/pdf/1406.4729v4.pdf) European conference on computer vision. Springer, Cham, 2014.
