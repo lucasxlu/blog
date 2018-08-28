@@ -116,9 +116,73 @@ Region Proposal生成阶段和RCNN比较相似，依然是[Selective Search](htt
 
 
 ## Fast RCNN
-下集预告：Fast RCNN ;-)
+> Paper: [Fast RCNN](https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf)
+
+Fast RCNN是Object Detection领域一个非常经典的算法。它的novelty在于引入了两个branch来做multi-task learning(category classification和bbox regression)。
+
+### Why Fast RCNN?
+按照惯例，我们不妨先来看一看之前的算法(RCNN/SPPNet)有什么缺点？
+1. 它们(RCNN/SPP)的训练都属于multi-stage pipeline，即先要利用Selective Search生成2K个Region Proposal，然后用los loss去fine-tune一个deep CNN，用Deep CNN抽取的feature去拟合linear SVM，最后再去做Bounding Box Regression。
+2. 训练很费时，CNN需要从每一个Region Proposal抽取deep feature来拟合linear SVM。
+3. testing的时候慢啊，还是太慢了。因为需要将Deep CNN抽取的feature先缓存到磁盘，再读取feature来拟合linear SVM，你说麻烦不麻烦。
+
+那我们再来看看Fast RCNN为什么优秀？
+1. 设计了一个multi-task loss，来同时优化object classification和bounding box regression。
+2. Training is single stage.
+3. Higher performance than RCNN and SPPNet.
+
+### Details of Fast RCNN
+![Fast RCNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/fastrcnn.jpg)
+
+Fast RCNN pipeline如上图所示：它将whole image with several object proposals作为输入，CNN抽取feature，对于每一个object proposal，<font color="red">region of interest (RoI) pooling layer extracts a fixed-length feature vector from the feature map</font>，然后将走过RoI Pooling Layer的feature vector输送到随后的multi-branch，一同做classification和bbox regression。
+
+可以看到，Fast RCNN模型里面一个非常重要的组件叫做<font color="red">RoI Pooling</font>，那么接下来我们就来细细分析一下RoI Pooling究竟是何方神圣。
+
+#### The RoI pooling layer
+Fast RCNN原文里是这样说的：
+> RoI pooling layer uses max pooling to convert the features inside any valid region of interest into a small feature map with a fixed spatial extent of $H\times W$ (e.g., $7\times 7$), where $H$ and $W$ are layer hyper-parameters that are independent of any particular RoI.
+> 
+> In this paper, an RoI is a rectangular window into a conv feature map. Each RoI is defined by a four-tuple $(r, c, h, w)$ that specifies its top-left corner $(r, c)$ and its height and width $(h, w)$.
+>
+> RoI max pooling works by dividing the $h\times w$ RoI window into an $H\times W$ grid of sub-windows of approximate size $h/H \times w/W$ and then max-pooling the values in each sub-window into the corresponding output grid cell. Pooling is applied independently to each feature map channel, as in standard max pooling. The RoI layer is simply the special-case of the spatial pyramid pooling layer used in SPPnets [11] in which there is only one pyramid level. We use the pooling sub-window calculation given in [11].
+
+什么意思呢？就是在任何valid region proposal里面，把某层的feature map划分成多个小方块，每个小方块做max pooling，这样就得到了尺寸更小的feature map。
+
+#### Fine-tuning for detection
+##### Multi-Task Loss
+之前也说过，Fast RCNN同时做了$K+1$ (K个object class + 1个background) 类的classification($p=(p_0,p_1,\cdots,p_K)$)和bbox regression($t^k = (t^k_x, t^k_y, t^k_w, t^k_h)$)。
+
+We use the parameterization for $t^k$ given in [9], in which <font color="red">$t^k$ specifies a scale-invariant translation and log-space height/width shift relative to an object proposal</font>(对linear regression熟悉的读者不妨思考一下为什么要对width和height做log). Each training RoI is labeled with a ground-truth class $u$ and a ground-truth bounding-box regression target $v$. We use a multi-task loss $L$ on each labeled RoI to jointly train for classification and bounding-box regression:
+$$
+L(p,u,t^u,v)=L_{cls}(p,u)+\lambda [u\geq1]L_{loc}(t^u,v)
+$$
+$L_{cls}(p,u)=-logp_u$ is log loss for true class $u$.
+
+我们再来看看Loss Function的第二部分(即regression loss)，$[u\geq 1]$代表只有满足$u\geq 1$时这个式子才为1，否则为0。在我们的setting中，background的$[u\geq 1]$自然而然就设为0啦。我们接着分析regression loss，既然是regression，惯常的手法是使用MSE Loss对不对？但是MSE Loss属于Cost-sensitive Loss啊，对outliers非常的敏感，因此Ross大神使用了更加柔和的$Smooth L_1 Loss$。
+$$
+L_{loc}(t^u,v)\sum_{i\in \{x,y,w,h\}} smooth_{L_1}(t_i^u-v_i)
+$$
+
+Smooth L1 Loss写得详细一点呢，就是这样的：
+$$
+smooth_{L_1}(x)=
+\begin{cases}
+0.5x^2 & if |x|<1\\
+|x|-0.5 & otherwise
+\end{cases}
+$$
+
+> @LucasX注：想详细了解Machine Learning中的Loss，请参考我的[另一篇文章](https://lucasxlu.github.io/blog/2018/07/24/ml-loss/)。
+
+##### Mini-batch sampling
+
+
+
+## Faster RCNN
+下集预告：Faster RCNN ;-)
 
 
 ## Reference
 1. Girshick, Ross, et al. ["Rich feature hierarchies for accurate object detection and semantic segmentation."](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
 2. He, Kaiming, et al. ["Spatial pyramid pooling in deep convolutional networks for visual recognition."](https://arxiv.org/pdf/1406.4729v4.pdf) European conference on computer vision. Springer, Cham, 2014.
+3. Girshick, Ross. ["Fast r-cnn."](https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf) Proceedings of the IEEE international conference on computer vision. 2015.
