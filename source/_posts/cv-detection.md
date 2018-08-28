@@ -24,7 +24,7 @@ Object Detection是Computer Vision领域一个非常火热的研究方向。并�
 
 RCNN可以认为是Regions with CNN features，即(1)先利用[Selective Search算法](https://staff.fnwi.uva.nl/th.gevers/pub/GeversIJCV2013.pdf)生成大约2000个Region Proposal，(2)Pretrained CNN从这些Region Proposal中提取deep feature(from pool5)，(3)然后再利用linear SVM进行one-VS-rest分类。从而将Object Detection问题转化为一个Classification问题，对于Selective Search框选不准的bbox，后面使用<font color="orange">Bounding Box Regression</font>(下面会详细介绍)进行校准。这便是RCNN的主要idea。
 
-![RCNN](https://raw.githubusercontent.com/wyt930927/hexo-blog/master/source/_posts/cv-detection/rcnn.png)
+![RCNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rcnn.png)
 
 ### Details of RCNN
 #### Pretraining and Fine-tuning
