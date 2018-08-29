@@ -175,7 +175,20 @@ $$
 > @LucasX注：想详细了解Machine Learning中的Loss，请参考我的[另一篇文章](https://lucasxlu.github.io/blog/2018/07/24/ml-loss/)。
 
 ##### Mini-batch sampling
+在Fine-tuning阶段，每个mini-batch随机采样自$N=2$类image，每一类都是64个sample，与groundtruth bbox $IOU\geq 0.5$的设为foreground samples[$u=1$]，反之为background samples[$u=0$]。
 
+### Fast R-CNN detection
+因为Fully Connected Layers的计算太费时，而FC Layers的计算显然就是大矩阵相乘，因此很容易联想到用truncated SVD来进行加速。
+
+In this technique, a layer parameterized by the $u\times v$ weight matrix $W$ is approximately factorized as:
+$$
+W\approx U\Sigma_t V^T
+$$
+$U$是由$W$前$t$个left-singular vectors组成的$u\times t$矩阵，$\Sigma_t$是包含$W$矩阵前$t$个singular value的$t\times t$对角矩阵，$V$是由$W$前$t$个right-singular vectors组成的$v\times t$矩阵。Truncated SVD可以将参数从$uv$降到$t(u+v)$。
+
+这里值得一提的有两点：
+1. $conv_1$ layers feature map通常都足够地general，并且task-independent。因此可以直接用来抽feature就行。
+2. Region Proposal的数量对Detection的性能并没有什么太大影响 (关键还是看feature啊！以及sampling mini-batch的时候正负样本的不均衡问题，详情请参阅kaiming He大神的[Focal Loss](http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf))。
 
 
 ## Faster RCNN
@@ -186,3 +199,4 @@ $$
 1. Girshick, Ross, et al. ["Rich feature hierarchies for accurate object detection and semantic segmentation."](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
 2. He, Kaiming, et al. ["Spatial pyramid pooling in deep convolutional networks for visual recognition."](https://arxiv.org/pdf/1406.4729v4.pdf) European conference on computer vision. Springer, Cham, 2014.
 3. Girshick, Ross. ["Fast r-cnn."](https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf) Proceedings of the IEEE international conference on computer vision. 2015.
+4. Ross, Tsung-Yi Lin Priya Goyal, and Girshick Kaiming He Piotr Dollár. ["Focal Loss for Dense Object Detection."](http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf)
