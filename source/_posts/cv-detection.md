@@ -192,7 +192,60 @@ $U$是由$W$前$t$个left-singular vectors组成的$u\times t$矩阵，$\Sigma_t
 
 
 ## Faster RCNN
-下集预告：Faster RCNN ;-)
+> Paper: [Faster r-cnn: Towards real-time object detection with region proposal networks](http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf)
+
+Faster RCNN也是Object Detection领域里一个非常具有代表性的工作，一个最大的改进就是Region Proposal Network(RPN)，RPN究竟神奇在什么地方呢？我们先来回顾一下RCNN--SPP--Fast RCNN，这些都属于two-stage detector，什么意思呢？就是先利用<font color="red">Selective Search</font>生成2000个Region Proposal，然后再将其转化为一个机器学习中的分类问题。而<font color="red">Selective Search</font>实际上是非常低效的，RPN则很好地完善了这一点，即直接从整个Network Architecture里生成Region Proposal。RPN是一种全卷积网络，它可以同时预测object bounds，以及objectness score。因为RPN的Feature是和Detection Network共享的，所以整个Region Proposal的生成几乎是cost-free的。所以，这也就是Faster RCNN中**Faster**一词的由来。
+
+
+### What is Faster RCNN?
+$$
+Faster RCNN = Fast RCNN + RPN
+$$
+按照惯例，一个算法的提出显然是为了解决之前算法的不足。那之前的算法都有什么问题呢？
+如果对之前的detector熟悉的话，shared features between proposals已经被解决，但是<font color="red">Region Proposal的生成变成了最大的计算瓶颈</font>。这便是RPN产生的缘由。
+
+作者注意到，conv feature maps used by region-based detectors也可以被用于生成region proposals。在这些conv features顶端，<font color="red">通过添加两个额外的卷积层来构造RPN：一个conv layer用于encode每个conv feature map position到一个低维向量(256-d)；另一个conv layer在每一个conv feature map position中输出k个region proposal with various scales and aspect ratios的objectness score和regression bounds。</font>下面重点介绍一下RPN。
+
+### Region Proposal Network
+RPN是一个全卷积网络，可以接受任意尺寸的image作为输入，并且输出一系列object proposals以及其对应的objectness score。那么RPN是如何生成region proposals的呢？
+
+首先，在最后一个shared conv feature map上slide一个小网络，这个小网络全连接到input conv feature map上$n\times n$的spatial window。而每一个sliding window映射到一个256-d的feature vector，这个feature vector输入到两个fully connected layers--一个做box regression，另一个做box classification。值得注意的是，因为这个小网络是以sliding window的方式操作的，所以fully-connected layers在所有的spatial locations都是共享的。该结构由一个$n\times n$ conv layer followed by two sibling $1\times 1$ conv layers组成。
+
+#### Translation-Invariant Anchors
+对于每个sliding window location，同时预测$k$个region proposals，所以regression layer有$4k$个encoding了$k$个bbox坐标的outputs。classification layer有$2k$个scores(每个region proposal估计object/non-object的概率)。
+
+> The $k$ proposals are parameterized relative to $k$ reference boxes, called anchors. Each anchor is centered at the sliding window in question, and is associated with a scale and aspect ratio.
+
+文章中采用3个scales和3个aspect ratios，所以每个sliding position一共得到$k=9$个anchors。所以对于每个$W\times H$的conv feature map一共产生$WHk$个anchor。这种方法一个很重要的性质就是**它是translation invariant**。
+
+#### A Loss Function for Learning Region Proposals
+训练RPN时，我们为每一个anchor分配binary class(即是不是一个object)。我们为一下这两类anchors分配positive label:
+1. 与groundtruth bbox有最高IoU的anchor
+2. 与任意groundtruth bbox $IoU\geq 0.7$的anchor
+
+同时，可能出现一个groundtruth bbox分配到多个anchor的情况，我们将与所有groundtruth bbox $IoU\leq 0.3$的anchor设为negative anchor。而那些既不是positive又不是negative的anchor则对training过程没有用处。然后，Faster RCNN的Loss Function就变成：
+$$
+L(\{p_i\},\{t_i\})=\frac{1}{N_{cls}} \sum_i L_{cls}(p_i,p_i^{\star}) + \lambda \frac{1}{N_{reg}} \sum_i p_i^{\star} L_{reg}(t_i,t_i^{\star})
+$$
+$p_i$是anchor $i$ 被预测为是一个object的概率，若anchor为positive，则groundtruth label $p_i^{{\star}}$为1；若anchor为negative则为0；$t_i$是包含4个预测bbox坐标点的向量，$t_i^{\star}$是groundtruth positive anchor坐标点的向量。$L_{cls}$是二分类的Log Loss(object VS non-object)。对于regression loss，文章使用$L_{reg}(t_i,t_i^{\star})=R(t_i-t_i^{\star})$，其中$R$是Smooth L1 Loss(和Fast RCNN中一样)。$p_i^{\star} L_{reg}$表示<font color="red">仅仅在positive anchor ($p_i^{\star}=1$)时才被激活，否则($p_i^{\star}=0$)不激活</font>。
+
+Bounding Box Regression依旧是采用之前的pipeline：
+$$
+t_x=\frac{x-x_a}{w_a},t_y=\frac{y-y_a}{h_a},t_w=log(\frac{w}{w_a}),t_h=log(\frac{h}{h_a})
+$$
+
+$$
+t_x^{\star}=\frac{x^{\star}-x_a}{w_a},t_y^{\star}=\frac{y^{\star}-y_a}{h_a},t_w^{\star}=log(\frac{w^{\star}}{w_a}),t_h^{\star}=log(\frac{h^{\star}}{h_a})
+$$
+
+> In our formulation, the features used for regression are of the same spatial size $(n\times n)$ on the feature maps. **To account for varying sizes, a set of $k$ bounding-box regressors are learned. Each regressor is responsible for one scale and one aspect ratio, and the $k$ regressors do not share weights**. As such, it is still possible to predict boxes of various sizes even though the features are of a fixed size/scale.
+
+#### Sharing Convolutional Features for Region Proposal and Object Detection
+1. Fine-tune在ImageNet上Pretrain的RPN来完成region proposal task。
+2. 利用RPN生成的region proposal来trainFast RCNN。注意在这一步骤中RPN和Faster RCNN没有共享卷积层。
+3. 利用detector network来初始化RPN训练，但是我们fix shared conv layers，仅仅fine-tune单独属于RPN的层。注意在这一步骤中RPN和Fast RCNN共享了卷积层。
+4. Fix所有shared conv layers，fine-tune Fast RCNN的fc layers。至此，RPN和Fast RCNN共享卷积层，并且形成了一个unified network。
+
 
 
 ## Reference
@@ -200,3 +253,4 @@ $U$是由$W$前$t$个left-singular vectors组成的$u\times t$矩阵，$\Sigma_t
 2. He, Kaiming, et al. ["Spatial pyramid pooling in deep convolutional networks for visual recognition."](https://arxiv.org/pdf/1406.4729v4.pdf) European conference on computer vision. Springer, Cham, 2014.
 3. Girshick, Ross. ["Fast r-cnn."](https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf) Proceedings of the IEEE international conference on computer vision. 2015.
 4. Ross, Tsung-Yi Lin Priya Goyal, and Girshick Kaiming He Piotr Dollár. ["Focal Loss for Dense Object Detection."](http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf)
+5. Ren, Shaoqing, et al. ["Faster r-cnn: Towards real-time object detection with region proposal networks."](http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf) Advances in neural information processing systems. 2015.

@@ -50,7 +50,7 @@ SVM是一种非常经典的分类算法，也是很多机器学习面试中必�
 最大间隔分离超平面  可以表示为下面的约束最优化问题：  
 $$\mathop{max} \limits_{w,b} \gamma s.t.\quad y_i(\frac{w}{||w||}\cdot x_i+\frac{b}{||w||})\geq \gamma,\quad i=1,\cdots,N$$
 
-即我们希望最大化超平面$(w,b)$关于training set的几何间隔$\gamma$，约束条件表示的是超平面$(w,b)$关于每个training sample的几个间隔至少是$\gamma$。
+即我们希望最大化超平面$(w,b)$关于training set的几何间隔$\gamma$，约束条件表示的是超平面$(w,b)$关于每个training sample的几何间隔至少是$\gamma$。
 
 考虑几何间隔和函数间隔的关系，该问题等价于：
 $$\mathop{max} \limits_{w,b}\frac{\hat{\gamma}}{||w||} \\
@@ -62,7 +62,7 @@ s.t.\quad y_i(w\cdot x_i+b)-1\geq 0, \quad i=1,\cdots,N$$
 
 * 最大间隔分离超平面的存在唯一性：若训练数据集T线性可分，则可将训练集中的样本点完全正确分开的最大间隔分离超平面存在且唯一。
 
-在线性可分情况下，training set的样本点中与分离超平面距离最近的样本点的实例成为支持向量。支持向量是使约束条件等号成立的点，即：
+在线性可分情况下，training set的样本点中与分离超平面距离最近的样本点的实例称为支持向量。支持向量是使约束条件等号成立的点，即：
 $y_i(w\cdot x_i+b)-1=0$
 
 对$y_i=+1$的正例点，支持向量在超平面 $H_1:w\cdot x+b=1$上，对$y_i=-1$的负例点，支持向量在超平面 $H_2:w\cdot x+b=-1$上。在决定分离超平面时只有支持向量起作用，而其他实例点并不起作用。由于支持向量在确定分离超平面中起着决定性的作用，所以将这种分类模型称为"支持向量机"。
@@ -92,7 +92,7 @@ $\mathop{max} \limits_{\alpha} \mathop{min} \limits_{w,b} L(w,b,\alpha)$，所�
   $$\mathop{max} \limits_{\alpha}-\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j) + \sum_{i=1}^N \alpha_i,\quad s.t. \sum_{i=1}^N \alpha_i y_i=0 \quad \alpha_i \geq 0, i=1,2,\cdots,N $$  
 
   可转换成下面等价的求极小值的对偶问题：
-  $$\mathop{min} \limits_{\alpha}-\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j) - \sum_{i=1}^N \alpha_i,\quad s.t. \sum_{i=1}^N \alpha_i y_i=0 \quad \alpha_i \geq 0, i=1,2,\cdots,N $$  
+  $$\mathop{min} \limits_{\alpha}\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j) - \sum_{i=1}^N \alpha_i,\quad s.t. \sum_{i=1}^N \alpha_i y_i=0 \quad \alpha_i \geq 0, i=1,2,\cdots,N $$  
 
 #### 线性可分SVM的学习算法
 1. 构造并求解约束最优化问题:
