@@ -23,7 +23,7 @@ catagories:
 > Paper: [Deep learning face representation from predicting 10,000 classes](http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf)
 
 这篇Paper其实idea非常简单，就是把Face Recognition问题转换为一个$N$-类Classification问题，其中$N$代表dataset中identity的数量。为了增强feature representation能力，作者也将各个facial region的特征做concatenation。[DeepID](http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf)的Architecture如下：
-![DeepID](https://note.youdao.com/yws/public/resource/d77bdd1365b5f3406a5af65f544c9380/xmlnote/WEBRESOURCEa675c67616b71c50e9d4e77c02129416/7230)
+![DeepID(https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/deepid.jpg)
 
 注意到DeepID的输入部分，除了后一个conv layer的feature map之外，还有前一个max-pooling的输出，这样做的好处在于Network能够获取multi-scale的input，也可以视为一种skipping layer(将lower level feature和higher level feature做feature fusion)。那么最后一个hidden layer的输入就是这样子的：
 $$
