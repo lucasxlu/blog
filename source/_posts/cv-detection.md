@@ -172,7 +172,7 @@ smooth_{L_1}(x)=
 \end{cases}
 $$
 
-> @LucasX注：想详细了解Machine Learning中的Loss，请参考我的[另一篇文章](https://lucasxlu.github.io/blog/2018/07/24/ml-loss/)。
+> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：想详细了解Machine Learning中的Loss，请参考我的[另一篇文章](https://lucasxlu.github.io/blog/2018/07/24/ml-loss/)。
 
 ##### Mini-batch sampling
 在Fine-tuning阶段，每个mini-batch随机采样自$N=2$类image，每一类都是64个sample，与groundtruth bbox $IOU\geq 0.5$的设为foreground samples[$u=1$]，反之为background samples[$u=0$]。
