@@ -16,6 +16,8 @@ catagories:
 ## Introduction
 Object Detection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本质旨在梳理RCNN--SPPNet--Fast RCNN--Faster RCNN--FCN--Mask RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。
 
+> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
+
 ## RCNN (Region-based CNN)
 > Paper: [Rich feature hierarchies for accurate object detection and semantic segmentation](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf)
 
@@ -122,7 +124,7 @@ Fast RCNN是Object Detection领域一个非常经典的算法。它的novelty在
 
 ### Why Fast RCNN?
 按照惯例，我们不妨先来看一看之前的算法(RCNN/SPPNet)有什么缺点？
-1. 它们(RCNN/SPP)的训练都属于multi-stage pipeline，即先要利用Selective Search生成2K个Region Proposal，然后用los loss去fine-tune一个deep CNN，用Deep CNN抽取的feature去拟合linear SVM，最后再去做Bounding Box Regression。
+1. 它们(RCNN/SPP)的训练都属于multi-stage pipeline，即先要利用Selective Search生成2K个Region Proposal，然后用log loss去fine-tune一个deep CNN，用Deep CNN抽取的feature去拟合linear SVM，最后再去做Bounding Box Regression。
 2. 训练很费时，CNN需要从每一个Region Proposal抽取deep feature来拟合linear SVM。
 3. testing的时候慢啊，还是太慢了。因为需要将Deep CNN抽取的feature先缓存到磁盘，再读取feature来拟合linear SVM，你说麻烦不麻烦。
 
@@ -219,7 +221,7 @@ RPN是一个全卷积网络，可以接受任意尺寸的image作为输入，并
 文章中采用3个scales和3个aspect ratios，所以每个sliding position一共得到$k=9$个anchors。所以对于每个$W\times H$的conv feature map一共产生$WHk$个anchor。这种方法一个很重要的性质就是**它是translation invariant**。
 
 #### A Loss Function for Learning Region Proposals
-训练RPN时，我们为每一个anchor分配binary class(即是不是一个object)。我们为一下这两类anchors分配positive label:
+训练RPN时，我们为每一个anchor分配binary class(即是不是一个object)。我们为以下这两类anchors分配positive label:
 1. 与groundtruth bbox有最高IoU的anchor
 2. 与任意groundtruth bbox $IoU\geq 0.7$的anchor
 
@@ -242,7 +244,7 @@ $$
 
 #### Sharing Convolutional Features for Region Proposal and Object Detection
 1. Fine-tune在ImageNet上Pretrain的RPN来完成region proposal task。
-2. 利用RPN生成的region proposal来trainFast RCNN。注意在这一步骤中RPN和Faster RCNN没有共享卷积层。
+2. 利用RPN生成的region proposal来train Fast RCNN。注意在这一步骤中RPN和Faster RCNN没有共享卷积层。
 3. 利用detector network来初始化RPN训练，但是我们fix shared conv layers，仅仅fine-tune单独属于RPN的层。注意在这一步骤中RPN和Fast RCNN共享了卷积层。
 4. Fix所有shared conv layers，fine-tune Fast RCNN的fc layers。至此，RPN和Fast RCNN共享卷积层，并且形成了一个unified network。
 
