@@ -44,8 +44,9 @@ VGG也是一篇非常经典的工作，并且在今天的很多任务上依旧�
 ### What is ShuffleNet?
 [ShuffleNet](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)结构最重要的两个部分就是**Pointwise Group Convolution**和**Channel Shuffle**。
 
-![Channel Shuffle]()
+![Channel Shuffle](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/channel_shuffle.jpg)
 
+![ShuffleNet Unit](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/shufflenet_unit.jpg)
 
 
 

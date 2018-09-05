@@ -50,7 +50,7 @@ __决策树学习的Loss Function通常是正则化的极大似然函数__，决
 #### 信息增益算法
 设training set为$D$，$|D|$表示其样本容量，即样本个数，设有$K$个类$C_k,k=1,2,\cdots,K$，$|C_k|$为属于类$C_k$的样本个数，$\sum_{k=1}^K|C_k|=|D|$。设特征$A$有$n$个不同的取值$\{a_1,a_2,\cdots,a_n\}$，根据特征$A$的取值将$D$划分为$n$个子集$D_1,D_2,\cdots,D_n$，$|D_i|$为$D_i$的样本个数，$\sum_{i=1}^n|D_i|=|D|$。记子集$D_i$中属于类$C_k$的样本集合为$D_{ik}$，即$D_{ik}=D_i\cap C_k$，$|D_{ik}|$为$D_{ik}$的样本个数。于是信息增益算法如下：
 1. 计算数据集$D$的经验熵$H(D)$：  
-   $H(D)=\sum_{k=1}^K \frac{|C_k|}{|D|}log_2\frac{|C_k|}{|D|}$
+   $H(D)=-\sum_{k=1}^K \frac{|C_k|}{|D|}log_2\frac{|C_k|}{|D|}$
 
 2. 计算特征$A$对数据集$D$的经验条件熵$H(D|A)$：  
    $H(D|A)=\sum_{i=1}^n \frac{|D_i|}{|D|}H(D_i)=-\sum_{i=1}^n \frac{|D_i|}{|D|}\sum_{k=1}^K \frac{|D_{ik}|}{|D_i|}log_2 \frac{|D_{ik}|}{|D_i|}$
