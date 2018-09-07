@@ -1,6 +1,6 @@
 ---
 title: "[DL] Architecture"
-date: 2018-09-04 15:29:40
+date: 2018-09-07 15:29:40
 mathjax: true
 tags:
 - Machine Learning
@@ -37,6 +37,31 @@ VGG也是一篇非常经典的工作，并且在今天的很多任务上依旧�
     > This can be seen as imposing a regularisation on the $7\times 7$ conv. filters, forcing them to have a decomposition through the $3\times 3$ filters (with non-linearity injected in between)
 
 
+## ResNet
+> Paper: [Deep Residual Learning for Image Recognition](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf)
+
+作者认为，ResNet可以称得上是自AlexNet以来，Deep Learning发展最insightful的idea，ResNet的主角shortcut至今也被广泛应用与Deep Architecture的设计中(如DenseNet, CliqueNet, Deep Layer Aggregation等)。
+此前的网络设计趋势是“越来越深”，但神经网络的设计真的就如同段子所言“一层一层往上堆叠就好了吗？”显然不是的，ResNet作者Kaiming He大神在Paper中做了一些实验，验证了当Network越来越深时，Accuracy就饱和了，然后迅速下降，值得一提的是<font color="red">这种性能下降并不是由于参数过多随之而来的overfitting造成的</font>。
+
+### What is Residual Network?
+设想DNN的目的是为了学习某种function $\mathcal{H}(x)$，作者并没有直接设计DNN Architecture去学习这种function，而是先学习另一种function $\mathcal{F}(x):=\mathcal{H}(x) - x$，那么原来的$\mathcal{H}(x)$是不是就可以表示成<font color="red">$\mathcal{F}(x)+x$</font>。作者假设这种结构比原先的$\mathcal{H}(x)$更容易优化。
+> 例如，若某种identity mapping是最优的，那么，将残差push到0要比通过一系列non-linearity transformation来学习identity mapping更为高效。
+ 
+Shortcut可以表示成如下结构：
+$$
+y=\mathcal{F}(x, \{W_i\}) + x
+$$
+$\mathcal{F}(x, \{W_i\})$可以表示多个conv layers，两个feature map通过channel by channel element-wise 叠加。
+
+网络结构的设计方面，依旧是参考了著名的[VGG](https://arxiv.org/pdf/1409.1556v6.pdf)，即：使用大量$3\times 3$ filters并且遵循这两条原则：
+1. 对于输出相同feature map size的层使用相同数量的filter
+2. 若feature map size减半，则filter的数量则翻倍，来维持每一层的time complexity
+
+对于feature map dimension相同的情况，则只需要element-wise addition即可；若feature map dimension double了，可以采取zero padding来增加dimension，或者采用$1\times 1$ conv来进行升维。
+
+ResNet到这里基本就介绍完了，实验部分当然是在classification/detection/segmentation task上吊打了当前所有的state-of-the-art。ResNet很简单的idea对不对？不得不佩服一下Kaiming大神，他的东西总是简单而有效！
+
+
 ## ShuffleNet
 在Computer Vision领域，除了像AlexNet、VGG、GoogLeNet、ResNet、DenseNet、CliqueNet等一系列比较“重量级”的网络结构之外，也有一些非常轻量级的模型，而轻量级模型对于移动设备而言无疑是非常重要的。这里就介绍一下轻量级模型的代表作之一：[ShuffleNet](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)。
 > Paper: [ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)
@@ -54,5 +79,6 @@ VGG也是一篇非常经典的工作，并且在今天的很多任务上依旧�
 1. Krizhevsky A, Sutskever I, Hinton G E. [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)[C]//Advances in neural information processing systems. 2012: 1097-1105.
 2. Simonyan K, Zisserman A. [Very deep convolutional networks for large-scale image recognition](https://arxiv.org/pdf/1409.1556v6.pdf)[J]. arXiv preprint arXiv:1409.1556, 2014.
 3. Lin M, Chen Q, Yan S. [Network in network](https://arxiv.org/pdf/1312.4400v3.pdf)[J]. arXiv preprint arXiv:1312.4400, 2013.
-4. Zhang, Xiangyu and Zhou, Xinyu and Lin, Mengxiao and Sun, Jian. [ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018
+4. He K, Zhang X, Ren S, Sun J. [Deep residual learning for image recognition](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf). InProceedings of the IEEE conference on computer vision and pattern recognition 2016 (pp. 770-778).
+5. Zhang, Xiangyu and Zhou, Xinyu and Lin, Mengxiao and Sun, Jian. [ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018
 
