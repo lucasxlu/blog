@@ -79,9 +79,57 @@ $$
 
 
 ## Center Loss
+> Paper: [A discriminative feature learning approach for deep face recognition](https://ydwen.github.io/papers/WenECCV16.pdf)
+
+Face Recognition领域，除了设计更加优秀的Network Architecture，也有另一个方向的工作是在设计更加优秀的Loss。[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)就是其中之一。和FaceNet中使用[Triplet Loss](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf)的目的一样，[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)依然是为了使得intra-class more compact and inter-class more separate。本文就来简要介绍一下[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)。
+
+[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)通过学习每一个类的中心向量，来同时更新这个center，以及最小化deep features和其对应class的centers之间的距离。CNN的Loss为Softmax Loss与[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)的加权。Softmax Loss仅仅会让不同的class分开，但[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)还会使得相同class的deep features更加靠近类的centers。通过这种joint supervision(Softmax + Center Loss)，不仅仅inter-class的difference被加大了，而且intra-class的variantions也被减小了。因此便可以学得更加discriminative的feature representation。这便是[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)的大致idea。
+
+## What is [Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)?
+Softmax Loss是这样的：
+$$
+\mathcal{L}_S=-\sum_{i=1}^m log\frac{e^{W_{y_i}^Tx_i+b_{y_i}}}{\sum_{j=1}^n e^{W_j^Tx_i+b_j}}
+$$
+
+[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)则是这样的：
+$$
+\mathcal{L}_C=\frac{1}{2}\sum_{i=1}^m ||x_i-c_{y_i}||_2^2
+$$
+为了更新center vector $c_{y_i}$，文中采取的做法是在每一个mini-batch中进行更新(而不是在整个training set中更新)，然后center vector $c_{y_i}$的计算为相关class feature的平均值。此外，为了避免mislabeled samples，我们使用$\alpha$来控制center vector的learning rate。Center Loss的梯度求导可以表示为：
+$$
+\frac{\partial \mathcal{L}_C}{\partial x_i}=x_i - c_{y_i}
+$$
+
+$$
+\Delta c_j=\frac{\sum_{i=1}^m \delta(y_i=j)\cdot (c_j-x_i)}{1+\sum_{i=1}^m\delta(y_i=j)}
+$$
+
+where $\delta(condition) = 1$ if the condition is satisfied, and $\delta(condition) = 0$ if not. $\alpha$ is restricted in $[0, 1]$. We adopt the joint supervision of softmax loss and center loss to train the CNNs for discriminative feature learning. The formulation is given in Eq. 5.
+$$
+\mathcal{L}=\mathcal{L}_S+\lambda \mathcal{L}_C=-\sum_{i=1}^m log\frac{e^{W_{y_i}^Tx_i + b_{y_i}}}{\sum_{j=1}^n e^{W_j^Tx_i + b_j}} + \frac{\lambda}{2} \sum_{i=1}^m ||x_i-c_{y_i}||_2^2
+$$
+
+整个学习算法如下：
+![Learning of Center Loss](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/centerloss_update.jpg)
+
+网络结构如下：
+![Center Loss Architecture](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/centerloss_nn.jpg)
+
+Center Loss的好处在于：
+* Joint supervision of Softmax Loss and Center Loss能够大大加强DCNN的feature learning能力。
+* 其他Metric Learning的Loss例如[Triplet Loss](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf), Contractive Loss等pairs selection是非常麻烦的一件事情，但是Center Loss则不需要复杂的triplet pairs selection。
+
+网络学习完成，在做Face Verification/Identification时，<font color="red">第一个 FC Layers的feature被当作特征，同时，我们也将水平翻转图片的feature进行concatenation，作为最终的face feature，PCA降维之后，Cosine Distance, Nearest Neighbor and Threshold comparison用来作为判断是否为同一个人的依据</font>。
+
+
+## NormFace
+> Paper: [Normface: L2 hypersphere embedding for face verification](https://arxiv.org/pdf/1704.06369v4.pdf)
+
 
 
 
 ## Reference
 1. Sun, Yi, Xiaogang Wang, and Xiaoou Tang. ["Deep learning face representation from predicting 10,000 classes."](http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
 2. Schroff, Florian, Dmitry Kalenichenko, and James Philbin. ["Facenet: A unified embedding for face recognition and clustering."](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2015.
+3. Wen Y, Zhang K, Li Z, Qiao Y. [A discriminative feature learning approach for deep face recognition](https://ydwen.github.io/papers/WenECCV16.pdf). In European Conference on Computer Vision 2016 Oct 8 (pp. 499-515). Springer, Cham.
+4. Wang F, Xiang X, Cheng J, Yuille AL. [Normface: L2 hypersphere embedding for face verification](https://arxiv.org/pdf/1704.06369v4.pdf). InProceedings of the 2017 ACM on Multimedia Conference 2017 Oct 23 (pp. 1041-1049). ACM.
