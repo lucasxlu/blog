@@ -85,7 +85,7 @@ Face Recognition领域，除了设计更加优秀的Network Architecture，也�
 
 [Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)通过学习每一个类的中心向量，来同时更新这个center，以及最小化deep features和其对应class的centers之间的距离。CNN的Loss为Softmax Loss与[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)的加权。Softmax Loss仅仅会让不同的class分开，但[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)还会使得相同class的deep features更加靠近类的centers。通过这种joint supervision(Softmax + Center Loss)，不仅仅inter-class的difference被加大了，而且intra-class的variantions也被减小了。因此便可以学得更加discriminative的feature representation。这便是[Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)的大致idea。
 
-## What is [Center Loss](https://ydwen.github.io/papers/WenECCV16.pdf)?
+### What is Center Loss?
 Softmax Loss是这样的：
 $$
 \mathcal{L}_S=-\sum_{i=1}^m log\frac{e^{W_{y_i}^Tx_i+b_{y_i}}}{\sum_{j=1}^n e^{W_j^Tx_i+b_j}}
