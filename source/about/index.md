@@ -5,9 +5,9 @@ description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
 ## Self Introduction
-I am a second-year master major in machine learning and computer vision. My research interests include Facial Attribute Analysis, Deep Learning and Data Science. 
+I am a third-year master major in machine learning and computer vision. My research interests include Facial Attribute Analysis, Deep Learning and Data Science. 
 
-![LucasX]()
+<img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg" width="22%" height="22%" href="https://www.zhihu.com/people/xulu-0620/activities"/>
 
 __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)] 
 
