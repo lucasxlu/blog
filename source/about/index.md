@@ -7,6 +7,8 @@ header-img: "img/header_img/archive-bg.png"
 ## Self Introduction
 I am a second-year master major in machine learning and computer vision. My research interests include Facial Attribute Analysis, Deep Learning and Data Science. 
 
+![LucasX]()
+
 __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)] 
 
 ## Academic Papers
