@@ -7,13 +7,14 @@ header-img: "img/header_img/archive-bg.png"
 ## Self Introduction
 I am a third-year master major in machine learning and computer vision. My research interests include Facial Attribute Analysis, Deep Learning and Data Science. 
 
-<img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg" width="22%" height="22%" href="https://www.zhihu.com/people/xulu-0620/activities"/>
+![LucasX](https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg)
 
 __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)] 
 
 ## Academic Papers
 * CRNet: Classification and Regression Neural Network for Facial Beauty Prediction ([PCM2018](http://www.pcm2018.org/index.html)) [[code](https://github.com/lucasxlu/CRNet.git)]  
 * Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition (submitted to [ICASSP 2019](https://2019.ieeeicassp.org/))  
+* Multi-Task Tree Convolutional Neural Network for Facial Expression Recognition and Face Analysis (submitted to [ICASSP 2019](https://2019.ieeeicassp.org/)) 
 * Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform [[code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
 * Transferring Rich Deep Features for Facial Beauty Prediction ([Computers and Electrical Engineering](https://www.journals.elsevier.com/computers-and-electrical-engineering). SCI) [[arXiv](https://arxiv.org/abs/1803.07253)] [[code](https://github.com/lucasxlu/TransFBP.git)]
 * An Automatic Method for Internet Terror Information Classification based on Deep Learning and Random Forests (submitted to [Information Studies: Theory & Application](http://www.itapress.cn/CN/volumn/home.shtml). Chinese)
