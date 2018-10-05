@@ -132,6 +132,46 @@ $D_K\times D_K\times \alpha M\times \rho D_F\times \rho D_F +\alpha M\times \alp
 ## MobileNet V2
 > Paper: [MobileNet V2](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)
 
+[MobileNet V2](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)是发表在[CVPR2018](http://openaccess.thecvf.com/CVPR2018.py)上的Paper，在移动端网络的设计方面又向前走了一步。MobileNet V2最大的contribution如下： 
+> Our main contribution is a novel layer module: the inverted residual with linear bottleneck. This module takes as an input a low-dimensional compressed representation which is first expanded to high dimension and filtered with a lightweight depthwise convolution. Features are subsequently projected back to a low-dimensional representation with a linear convolution.
+
+
+### Preliminaries, discussion and intuition
+#### Depthwise Separable Convolutions
+说起Light-weighted Architecture呢，DW Conv是必不可少的组件了，同理，MobileNet V2也是基于DW Conv做的改进。
+
+> The basic idea is to replace a full convolutional operator with a factorized version that splits convolution into two separate layers. The first layer is called a depthwise convolution, it performs lightweight filtering by applying a single convolutional filter per input channel. The second layer is a $1\times 1$ convolution, called a pointwise convolution, which is responsible for building new features through computing linear combinations of the input channels.
+
+传统Conv接受一个$h_i\times w_i\times d_i$输入，应用卷积核$K\in \mathcal{R}^{k\times k\times d_i\times d_j}$来产生$h_i\times w_i\times d_j$的输出。所以传统Conv的Computational Cost为：$h_i\times w_i\times d_i \times d_j\times k\times k$。而DW Separable Conv的Computational Cost仅仅为：$h_i\times w_i\times d_i(k^2+d_j)$，__减少了将近$k^2$倍的计算量__。
+
+#### Linear Bottlenecks
+> It has been long assumed that manifolds of interest in neural networks could be embedded in low-dimensional subspaces. In other words, when we look at all individual d-channel pixels of a deep convolutional layer, the information encoded in those values actually lie in some manifold, which in turn is embeddable into a low-dimensional subspace.
+
+DCNN的架构大致是这样的：Conv + ReLU + (Pool) + (FC) + Softmax。DNN之所以拟合能力超强，原因就在于non-linearity transformation，而由于gradient vanishing/exploding的原因，Sigmoid已经淡出了历史舞台，取而代之的是ReLU。我们来分析分析ReLU有什么缺点：
+
+> It is easy to see that in general if a result of a layer transformation ReLU(Bx) has a non-zero volume S, the points mapped to interior S are obtained via a linear transformation B of the input, thus indicating that the part of the input space corresponding to the full dimensional output, is limited to a linear transformation. <font color="red">In other words, deep networks only have the power of a linear classifier on the non-zero volume part of the output domain.</font>
+
+> On the other hand, when ReLU collapses the channel, it inevitably loses information in that channel. However if we have lots of channels, and there is a a structure in the activation manifold that information might still be preserved in the other channels. In supplemental materials, we show that if the input manifold can be embedded into a significantly lower-dimensional subspace of the activation space then the ReLU transformation preserves the information while introducing the needed complexity into the set of expressible functions.
+
+简而言之，ReLu有以下两种性质：
+1. 若Manifold of Interest在ReLU之后非零，那么它就相当于是一个线性变换。
+2. ReLU能够保存input manifold完整的信息，<font color="red">但是当且仅当input manifold位于input space的低维子空间中时</font>。
+
+所以，也就不难理解为什么MobileNet V2要先将high-dimensional hidden representations先做一次low-dimensional embedding，然后再变换回到high-dimensional了。
+
+![Evolution of Separable Conv](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/evolution-of-separable-conv.png)
+
+#### Inverted residuals
+> The bottleneck blocks appear similar to residual block where each block contains an input followed by several bottlenecks then followed by expansion [8]. However, inspired by the intuition that the bottlenecks actually contain all the necessary information, while an expansion layer acts merely as an implementation detail that accompanies a non-linear transformation of the tensor, we use shortcuts directly between the bottlenecks.
+
+回想一下，[MobileNet V1](https://arxiv.org/pdf/1704.04861v1.pdf)的结构就是一个普通的feedforwad network，而shortcut在[ResNet](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf)里已经被证明是非常effective的了，所以MobileNet V2自然而然地引入了skip connection了。
+
+
+### MobileNet V2 Architecture
+> We use ReLU6 as the non-linearity because of its robustness when used with low-precision computation [27]. We always use kernel size $3\times 3$ as is standard for modern networks, and utilize dropout and batch normalization during training.
+
+![DCNN Architecture Comparison](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/mobilenetv2-cnn-comparison.png)
+
 
 
 
