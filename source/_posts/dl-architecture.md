@@ -1,6 +1,6 @@
 ---
 title: "[DL] Architecture"
-date: 2018-09-07 15:29:40
+date: 2018-10-05 15:29:40
 mathjax: true
 tags:
 - Machine Learning
@@ -82,8 +82,56 @@ Note that group convolution allows more feature map channels for a given complex
 The purpose of shuffle operation is to enable cross-group information flow for multiple group convolution layers. The evaluations are performed under three different scales of complexity. It is clear that channel shuffle consistently boosts classification scores for different settings. Especially, when group number is relatively large (e.g. g = 8), models with channel shuffle outperform the counterparts by a significant margin, which shows the importance of cross-group information interchange.
 
 
-## Xception
-> Paper: [Xception: Deep Learning with Depthwise Separable Convolutions](http://openaccess.thecvf.com/content_cvpr_2017/papers/Chollet_Xception_Deep_Learning_CVPR_2017_paper.pdf)
+## MobileNet V1
+> Paper: [MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications](https://arxiv.org/pdf/1704.04861v1.pdf)
+
+CNN驱动了许多视觉任务的飞速发展，然而传统结构例如ResNet、Inception、VGG等FLOP非常大，这使得对于移动端和嵌入式设备的训练与部署变得非常困难。所以近些年来，轻量级网络的设计也成为了一个非常热门的研究方向，[MobileNet](https://arxiv.org/pdf/1704.04861v1.pdf)和[ShuffleNet](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)就是其中的代表。前面我们已经介绍了[ShuffleNet](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)，本篇我们就大致回顾一下[MobileNet](https://arxiv.org/pdf/1704.04861v1.pdf)。
+
+### Architecture of MobileNet
+MobileNet最主要的结构就是<font color="red">Depth-wise Separable Convolution</font>。DW Conv为什么能减少model size呢？我们不妨先来细致分析一下传统的卷积需要多少参数：
+假设传统卷积层接受一个$D_F\times D_F\times M$的feature map作为输入，然后输出$D_F\times D_F\times N$的feature map，所以卷积核的size是$D_K\times D_K\times M\times N$，所以需要的计算量为：$D_K\times D_K\times M\times N\times D_F\times D_F$，所以Computational Cost依赖于input channel $M$，output channel $N$，卷积核尺寸$D_K\times D_K$和feature map的尺寸$D_F\times D_F$。
+
+但是MobileNet应用Depth-wise Conv来对Kernel Size和Output Channel进行了解耦。传统Conv Operation通过filters来对features进行filter，然后重组(Combinations)以形成新的representations。Filtering和Combinations可通过DW Separable Conv来分成两步进行。
+
+<font color="red">Depth-wise Separable Convolution由两层组成：Depth-wise Conv + Point-wise Conv</font>。DW Conv对于每个channel应用单个filter，PW Conv (a simple $1\times 1$ Conv)用来建立DW layer输出的linear combination。<font color="red">DW Conv的Computational Cost为：$D_K\times D_K\times M\times D_F\times D_F$</font>，与传统Conv相比低了$N$倍。
+
+DW Conv虽然高效，然而它仅仅filter了input channel，__却没有对其进行combination__，所以需要额外的layer来对DW Conv后的feature进行linear combination来产生新的representation，这就是基于$1\times 1$ Conv的PW Conv。
+
+> The combination of depthwise convolution and $1\times 1$ (pointwise) convolution is called depthwise separable convolution
+
+DW Separable Conv的Computational Cost为：
+$D_K\times D_K \times M\times D_F \times D_F + M\times N\times D_F\times D_F$，前者为DW Conv的cost，后者为PW Conv的cost。
+
+> By expressing convolution as a two step process of filtering and combining we get a reduction in computation of:
+$$
+\frac{D_K\times D_K \times M\times D_F \times D_F + M\times N\times D_F\times D_F}{D_K\times D_K \times M\times N\times D_F \times D_F}=\frac{1}{N} + \frac{1}{D_K^2}
+$$
+可以看到，Depth-wise Separable Conv的计算量仅仅为传统Conv的$\frac{1}{N} + \frac{1}{D_K^2}$。
+
+![DW Separable Conv](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dw-sep-conv.png)
+
+
+### Width Multiplier: Thinner Models
+> In order to construct these smaller and less computationally expensive models we introduce a very simple parameter $\alpha$ called width multiplier. The role of the width multiplier α is to thin a network uniformly at each layer. 
+
+> The computational cost of a depthwise separable convolution
+with width multiplier $\alpha$ is:
+
+$D_K\times D_K\times \alpha M\times D_F\times D_F +\alpha M\times \alpha N + D_F\times D_F$
+
+> where $\alpha\in (0, 1]$ with typical settings of 1, 0.75, 0.5 and 0.25. $\alpha = 1$ is the baseline MobileNet and $\alpha < 1$ are reduced MobileNets. Width multiplier has the effect of reducing computational cost and the number of parameters quadratically by roughly $\alpha^2$ . Width multiplier can be applied to any model structure to define a new smaller model with a reasonable accuracy, latency and size trade off. It is used to define a new reduced structure that needs to be trained from scratch.
+
+### Resolution Multiplier: Reduced Representation
+> The second hyper-parameter to reduce the computational cost of a neural network is a resolution multiplier $\rho$. We apply this to the input image and the internal representation of every layer is subsequently reduced by the same multiplier. In practice we implicitly set $\rho$ by setting the input resolution. We can now express the computational cost for the core layers of our network as depthwise separable convolutions with width multiplier $\alpha$ and resolution multiplier $\rho$:
+> 
+$D_K\times D_K\times \alpha M\times \rho D_F\times \rho D_F +\alpha M\times \alpha N + \rho D_F\times \rho D_F$
+
+> where $\rho\in (0, 1]$ which is typically set implicitly so that the input resolution of the network is 224, 192, 160 or 128. $\rho = 1$ is the baseline MobileNet and ρ < 1 are reduced computation MobileNets. Resolution multiplier has the effect of reducing computational cost by $\rho^2$.
+
+
+## MobileNet V2
+> Paper: [MobileNet V2](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)
+
 
 
 
@@ -94,4 +142,6 @@ The purpose of shuffle operation is to enable cross-group information flow for m
 4. He K, Zhang X, Ren S, Sun J. [Deep residual learning for image recognition](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf). InProceedings of the IEEE conference on computer vision and pattern recognition 2016 (pp. 770-778).
 5. Zhang, Xiangyu and Zhou, Xinyu and Lin, Mengxiao and Sun, Jian. [ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018
 6. Chollet, Francois. ["Xception: Deep Learning with Depthwise Separable Convolutions."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Chollet_Xception_Deep_Learning_CVPR_2017_paper.pdf) 2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR). IEEE, 2017.
+7. Howard, Andrew G., et al. ["Mobilenets: Efficient convolutional neural networks for mobile vision applications."](https://arxiv.org/pdf/1704.04861v1.pdf) arXiv preprint arXiv:1704.04861 (2017).
+8. Zhu, Mark Sandler Andrew Howard Menglong, and Andrey Zhmoginov Liang-Chieh Chen. ["MobileNetV2: Inverted Residuals and Linear Bottlenecks."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018
 
