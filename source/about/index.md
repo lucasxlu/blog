@@ -12,7 +12,7 @@ I am a third-year master major in machine learning and computer vision. My resea
 __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)] 
 
 ## Academic Papers
-* **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//Pacific Rim Conference on Multimedia. Springer, Cham, 2018: 661-671. [[PDF](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[code](https://github.com/lucasxlu/CRNet.git)]
+* **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//Pacific Rim Conference on Multimedia. Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[code](https://github.com/lucasxlu/CRNet.git)]
 * Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition (submitted to [ICASSP 2019](https://2019.ieeeicassp.org/))  
 * Multi-Task Tree Convolutional Neural Network for Facial Expression Recognition and Face Analysis (submitted to [ICASSP 2019](https://2019.ieeeicassp.org/)) 
 * Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform [[code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
@@ -21,7 +21,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Paper](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) Among All Papers of Hubei Province in 2015. Chinese) [[code](https://github.com/xuludev/System.git)]  
 
 ## Projects
-* [XCloud](https://github.com/lucasxlu/CVLH.git)  
+* XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]  
   An AI cloud platform based on Java, to provide RESTful APIs in web data crawling, text classification, sentiment analysis, document   similarity measuring, image classification and HTML5-based data visualization.
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
   A repository for job data crawling and data analysis based on Python3. This repo has received over **200 stars** and **120+ forks**. More details can be read at [here](https://www.zhihu.com/question/36132174/answer/94392659).
@@ -31,6 +31,10 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 
 ## Experience
+* Image Quality Assessment  
+  During my intern at [DiDi ChuXing](https://www.didiglobal.com/), we are working at developing deep learning models to recognize the image quality (blur/reflection/normal), and facial beauty prediction algorithm.
+
+
 * [Pig Face Recognition](http://gd.people.com.cn/n2/2018/0323/c123932-31374601.html)  
   Our team developed a **Pig Face Recognition System** with [Guangzhou Yingzi Holding Co.,Ltd](http://www.yingzi.com/), to accurately recognize a pig and get its detailed information through captured photo. It achieves a mAP over 95%.   
   * Building deep model and training on Amazon S3 GPU server.

@@ -7,7 +7,7 @@ date: 2018-07-18 12:28:56
 description: "Academic papers list."
 ---
 # Academic Papers List
-* **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//Pacific Rim Conference on Multimedia. Springer, Cham, 2018: 661-671. [[PDF](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[code](https://github.com/lucasxlu/CRNet.git)]
+* **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//Pacific Rim Conference on Multimedia. Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[code](https://github.com/lucasxlu/CRNet.git)]
 * Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition (submitted to [ICASSP 2019](https://2019.ieeeicassp.org/))  
 * Multi-Task Tree Convolutional Neural Network for Facial Expression Recognition and Face Analysis (submitted to [ICASSP 2019](https://2019.ieeeicassp.org/)) 
 * Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform [[code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
