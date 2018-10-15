@@ -13,12 +13,12 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 ## Academic Papers
 * **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//Pacific Rim Conference on Multimedia. Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[code](https://github.com/lucasxlu/CRNet.git)]
-* Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition (submitted to [ICASSP 2019](https://2019.ieeeicassp.org/))  
-* Multi-Task Tree Convolutional Neural Network for Facial Expression Recognition and Face Analysis (submitted to [ICASSP 2019](https://2019.ieeeicassp.org/)) 
+* Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition  
+* Multi-Task Tree Convolutional Neural Network for Facial Expression Recognition and Face Analysis
 * Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform [[code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
 * Transferring Rich Deep Features for Facial Beauty Prediction ([Computers and Electrical Engineering](https://www.journals.elsevier.com/computers-and-electrical-engineering). SCI) [[arXiv](https://arxiv.org/abs/1803.07253)] [[code](https://github.com/lucasxlu/TransFBP.git)]
-* An Automatic Method for Internet Terror Information Classification based on Deep Learning and Random Forests (submitted to [Information Studies: Theory & Application](http://www.itapress.cn/CN/volumn/home.shtml). Chinese)
-* Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Paper](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) Among All Papers of Hubei Province in 2015. Chinese) [[code](https://github.com/xuludev/System.git)]  
+* An Automatic Method for Internet Terror Information Classification based on Deep Learning and Random Forests (Chinese)
+* Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Paper](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) among all papers of Hubei Province in 2015. Chinese) [[code](https://github.com/xuludev/System.git)]  
 
 ## Projects
 * XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]  
@@ -32,7 +32,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 ## Experience
 * Image Quality Assessment  
-  During my intern at [DiDi ChuXing](https://www.didiglobal.com/), we are working at developing deep learning models to recognize the image quality (blur/reflection/normal), and facial beauty prediction algorithm.
+  During my intern at [DiDiChuXing](https://www.didiglobal.com/), we are working at developing deep learning models to recognize the image quality (blur/reflection/normal), and facial beauty prediction algorithm.
 
 
 * [Pig Face Recognition](http://gd.people.com.cn/n2/2018/0323/c123932-31374601.html)  

@@ -10,7 +10,7 @@ description: "Projects for ML/CV/AI/Data Science."
 * Lagou Job Data Analysis [[article](https://www.zhihu.com/question/36132174/answer/94392659)] [[code](https://github.com/lucasxlu/LagouJob.git)] [[PDF](LagouJob.pdf)]
     > A repository for web data crawling, data storage, and data analysis of [lagou.com](https://www.lagou.com) based on Python3.
 
-* XCloud [[code](https://github.com/lucasxlu/CVLH.git)]
+* XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]
     > An AI Cloud Platform with RESTful APIs.
 
 * JiaYuan User Profile [[article](https://zhuanlan.zhihu.com/p/24515034)] [[code](https://github.com/lucasxlu/JiaYuan.git)] [[PDF](JiaYuan.pdf)]
