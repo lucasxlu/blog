@@ -97,12 +97,12 @@ MobileNet最主要的结构就是<font color="red">Depth-wise Separable Convolut
 
 DW Conv虽然高效，然而它仅仅filter了input channel，__却没有对其进行combination__，所以需要额外的layer来对DW Conv后的feature进行linear combination来产生新的representation，这就是基于$1\times 1$ Conv的PW Conv。
 
-> The combination of depthwise convolution and $1\times 1$ (pointwise) convolution is called depthwise separable convolution
+The combination of depthwise convolution and $1\times 1$ (pointwise) convolution is called depthwise separable convolution.
 
 DW Separable Conv的Computational Cost为：
 $D_K\times D_K \times M\times D_F \times D_F + M\times N\times D_F\times D_F$，前者为DW Conv的cost，后者为PW Conv的cost。
 
-> By expressing convolution as a two step process of filtering and combining we get a reduction in computation of:
+By expressing convolution as a two step process of filtering and combining we get a reduction in computation of:
 $$
 \frac{D_K\times D_K \times M\times D_F \times D_F + M\times N\times D_F\times D_F}{D_K\times D_K \times M\times N\times D_F \times D_F}=\frac{1}{N} + \frac{1}{D_K^2}
 $$
@@ -110,31 +110,26 @@ $$
 
 ![DW Separable Conv](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dw-sep-conv.png)
 
-
 ### Width Multiplier: Thinner Models
-> In order to construct these smaller and less computationally expensive models we introduce a very simple parameter $\alpha$ called width multiplier. The role of the width multiplier α is to thin a network uniformly at each layer. 
-
-> The computational cost of a depthwise separable convolution
-with width multiplier $\alpha$ is:
+In order to construct these smaller and less computationally expensive models we introduce a very simple parameter $\alpha$ called width multiplier. The role of the width multiplier α is to thin a network uniformly at each layer. The computational cost of a depthwise separable convolution with width multiplier $\alpha$ is:
 
 $D_K\times D_K\times \alpha M\times D_F\times D_F +\alpha M\times \alpha N + D_F\times D_F$
 
-> where $\alpha\in (0, 1]$ with typical settings of 1, 0.75, 0.5 and 0.25. $\alpha = 1$ is the baseline MobileNet and $\alpha < 1$ are reduced MobileNets. Width multiplier has the effect of reducing computational cost and the number of parameters quadratically by roughly $\alpha^2$ . Width multiplier can be applied to any model structure to define a new smaller model with a reasonable accuracy, latency and size trade off. It is used to define a new reduced structure that needs to be trained from scratch.
+where $\alpha\in (0, 1]$ with typical settings of 1, 0.75, 0.5 and 0.25. $\alpha = 1$ is the baseline MobileNet and $\alpha < 1$ are reduced MobileNets. Width multiplier has the effect of reducing computational cost and the number of parameters quadratically by roughly $\alpha^2$ . Width multiplier can be applied to any model structure to define a new smaller model with a reasonable accuracy, latency and size trade off. It is used to define a new reduced structure that needs to be trained from scratch.
 
 ### Resolution Multiplier: Reduced Representation
-> The second hyper-parameter to reduce the computational cost of a neural network is a resolution multiplier $\rho$. We apply this to the input image and the internal representation of every layer is subsequently reduced by the same multiplier. In practice we implicitly set $\rho$ by setting the input resolution. We can now express the computational cost for the core layers of our network as depthwise separable convolutions with width multiplier $\alpha$ and resolution multiplier $\rho$:
-> 
+The second hyper-parameter to reduce the computational cost of a neural network is a resolution multiplier $\rho$. We apply this to the input image and the internal representation of every layer is subsequently reduced by the same multiplier. In practice we implicitly set $\rho$ by setting the input resolution. We can now express the computational cost for the core layers of our network as depthwise separable convolutions with width multiplier $\alpha$ and resolution multiplier $\rho$:
+ 
 $D_K\times D_K\times \alpha M\times \rho D_F\times \rho D_F +\alpha M\times \alpha N + \rho D_F\times \rho D_F$
 
-> where $\rho\in (0, 1]$ which is typically set implicitly so that the input resolution of the network is 224, 192, 160 or 128. $\rho = 1$ is the baseline MobileNet and ρ < 1 are reduced computation MobileNets. Resolution multiplier has the effect of reducing computational cost by $\rho^2$.
+where $\rho\in (0, 1]$ which is typically set implicitly so that the input resolution of the network is 224, 192, 160 or 128. $\rho = 1$ is the baseline MobileNet and ρ < 1 are reduced computation MobileNets. Resolution multiplier has the effect of reducing computational cost by $\rho^2$.
 
 
 ## MobileNet V2
-> Paper: [MobileNet V2](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)
+> Paper: [MobileNetV2: Inverted Residuals and Linear Bottlenecks](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)
 
 [MobileNet V2](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)是发表在[CVPR2018](http://openaccess.thecvf.com/CVPR2018.py)上的Paper，在移动端网络的设计方面又向前走了一步。MobileNet V2最大的contribution如下： 
 > Our main contribution is a novel layer module: the inverted residual with linear bottleneck. This module takes as an input a low-dimensional compressed representation which is first expanded to high dimension and filtered with a lightweight depthwise convolution. Features are subsequently projected back to a low-dimensional representation with a linear convolution.
-
 
 ### Preliminaries, discussion and intuition
 #### Depthwise Separable Convolutions
