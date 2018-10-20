@@ -87,13 +87,13 @@ The purpose of shuffle operation is to enable cross-group information flow for m
 
 CNN驱动了许多视觉任务的飞速发展，然而传统结构例如ResNet、Inception、VGG等FLOP非常大，这使得对于移动端和嵌入式设备的训练与部署变得非常困难。所以近些年来，轻量级网络的设计也成为了一个非常热门的研究方向，[MobileNet](https://arxiv.org/pdf/1704.04861v1.pdf)和[ShuffleNet](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)就是其中的代表。前面我们已经介绍了[ShuffleNet](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf)，本篇我们就大致回顾一下[MobileNet](https://arxiv.org/pdf/1704.04861v1.pdf)。
 
-### Architecture of MobileNet
-MobileNet最主要的结构就是<font color="red">Depth-wise Separable Convolution</font>。DW Conv为什么能减少model size呢？我们不妨先来细致分析一下传统的卷积需要多少参数：
+### Depth-wise Separable Convolution
+MobileNet最主要的结构就是**Depth-wise Separable Convolution**。DW Conv为什么能减少model size呢？我们不妨先来细致分析一下传统的卷积需要多少参数:
 假设传统卷积层接受一个$D_F\times D_F\times M$的feature map作为输入，然后输出$D_F\times D_F\times N$的feature map，所以卷积核的size是$D_K\times D_K\times M\times N$，所以需要的计算量为：$D_K\times D_K\times M\times N\times D_F\times D_F$，所以Computational Cost依赖于input channel $M$，output channel $N$，卷积核尺寸$D_K\times D_K$和feature map的尺寸$D_F\times D_F$。
 
 但是MobileNet应用Depth-wise Conv来对Kernel Size和Output Channel进行了解耦。传统Conv Operation通过filters来对features进行filter，然后重组(Combinations)以形成新的representations。Filtering和Combinations可通过DW Separable Conv来分成两步进行。
 
-<font color="red">Depth-wise Separable Convolution由两层组成：Depth-wise Conv + Point-wise Conv</font>。DW Conv对于每个channel应用单个filter，PW Conv (a simple $1\times 1$ Conv)用来建立DW layer输出的linear combination。<font color="red">DW Conv的Computational Cost为：$D_K\times D_K\times M\times D_F\times D_F$</font>，与传统Conv相比低了$N$倍。
+**Depth-wise Separable Convolution由两层组成：Depth-wise Conv + Point-wise Conv**。DW Conv对于每个channel应用单个filter，PW Conv (a simple $1\times 1$ Conv)用来建立DW layer输出的linear combination。**DW Conv的Computational Cost为: $D_K\times D_K\times M\times D_F\times D_F$**，与传统Conv相比低了$N$倍。
 
 DW Conv虽然高效，然而它仅仅filter了input channel，__却没有对其进行combination__，所以需要额外的layer来对DW Conv后的feature进行linear combination来产生新的representation，这就是基于$1\times 1$ Conv的PW Conv。
 
@@ -107,7 +107,6 @@ $$
 \frac{D_K\times D_K \times M\times D_F \times D_F + M\times N\times D_F\times D_F}{D_K\times D_K \times M\times N\times D_F \times D_F}=\frac{1}{N} + \frac{1}{D_K^2}
 $$
 可以看到，Depth-wise Separable Conv的计算量仅仅为传统Conv的$\frac{1}{N} + \frac{1}{D_K^2}$。
-
 ![DW Separable Conv](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dw-sep-conv.png)
 
 ### Width Multiplier: Thinner Models
@@ -128,7 +127,8 @@ where $\rho\in (0, 1]$ which is typically set implicitly so that the input resol
 ## MobileNet V2
 > Paper: [MobileNetV2: Inverted Residuals and Linear Bottlenecks](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)
 
-[MobileNet V2](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)是发表在[CVPR2018](http://openaccess.thecvf.com/CVPR2018.py)上的Paper，在移动端网络的设计方面又向前走了一步。MobileNet V2最大的contribution如下： 
+[MobileNet V2](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)是发表在[CVPR2018](http://openaccess.thecvf.com/CVPR2018.py)上的Paper，在移动端网络的设计方面又向前走了一步。MobileNet V2最大的contribution如下: 
+
 > Our main contribution is a novel layer module: the inverted residual with linear bottleneck. This module takes as an input a low-dimensional compressed representation which is first expanded to high dimension and filtered with a lightweight depthwise convolution. Features are subsequently projected back to a low-dimensional representation with a linear convolution.
 
 ### Preliminaries, discussion and intuition
@@ -144,13 +144,13 @@ where $\rho\in (0, 1]$ which is typically set implicitly so that the input resol
 
 DCNN的架构大致是这样的：Conv + ReLU + (Pool) + (FC) + Softmax。DNN之所以拟合能力超强，原因就在于non-linearity transformation，而由于gradient vanishing/exploding的原因，Sigmoid已经淡出了历史舞台，取而代之的是ReLU。我们来分析分析ReLU有什么缺点：
 
-> It is easy to see that in general if a result of a layer transformation ReLU(Bx) has a non-zero volume S, the points mapped to interior S are obtained via a linear transformation B of the input, thus indicating that the part of the input space corresponding to the full dimensional output, is limited to a linear transformation. <font color="red">In other words, deep networks only have the power of a linear classifier on the non-zero volume part of the output domain.</font>
+> It is easy to see that in general if a result of a layer transformation ReLU(Bx) has a non-zero volume S, the points mapped to interior S are obtained via a linear transformation B of the input, thus indicating that the part of the input space corresponding to the full dimensional output, is limited to a linear transformation. **In other words, deep networks only have the power of a linear classifier on the non-zero volume part of the output domain.**
 
 > On the other hand, when ReLU collapses the channel, it inevitably loses information in that channel. However if we have lots of channels, and there is a a structure in the activation manifold that information might still be preserved in the other channels. In supplemental materials, we show that if the input manifold can be embedded into a significantly lower-dimensional subspace of the activation space then the ReLU transformation preserves the information while introducing the needed complexity into the set of expressible functions.
 
 简而言之，ReLu有以下两种性质：
 1. 若Manifold of Interest在ReLU之后非零，那么它就相当于是一个线性变换。
-2. ReLU能够保存input manifold完整的信息，<font color="red">但是当且仅当input manifold位于input space的低维子空间中时</font>。
+2. ReLU能够保存input manifold完整的信息，**但是当且仅当input manifold位于input space的低维子空间中时**。
 
 所以，也就不难理解为什么MobileNet V2要先将high-dimensional hidden representations先做一次low-dimensional embedding，然后再变换回到high-dimensional了。
 
@@ -161,14 +161,14 @@ DCNN的架构大致是这样的：Conv + ReLU + (Pool) + (FC) + Softmax。DNN之
 
 回想一下，[MobileNet V1](https://arxiv.org/pdf/1704.04861v1.pdf)的结构就是一个普通的feedforwad network，而shortcut在[ResNet](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf)里已经被证明是非常effective的了，所以MobileNet V2自然而然地引入了skip connection了。
 
-
-### MobileNet V2 Architecture
+#### MobileNet V2 Architecture
 > We use ReLU6 as the non-linearity because of its robustness when used with low-precision computation [27]. We always use kernel size $3\times 3$ as is standard for modern networks, and utilize dropout and batch normalization during training.
 
 ![DCNN Architecture Comparison](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/mobilenetv2-cnn-comparison.png)
 
 
-
+## ResNeXt
+> Paper: [Aggregated Residual Transformations for Deep Neural Networks](http://openaccess.thecvf.com/content_cvpr_2017/papers/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.pdf)
 
 ## Reference
 1. Krizhevsky A, Sutskever I, Hinton G E. [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)[C]//Advances in neural information processing systems. 2012: 1097-1105.
@@ -179,4 +179,5 @@ DCNN的架构大致是这样的：Conv + ReLU + (Pool) + (FC) + Softmax。DNN之
 6. Chollet, Francois. ["Xception: Deep Learning with Depthwise Separable Convolutions."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Chollet_Xception_Deep_Learning_CVPR_2017_paper.pdf) 2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR). IEEE, 2017.
 7. Howard, Andrew G., et al. ["Mobilenets: Efficient convolutional neural networks for mobile vision applications."](https://arxiv.org/pdf/1704.04861v1.pdf) arXiv preprint arXiv:1704.04861 (2017).
 8. Zhu, Mark Sandler Andrew Howard Menglong, and Andrey Zhmoginov Liang-Chieh Chen. ["MobileNetV2: Inverted Residuals and Linear Bottlenecks."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018
+9. Xie, Saining, et al. ["Aggregated residual transformations for deep neural networks."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.pdf) Computer Vision and Pattern Recognition (CVPR), 2017 IEEE Conference on. IEEE, 2017.
 
