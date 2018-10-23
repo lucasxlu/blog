@@ -1,6 +1,6 @@
 ---
 title: "[DL] Architecture"
-date: 2018-10-05 15:29:40
+date: 2018-10-23 23:07:40
 mathjax: true
 tags:
 - Machine Learning
@@ -169,6 +169,55 @@ DCNN的架构大致是这样的：Conv + ReLU + (Pool) + (FC) + Softmax。DNN之
 
 ## ResNeXt
 > Paper: [Aggregated Residual Transformations for Deep Neural Networks](http://openaccess.thecvf.com/content_cvpr_2017/papers/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.pdf)
+
+### Introduction
+自AlexNet以来，Deep Learning涌现了一大批设计优良的网络(如VGG，Inception，ResNet等)。ResNeXt则在ResNet的基础上，一定程度上参考了Inception的设计，即**split-transform-merge**。
+
+
+### 
+> Unlike VGG-nets, the family of Inception models [38, 17, 39, 37] have demonstrated that carefully designed topologies are able to achieve compelling accuracy with low theoretical complexity. The Inception models have evolved over time [38, 39], but an important common property is a split-transform-merge strategy. In an Inception module, the input is split into a few lower-dimensional embeddings (by 1×1 convolutions), transformed by a set of specialized filters (3×3, 5×5, etc.), and merged by concatenation. It can be shown that the solution space of this architecture is a strict subspace of the solution space of a single large layer (e.g., 5×5) operating on a high-dimensional embedding. The split-transform-merge behavior of Inception modules is expected to approach the representational power of large and dense layers, but at a considerably lower computational complexity.
+
+尽管Inception的**split-transform-merge**策略是非常行之有效的，但是该网络结构过于复杂，人工设计的痕迹过重(相比之下VGG和ResNet则是由相同的block stacking而成)，给人的感觉就是专门为了ImageNet去做的优化，所以当你想要迁移到其他的dataset时就会比较麻烦。因此，ResNeXt的设计就是：在VGG/ResNet的stacking block的基础上，融合进了Inception的split-transform-merge策略。这就是ResNeXt的基础idea。作者在实验中发现cardinality (the size of the set of transformations)对performance的影响是最大的，甚至要大于width和depth。
+
+> Our method harnesses additions to aggregate a set of transformations. But we argue that it is imprecise to view
+our method as ensembling, because the members to be aggregated
+are trained jointly, not independently.
+
+> The above operation can be recast as a combination of
+splitting, transforming, and aggregating. 
+1. Splitting: the vector $x$ is sliced as a low-dimensional embedding, and in the above, it is a single-dimension subspace $x_i$. 
+2. Transforming: the low-dimensional representation is transformed, and in the above, it is simply scaled: $w_i x_i$.
+3. Aggregating: the transformations in all embeddings are aggregated by $\sum_{i=1}^D$.
+
+若将$W$更换为更一般的形式，即任意一种function mapping: $\mathcal{T}(x)$，那么aggregated transformations就变成了:
+$$
+\mathcal{F}(x)=\sum_{i=1}^C \mathcal{T}_i(x)
+$$
+其中$\mathcal{T}_i$可以将$x$映射到低维空间。$C$是transformation的size，也就是本文主角——**cardinality**。
+
+> In Eqn.(2), $C$ is the size of the set of transformations
+to be aggregated. We refer to $C$ as cardinality [2]. In
+Eqn.(2) $C$ is in a position similar to $D$ in Eqn.(1), but $C$
+need not equal $D$ and can be an arbitrary number. While
+the dimension of width is related to the number of simple
+transformations (inner product), we argue that the dimension
+of cardinality controls the number of more complex
+transformations. We show by experiments that cardinality
+is an essential dimension and can be more effective than the
+dimensions of width and depth.
+
+![ResNeXt Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dl-architecture/resnext_block.jpg)
+
+那么在ResNet的identical mapping背景下，就变成了这样一种熟悉的结构：
+$$
+y=x+\sum_{i=1}^C \mathcal{T}_i(x)
+$$
+
+> **Relation to Grouped Convolutions**. The above module becomes more succinct using the notation of grouped convolutions [24]. This reformulation is illustrated in Fig. 3(c). All the low-dimensional embeddings (the first $1\times 1$ layers) can be replaced by a single, wider layer (e.g., $1\times 1$, 128-d in Fig 3(c)). Splitting is essentially done by the grouped convolutional layer when it divides its input channels into groups. The grouped convolutional layer in Fig. 3(c) performs 32 groups of convolutions whose input and output channels are 4-dimensional. The grouped convolutional layer concatenates them as the outputs of the layer. The block in Fig. 3(c) looks like the original bottleneck residual block in Fig. 1(left), except that Fig. 3(c) is a wider but sparsely connected module.
+
+![Equivalent Building Blocks of ResNeXt](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dl-architecture/equivalent_building_blocks_of_resnext.jpg)
+
+
 
 ## Reference
 1. Krizhevsky A, Sutskever I, Hinton G E. [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)[C]//Advances in neural information processing systems. 2012: 1097-1105.
