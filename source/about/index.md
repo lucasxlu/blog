@@ -22,7 +22,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 ## Projects
 * XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]  
-  An AI cloud platform based on Java, to provide RESTful APIs in web data crawling, text classification, sentiment analysis, document   similarity measuring, image classification and HTML5-based data visualization.
+  An AI cloud platform based on Java & Python, to provide RESTful APIs in web data crawling, text classification, sentiment analysis, document   similarity measuring, image classification and HTML5-based data visualization.
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
   A repository for job data crawling and data analysis based on Python3. This repo has received over **200 stars** and **120+ forks**. More details can be read at [here](https://www.zhihu.com/question/36132174/answer/94392659).
 
