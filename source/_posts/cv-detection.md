@@ -1,6 +1,6 @@
 ---
 title: "[CV] Object Detection"
-date: 2018-08-28 11:20:05
+date: 2018-10-28 14:45:05
 mathjax: true
 tags:
 - Machine Learning
@@ -249,6 +249,62 @@ $$
 4. Fix所有shared conv layers，fine-tune Fast RCNN的fc layers。至此，RPN和Fast RCNN共享卷积层，并且形成了一个unified network。
 
 
+## SSD
+> Paper: [SSD: Single Shot MultiBox Detector](https://arxiv.org/pdf/1512.02325v5.pdf)
+
+SSD是one-stage detector里一个非常著名的算法，那什么叫做one-stage和two-stage呢？回想一下，从DL Detector发展到现在，我们之前介绍的RCNN/SSP/Fast RCNN/Faster RCNN等，都是属于two-stage detectors，意思就是说```第一步需要生成region proposals，第二步再将整个detection转化为对这些region proposals的classification问题来做```。那所谓的one-stage detection就自然是不需要生成region proposals了，而是直接输出bbox了。Faster RCNN里面作者已经分析了，two-stage detection为啥慢？很大原因就是因为region proposal generation太慢了(例如Selective Search算法)，所以提出了RPN来辅助生成region proposals。
+
+### What is SSD?
+SSD最主要的改进就是```使用了一个小的Convolution Filter来预测object category和bbox offset```。那如何处理多尺度问题呢？SSD采取的策略是将这些conv filter应用到多个feature map上，来使得整个模型对Scale Invariant。
+
+![SSD Framework](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/SSD.png)
+
+### Details of SSD
+SSD主要部件如下：一个DCNN用来提取feature，产生fixed-size的bbox以及这些bbox中每个类的presence score，然后NMS用来输出最后的检测结果。Feature Extraction部分和普通的分类DCNN没啥太大的区别，作者在后面新添加了新的结构：
+1. **Multi-scale feature maps for detection**: 在base feature extraction network之后额外添加新的conv layers(所以得到了multi-scale的feature maps)，来使得模型可以处理multi-scale的detection。
+2. **Convolutional predictors for detection**: 每一个新添加的feature layer可以基于```small conv filters```产生fixed-size detection predictions。
+3. **Default boxes and aspect ratios**: 对于每个feature map cell，算法给出cell中default box的relative offset，以及class-score(表示在每个box中一个class instance出现的概率)。具体的，对于每个given location的$k$个box，产生4个bbox offset和$c$个class score，这样就对每个```feature map location```上产生了$(c+4)k$个filters，那么对于一个$m\times n$的```feature map```，则产生$(c+4)kmn$个output。这个做法和Faster RCNN中的anchor box有点类似，但是```SSD中将它用到了多个不同resolution的feature map上，因此多个feature map的不同default box shape使得我们可以很高效地给出output box shape```。
+
+![SSD and YOLO](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/SSD_YOLO.png)
+
+#### Training of SSD
+前面已经提到了，SSD会在default box周围生成一系列varied location/ratio/scale的boxes，那么到底哪一个box才是和groundtruth真正匹配的呢？作者采用了这样的一个Matching Strategy: 对于每一个groundtruth box，我们从default boxes中选择不同location/ratio/scale的boxes，然后计算它们和任意一个groundtruth box的Jaccard Overlap，并挑选出超过阈值的boxes。那么SSD最终的Loss就可以写成：
+$$
+L(x,c,l,g)=\frac{1}{N}(L_{conf}(x,c) + \alpha L_{loc}(x,l,g))
+$$
+其中$N$代表matched default boxes的数量，Localisation Loss和Faster RCNN一样也选择了Smooth L1。$x_{ij}^p=\{0,1\}$为第$i$个default box是否和第$j$个groundtruth box匹配的indicator。
+$$
+L_{loc}(x,l,g)=\sum_{i\in Pos} \sum_{m\in \{cx,cy,w,h\}}x_{ij}^k smoothL_1(l_i^m-\hat{g}_j^m)
+$$
+
+$$
+\hat{g}_j^{cx}=(g_j^{cx}-d_i^{cx})/d_i^w
+$$
+
+$$
+\hat{g}_j^{cy}=(g_j^{cy}-d_i^{cy})/d_i^h
+$$
+
+$$
+\hat{g}_j^w=log(\frac{g_j^w}{d_i^w})
+$$
+
+$$
+\hat{g}_j^h=log(\frac{g_j^h}{d_i^h})
+$$
+
+Confidence Loss采用Softmax Loss:
+$$
+L_{conf}(x, c)=-\sum_{i\in Pos}^N x_{ij}^p log(\hat{c}_i^0)-\sum_{\in Neg}log(\hat{c}_i^0)
+$$
+其中，$\hat{c}_i^p=\frac{exp(c_i^p)}{\sum_p exp(c_i^p)}$
+
+SSD在检测large object时效果很好，但是在检测small object时则效果比较差，这是因为在higher layers，feature map包含的small object信息太少，可通过将input size由$300\times 300$改为$512\times 512$，**Zoom Data Augmentation**(即采用zoom in来生成large objects, zoom out来生成small objects)来进行一定程度的缓解。
+
+
+## YOLO v1
+
+
 
 ## Reference
 1. Girshick, Ross, et al. ["Rich feature hierarchies for accurate object detection and semantic segmentation."](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
@@ -256,3 +312,4 @@ $$
 3. Girshick, Ross. ["Fast r-cnn."](https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf) Proceedings of the IEEE international conference on computer vision. 2015.
 4. Ross, Tsung-Yi Lin Priya Goyal, and Girshick Kaiming He Piotr Dollár. ["Focal Loss for Dense Object Detection."](http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf)
 5. Ren, Shaoqing, et al. ["Faster r-cnn: Towards real-time object detection with region proposal networks."](http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf) Advances in neural information processing systems. 2015.
+6. Liu, W., Anguelov, D., Erhan, D., Szegedy, C., Reed, S., Fu, C. Y., & Berg, A. C. (2016, October). [Ssd: Single shot multibox detector](https://arxiv.org/pdf/1512.02325v5.pdf). In European conference on computer vision (pp. 21-37). Springer, Cham.
