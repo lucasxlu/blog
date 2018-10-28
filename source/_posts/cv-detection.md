@@ -252,10 +252,10 @@ $$
 ## SSD
 > Paper: [SSD: Single Shot MultiBox Detector](https://arxiv.org/pdf/1512.02325v5.pdf)
 
-SSD是one-stage detector里一个非常著名的算法，那什么叫做one-stage和two-stage呢？回想一下，从DL Detector发展到现在，我们之前介绍的RCNN/SSP/Fast RCNN/Faster RCNN等，都是属于two-stage detectors，意思就是说```第一步需要生成region proposals，第二步再将整个detection转化为对这些region proposals的classification问题来做```。那所谓的one-stage detection就自然是不需要生成region proposals了，而是直接输出bbox了。Faster RCNN里面作者已经分析了，two-stage detection为啥慢？很大原因就是因为region proposal generation太慢了(例如Selective Search算法)，所以提出了RPN来辅助生成region proposals。
+SSD是one-stage detector里一个非常著名的算法，那什么叫做one-stage和two-stage呢？回想一下，从DL Detector发展到现在，我们之前介绍的RCNN/SSP/Fast RCNN/Faster RCNN等，都是属于two-stage detectors，意思就是说**第一步需要生成region proposals，第二步再将整个detection转化为对这些region proposals的classification问题来做**。那所谓的one-stage detection就自然是不需要生成region proposals了，而是直接输出bbox了。Faster RCNN里面作者已经分析了，two-stage detection为啥慢？很大原因就是因为region proposal generation太慢了(例如Selective Search算法)，所以提出了RPN来辅助生成region proposals。
 
 ### What is SSD?
-SSD最主要的改进就是```使用了一个小的Convolution Filter来预测object category和bbox offset```。那如何处理多尺度问题呢？SSD采取的策略是将这些conv filter应用到多个feature map上，来使得整个模型对Scale Invariant。
+SSD最主要的改进就是**使用了一个小的Convolution Filter来预测object category和bbox offset**。那如何处理多尺度问题呢？SSD采取的策略是将这些conv filter应用到多个feature map上，来使得整个模型对Scale Invariant。
 
 ![SSD Framework](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/SSD.png)
 
@@ -263,7 +263,7 @@ SSD最主要的改进就是```使用了一个小的Convolution Filter来预测ob
 SSD主要部件如下：一个DCNN用来提取feature，产生fixed-size的bbox以及这些bbox中每个类的presence score，然后NMS用来输出最后的检测结果。Feature Extraction部分和普通的分类DCNN没啥太大的区别，作者在后面新添加了新的结构：
 1. **Multi-scale feature maps for detection**: 在base feature extraction network之后额外添加新的conv layers(所以得到了multi-scale的feature maps)，来使得模型可以处理multi-scale的detection。
 2. **Convolutional predictors for detection**: 每一个新添加的feature layer可以基于```small conv filters```产生fixed-size detection predictions。
-3. **Default boxes and aspect ratios**: 对于每个feature map cell，算法给出cell中default box的relative offset，以及class-score(表示在每个box中一个class instance出现的概率)。具体的，对于每个given location的$k$个box，产生4个bbox offset和$c$个class score，这样就对每个```feature map location```上产生了$(c+4)k$个filters，那么对于一个$m\times n$的```feature map```，则产生$(c+4)kmn$个output。这个做法和Faster RCNN中的anchor box有点类似，但是```SSD中将它用到了多个不同resolution的feature map上，因此多个feature map的不同default box shape使得我们可以很高效地给出output box shape```。
+3. **Default boxes and aspect ratios**: 对于每个feature map cell，算法给出cell中default box的relative offset，以及class-score(表示在每个box中一个class instance出现的概率)。具体的，对于每个given location的$k$个box，产生4个bbox offset和$c$个class score，这样就对每个```feature map location```上产生了$(c+4)k$个filters，那么对于一个$m\times n$的```feature map```，则产生$(c+4)kmn$个output。这个做法和Faster RCNN中的anchor box有点类似，但是**SSD中将它用到了多个不同resolution的feature map上，因此多个feature map的不同default box shape使得我们可以很高效地给出output box shape**。
 
 ![SSD and YOLO](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/SSD_YOLO.png)
 
@@ -303,7 +303,7 @@ SSD在检测large object时效果很好，但是在检测small object时则效�
 
 
 ## YOLO v1
-
+> Paper: [You Only Look Once: Unified, Real-Time Object Detection](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf)
 
 
 ## Reference
@@ -313,3 +313,4 @@ SSD在检测large object时效果很好，但是在检测small object时则效�
 4. Ross, Tsung-Yi Lin Priya Goyal, and Girshick Kaiming He Piotr Dollár. ["Focal Loss for Dense Object Detection."](http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf)
 5. Ren, Shaoqing, et al. ["Faster r-cnn: Towards real-time object detection with region proposal networks."](http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf) Advances in neural information processing systems. 2015.
 6. Liu, W., Anguelov, D., Erhan, D., Szegedy, C., Reed, S., Fu, C. Y., & Berg, A. C. (2016, October). [Ssd: Single shot multibox detector](https://arxiv.org/pdf/1512.02325v5.pdf). In European conference on computer vision (pp. 21-37). Springer, Cham.
+7. Redmon, Joseph, et al. ["You only look once: Unified, real-time object detection."](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.

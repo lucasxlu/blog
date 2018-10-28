@@ -33,10 +33,13 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 ## Experience
 * Image Quality Assessment  
   During my intern at [DiDiChuXing](https://www.didiglobal.com/), we are working at developing deep learning models to recognize the image quality (blur/reflection/normal), and facial beauty prediction algorithm.
+  * Building deep models for IQA with 93.15% precision and 98.35% recall
+  * Developing and training deep models for license type classification with 99.72% precision and 99.73% recall 
+  * Developing deep models for Facial Beauty Prediction with 0.89 PC
 
 
 * [Pig Face Recognition](http://gd.people.com.cn/n2/2018/0323/c123932-31374601.html)  
-  Our team developed a **Pig Face Recognition System** with [Guangzhou Yingzi Holding Co.,Ltd](http://www.yingzi.com/), to accurately recognize a pig and get its detailed information through captured photo. It achieves a mAP over 95%.   
+  Our team developed a **Pig Face Recognition System** with [Guangzhou Yingzi Technology Co.,Ltd](http://www.yingzi.com/), to accurately recognize a pig and get its detailed information through captured photo. It achieves a mAP over 95%.   
   * Building deep model and training on Amazon S3 GPU server.
   * Encapsulate RESTful API and web backend development.
   
