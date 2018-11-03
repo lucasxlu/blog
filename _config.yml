@@ -6,17 +6,17 @@
 title: LucasX
 subtitle: 
 description: To share something about ML/CV/Data Science
-keywords:
+keywords: Machine Learning; Computer Vision; Face Analysis
 author: LucasX
 language:
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-# url: https://lucasxlu.github.io/blog
-# root: /blog/
-url: http://www.lucasx.top
-root: /
+url: https://lucasxlu.github.io/blog
+root: /blog/
+# url: http://www.lucasx.top
+# root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 
