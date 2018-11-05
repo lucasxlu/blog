@@ -31,7 +31,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 
 ## Experience
-* Image Quality Assessment  
+* Image Quality Assessment & Automatic License Examination & Face Analysis
   During my intern at [DiDi](https://www.didiglobal.com/), we are working at developing deep learning models to recognize the image quality (blur/reflection/normal), and facial beauty prediction algorithm.
   * Building deep models for IQA with 93.15% precision and 98.35% recall
   * Developing and training deep models for license type classification with 99.72% precision and 99.73% recall 
