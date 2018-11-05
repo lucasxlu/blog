@@ -218,6 +218,59 @@ $$
 ![Equivalent Building Blocks of ResNeXt](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/equivalent_building_blocks_of_resnext.jpg)
 
 
+## DenseNet
+> Paper: [Densely Connected Convolutional Networks](http://openaccess.thecvf.com/content_cvpr_2017/papers/Huang_Densely_Connected_Convolutional_CVPR_2017_paper.pdf)
+
+### What is DenseNet?
+DenseNet是CVPR2017 Best Paper，是继ResNet之后更加优秀的网络。[前面我们已经介绍过](https://lucasxlu.github.io/blog/2018/10/23/dl-architecture/#ResNet)，ResNet一定程度上解决了gradient vanishing的问题，通过ResNet中的identical mapping使得网络深度可以到达上千层。那么DenseNet又做了哪些改进呢？本文为你一一解答！
+
+在介绍DenseNet之前，我们先回顾一下ResNet做了什么改动，当shortcuts还未被引入DCNN之前，AlexNet/VGG/GoogLeNet都属于构造比较简单的feedforward network，即信息**一层一层往前传播，在BP时梯度一层一层往后传**，但是这样在网络结构很深的时候，就会存在gradient vanishing的问题。所以Kaiming He创造性地引入了skip connection，来使得信息可以从第$i$层之间做identical mapping传播到第$i+t$层，这样就保证了信息的高效流通。
+> 注: 关于ResNet更详细的介绍，请参考[这里](https://lucasxlu.github.io/blog/2018/10/23/dl-architecture/#ResNet)。
+
+![Dense Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dl-architecture/dense_block.jpg)
+
+而DenseNet，就是把这种skip connection做到了极致。为了保证信息在不同layer之间的流通，DenseNet将skip connection做到了每一层和该层之后的所有层中。和ResNet中采用的DW Summation不同的是，DenseNet直接concatenate不同层的features (因为ResNet中DW Summation会影响信息流动)。
+
+值得一提的是，**DenseNet比ResNet的参数更少**。因为dense connection的结构，使得网络不需要重新学习多余的feature maps。
+此外，every layer都可以从loss层直接获得梯度，从early layer是获得信息流，也产生了一种**deep supervision**。最后，作者还注意到dense connections一定程度上可以视为Regularization，所以可以缓解overfitting。
+
+它有以下优点：
+* 减轻了gradient vanishing问题
+* 加强了梯度传播
+* 更好的feature reuse
+* 极大地减少了参数
+
+### Delve into DenseNet
+#### Dense connectivity
+To further improve the information flow between layers we propose a different connectivity pattern: we introduce direct connections from any layer to all subsequent layers. Figure 1 illustrates the layout of the resulting DenseNet schematically. Consequently, the ℓth layer receives the feature-maps of all preceding layers, $x_0, \cdots, x_{l-1}$, as input:
+$$
+x_l=H_l([x_0,x_1,\cdots,x_{l-1}])
+$$
+where $[x_0,x_1,\cdots,x_{l-1}]$ refers to the concatenation of the feature-maps produced in layers $0, \cdots, l−1$.
+
+#### Pooling layers
+The concatenation operation used in Eq. (2) is not viable when the size of feature-maps changes. However, an essential part of convolutional networks is down-sampling layers that change the size of feature-maps. To facilitate down-sampling in our architecture we divide the network into multiple densely connected dense blocks; see Figure 2. We refer to layers between blocks as transition layers, which do convolution and pooling. The transition layers used in our experiments consist of a batch normalization layer and an $1\times 1$ convolutional layer followed by a $2\times 2$ average pooling layer.
+
+#### Growth rate
+If each function $H_l$ produces $k$ featuremaps, it follows that the $l$-th layer has $k_0 + k\times (l−1)$ input
+feature-maps, where $k_0$ is the number of channels in the input layer. An important difference between DenseNet and
+existing network architectures is that DenseNet can have
+very narrow layers, e.g., $k = 12$. We refer to the hyperparameter $k$ as the growth rate of the network. We show in Section 4 that a relatively small growth rate is sufficient to obtain state-of-the-art results on the datasets that we tested on.
+
+**One explanation for this is that each layer has access
+to all the preceding feature-maps in its block and, therefore,
+to the network's "collective knowledge". One can view the
+feature-maps as the global state of the network. Each layer
+adds $k$ feature-maps of its own to this state. The growth
+rate regulates how much new information each layer contributes
+to the global state. The global state, once written,
+can be accessed from everywhere within the network and,
+unlike in traditional network architectures, there is no need
+to replicate it from layer to layer**.
+
+#### Bottleneck layers
+Although each layer only produces $k$ output feature-maps, it typically has many more inputs. It has been noted in [36, 11] that a $1\times 1$ convolution can be introduced as bottleneck layer before each $3\times 3$ convolution to reduce the number of input feature-maps, and thus to improve computational efficiency. We find this design especially effective for DenseNet and we refer to our network with such a bottleneck layer, i.e., to the BN-ReLU-Conv($1\times 1$)-BN-ReLU-Conv($3\times 3$) version of $H_l$, as DenseNet-B. In our experiments, we let each $1\times 1$ convolution produce 4k feature-maps.
+
 
 ## Reference
 1. Krizhevsky A, Sutskever I, Hinton G E. [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)[C]//Advances in neural information processing systems. 2012: 1097-1105.
@@ -229,4 +282,5 @@ $$
 7. Howard, Andrew G., et al. ["Mobilenets: Efficient convolutional neural networks for mobile vision applications."](https://arxiv.org/pdf/1704.04861v1.pdf) arXiv preprint arXiv:1704.04861 (2017).
 8. Zhu, Mark Sandler Andrew Howard Menglong, and Andrey Zhmoginov Liang-Chieh Chen. ["MobileNetV2: Inverted Residuals and Linear Bottlenecks."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018
 9. Xie, Saining, et al. ["Aggregated residual transformations for deep neural networks."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.pdf) Computer Vision and Pattern Recognition (CVPR), 2017 IEEE Conference on. IEEE, 2017.
+10. Huang, Gao, et al. ["Densely Connected Convolutional Networks."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Huang_Densely_Connected_Convolutional_CVPR_2017_paper.pdf) CVPR. Vol. 1. No. 2. 2017.
 
