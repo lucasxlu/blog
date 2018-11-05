@@ -227,7 +227,7 @@ DenseNet是CVPR2017 Best Paper，是继ResNet之后更加优秀的网络。[前�
 在介绍DenseNet之前，我们先回顾一下ResNet做了什么改动，当shortcuts还未被引入DCNN之前，AlexNet/VGG/GoogLeNet都属于构造比较简单的feedforward network，即信息**一层一层往前传播，在BP时梯度一层一层往后传**，但是这样在网络结构很深的时候，就会存在gradient vanishing的问题。所以Kaiming He创造性地引入了skip connection，来使得信息可以从第$i$层之间做identical mapping传播到第$i+t$层，这样就保证了信息的高效流通。
 > 注: 关于ResNet更详细的介绍，请参考[这里](https://lucasxlu.github.io/blog/2018/10/23/dl-architecture/#ResNet)。
 
-![Dense Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dl-architecture/dense_block.jpg)
+![Dense Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dense_block.jpg)
 
 而DenseNet，就是把这种skip connection做到了极致。为了保证信息在不同layer之间的流通，DenseNet将skip connection做到了每一层和该层之后的所有层中。和ResNet中采用的DW Summation不同的是，DenseNet直接concatenate不同层的features (因为ResNet中DW Summation会影响信息流动)。
 
