@@ -195,16 +195,7 @@ $$
 $$
 其中$\mathcal{T}_i$可以将$x$映射到低维空间。$C$是transformation的size，也就是本文主角——**cardinality**。
 
-> In Eqn.(2), $C$ is the size of the set of transformations
-to be aggregated. We refer to $C$ as cardinality [2]. In
-Eqn.(2) $C$ is in a position similar to $D$ in Eqn.(1), but $C$
-need not equal $D$ and can be an arbitrary number. While
-the dimension of width is related to the number of simple
-transformations (inner product), we argue that the dimension
-of cardinality controls the number of more complex
-transformations. We show by experiments that cardinality
-is an essential dimension and can be more effective than the
-dimensions of width and depth.
+> In Eqn.(2), $C$ is the size of the set of transformations to be aggregated. We refer to $C$ as cardinality [2]. In Eqn.(2) $C$ is in a position similar to $D$ in Eqn.(1), but $C$ need not equal $D$ and can be an arbitrary number. While the dimension of width is related to the number of simple transformations (inner product), we argue that the dimension of cardinality controls the number of more complex transformations. We show by experiments that cardinality is an essential dimension and can be more effective than the dimensions of width and depth.
 
 ![ResNeXt Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/resnext_block.jpg)
 
