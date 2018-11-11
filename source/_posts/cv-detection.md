@@ -302,6 +302,33 @@ $$
 SSD在检测large object时效果很好，但是在检测small object时则效果比较差，这是因为在higher layers，feature map包含的small object信息太少，可通过将input size由$300\times 300$改为$512\times 512$，**Zoom Data Augmentation**(即采用zoom in来生成large objects, zoom out来生成small objects)来进行一定程度的缓解。
 
 
+## Light-head RCNN
+> Paper: [Light-Head R-CNN: In Defense of Two-Stage Object Detector](https://arxiv.org/pdf/1711.07264v2.pdf)
+
+### Introduction
+在介绍Light-head RCNN之前，我们先来回顾一下常见的two-stage detector为什么是heavy-head？作者发现two-stage detector之所以慢，就是因为two-stage detector在RoI Warp前/后 会进行非常密集的计算，例如Faster RCNN包含2个fully connected layers做nRoI Recognition，RFCN会生成很大的score maps。所以无论你的backbone network使用了多么精巧的小网络结构，但是总体速度还是提升不上去。所以针对这个问题，作者在本文提出了```light-head``` RCNN。所谓的```light-head```，其实说白了就是```使用thin feature map + cheap RCNN subnet (pooling和单层fully connected layer)```。
+
+大家都知道，two-stage detector，其实是将detection问题转化为一个classification问题来完成的。也就是说，在第一个stage，模型会生成很多region proposal (此为```body```)，然后在第二个stage对这些region proposal进行分类 (此为```head```)。通常，two-stage detector的accuracy要比one-stage detector高的，所以为了accuracy，head往往会设计得非常heavy。Light-head RCNN是这么做的：
+> In this paper, we propose a light-head design to build
+an efficient yet accurate two-stage detector. Specifically,
+we apply a large-kernel separable convolution to produce
+"thin" feature maps with small channel number ($\alpha \times p\times p$ is used in our experiments and $\alpha\leq 10$). This design greatly reduces the computation of following RoI-wise subnetwork and makes the detection system memory-friendly. A cheap single fully-connected layer is attached to the pooling layer, which well exploits the feature representation for classification and regression.
+
+### Delve Into Light-Head RCNN
+#### RCNN Subnet
+> Faster R-CNN adopts a powerful R-CNN which utilizes two large fully connected layers or whole Resnet stage 5 [28, 29] as a second stage classifier, which is beneficial to the detection performance. Therefore Faster R-CNN and its extensions perform leading accuracy in the most challenging benchmarks like COCO. However, the computation could be intensive especially when the number of object proposals is large. To speed up RoI-wise subnet, **R-FCN first produces a set of score maps for each region, whose channel number will be $\#classes\times p \times p$ ($p$ is the followed pooling size), and then pool along each RoI and average vote the final prediction. Using a computation-free R-CNN subnet, R-FCN gets comparable results by involving more computation on RoI shared score maps generation**.
+
+Faster RCNN虽然在RoI Classification上表现得很好，但是它需要global average pooling来减小第一个fully connected layer的计算量，```而GAP会影响spatial localization```。此外，Faster RCNN对每一个RoI都要feedforward一遍RCNN subnet，所以在当proposal的数量很大时，效率就非常低了。
+
+#### Thin Feature Maps for RoI Warping
+在feed region proposal到RCNN subnet之前，用RoI warping来使得得到fixed shape的feature maps。本文提出的light-head产生了一系列```thin feature maps```，然后再接RoI Pooling层。在实验中，作者发现```RoI warping on thin feature maps```不仅仅提高了精度，而且节省了training和inference的时间。而且，如果直接应用RoI pooling到thin feature maps上，一方面模型可以减少计算量，另一方面可以去掉GAP来保留spatial information。
+
+![Light Head RCNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/light_head_rcnn.jpg)
+
+### Experiments
+作者在实验中发现，regression loss比classification loss要小很多，所以```将regression loss的权重进行double来balance multi-task training```。
+
+
 ## YOLO v1
 > Paper: [You Only Look Once: Unified, Real-Time Object Detection](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf)
 
@@ -314,3 +341,4 @@ SSD在检测large object时效果很好，但是在检测small object时则效�
 5. Ren, Shaoqing, et al. ["Faster r-cnn: Towards real-time object detection with region proposal networks."](http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf) Advances in neural information processing systems. 2015.
 6. Liu, W., Anguelov, D., Erhan, D., Szegedy, C., Reed, S., Fu, C. Y., & Berg, A. C. (2016, October). [Ssd: Single shot multibox detector](https://arxiv.org/pdf/1512.02325v5.pdf). In European conference on computer vision (pp. 21-37). Springer, Cham.
 7. Redmon, Joseph, et al. ["You only look once: Unified, real-time object detection."](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.
+8. Li Z, Peng C, Yu G, et al. [Light-head r-cnn: In defense of two-stage object detector](https://arxiv.org/pdf/1711.07264v2.pdf)[J]. arXiv preprint arXiv:1711.07264, 2017.

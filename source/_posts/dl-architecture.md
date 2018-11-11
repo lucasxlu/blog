@@ -1,6 +1,6 @@
 ---
 title: "[DL] Architecture"
-date: 2018-11-06 00:24:40
+date: 2018-11-11 20:41:40
 mathjax: true
 tags:
 - Machine Learning
