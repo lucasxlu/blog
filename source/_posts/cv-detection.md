@@ -1,6 +1,6 @@
 ---
 title: "[CV] Object Detection"
-date: 2018-10-28 14:45:05
+date: 2018-11-11 21:07:05
 mathjax: true
 tags:
 - Machine Learning
@@ -316,7 +316,7 @@ we apply a large-kernel separable convolution to produce
 
 ### Delve Into Light-Head RCNN
 #### RCNN Subnet
-> Faster R-CNN adopts a powerful R-CNN which utilizes two large fully connected layers or whole Resnet stage 5 [28, 29] as a second stage classifier, which is beneficial to the detection performance. Therefore Faster R-CNN and its extensions perform leading accuracy in the most challenging benchmarks like COCO. However, the computation could be intensive especially when the number of object proposals is large. To speed up RoI-wise subnet, **R-FCN first produces a set of score maps for each region, whose channel number will be $\#classes\times p \times p$ ($p$ is the followed pooling size), and then pool along each RoI and average vote the final prediction. Using a computation-free R-CNN subnet, R-FCN gets comparable results by involving more computation on RoI shared score maps generation**.
+> Faster R-CNN adopts a powerful R-CNN which utilizes two large fully connected layers or whole Resnet stage 5 [28, 29] as a second stage classifier, which is beneficial to the detection performance. Therefore Faster R-CNN and its extensions perform leading accuracy in the most challenging benchmarks like COCO. However, the computation could be intensive especially when the number of object proposals is large. To speed up RoI-wise subnet, **R-FCN first produces a set of score maps for each region, whose channel number will be $classes\_num\times p \times p$ ($p$ is the followed pooling size), and then pool along each RoI and average vote the final prediction. Using a computation-free R-CNN subnet, R-FCN gets comparable results by involving more computation on RoI shared score maps generation**.
 
 Faster RCNN虽然在RoI Classification上表现得很好，但是它需要global average pooling来减小第一个fully connected layer的计算量，```而GAP会影响spatial localization```。此外，Faster RCNN对每一个RoI都要feedforward一遍RCNN subnet，所以在当proposal的数量很大时，效率就非常低了。
 
