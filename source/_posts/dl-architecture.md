@@ -248,19 +248,77 @@ feature-maps, where $k_0$ is the number of channels in the input layer. An impor
 existing network architectures is that DenseNet can have
 very narrow layers, e.g., $k = 12$. We refer to the hyperparameter $k$ as the growth rate of the network. We show in Section 4 that a relatively small growth rate is sufficient to obtain state-of-the-art results on the datasets that we tested on.
 
-**One explanation for this is that each layer has access
-to all the preceding feature-maps in its block and, therefore,
-to the network's "collective knowledge". One can view the
-feature-maps as the global state of the network. Each layer
-adds $k$ feature-maps of its own to this state. The growth
-rate regulates how much new information each layer contributes
-to the global state. The global state, once written,
-can be accessed from everywhere within the network and,
-unlike in traditional network architectures, there is no need
-to replicate it from layer to layer**.
+**One explanation for this is that each layer has access to all the preceding feature-maps in its block and, therefore, to the network's "collective knowledge". One can view the feature-maps as the global state of the network. Each layer adds $k$ feature-maps of its own to this state. The growth rate regulates how much new information each layer contributes to the global state. The global state, once written, can be accessed from everywhere within the network and, unlike in traditional network architectures, there is no need to replicate it from layer to layer**.
 
 #### Bottleneck layers
 Although each layer only produces $k$ output feature-maps, it typically has many more inputs. It has been noted in [36, 11] that a $1\times 1$ convolution can be introduced as bottleneck layer before each $3\times 3$ convolution to reduce the number of input feature-maps, and thus to improve computational efficiency. We find this design especially effective for DenseNet and we refer to our network with such a bottleneck layer, i.e., to the BN-ReLU-Conv($1\times 1$)-BN-ReLU-Conv($3\times 3$) version of $H_l$, as DenseNet-B. In our experiments, we let each $1\times 1$ convolution produce 4k feature-maps.
+
+
+## Identity Mappings in Deep Residual Networks
+> Paper: [Identity mappings in deep residual networks](https://arxiv.org/pdf/1603.05027v3.pdf)
+
+### Introduction
+ResNet已经成了很多CV任务的标配，作者Kaiming He在ResNet里引入了shortcut来辅助DCNN的学习与优化，但是对于shortcut为什么能work则没有过多提及。本文是ResNet作者本人发表在ECCV'16上的Paper，主要在于解释identical mapping为何能work，并且对比了identical mapping的一些变体，最后提出了pre-activation。
+
+### Delve Into ResNet and Identical Mapping
+ResNet可以表示为这样：
+$$
+y_l=h(x_l) + \mathcal{F}(x_l,\mathcal{W}_l)
+$$
+
+$$
+x_{l+1} = f(y_l)
+$$
+其中，$\mathcal{F}$代表residual function，$h(x_l)=x_l$代表identical mapping，$f$代表ReLU函数。
+
+在本文中，作者发现，**若$h(x_l)$和$f(y_l)$都是identical mapping的话，信息就可以直接从一个unit传播到下几层的units，无论是在forward还是backward都是如此**。
+
+![Proposed Residual Unit](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/proposed_residual_unit.jpg)
+
+为了构造identical mapping $f(y_l)=y_l$，我们可以将activation function (ReLU and BN)看作weight layers的```pre-activation```。
+
+### Analysis of Deep Residual Networks
+CVPR'15 Best Paper中的原始ResNet Unit是这样的：
+$$
+y_l=h(x_l)+\mathcal{F}(x_l, \mathcal{W}_l)
+$$
+
+$$
+x_{l+1}=f(y_l)
+$$
+若$f$也是identical mapping: $x_{l+1}\equiv y_l$，就可以得到：
+$$
+x_{l+1}=x_l+\mathcal{F}(x_l,\mathcal{W}_l)
+$$
+Recursively，我们可以得到：
+$$
+x_{l+2}=x_{l+1}+\mathcal{F}(x_{l+1}, \mathcal{W}_{l+1})=x_l+\mathcal{F}(x_l, \mathcal{W}_l)+\mathcal{F}(x_{l+1}, \mathcal{W}_{l+1})
+$$
+所以有：
+$$
+x_L=x_l+\sum_{i=l}^{L-1}\mathcal{F}(x_i,\mathcal{W}_i)
+$$
+所以，对于deep的$L$层和shallow的$l$层，特征$x_L$可以表示成**shallow unit feature $x_l$和residual function $\sum_{i=l}^{L-1}\mathcal{F}$的加和**！说明：
+1. **模型是任意units $L$和$l$ 的residual function**
+2. 特征$x_L=x_0+\sum_{i=0}^{L-1}\mathcal{F}(x_i,\mathcal{W}_i)$是所有proceeding residual functions输出的summation再加上$x_0$
+
+BP的时候，根据chain rule，就得到如下公式(假设loss function为$\epsilon$)：
+$$
+\frac{\partial \epsilon}{\partial x_l}=\frac{\partial \epsilon}{\partial x_L}\frac{\partial x_L}{\partial x_l}=\frac{\partial \epsilon}{\partial x_L}(1+\frac{\partial }{\partial x_l} \sum_{i=l}^{L-1}\mathcal{F}(x_i,\mathcal{W}_i))
+$$
+所以，梯度$\frac{\partial \epsilon}{\partial x_l}$可以看作两个部分：
+1. $\frac{\partial \epsilon}{\partial x_L}$直接从高层流通回来
+2. $\frac{\partial \epsilon}{\partial x_L}(\frac{\partial }{\partial x_l}\sum_{i=l}^{L-1}\mathcal{F})$流经了其他的weight layers
+
+#### Discussions
+Paper里也对一些identical mapping的变体进行了实验与探讨，反正scaling, gating, $1\times 1$ convolutions, and dropout都效果不如原来的好。并且，**由于$1\times 1$ conv**引入了更多的参数，理论上讲representation learning ability是要比原来的ResNet要高的，结果却比原来低，说明这种performance drop不是因为representation ability，而是因为优化问题所致。
+
+> The shortcut connections are the most direct paths for the information to propagate. Multiplicative manipulations
+(scaling, gating, $1\times 1$ convolutions, and dropout) on the shortcuts can hamper information propagation and lead to optimization problems. It is noteworthy that the gating and $1\times 1$ convolutional shortcuts introduce more parameters, and should have stronger representational abilities than identity shortcuts. In fact, the shortcut-only gating and $1\times 1$ convolution cover the solution space of identity shortcuts (i.e., they could be optimized as identity shortcuts. However, their training error is higher than that of identity shortcuts,indicating that the degradation of these models is caused by optimization issues, instead of representational abilities.
+
+此外，作者还验证了，当使用BN + ReLU作为pre-activation时，模型performance有了显著地改善。这种改善主要由两点带来：
+1. 因为$f$是identical mapping，所以整个模型的optimization更容易了。
+2. 使用BN作为pre-activation增加了模型的regularization，因BN本身具有regularization的效果。在CVPR'15原始版本的ResNet中，尽管BN normalize了信号，但是却立刻被添加进了shortcut，和未被BN normalize的signal一起merge了。而在pre-activation中，所有weight layers的input均被normalize了。
 
 
 ## Reference
@@ -274,4 +332,5 @@ Although each layer only produces $k$ output feature-maps, it typically has many
 8. Zhu, Mark Sandler Andrew Howard Menglong, and Andrey Zhmoginov Liang-Chieh Chen. ["MobileNetV2: Inverted Residuals and Linear Bottlenecks."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018
 9. Xie, Saining, et al. ["Aggregated residual transformations for deep neural networks."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.pdf) Computer Vision and Pattern Recognition (CVPR), 2017 IEEE Conference on. IEEE, 2017.
 10. Huang, Gao, et al. ["Densely Connected Convolutional Networks."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Huang_Densely_Connected_Convolutional_CVPR_2017_paper.pdf) CVPR. Vol. 1. No. 2. 2017.
+11. He K, Zhang X, Ren S, et al. [Identity mappings in deep residual networks](https://arxiv.org/pdf/1603.05027v3.pdf)[C]//European conference on computer vision. Springer, Cham, 2016: 630-645.
 
