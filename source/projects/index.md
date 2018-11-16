@@ -7,13 +7,13 @@ date: 2018-07-18 12:28:56
 description: "Projects for ML/CV/AI/Data Science."
 ---
 # Projects List
-* Lagou Job Data Analysis [[article](https://www.zhihu.com/question/36132174/answer/94392659)] [[code](https://github.com/lucasxlu/LagouJob.git)] [[PDF](LagouJob.pdf)]
+* Lagou Job Data Analysis [[article](https://www.zhihu.com/question/36132174/answer/94392659)] [[code](https://github.com/lucasxlu/LagouJob.git)] [[Slides](LagouJob.pdf)]
     > A repository for web data crawling, data storage, and data analysis of [lagou.com](https://www.lagou.com) based on Python3.
 
 * XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]
     > An AI Cloud Platform with RESTful APIs.
 
-* JiaYuan User Profile [[article](https://zhuanlan.zhihu.com/p/24515034)] [[code](https://github.com/lucasxlu/JiaYuan.git)] [[PDF](JiaYuan.pdf)]
+* JiaYuan User Profile [[article](https://zhuanlan.zhihu.com/p/24515034)] [[code](https://github.com/lucasxlu/JiaYuan.git)] [[Slides](JiaYuan.pdf)]
     > A repository for web data crawling, user profile of [jiayuan.com](http://www.jiayuan.com/).
 
 * XiaoLu AI [[article-face beauty recognition](https://zhuanlan.zhihu.com/p/29399781)] [[article-mate face recognition](https://zhuanlan.zhihu.com/p/35135539)] [[code](https://github.com/lucasxlu/XiaoLuAI.git)]
@@ -37,11 +37,11 @@ description: "Projects for ML/CV/AI/Data Science."
 * MateFace (WeChat Mini Program) [[code](https://github.com/lucasxlu/mateface.git)]
     > A WeChat Mini Program for mate face comparision.
 
-* Industry Analysis [[code](https://github.com/lucasxlu/DataHouse.git)] [[PDF](./IndustryReport.pdf)]
+* Industry Analysis [[code](https://github.com/lucasxlu/DataHouse.git)] [[Slides](./IndustryReport.pdf)]
     > A repository for industry analysis and report.
 
-* AI Career Analysis [[code](https://github.com/lucasxlu/DataHouse.git)] [[PDF](./MLJob.pdf)]
+* AI Career Analysis [[code](https://github.com/lucasxlu/DataHouse.git)] [[Slides](./MLJob.pdf)]
     > A repository and report for career analysis in AI/ML.
 
-* Government Report [[PDF](./GovReport.pdf)]
+* Government Report [[Slides](./GovReport.pdf)]
     > A repository for government report analysis and report.

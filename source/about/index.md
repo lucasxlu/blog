@@ -36,6 +36,8 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
   * Building deep models for IQA with 93.15% precision and 98.35% recall
   * Developing and training deep models for license type classification with 99.72% precision and 99.73% recall 
   * Developing deep models for Facial Beauty Prediction with 0.89 PC
+  * Developing and training deep models for scene recognition (in/out car) with 98.94% precision and 99.27% recall
+  * Writing 16 patents about security products about DiDi
 
 
 * [Pig Face Recognition](http://gd.people.com.cn/n2/2018/0323/c123932-31374601.html)  
@@ -66,8 +68,8 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * Others: Web Crawler/Web Development/PPT
 
 ## Award
-* 1st Prize in Academic Research Report (outperform all Ph.Ds). Combining Machine Learning and Data-driven Approaches for AI Services. [[PDF](./Presentation.pdf)]
-* 1st Scholar Prize [[PDF](./Research_Overview.pdf)]
+* 1st Prize in Academic Research Report (outperform all Ph.Ds). Combining Machine Learning and Data-driven Approaches for AI Services. [[Slides](./Presentation.pdf)]
+* 1st Scholar Prize [[Slides](./Research_Overview.pdf)]
 * 2nd Scholar Prize  
 * 3rd Prize in NECCS (national level)  
 
