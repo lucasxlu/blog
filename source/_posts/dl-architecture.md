@@ -1,6 +1,6 @@
 ---
 title: "[DL] Architecture"
-date: 2018-11-11 20:41:40
+date: 2018-11-16 19:29:40
 mathjax: true
 tags:
 - Machine Learning
@@ -16,7 +16,7 @@ catagories:
 - Network Architecture
 ---
 ## Introduction
-Deep Learning有三宝：Network Architecture，Loss Function and Optimization。对于大多数人而言，Optimization是搞不动的，所以绝大多数的Paper偏向还是设计更好的Network Architecture或者堆更加精巧的Loss Function。Ian Goodfellow大佬也曾说过：现如今Deep Learning的繁荣，网络结构探究的贡献度远远高于优化算法的贡献度。所以本文旨在梳理从AlexNet到CliqueNet这些经典的work。
+Deep Learning有三宝：Network Architecture，Loss Function and Optimization。对于大多数人而言，Optimization门槛还是很高的（需要非常深厚的数学功底），所以绝大多数的Paper偏向还是设计更好的Network Architecture或者堆更加精巧的Loss Function。Ian Goodfellow大佬也曾说过：现如今Deep Learning的繁荣，网络结构探究的贡献度远远高于优化算法的贡献度。所以本文旨在梳理从AlexNet到CliqueNet这些经典的work。
 > [@LucasX](https://www.zhihu.com/people/xulu-0620)注：对于优化算法，可参考我的[这一篇文章](https://lucasxlu.github.io/blog/2018/07/20/dl-optimization/)。
 
 ## AlexNet
