@@ -12,13 +12,13 @@ I am a third-year master major in machine learning and computer vision. My resea
 __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)] 
 
 ## Academic Papers
-* **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//Pacific Rim Conference on Multimedia. Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[code](https://github.com/lucasxlu/CRNet.git)]
+* **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//Pacific Rim Conference on Multimedia. Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[Code](https://github.com/lucasxlu/CRNet.git)]
 * Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition  
 * Multi-Task Tree Convolutional Neural Network for Facial Expression Recognition and Face Analysis
-* Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform [[code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
-* Transferring Rich Deep Features for Facial Beauty Prediction ([Computers and Electrical Engineering](https://www.journals.elsevier.com/computers-and-electrical-engineering). SCI) [[arXiv](https://arxiv.org/abs/1803.07253)] [[code](https://github.com/lucasxlu/TransFBP.git)]
+* Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform [[Code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
+* Transferring Rich Deep Features for Facial Beauty Prediction ([Computers and Electrical Engineering](https://www.journals.elsevier.com/computers-and-electrical-engineering). SCI) [[ArXiv](https://arxiv.org/abs/1803.07253)] [[Code](https://github.com/lucasxlu/TransFBP.git)]
 * An Automatic Method for Internet Terror Information Classification based on Deep Learning and Random Forests (Chinese)
-* Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Paper](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) among all papers of Hubei Province in 2015. Chinese) [[code](https://github.com/xuludev/System.git)]  
+* Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Paper](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) among all papers of Hubei Province in 2015. Chinese) [[Code](https://github.com/xuludev/System.git)]  
 
 ## Projects
 * XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]  
@@ -72,6 +72,9 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * 1st Scholar Prize [[Slides](./Research_Overview.pdf)]
 * 2nd Scholar Prize  
 * 3rd Prize in NECCS (national level)  
+
+## Report & Tutorial
+* Deep Learning for Face Analysis [[Slides](./DL_for_Face_Analysis.pdf)]
 
 ## Interests
 * Coding  
