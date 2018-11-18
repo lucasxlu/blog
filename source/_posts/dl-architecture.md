@@ -37,6 +37,20 @@ VGG也是一篇非常经典的工作，并且在今天的很多任务上依旧�
     > This can be seen as imposing a regularisation on the $7\times 7$ conv. filters, forcing them to have a decomposition through the $3\times 3$ filters (with non-linearity injected in between)
 
 
+## GoogLeNet
+> Paper: [Going deeper with convolutions](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Szegedy_Going_Deeper_With_2015_CVPR_paper.pdf)
+
+因DCNN在一系列CV任务上均取得了非常好的效果，所以大家开始将精力由hand-crafted features转换到network architecture上来了。GoogLeNet也是经典网络中一个非常值得关注的模型，其中值得关注的设计就是**Multi-branch + Feature Concatenation**，这是今天很多深度学习算法也依旧在使用的方法。GoogLeNet中，作者大量使用了$1\times 1$ conv (注：$1\times 1$ conv最先来自[Network in network](https://arxiv.org/pdf/1312.4400v3.pdf))，这样有以下好处：
+* 作为dimension reduction来remove computational bottlenecks
+* 既然computational bottlenecks减少了，那么在相同FLOPs下，我们可以设计更加deep的网络结构，从而辅助更好的representation learning
+
+Inception Module的基础结构如下图所示：
+![Inception Module](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/inception_module.jpg)
+> 在走每一个$3\times 3$和$5\times 5$ conv之前，先过一遍$1\times 1$ conv，一方面可以起到**dimension reduction**的作用；另一方面也引入了更多的**non-linearity transformation**，而这对于整个网络的representation learning ability是非常重要的(这个套路基本和[Network in network](https://arxiv.org/pdf/1312.4400v3.pdf)一样，感兴趣的读者可以去阅读[Network in network](https://arxiv.org/pdf/1312.4400v3.pdf)原文)。
+
+GoogLeNet就是通过一系列的Inception Module堆叠而成(读者不妨再仔细思考一下，VGG/ResNet/ResNeXt等等网络是不是也是由一系列小block堆叠而成？)。此外，因GoogLeNet是Multi-branch的结构，所以作者在中间层也添加了classification layer作为supervision来辅助gradient flow(读者不妨回忆一下，经典的人脸识别算法DeepID是不是也是这么做的？)。
+
+
 ## ResNet
 > Paper: [Deep Residual Learning for Image Recognition](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf)
 
@@ -333,4 +347,4 @@ Paper里也对一些identical mapping的变体进行了实验与探讨，反正s
 9. Xie, Saining, et al. ["Aggregated residual transformations for deep neural networks."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.pdf) Computer Vision and Pattern Recognition (CVPR), 2017 IEEE Conference on. IEEE, 2017.
 10. Huang, Gao, et al. ["Densely Connected Convolutional Networks."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Huang_Densely_Connected_Convolutional_CVPR_2017_paper.pdf) CVPR. Vol. 1. No. 2. 2017.
 11. He K, Zhang X, Ren S, et al. [Identity mappings in deep residual networks](https://arxiv.org/pdf/1603.05027v3.pdf)[C]//European conference on computer vision. Springer, Cham, 2016: 630-645.
-
+12. Szegedy, Christian, et al. ["Going deeper with convolutions."](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Szegedy_Going_Deeper_With_2015_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2015.
