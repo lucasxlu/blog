@@ -43,7 +43,7 @@ y^{(k)}=\gamma^{(k)}\hat{x}^{(k)} + \beta^{(k)}
 $$
 其中，$\gamma^{(k)}=\sqrt{Var(x^{(k)})}$，$\beta^{(k)}=E[x^{(k)}]$。
 
-![BatchNorm Transform](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-bn/dl-bn/BN_transform.jpg)
+![BatchNorm Transform](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-bn/BN_transform.jpg)
 
 每个normalized activation $\hat{x}^{(k)}$可以视为线性变换$y^{(k)}=\gamma^{(k)}\hat{x}^{(k)} + \beta^{(k)}$后子网络的输入。
 
