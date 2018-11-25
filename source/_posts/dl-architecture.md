@@ -54,7 +54,7 @@ GoogLeNet就是通过一系列的Inception Module堆叠而成(读者不妨再仔
 ## ResNet
 > Paper: [Deep Residual Learning for Image Recognition](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf)
 
-作者认为，ResNet可以称得上是自AlexNet以来，Deep Learning发展最insightful的idea，ResNet的主角shortcut至今也被广泛应用与Deep Architecture的设计中(如DenseNet, CliqueNet, Deep Layer Aggregation等)。
+笔者认为，ResNet可以称得上是自AlexNet以来，Deep Learning发展最insightful的idea，ResNet的主角shortcut至今也被广泛应用于Deep Architecture的设计中(如DenseNet, CliqueNet, Deep Layer Aggregation等)。
 此前的网络设计趋势是“越来越深”，但神经网络的设计真的就如同段子所言“一层一层往上堆叠就好了吗？”显然不是的，ResNet作者Kaiming He大神在Paper中做了一些实验，验证了当Network越来越深时，Accuracy就饱和了，然后迅速下降，值得一提的是<font color="red">这种性能下降并不是由于参数过多随之而来的overfitting造成的</font>。
 
 ### What is Residual Network?
