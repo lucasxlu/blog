@@ -335,6 +335,68 @@ Paper里也对一些identical mapping的变体进行了实验与探讨，反正s
 2. 使用BN作为pre-activation增加了模型的regularization，因BN本身具有regularization的效果。在CVPR'15原始版本的ResNet中，尽管BN normalize了信号，但是却立刻被添加进了shortcut，和未被BN normalize的signal一起merge了。而在pre-activation中，所有weight layers的input均被normalize了。
 
 
+## CliqueNet
+> Paper: [Convolutional Neural Networks with Alternately Updated Clique](http://openaccess.thecvf.com/content_cvpr_2018/papers/Yang_Convolutional_Neural_Networks_CVPR_2018_paper.pdf)
+
+[CliqueNet](http://openaccess.thecvf.com/content_cvpr_2018/papers/Yang_Convolutional_Neural_Networks_CVPR_2018_paper.pdf)是发表在[CVPR 2018](http://openaccess.thecvf.com/CVPR2018.py)上的Paper,在Deep CNN的设计方面又进了一步。前面我们已经谈到，自从ResNet/HighwayNet起，skip connection就被广泛应用于Deep Model的设计中（例如后来CVPR 2017的DenseNet）。在CliqueNet中，各个layer通过skip connection被设计成了环状结构(也就是说，在同一个block中，每一层既是其他layer的输入，也是其他layer的输出)，从而可以辅助更好的 __information flow__。新update的layers被concatenate来重新之前updated layers，参数被多次重用。因此这种recurrent结构能够将高层的information传递到低层，并且起到 __spatial attention__ 的效果。而且通过使用multi-scale feature strategy，也可以避免产生过多的参数。CliqueNet的basic block如下：
+
+![Clique Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/clique_block.jpg)
+
+### What is CliqueNet?
+前面已经提到了，skip connection现在俨然已成为CV/DCNN领域的神器，ResNet作者Kaiming He在最原始的ResNet中却对skip connection并未做过多的解释。所以最近的一些work中也有专门去分析shortcut的，有researcher认为ResNet可以看作是一系列小浅层网络的ensemble，也有人将skip connection解释为RNN/LSTM，在不同layers中weights被共享。
+
+> [@LucasX](https://www.zhihu.com/people/xulu-0620)注：如果读者有读过[HighwayNet](http://proceedings.mlr.press/v70/zilly17a/zilly17a.pdf)原文的话，就会深有体会了，是真的跟RNN很像啊。
+
+__Attention__ 也是在许多CV任务中被广泛应用的，其idea来源于人类的视觉系统，例如当人类在观察某样东西时，对当前眼睛里观察到的画面，注意力并非完全一致的，对某些物体总会施加过多的关注。而skip connection可以将高层语义信息带回到低层，并且可以re-weight这种focus，因此可以suppress一些背景/噪声信息，从而使得当前的feature map包含更多对分类更为discriminative的信息。
+
+在CliqueNet中，信息是这样传递的：
+前几层的feature map被concatenate来更新下一层，然后新update的层又被concatenate用来更新前面的层，因此information flow和feedback mechanism都可以被最大化。(读者可能有点绕，不太明白的话，可以看看上面那个图Clique Block，它是环状结构。)
+
+CliqueNet有如下特性：
+1. 参数少；DenseNet需要$C_n^2$个group的参数，CliqueNet需要$A_n^2$组。然而，DenseNet的filter数量随着depth增长而线性增长，所以DenseNet在网络结构过深时需要很多的参数。而在CliqueNet的每一个block中，只有**Stage II**的feature被feed到下一个block。此外，传统的网络新增了一层来做shortcut，而在CliqueNet中，weights被循环使用多次，所以当参数量固定的时候，可以获取deeper representation space。
+
+### CliqueNet Architecture
+CliqueNet主要有两个重要组件：
+* Clique Block: 来辅助feature的refinement
+* Multi-scale Feature Strategy: 来保证参数的高效利用
+
+CliqueNet的网络结构如下：
+![CliqueNet](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/cliquenet.jpg)
+
+#### Clique Block
+为了保证信息的高效流通，在CliqueNet中，相同block中除了input layer之外的任意两层都被双向连接（即该层既是其他层的输出，又是其他层的输入）。在**Stage I**，输入层$X_0$通过单向连接初始化该block的所有层，所有被updated layer都被concatenate来update下一层。在**Stage II**，layers开始选择性地update，除了top layer之外的所有层都被concatenate起来。因此，第$k (k\geq 2)$个loop中的第$i (i\geq 1)$层可以表示为：
+$$
+X_i^{(k)}=g(\sum_{l<i} W_{li}\star X_l^{(k)} + \sum_{m>i} W_{mi} \star X_m^{(k-1)})
+$$
+
+其中$\star$代表conv，权重$W_{ij}$在不同的stage保持重用。每一层都会接受来自最近更新的feedback information，这种top-down refinement可达到**spatial attention mechanism**的效果。
+
+#### Feature at Different Stages
+因为**Stage II** feature因attention得到了提纯，并且获取了更high-level的representation，我们将**Stage II** feature和input layer做concatenate作为block feature，然后走GAP后直接输入到loss layer，只有**Stage II**的feature被输入到下一个Clique Block中。通过这种方式，我们就获得了multi-scale feature representation，并且每一个block的dimensionality不会增长过大。
+
+#### Extra Techniques
+除了上述的两个main components，作者也使用了一些其他的tricks来刷分。
+
+##### Attention transition
+CliqueNet使用high level visual information来refine low level activations。Attention mechanism通过对feature map进行加权，来弱化noise和background。在CliqueNet中，filters在transition的conv layer之后进行global average，然后接两层FC layers。第一个FC layer使用ReLU和一半数量的filters，第二个FC layer使用sigmoid和相同数量的filters。因此activation被归一化到$[0, 1]$区间，并且通过filter-wise multiplication作为input。
+
+![Attention Transition](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/attention_transition.jpg)
+
+##### Bottleneck and compression
+> We introduce bottleneck to our large models. The $3\times 3$ convolution kernels in each block are replaced by $1\times 1$, and produce a middle layer, after which, a $3\times 3$ convolution layer follows to produce the top layer. The middle layer and top layer contain the same number of feature maps. Compression is another tool adopted in [17] to make the model more compact. Instead of compressing the number of filters in transition layers as they do, we only compress the features that are accessed to the loss function, i.e. the Stage-II concatenated with its input layer. The models with compression have an extra convolutional layer with $1\times 1$ kernel size before global pooling. It generates half the number of filters to enhance model compactness and keep the dimensionality of the final feature in a proper range.
+
+#### Further Discussion
+* Parameter efficiency  
+  因为multi-scale feature strategy仅仅将Stage-II feature transit到下一个block（而不是像DenseNet那样stack feature map到更深的层）。
+
+* Feature refinement
+  > In CliqueNet, the layers are updated alternately so that they are supervised by each other. Moreover, in the second stage, feature maps always receive a higher-level information from the filters that are updated more lately. This spatial attention mechanism makes layers refined repeatedly, and is able to repress the noises or background of images and focus more activations on the region that characterize the target object. In order to test the effects, we visualize the feature maps following the methods in [43]. As shown in Figure 6, we choose three input images with complex background from ImageNet validation set, and visualize their feature maps with the highest average activation magnitude in the Stage-I and Stage-II, respectively. It is observed that, compared with the Stage-I, the feature maps in Stage-II diminish the activations of surrounding objects and focus more attention on the target region. This is in line with the conclusion in Table 2 that the Stage-II feature is more discriminative and leads to a better performance.
+
+  ![Feature Refinement](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/feature_refinement.jpg)
+  > 可以看到，对Feature activation做可视化之后，Stage-II相比较于Stage-I，明显削弱了一些背景信息，从而使得object主体信息更加明显，进而有助于提升分类性能。
+
+
+
 ## Reference
 1. Krizhevsky A, Sutskever I, Hinton G E. [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)[C]//Advances in neural information processing systems. 2012: 1097-1105.
 2. Simonyan K, Zisserman A. [Very deep convolutional networks for large-scale image recognition](https://arxiv.org/pdf/1409.1556v6.pdf)[J]. arXiv preprint arXiv:1409.1556, 2014.
@@ -348,3 +410,5 @@ Paper里也对一些identical mapping的变体进行了实验与探讨，反正s
 10. Huang, Gao, et al. ["Densely Connected Convolutional Networks."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Huang_Densely_Connected_Convolutional_CVPR_2017_paper.pdf) CVPR. Vol. 1. No. 2. 2017.
 11. He K, Zhang X, Ren S, et al. [Identity mappings in deep residual networks](https://arxiv.org/pdf/1603.05027v3.pdf)[C]//European conference on computer vision. Springer, Cham, 2016: 630-645.
 12. Szegedy, Christian, et al. ["Going deeper with convolutions."](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Szegedy_Going_Deeper_With_2015_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2015.
+13. Yang Y, Zhong Z, Shen T, et al. [Convolutional Neural Networks with Alternately Updated Clique](http://openaccess.thecvf.com/content_cvpr_2018/papers/Yang_Convolutional_Neural_Networks_CVPR_2018_paper.pdf)[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018: 2413-2422.
+14. Zilly J G, Srivastava R K, Koutnı́k J, et al. [Recurrent Highway Networks](http://proceedings.mlr.press/v70/zilly17a/zilly17a.pdf)[C]//International Conference on Machine Learning. 2017: 4189-4198.
