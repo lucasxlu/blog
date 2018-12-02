@@ -318,7 +318,7 @@ SSD在检测large object时效果很好，但是在检测small object时则效�
 Faster RCNN虽然在RoI Classification上表现得很好，但是它需要global average pooling来减小第一个fully connected layer的计算量，```而GAP会影响spatial localization```。此外，Faster RCNN对每一个RoI都要feedforward一遍RCNN subnet，所以在当proposal的数量很大时，效率就非常低了。
 
 #### Thin Feature Maps for RoI Warping
-在feed region proposal到RCNN subnet之前，用RoI warping来使得得到fixed shape的feature maps。本文提出的light-head产生了一系列```thin feature maps```，然后再接RoI Pooling层。在实验中，作者发现```RoI warping on thin feature maps```不仅仅提高了精度，而且节省了training和inference的时间。而且，如果直接应用RoI pooling到thin feature maps上，一方面模型可以减少计算量，另一方面可以去掉GAP来保留spatial information。
+在feed region proposal到RCNN subnet之前，用RoI warping来得到fixed shape的feature maps。本文提出的light-head产生了一系列```thin feature maps```，然后再接RoI Pooling层。在实验中，作者发现```RoI warping on thin feature maps```不仅仅提高了精度，而且节省了training和inference的时间。而且，如果直接应用RoI pooling到thin feature maps上，一方面模型可以减少计算量，另一方面可以去掉GAP来保留spatial information。
 
 ![Light Head RCNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/light_head_rcnn.jpg)
 
@@ -328,6 +328,66 @@ Faster RCNN虽然在RoI Classification上表现得很好，但是它需要global
 
 ## YOLO v1
 > Paper: [You Only Look Once: Unified, Real-Time Object Detection](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf)
+
+YOLO是One-stage Detection领域里一个非常著名的算法，本文对其V1版本做一个简介。
+和基于Slide Window/Region Proposal based two-stage detection不同的是，YOLO可以将整张图作为输入（相比之下，two-stage detector需要在第一步先基于selective search等算法生成region proposal，再基于这些region proposal去做classification），**因此YOLO可以获取context information**，而Fast RCNN则很容易将background patch误识为object，原因就在于基于region proposal的detector不能获知larger context information。而YOLO则可以很好地解决该问题。
+
+### What is YOLO?
+YOLO将input image先划分为$S\times S$个grid，**若某个object的中心落在了一个grid cell，那么该grid cell就“负责”检测该物体**。每个grid cell预测$B$个bbox以及相对应的confidence score，我们将confidence定义为：
+$$
+Pr(Object)\star IOU_{pred}^{truth}
+$$
+若该grid cell没有object，则confidence score自然就为0了，**confidence score为prediction bbox与gt bbox的IOU**。
+
+此外，每个grid cell也预测$C$个conditional class probabilities $Pr(Class_i|Object)$，在测试阶段，我们将conditional class probability和bbox confidence score相乘：
+$$
+Pr(Class_i|Object)\times Pr(Object)\times IOU_{pred}^{truth}=Pr(Class_i)\times IOU_{pred}^{truth}
+$$
+这样就得到了对每个box的class-specific confidence score，即同时encode了object在该box中的probability和bbox prediction的精度。
+
+![YOLO V1 Model](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/yolo_v1.jpg)
+
+#### Training of YOLO
+因detection需要非常细粒度的feature，所以作者将input resolution由$224\times 224$提升至$448\times 448$来使得网络可以更好地捕捉到细节特征。同时将bbox width/height除以image width/height来进行归一化到$[0, 1]$区间。
+
+> We optimize for sum-squared error in the output of our model. We use sum-squared error because it is easy to optimize **however it does not perfectly align with our goal of maximizing average precision. It weights localization error equally with classification error which may not be ideal. Also, in every image many grid cells do not contain any object. This pushes the confidence scores of those cells towards zero, often overpowering the gradient from cells that do contain objects. This can lead to model instability, causing training to diverge early on**.
+
+针对上述问题，作者使用了两个hyper-param $\lambda_{coord}=5$和$\lambda_{noobj}=0.5$来控制bbox no-object prediction loss和confidence loss。
+
+> Sum-squared error also equally weights errors in large boxes and small boxes. Our error metric should reflect that small deviations in large boxes matter less than in small boxes. To partially address this we predict the square root of the bounding box width and height instead of the width and height directly.
+
+YOLO的Loss如下：
+$$
+\lambda_{coord}\sum_{i=0}^{S^2} \sum_{j=0}^{B}\mathbb{I} _{ij}^{obj}[(x_i-\hat{x}_i)^2+(y_i-\hat{y}_i)^2]
+$$
+
+$$
++\lambda_{coord}\sum_{i=0}^{S^2} \sum_{j=0}^{B}\mathbb{I} _{ij}^{obj}[(\sqrt{w_i}-\sqrt{\hat{w}_i})^2+ (\sqrt{h_i}-\sqrt{\hat{h}_i})^2]
+$$
+
+$$
++\sum_{i=0}^{S^2} \sum_{j=0}^{B}\mathbb{I}_{ij}^{obj}(C_i-\hat{C}_i)^2 + \lambda_{noobj}\sum_{i=0}^{S^2} \sum_{j=0}^{B}\mathbb{I}_{ij}^{noobj}(C_i-\hat{C}_i)^2
+$$
+
+$$
++\sum_{i=0}^{S^2}\mathbb{I}_{i}^{obj}\sum_{c\in classes} (p_i(c)-\hat{p}_i(c))^2
+$$
+
+where $\mathbb{I}_{i}^{obj}$ denotes if object appears in cell $i$ and denotes that the $j$-th bounding box predictor in cell $i$ is responsible for that prediction.
+
+> Note that the loss function only penalizes classification error if an object is present in that grid cell (hence the conditional class probability discussed earlier). It also only penalizes bounding box coordinate error if that predictor is responsible for the ground truth box (i.e. has the highest IOU of any predictor in that grid cell). **However, some large objects or objects near the border of multiple cells can be well localized by multiple cells. Non-maximal suppression can be used to fix these multiple detections**.
+
+#### Limitations of YOLO
+> Our model also uses relatively coarse features for predicting bounding boxes since our architecture has multiple downsampling layers from the input image. Finally, while we train on a loss function that approximates detection performance, **our loss function treats errors the same in small bounding boxes versus large bounding boxes. A small error in a large box is generally benign but a small error in a small box has a much greater effect on IOU. Our main source of error is incorrect localizations**.
+
+![Error Analysis](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/yolo_v1_error_analysis.jpg)
+
+
+## YOLO V2
+> [YOLO9000: Better, Faster, Stronger.](http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf)
+
+
+
 
 
 ## Reference
@@ -339,3 +399,5 @@ Faster RCNN虽然在RoI Classification上表现得很好，但是它需要global
 6. Liu, W., Anguelov, D., Erhan, D., Szegedy, C., Reed, S., Fu, C. Y., & Berg, A. C. (2016, October). [Ssd: Single shot multibox detector](https://arxiv.org/pdf/1512.02325v5.pdf). In European conference on computer vision (pp. 21-37). Springer, Cham.
 7. Redmon, Joseph, et al. ["You only look once: Unified, real-time object detection."](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.
 8. Li Z, Peng C, Yu G, et al. [Light-head r-cnn: In defense of two-stage object detector](https://arxiv.org/pdf/1711.07264v2.pdf)[J]. arXiv preprint arXiv:1711.07264, 2017.
+9. Lin, Tsung-Yi, et al. ["Feature Pyramid Networks for Object Detection."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf) CVPR. Vol. 1. No. 2. 2017.
+10. Redmon, Joseph, and Ali Farhadi. ["YOLO9000: Better, Faster, Stronger." ](http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf)2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR). IEEE, 2017.
