@@ -1,6 +1,6 @@
 ---
 title: "[Book] ML Practice At MeiTuan"
-date: 2018-11-24 19:05:11
+date: 2018-12-04 20:15:11
 mathjax: true
 tags:
 - Book Notes
@@ -154,3 +154,72 @@ $$
   $$
   P(y|x_k)=\frac{1}{T}\sum_{i=1}^T \prod (h_i(x_k)=y_k)
   $$
+
+
+## Feature Engineering
+当获取到一批数据后，可以先做**探索性数据分析**，即可视化/统计分析基础统计量，来探索数据内部的规律。
+
+对那些目标变量为输入特征的光滑函数模型，例如Linear Regression/Logistic Regression，其对输入特征的大小很敏感，因此需要做归一化。而那些Tree-based model，如Random Forest/GBDT等，其对输入特征的大小不敏感，因此不需要归一化。
+
+对于**数值**特征，通常有如下处理方法：
+* 截断
+* 二值化
+* bin
+* scale
+* 缺失值处理
+    * 对于缺失值，填充mean
+    * 对于异常值，填充median
+    * XGBoost可以自动处理缺失feature
+* 特征交叉：即让特征直接进行四则运算来获取新的特征(例如$area=width\times height$)，**特征交叉可以在linear model中引入非线性性质，从而提升模型的表达能力**
+* 非线性编码：t-SNE，局部线性embedding，谱embedding
+* 行统计量：mean/median/mode/maximum/minimum/偏度/峰度
+
+对于**类别**特征，通常有如下处理方法：
+* 自然数编码
+* one-hot encoding
+* 分层编码
+* 散列编码
+* 计数编码：将类别特征用其对应的计数来代替
+* 计数排名编码
+
+### Filter
+* Coverage：计算每个特征的coverage(特征在training set中出现的比例)，若feature的coverage很小，则此coverage对模型的预测作用不大，可以剔除。
+* Pearson Correlation：计算两个变量$X$和$Y$直接的相关性：
+    $$
+    \rho_{X,Y}=\frac{cov(X,Y)}{\alpha_X \alpha_Y}=\frac{E[(X-\mu_X)(Y-\mu_Y)]}{\alpha_X \alpha_Y}
+    $$
+
+    $$
+    r=\frac{\sum_{i=1}^n (X_i-\bar{X})(Y_i-\bar{Y})}{\sqrt{\sum_{i=1}^n (X_i-\bar{X})^2} \sqrt{\sum_{i=1}^n (Y_i-\bar{Y})^2}}
+    $$
+* Fisher score：对于分类问题，好的feature应该是在同一个category中的取值比较类似，而在不同category之间的取值差异比较大。
+    $$
+    S_i=\frac{\sum_{j=1}^K n_j(\mu_{ij}-\mu_i)^2}{\sum_{j=1}^K n_j \rho_{ij}^2}
+    $$
+    其中，$\mu_{ij}$和$\rho_{ij}$分别为特征$i$在类别$j$中的mean和variance。Fisher score越高，特征在不同类别直接的差异性越大，在同一类别中的差异性越小，则该特征越重要。
+* 假设检验：$\chi^2$统计量越大，特征相关性越高。
+* Mutual Information：MI越大表明两个变量相关性越高。
+    $$
+    MI(X,Y)=\sum_{y\in Y}\sum_{x\in X}p(x,y)log(\frac{p(x,y)}{p(x)p(y)})=D_{KL}(p(x,y)||p(x)p(y))
+    $$
+* 最小冗余最大相关性(mRMR)：由于单变量filter方法只考虑了单特征变量和目标变量之间的相关性，因此选择的特征子集可能过于冗余。mRMR在进行feature selection时考虑了feature之间的冗余性，对跟已选择feature的相关性较高的冗余feature进行惩罚。
+* 相关特征选择(CFS)：好的feature set包含跟目标变量非常相关的feature，但这些feature之间彼此不相关，对于包含$k$个feature的集合，CFS定义如下：
+    $$
+    CFS=\mathop{max} \limits_{S_k}[\frac{r_{cf_1} + r_{cf_2} + \cdots + r_{cf_k}}{\sqrt{k + 2(r_{f_1f_2} + \cdots + r_{f_if_j} + \cdots + r_{f_kf_l})}}]
+    $$
+
+### Bagging
+Bagging直接使用ML算法评估特征子集的效果，它可以检测出两个或多个feature之间的交互关系，而且选择的特征子集让模型的效果达到最优。Bagging是特征子集搜索 + 评估指标 相结合的方法，前者提供候选的新特征子集，后者则基于新特征子集训练一个模型，并用validation set进行评估，为每一组特征子集进行打分，然后选择最优的特征子集。
+* 完全搜索
+* 启发式搜索(greed search)：feedforwad search/backward search/feedforwad + backward search
+* 随机搜索
+
+### Embedding
+即与具体的ML算法结合。
+* LASSO：L1 Regularization可一定程度上做feature selection
+* Decision Tree
+* SVM
+* Random Forest
+* GBDT
+
+

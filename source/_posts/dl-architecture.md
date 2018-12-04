@@ -162,7 +162,7 @@ DCNN的架构大致是这样的：Conv + ReLU + (Pool) + (FC) + Softmax。DNN之
 
 > On the other hand, when ReLU collapses the channel, it inevitably loses information in that channel. However if we have lots of channels, and there is a a structure in the activation manifold that information might still be preserved in the other channels. In supplemental materials, we show that if the input manifold can be embedded into a significantly lower-dimensional subspace of the activation space then the ReLU transformation preserves the information while introducing the needed complexity into the set of expressible functions.
 
-简而言之，ReLu有以下两种性质：
+简而言之，ReLU有以下两种性质：
 1. 若Manifold of Interest在ReLU之后非零，那么它就相当于是一个线性变换。
 2. ReLU能够保存input manifold完整的信息，**但是当且仅当input manifold位于input space的低维子空间中时**。
 
