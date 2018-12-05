@@ -32,7 +32,7 @@ Semantic segmentation也是Computer Vision领域一个非常重要的研究方�
 若FCN的loss为最后一层spatial dimension的求和，$l(x;\theta)=\sum_{ij}l^{'}(x_{ij};\theta)$，那么梯度就可以被计算为每个spatial component的求和。因此**将最后一层的receptive fields作为mini-batch的话，在整张图上SGD优化$l$与spatial component上SGD优化$l^{'}是等效的$**。当这些receptive fileds有大量重叠时，layer-by-layer的feedforward computation/BP 比patch-by-patch的计算要高效。
 
 #### Adapting classifiers for dense prediction
-![Convert to FCN](./cv-segmentation/convert_to_fcn.jpg)
+![Convert to FCN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/convert_to_fcn.jpg)
 
 #### Shift-and-stitch is filter rarefaction
 > Dense predictions can be obtained from coarse outputs
@@ -90,7 +90,7 @@ patches [28, 15]**. In fully convolutional training, class balance can also be a
 
 ### Segmentation Architecture
 Base network是由AlexNet/VGG/GoogLeNet改动而来，Loss采用per-pixel multinominal logistic loss。整体architecture如下：
-![DAG Nets in FCN](./cv-segmentation/dag_nets_fcn.jpg)
+![DAG Nets in FCN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/dag_nets_fcn.jpg)
 
 #### Combining what and where
 > We address this by adding skips [1] that combine the
