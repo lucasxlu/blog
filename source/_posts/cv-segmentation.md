@@ -38,77 +38,33 @@ Semantic segmentation也是Computer Vision领域一个非常重要的研究方�
 > Dense predictions can be obtained from coarse outputs
 by stitching together output from shifted versions of the input. If the output is downsampled by a factor of $f$, shift the input $x$ pixels to the right and $y$ pixels down, once for every $(x, y)$ s.t. $0\leq x, y \leq f$. Process each of these $f^2$ inputs, and interlace the outputs so that the predictions correspond to the pixels at the centers of their receptive fields.
 
-> Consider a layer (convolution or pooling) with input stride
-$s$, and a subsequent convolution layer with filter weights
-$f_{ij}$ (eliding the irrelevant feature dimensions). Setting the lower layer's input stride to 1 upsamples its output by a
-factor of $s$. However, convolving the original filter with
-the upsampled output does not produce the same result as
-shift-and-stitch, because the original filter only sees a reduced portion of its (now upsampled) input. To reproduce the trick, rarefy the filter by enlarging it as:
+> Consider a layer (convolution or pooling) with input stride $s$, and a subsequent convolution layer with filter weights $f_{ij}$ (eliding the irrelevant feature dimensions). Setting the lower layer's input stride to 1 upsamples its output by a factor of $s$. However, convolving the original filter with the upsampled output does not produce the same result as shift-and-stitch, because the original filter only sees a reduced portion of its (now upsampled) input. To reproduce the trick, rarefy the filter by enlarging it as:
 $$
 f_{ij}^{'}=\begin{cases}
     f_{i/s,j/s} & \text{if $s$ divides both $i$ and $j$}\\
     0 & \text{otherwise}
 \end{cases}
 $$
-> (with $i$ and $j$ zero-based). Reproducing the full net output
-of the trick involves repeating this filter enlargement layer-by-layer until all subsampling is removed. (In practice, this can be done efficiently by processing subsampled versions
-of the upsampled input.)
+> (with $i$ and $j$ zero-based). Reproducing the full net output of the trick involves repeating this filter enlargement layer-by-layer until all subsampling is removed. (In practice, this can be done efficiently by processing subsampled versions of the upsampled input.)
 
 #### Upsampling is backwards strided convolution
-> Another way to connect coarse outputs to dense pixels
-is interpolation. For instance, simple bilinear interpolation
-computes each output $y_{ij}$ from the nearest four inputs by a
-linear map that depends only on the relative positions of the
-input and output cells.
+> Another way to connect coarse outputs to dense pixels is interpolation. For instance, simple bilinear interpolation computes each output $y_{ij}$ from the nearest four inputs by a linear map that depends only on the relative positions of the input and output cells.
 
-> In a sense, upsampling with factor $f$ is convolution with
-a fractional input stride of $1/f$. So long as $f$ is integral,a natural way to upsample is therefore backwards convolution
-(sometimes called deconvolution) with an output stride of
-$f$. Such an operation is trivial to implement, since it simply
-reverses the forward and backward passes of convolution.
-Thus upsampling is performed in-network for end-to-end learning by backpropagation from the pixelwise loss.
+> In a sense, upsampling with factor $f$ is convolution with a fractional input stride of $1/f$. So long as $f$ is integral,a natural way to upsample is therefore backwards convolution (sometimes called deconvolution) with an output stride of $f$. Such an operation is trivial to implement, since it simply reverses the forward and backward passes of convolution. Thus upsampling is performed in-network for end-to-end learning by backpropagation from the pixelwise loss.
 
 #### Patchwise training is loss sampling
-> In stochastic optimization, gradient computation is
-driven by the training distribution. Both patchwise training
-and fully convolutional training can be made to produce
-any distribution, although their relative computational
-efficiency depends on overlap and minibatch size. Whole
-image fully convolutional training is identical to patchwise
-training where each batch consists of all the receptive fields
-of the units below the loss for an image (or collection of
-images). While this is more efficient than uniform sampling
-of patches, it reduces the number of possible batches. However,
-random selection of patches within an image may be
-recovered simply. Restricting the loss to a randomly sampled
-subset of its spatial terms (or, equivalently applying a
-DropConnect mask [36] between the output and the loss) excludes patches from the gradient computation.
+> In stochastic optimization, gradient computation is driven by the training distribution. Both patchwise training and fully convolutional training can be made to produce any distribution, although their relative computational efficiency depends on overlap and minibatch size. Whole image fully convolutional training is identical to patchwise training where each batch consists of all the receptive fields of the units below the loss for an image (or collection of images). While this is more efficient than uniform sampling of patches, it reduces the number of possible batches. However, random selection of patches within an image may be recovered simply. Restricting the loss to a randomly sampled subset of its spatial terms (or, equivalently applying a DropConnect mask [36] between the output and the loss) excludes patches from the gradient computation.
 
-> **Sampling in patchwise training can correct class imbalance
-[27, 7, 2] and mitigate the spatial correlation of dense
-patches [28, 15]**. In fully convolutional training, class balance can also be achieved by weighting the loss, and loss sampling can be used to address spatial correlation.
+> **Sampling in patchwise training can correct class imbalance [27, 7, 2] and mitigate the spatial correlation of dense patches [28, 15]**. In fully convolutional training, class balance can also be achieved by weighting the loss, and loss sampling can be used to address spatial correlation.
 
 ### Segmentation Architecture
 Base network是由AlexNet/VGG/GoogLeNet改动而来，Loss采用per-pixel multinominal logistic loss。整体architecture如下：
 ![DAG Nets in FCN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/dag_nets_fcn.jpg)
 
 #### Combining what and where
-> We address this by adding skips [1] that combine the
-final prediction layer with lower layers with finer strides.
-This turns a line topology into a DAG, with edges that skip
-ahead from lower layers to higher ones (Figure 3). **As they
-see fewer pixels, the finer scale predictions should need
-fewer layers, so it makes sense to make them from shallower
-net outputs. Combining fine layers and coarse layers lets the
-model make local predictions that respect global structure**.
+> We address this by adding skips [1] that combine the final prediction layer with lower layers with finer strides. This turns a line topology into a DAG, with edges that skip ahead from lower layers to higher ones (Figure 3). **As they see fewer pixels, the finer scale predictions should need fewer layers, so it makes sense to make them from shallower net outputs. Combining fine layers and coarse layers lets the model make local predictions that respect global structure**.
 
-> We first divide the output stride in half by predicting
-from a 16 pixel stride layer. We add a $1\times 1$ convolution
-layer on top of pool-4 to produce additional class predictions.
-We fuse this output with the predictions computed on top of conv7 (convolutionalized fc7) at stride 32 by adding a $2\times$ upsampling layer and summing both predictions (see Figure 3). We initialize the $2\times$ upsampling to bilinear interpolation, but allow the parameters to be learned as described in Section 3.3. Finally, the stride 16 predictions are upsampled back to the image. We call this net FCN-16s. FCN-16s is learned end-to-end, initialized with
-the parameters of the last, coarser net, which we now call
-FCN-32s. The new parameters acting on pool4 are zeroinitialized
-so that the net starts with unmodified predictions. The learning rate is decreased by a factor of 100.
+> We first divide the output stride in half by predicting from a 16 pixel stride layer. We add a $1\times 1$ convolution layer on top of pool-4 to produce additional class predictions. We fuse this output with the predictions computed on top of conv7 (convolutionalized fc7) at stride 32 by adding a $2\times$ upsampling layer and summing both predictions (see Figure 3). We initialize the $2\times$ upsampling to bilinear interpolation, but allow the parameters to be learned as described in Section 3.3. Finally, the stride 16 predictions are upsampled back to the image. We call this net FCN-16s. FCN-16s is learned end-to-end, initialized with the parameters of the last,coarser net, which we now call FCN-32s. The new parameters acting on pool4 are zeroinitialized so that the net starts with unmodified predictions. The learning rate is decreased by a factor of 100.
 
 
 ## Reference
