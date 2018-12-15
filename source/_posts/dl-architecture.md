@@ -396,6 +396,38 @@ CliqueNet使用high level visual information来refine low level activations。At
   > 可以看到，对Feature activation做可视化之后，Stage-II相比较于Stage-I，明显削弱了一些背景信息，从而使得object主体信息更加明显，进而有助于提升分类性能。
 
 
+## PeleeNet
+> Paper: [Pelee: A Real-Time Object Detection System on Mobile Devices](https://papers.nips.cc/paper/7466-pelee-a-real-time-object-detection-system-on-mobile-devices.pdf)
+
+提起DNN for Mobile/Efficiency Architecture，Depth-wise Convolution自然不会陌生，我们前面也讲到过ShuffleNet/MobileNet这些专为移动端设计的网络结构。本文介绍一篇来自[NeurIPS2018](https://nips.cc/Conferences/2018/Schedule)上的高性能网络结构——[PeleeNet](https://papers.nips.cc/paper/7466-pelee-a-real-time-object-detection-system-on-mobile-devices.pdf)。
+
+
+传统的移动端高效网络结构往往依赖于DW Separable Conv，但是在现如今绝大多数的Deep Learning Framework(例如TensorFlow/PyTorch等)却缺乏对DW Separable Conv的高效实现，因此**PeleeNet是完全基于传统卷积而设计的**。也就是说，要设计高效的网络结构，也不一定非得靠DW Conv嘛~
+
+### Details of PeleeNet
+PeleeNet的设计主要idea如下：
+* Two-way Dense Layer: 这一点idea来源于GoogLeNet，PeleeNet使用这种结构来获取不同尺度的receptive fields。一种way使用$3\times 3$ kernel size；另一种使用堆叠的两个$3\times 3$ conv来学习larger objects的feature。结构如下：
+![Structure of 2-way dense layer](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/2way_dense_layer_in_peleenet.jpg)
+* Stem Block: 在第一个dense layer之前加入了stem block，可以做到在增强feature representation ability的同时不引入过多的computational burden，这种方法比现如今主流方法(例如增加feature map的channel数量，增加depth)要更优越。
+![Stem Block in PeleeNet](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/stem_block_in_peleenet.jpg)
+* Dynamic Number of Channels in Bottleneck Layer: 简而言之，bottleneck layers中channel的数量是随着输入尺寸而变动的。而不像DenseNet中采用固定的4倍layers增长速率。
+* Transition Layer Without Compression: 作者在实验中发现，DenseNet提出的compression factor会损害feature representation ability。因此PeleeNet的transition layers中，output channels数量总是和input channels数量保持一致。
+* Composite Function: 作者采用post-activation来进一步加速网络。在预测阶段，所有的BN layers都可以被merge进conv layers，从而大幅提升效率。为了抵消这种post-activation带来的不良影响，我们使用了shallow and wide structure。此外，作者在最后一个dense block之后还使用了一个额外的$1\times 1$ conv layer来进一步加强整个网络的非线性能力，从而提升representation learning ability。
+
+此外，为了在detection任务中获得性能提升，作者将PeleeNet融合进了SSD，并且做了如下改进：
+* Feature Map Selection: 为了加速，作者没有使用$38\times 38$的feature map，而是使用了这5个multi-scale的feature map: $19\times 19$, $10\times 10$, $5\times 5$, $3\times 3$以及 $1\times 1$。
+* Residual Prediction Block: 对于每个将被应用到detection的feature map，都先走一遍residual block。
+![Residual Block in PeleeNet](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/residual_block_in_peleenet.jpg)
+* Small Conv Kernel for Prediction: 作者在实验中发现，使用$1\times 1$ conv和$3\times 3$ conv做预测时accuracy几乎一样，但是却可以带来很大的速度提升。
+
+### Ablation Study
+作者在train ImageNet任务时，使用了**Cosine Learning Rate Annealing**的策略：
+$$
+0.5\times lr\times(cos(\pi \times t/120) + 1)
+$$
+
+为了加速deep model的inference time，一个惯用做法是**使用FP16来代替FP32**。然而，由DW Separable Conv设计而来的网络结构很难从FP16 inference engine中获得提升。作者观察到使用FP16的MobileNet V2和使用FP32的MobileNet V2速度几乎一致。
+
 
 ## Reference
 1. Krizhevsky A, Sutskever I, Hinton G E. [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)[C]//Advances in neural information processing systems. 2012: 1097-1105.
@@ -412,3 +444,4 @@ CliqueNet使用high level visual information来refine low level activations。At
 12. Szegedy, Christian, et al. ["Going deeper with convolutions."](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Szegedy_Going_Deeper_With_2015_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2015.
 13. Yang Y, Zhong Z, Shen T, et al. [Convolutional Neural Networks with Alternately Updated Clique](http://openaccess.thecvf.com/content_cvpr_2018/papers/Yang_Convolutional_Neural_Networks_CVPR_2018_paper.pdf)[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018: 2413-2422.
 14. Zilly J G, Srivastava R K, Koutnı́k J, et al. [Recurrent Highway Networks](http://proceedings.mlr.press/v70/zilly17a/zilly17a.pdf)[C]//International Conference on Machine Learning. 2017: 4189-4198.
+15. Wang, Jun and Bohn, Tanner and Ling, Charles. [Pelee: A Real-Time Object Detection System on Mobile Devices](https://papers.nips.cc/paper/7466-pelee-a-real-time-object-detection-system-on-mobile-devices.pdf)[C]//Advances in Neural Information Processing Systems 31. 2018:1967--1976.
