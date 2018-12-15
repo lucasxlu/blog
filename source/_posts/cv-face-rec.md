@@ -32,7 +32,7 @@ $$
 y_j=max(0, \sum_i x_i^1\cdot w_{i,j}^1 + \sum_i x_i^2\cdot w_{i,j}^2 + b_j)
 $$
 
-另外，作者在实验中意识到，<font color="red">随着identity 数量的增加，整个网络的feature representation learning和performance都会随之增加</font>。[DeepID](http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf)在LFW上达到了97.45%的精度。
+另外，作者在实验中意识到，**随着identity 数量的增加，整个网络的feature representation learning和performance都会随之增加**。[DeepID](http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf)在LFW上达到了97.45%的精度。
 
 
 ## FaceNet
@@ -57,7 +57,8 @@ $$
 Triplet Loss确定了，那么下一步就是如何选择合适的Triplets。
 
 ### Triplet Selection
-<font color="red">为了保证快速收敛，我们需要violate triplet的constraint，即挑选anchor $x_i^a$，来挑选hard positive $x_i^p$来满足$\mathop{argmax} \limits_{x_i^p}||f(x_i^a)-f(x_i^p)||_2^2$，以及hard negative $x_i^n$来满足$\mathop{argmin} \limits_{x_i^p}||f(x_i^a)-f(x_i^n)||_2^2$</font>。
+**为了保证快速收敛，我们需要violate triplet的constraint，即挑选anchor $x_i^a$，来挑选hard positive $x_i^p$来满足$\mathop{argmax} \limits_{x_i^p}||f(x_i^a)-f(x_i^p)||_2^2$，以及hard negative $x_i^n$来满足$\mathop{argmin} \limits_{x_i^p}||f(x_i^a)-f(x_i^n)||_2^2$**。
+
 > [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：读者仔细体会一下这里和triplet loss definition的区别，为啥是相反的？这里可视为一种[hard negative mining](http://cs.brown.edu/people/pfelzens/papers/lsvm-pami.pdf)。
 
 在整个training set上计算$argmax$和$argmin$是不太现实的，文中采取了两个做法：
@@ -68,7 +69,7 @@ Selecting the hardest negatives can in practice lead to bad local minima early o
 $$
 ||f(x_i^a)-f(x_i^p)||_2^2 < ||f(x_i^a)-f(x_i^n)||_2^2
 $$
-<font color="red">We call these negative exemplars semi-hard, as they are further away from the anchor than the positive exemplar, but still hard because the squared distance is close to the anchorpositive distance. Those negatives lie inside the margin $\alpha$.</font>
+**We call these negative exemplars semi-hard, as they are further away from the anchor than the positive exemplar, but still hard because the squared distance is close to the anchorpositive distance. Those negatives lie inside the margin $\alpha$.**
 
 ### Experiments
 对于Face Verification Task，判断两张图是否为一个人，我们仅需比较这两个特征向量的squared $L_2$ distance $D(x_i,x_j)$是否超过了某个阈值即可。
@@ -119,7 +120,7 @@ Center Loss的好处在于：
 * Joint supervision of Softmax Loss and Center Loss能够大大加强DCNN的feature learning能力。
 * 其他Metric Learning的Loss例如[Triplet Loss](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf), Contractive Loss等pairs selection是非常麻烦的一件事情，但是Center Loss则不需要复杂的triplet pairs selection。
 
-网络学习完成，在做Face Verification/Identification时，<font color="red">第一个 FC Layers的feature被当作特征，同时，我们也将水平翻转图片的feature进行concatenation，作为最终的face feature，PCA降维之后，Cosine Distance, Nearest Neighbor and Threshold comparison用来作为判断是否为同一个人的依据</font>。
+网络学习完成，在做Face Verification/Identification时，**第一个 FC Layers的feature被当作特征，同时，我们也将水平翻转图片的feature进行concatenation，作为最终的face feature，PCA降维之后，Cosine Distance, Nearest Neighbor and Threshold comparison用来作为判断是否为同一个人的依据**。
 
 
 ## NormFace
