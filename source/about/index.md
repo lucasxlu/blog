@@ -31,33 +31,37 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 
 ## Experience
-* Image Quality Assessment & Automatic License Examination & Face Analysis
-  During my intern at [DiDi](https://www.didiglobal.com/), we are working at developing deep learning models to recognize the image quality (blur/reflection/normal), and facial beauty prediction algorithm.
-  * Building deep models for IQA with 93.15% precision and 98.35% recall
-  * Developing and training deep models for license type classification with 99.72% precision and 99.73% recall 
-  * Developing deep models for Facial Beauty Prediction with 0.89 PC
-  * Developing and training deep models for scene recognition (in/out car) with 98.94% precision and 99.27% recall
-  * Writing 16 patents about security products about DiDi
+* [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – Present  
+Algorithm Intern  
+Security Product & Technology
+  * License image quality recognition (reflection/blur) with 93.15% Precision and 98.35% Recall
+  * Facial beauty prediction with 0.89 Pearson Correlation
+  * License type recognition with 99.77% Precision and 99.76% Recall
+  * Scene recognition (in car/out of car) with 99.89% Precision 99.90% Recall
+  * License completeness with 99.67% Precision and 99.68% Recall
+  * Complete the writing of 20 patents related to safety products
 
+* [Guangzhou Yingzi Technology Co.,Ltd](http://www.yingzi.com/) &emsp; 2018.02 – 2018.03  
+Deep Learning/Python Engineer  
+Animal Identification Center
+  * Implementation of Amazon S3 data interaction module; Cleaning and pre-processing of existing Label-Me data
+  * Implement and train face detection model (MTCNN), and face identification model (FaceNet) based on TensorFlow
+  * Encapsulate RESTful API based on Django, V1.0 achieves an accuracy over 95%
 
-* [Pig Face Recognition](http://gd.people.com.cn/n2/2018/0323/c123932-31374601.html)  
-  Our team developed a **Pig Face Recognition System** with [Guangzhou Yingzi Technology Co.,Ltd](http://www.yingzi.com/), to accurately recognize a pig and get its detailed information through captured photo. It achieves a mAP over 95%.   
-  * Building deep model and training on Amazon S3 GPU server.
-  * Encapsulate RESTful API and web backend development.
-  
-  
-* Mal-Image Recognition System  
-  I developed a Mal-Image Recognition System with [Wuhan ZhiLiFeng Information .,Ltd.](http://zlfinfo.com.cn/), the model achieves a mAP with 92.17% on detecting mal-images.  
-  * Image data crawling and preprocessing.
-  * Building machine learning algorithms.
-  * Model training and deployment.
+* [Wuhan ZhiLiFeng Information .,Ltd.](http://zlfinfo.com.cn/) &emsp; 2017.07 – 2017.09  
+Python/Machine Learning Engineer  
+Malicious Image Recognition 
+  * Developing machine learning & skin models to recognize pornographic images with 92.17 accuracy
+  * Developing deep model (Center Loss + Softmax Loss) to recognize politically sensitive images with 99.87% accuracy
+  * Model training and deployment based on Django
 
+* [Beijing Jiewen Technology Co.,Ltd.](http://www.jiewen.com.cn/), Huazhong Developing Center. &emsp; 2015.06 – 2016.06  
+Java/Web Spider Developer  
+Financial Information System & Multi-thread Web Crawling System
+  * Develop and maintain web information system based on Java SSM framework and MySQL database.
+  * Develop web crawlers to collect data from O2O websites (e.g. [Ctrip](http://www.ctrip.com/), [Dazhong Dianping](http://www.dianping.com/), [AMap](https://www.amap.com/)) based on Python/Java and MySQL/MongoDB.
+  * Data statistics, analysis and visualization. It provides important data support for company offline product location
 
-* Web Crawling and Java Developer  
-  During working at [Beijing Jiewen Technology Co.,Ltd.](http://www.jiewen.com.cn/), Huazhong Developing Center. My duties are developing and maintaining financial information system, and developing web crawling system based on Java and Python.
-  * Developing and maintaining web information system based on Java SSM framework and MySQL database.
-  * Developing web crawlers to collect data from O2O websites (e.g. [Ctrip](http://www.ctrip.com/), [Dazhong Dianping](http://www.dianping.com/), [AMap](https://www.amap.com/)), and storing them in MySQL and MongoDB.
-  * Data statistics, analysis and visualization.
 
 ## Skills
 * English: (CET-6: 575/710); Proficiency in Reading and Writing    
@@ -68,6 +72,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * Others: Web Crawler/Web Development/PPT
 
 ## Award
+* 1st Prize in Academic Research Report (outperform all Ph.Ds). Deep Learning for Face Analysis and Fine-grained Visual Recognition. [[Slides](./DL_for_Face_Analysis_and_FGVC.pdf)]
 * 1st Prize in Academic Research Report (outperform all Ph.Ds). Combining Machine Learning and Data-driven Approaches for AI Services. [[Slides](./Presentation.pdf)]
 * 1st Scholar Prize [[Slides](./Research_Overview.pdf)]
 * 2nd Scholar Prize  
