@@ -1,6 +1,6 @@
 ---
 title: "[CV] Object Detection"
-date: 2018-11-11 21:07:05
+date: 2018-12-21 12:14:05
 mathjax: true
 tags:
 - Machine Learning
@@ -385,6 +385,68 @@ where $\mathbb{I}_{i}^{obj}$ denotes if object appears in cell $i$ and denotes t
 
 ## YOLO V2
 > [YOLO9000: Better, Faster, Stronger.](http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf)
+
+前面我们已经介绍过YOLO V1，本篇来介绍一下它的改进版本——YOLO V2。```YOLO V2```也叫```YOLO 9000```，意思就是说它可以检测9000种object。我们知道，detection的benchmark和classification的benchmark相比，标注成本要更为昂贵(因为画框框远比打标签要麻烦)，而```YOLO 9000```使用了一种```joint training```的方法，可以从其他数据集中学习object classification label。此外，和```SSD```一样，```YOLO 9000```也使用了```multi-scale training```来使得它对```scale variance```更加鲁棒。
+
+### Better
+如果大家对```YOLO V1```还有印象，就会知道作者在对比了```YOLO V1```和```Fast RCNN```的error analysis之后，发现```YOLO V1```的localisation error比较高，并且和基于region-proposal的two-stage detector(例如RCNN系列)相比，recall比较低。所以YOLO V2就主要来解决这两个问题了。
+
+YOLO V2用到了一下几个tricks：
+* **Batch Normalization**: 这个就不多解释了，基本已经成为deep learning models的必备组件。
+* **High Resolution Classifier**: YOLO V2首先在ImageNet上用$448\times 448$ input pretrain 10 epochs，来使得网络的filter对high resolution input更好。
+* **Convolutional With Anchor Boxes**: 这一点idea来源于```Faster RCNN```，YOLO直接通过FC layer回归bbox coordinates。而Faster RCNN中，RPN可以直接预测anchor boxes的offsets和confidences，因RPN是一个小型的conv net，所以可以在feature map的每一个location```预测offsets```，而非```coordinates```。而```预测offsets要比coordinates更加方便，同时模型也更容易学习```。因此，YOLO V2直接去除了FC layers，并且使用anchor boxes来预测bbox。首先去除了一个Pooling层，来得到高分辨率的输出。其次，输入也由$448\times 448$ 改为$416\times 416$，```使用416分辨率的输入是为了保证从得到奇数个的locations，从而保证只有一个center cell```。对于large objects而言，很容易占据满image的中间，所以更好的方式是用一个single center location来预测objects，而非其相邻的4个位置。YOLO的卷积层会对input image进行32倍的downsampling，所以使用$416\times 416$的input，我们最终会得到$13\times 13$的feature map。和YOLO V1一样，objectness prediction依然是预测groundtruth和proposed box的IOU，class prediction预测当该bbox为object时，该object所属类别的条件概率。
+* **Dimension Cluster**: YOLO V2在training set bbox上使用KMeans来自动寻找good prior。
+* **Direct location prediction**: 在YOLO中使用anchor box时，我们会碰到model instability问题，尤其是在前几轮的迭代中。这些instability大多来自预测box的位置$(x,y)$。在RPN中，预测值$t_x$、$t_y$、$(x,y)$center coordinate计算方式如下：
+    $$
+    x=(t_x\times w_a)-x_a
+    $$
+
+    $$
+    y=(t_y\times h_a)-y_a
+    $$
+
+    > For example, a prediction of $t_x = 1$ would shift the box to the right by the width of the anchor box, a prediction of $t_x = −1$ would shift it to the left by the same amount.
+
+    YOLO V2采取了V1的做法，预测相对于grid cell的location coordinate值，这样可以将groundtruth限制在0~1之间，作者使用Logistic activation来达到这种效果。
+
+    在output feature map的每个cell中，网络预测出了5个bounding boxes，对于每个bounding box有5个coordinates: $t_x, t_y, t_w, t_h, t_o$。
+    > If the cell is offset from the top left corner of the image by $(c_x, c_y)$ and the bounding box prior has width and height $p_w, p_h$, then the predictions correspond to:
+    $$
+    b_x=\sigma(t_x)+c_x
+    $$
+
+    $$
+    b_y=\sigma(t_y)+c_y
+    $$
+
+    $$
+    b_w=p_we^{t_w}
+    $$
+
+    $$
+    b_h=p_he^{t_h}
+    $$
+
+    $$
+    Pr(object)\times IOU(b, object)=\sigma(t_o)
+    $$
+    因限制了location prediction，所以参数更容易学习了，模型也更稳定了。
+
+    ![BBox Prediction in YOLO V2](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/yolov2_bbox_prediction.jpg)
+
+* **Fine-grained Features**: YOLO V2从$13\times 13$的feature map中预测detection，这对于large objects而言是足够的，对于small objects detection，可以从finer grained features中获益。Faster RCNN和SSD都在不同尺度的feature maps上滑窗proposal networks，来获取不同resolution的region proposal。YOLO V2采用了不同的方法来达到这种效果，即仅仅通过新增一个passthrough layer来获取earlier layer的resolution ($26\times 26$)。
+  > The passthrough layer concatenates the higher resolution features with the low resolution features by stacking adjacent features into different channels instead of spatial locations, similar to the identity mappings in ResNet. This turns the $26\times 26\times 512$ feature map into a $13\times 13\times 2048$ feature map, which can be concatenated with the original features. Our detector runs on top of this expanded feature map so that it  has access to fine grained features. This gives a modest 1% performance increase.
+
+* **Multi-Scale Training**: Instead of fixing the input image size we change the network every few iterations. Every 10 batches our network randomly chooses new image dimensions. Since our model downsamples by a factor of 32, we pull from the following multiples of $32: {320, 352, ..., 608}$. Thus the smallest option is $320\times 320$ and the largest is 608×608. We resize the network to that dimension and continue training. This regime forces the network to learn to predict well across a variety of input dimensions. This means the same network can predict detections at different resolutions.
+
+### Faster
+大多数detector使用了VGG作为feature extraction backbone，尽管VGG很强大，但是FLOPs太高。YOLO使用了GoogLeNet作为backbone，在YOLO V2中，作者使用了Darknet-19作为backbone。
+
+### Stronger
+YOLO V2使用了一种joint training方法来训练classification和detection dataset，简而言之呢，就是说当遇到classification data时，只BP classification-specific part；当遇到detection data时，BP full architecture.
+> We propose a mechanism for jointly training on classification and detection data. Our method uses images labelled for detection to learn detection-specific information like bounding box coordinate prediction and objectness as well as how to classify common objects. It uses images with only class labels to expand the number of categories it can detect. During training we mix images from both detection and classification datasets. When our network sees an image labelled for detection we can backpropagate based on the full YOLOv2 loss function. When it sees a classification image we only backpropagate loss from the classificationspecific parts of the architecture.
+
+* **Hierarchical classification**: 因ImageNet是Hierarchy的结构，所以为了让detector获取识别9000-category的识别能力，YOLO V2使用了一种Hierarchical classification方法。这个就不细说了，详情请参考[Paper原文](http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf)吧。
 
 
 
