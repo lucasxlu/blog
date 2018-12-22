@@ -449,7 +449,45 @@ YOLO V2使用了一种joint training方法来训练classification和detection da
 * **Hierarchical classification**: 因ImageNet是Hierarchy的结构，所以为了让detector获取识别9000-category的识别能力，YOLO V2使用了一种Hierarchical classification方法。这个就不细说了，详情请参考[Paper原文](http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf)吧。
 
 
+## MTCNN
+> Paper: [Joint face detection and alignment using multitask cascaded convolutional networks](https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf)
 
+这里介绍一下人脸检测领域一个非常著名的算法——MTCNN，和通用物体检测相比，人脸检测相对来讲会容易一些。因为熟悉two-stage detection的同学应该知道，face detection可以视为一个face/non-face binary classification问题，所以binary classification的decision boundary要比multi-class classification的decision boundary更容易学得。
+
+在MTCNN中，作者提出了一个deep cascade multi-task framework，来用一种coarse-to-fine的方法同时处理face detection和face alignment任务，此外，本文也介绍了一种online hard sample mining strategy来进一步提升性能。
+
+MTCNN主要包括3个子网络：
+* 在第一阶段，通过一个shallow CNN ```PNet```快速生成candidate windows。
+* 在第二阶段，通过一个稍微复杂的CNN ```RNet```来reject大量non-facial candidate windows。
+* 在第三阶段，通过一个更加复杂CNN ```ONet```来进一步提纯结果，并输出5个facial landmarks。
+ 
+MTCNN的pipeline如下：  
+![Pipeline of MTCNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/mtcnn_pipeline.jpg)
+
+### Details of MTCNN
+输入图像首先被resize成不同的scale来形成image pyramid，来使得网络具备scale-invariance。然后作为下面3阶段网络的输入：
+* **Stage 1**: 在第一阶段，```PNet```来得到candidate facial windows以及对应的bbox regression vectors，bbox regression对estimated bbox进行校准。然后，non-max suppression来merge highly overlapped candidates。
+* **Stage 2**: 在Stage 1产生的candidate regions被输入到另外一个CNN——```RNet```，来进一步reject non-facial candidates。同时也应用bbox regression进行box校准，以及non-max suppression来merge highly overlapped candidates。
+* **Stage 3**: 在第三阶段，```ONet```会输出5个facial landmarks。
+
+### Training of MTCNN
+1. Face classification:
+    $$
+    L_i^{det}=-(y_i^{det}log(p_i) + (1-y_i^{det})(1 - log(p_i)))
+    $$
+2. Bounding box regression: 对于每一个candidate window，我们预测该candidate和与其最近的groundtruth box之间的offset，优化L2 Loss：
+    $$
+    L_i^{box}=||\hat{y}_i^{box}-y_i^{box}||_2^2
+    $$
+3. Facial landmark location:
+    $$
+    L_i^{landmark}=||\hat{y}_i^{landmark}-y_i^{landmark}||_2^2
+    $$
+4. Multi-source training: 因为是multi-task learning，且每个stage学习的data source都不一样(例如PNet需要face/non-face region)，所以MTCNN的整个优化目标如下：
+    $$
+    \mathop{min} \sum_{i=1}^N \sum_{j\in \{det, box, landmark\}}\alpha_j \beta_i^j L_i^j
+    $$
+5. Online hard sample mining: 在每个mini-batch里，我们对feedforwad propagation的samples按照loss进行排序，然后选择Top 70%作为hard samples，在BP的时候就只计算这些hard samples的gradients。这就意味着```太容易区分的样本就直接被舍弃了```。
 
 
 ## Reference
@@ -463,3 +501,5 @@ YOLO V2使用了一种joint training方法来训练classification和detection da
 8. Li Z, Peng C, Yu G, et al. [Light-head r-cnn: In defense of two-stage object detector](https://arxiv.org/pdf/1711.07264v2.pdf)[J]. arXiv preprint arXiv:1711.07264, 2017.
 9. Lin, Tsung-Yi, et al. ["Feature Pyramid Networks for Object Detection."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf) CVPR. Vol. 1. No. 2. 2017.
 10. Redmon, Joseph, and Ali Farhadi. ["YOLO9000: Better, Faster, Stronger." ](http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf)2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR). IEEE, 2017.
+11. Redmon, Joseph, and Ali Farhadi. ["Yolov3: An incremental improvement."](https://arxiv.org/pdf/1804.02767.pdf) arXiv preprint arXiv:1804.02767 (2018).
+12. Zhang, Kaipeng, et al. ["Joint face detection and alignment using multitask cascaded convolutional networks."](https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf) IEEE Signal Processing Letters 23.10 (2016): 1499-1503.

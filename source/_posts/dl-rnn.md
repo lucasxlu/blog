@@ -1,6 +1,6 @@
 ---
 title: "[DL] RNN"
-date: 2018-08-10 14:18:19
+date: 2018-12-22 14:18:19
 mathjax: true
 tags:
 - Machine Learning
@@ -43,9 +43,18 @@ RNN的一些重要设计模式包括以下几种：
 
 表示离散变量的常规方式是把输出 $o$ 作为每个离散变量可能值的非标准化对数概率，然后我们可以应用Softmax处理，得到标准化后的概率输出向量$\hat{y}$。RNN从特定的初始状态$h^{(0)}$开始前向传播。从$t=1$到$t=\tau$的每个时间步，我们应用以下更新方程：
 $$
-a^{(t)} = Wh^{(t-1)}+Ux^{(t)}+b \\
-h^{(t)}=tanh(a^{(t)}) \\
-o^{(t)}=Vh^{(t)}+c \\
+a^{(t)} = Wh^{(t-1)}+Ux^{(t)}+b
+$$
+
+$$
+h^{(t)}=tanh(a^{(t)}) 
+$$
+
+$$
+o^{(t)}=Vh^{(t)}+c
+$$
+
+$$
 \hat{y}^{(t)}=softmax(o^{(t)})
 $$
 $U, V, W$分别对应 input layers to hidden layers，hidden layers to output layers，hidden to next hidden layers的连接。该RNN将一个input sequence映射到相同长度的output sequence。__与 $x$ 序列配对的 $y$ 的总Loss就是所有时间步的Loss之和__。
