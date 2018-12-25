@@ -487,6 +487,46 @@ $$
 ![SE in ResNet](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/se_block_in_resnet.jpg)
 
 
+## Slimmable Neural Network
+> Paper: [Slimmable Neural Network](https://openreview.net/pdf?id=H1gMCsAqY7)
+
+近年来，深度学习的火热驱动了越来越多任务性能的大幅提升，尤其是在CV，从AlexNet到CliqueNet，网络结构越来越精巧。此外，针对移动端的网络结构设计(如MobileNet/ShuffleNet/PeleeNet等)也得到了非常多的关注。但是，即便是专门为移动端设计的网络结构，也是不能通用的。例如Android设备的碎片化问题，以及同一部手机在不同时间段内后台任务对资源的占用率问题。
+
+针对以上问题，作者设计了**switchable batch normalization**，在测试时，网络可以根据当前设备的resource constraints来自动调整width来保证accuracy和latency的tradeoff。
+
+SNN有以下好处：
+1. 对于不同的环境，我们只需要训练单个模型。
+2. 在target device上可以根据device本身的computational constraint自动调整active channels。
+3. SNN可以应用到各种结构的网络中(FC/Conv/DW Conv/Group Conv/Dilated Conv)和各种不同的应用(Classification/Detection/Segmentation)中。
+4. 当Switch到不同configuration时，SNN的运行不需要额外的runtime和memory cost。
+
+![SNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dl-snn/snn.jpg)
+
+> Empirically training neural networks with multiple switches has an extremely low testing accuracy around 0.1% for 1000-class ImageNet classification. We conjecture it is mainly due to the problem that accumulating different number of channels results in different feature mean and variance. This discrepancy of feature mean and variance across different switches leads to inaccurate statistics of shared Batch Normalization layers (Ioffe & Szegedy, 2015), an important training stabilizer. To this end, we propose a simple and effective approach, switchable batch normalization, that privatizes batch normalization for different switches of a slimmable network. The variables of moving averaged means and variances can independently accumulate feature statistics of each switch. Moreover, Batch Normalization usually comes with two additional learnable scale and bias parameter to ensure same representation space (Ioffe & Szegedy, 2015). These two parameters may able to act as conditional parameters for different switches, since the computation graph of a slimmable network depends on the width configuration. It is noteworthy that the scale and bias can be merged into variables of moving mean and variance after training, thus by default we also use independent scale and bias as they come for free. Importantly, batch normalization layers usually have negligible size (less than 1%) in a model.
+
+### Details of Slimmable Neural Network
+> To train slimmable neural networks, we begin with a naive approach, where we directly train a shared neural network with different width configurations. The training framework is similar to the one of our final approach, as shown in Algorithm 1. The training is stable, however, the network obtains extremely low top-1 testing accuracy around 0.1% on 1000-class ImageNet classification. **We conjecture the major problem in the naive approach is that: for a single channel in a layer, different numbers of input channels in previous layer result in different means and variances of the aggregated feature, which are then rolling averaged to a shared batch normalization layer. The inconsistency leads to inaccurate batch normalization statistics in a layer-by-layer propagating manner**. Note that these batch normalization statistics (moving averaged means and variances) are only used during testing, in training the means and variances of the current mini-batch are used.
+
+作者在实验中证明，先train ```base-net——A```，再添加额外参数```B```来形成新的模型```A+B (MobileNet V2 0.5×)```只会带来非常微小的performance boost(from 60.3% to 61.0%)。但单独train一个```A+B (MobileNet V2 0.5×)```会提升到65.4%。这是因为**将B添加到A之后，会引入新的connection (A-B, B-B, B-A)，而这种incremental training会抑制A和B权重的joint adaption**。
+> We then investigate incremental training approach (a.k.a. progressive training). We first train a base model A (MobileNet v2 0.35×). We fix it and add extra parameters B to make it an extended model A+B (MobileNet v2 0.5×). The extra parameters are fine-tuned along with the fixed parameters of A on the training data. Although the approach is stable in both training and testing, the top-1 accuracy only increases from 60.3% of A to 61.0% of A+B. In contrast, individually trained MobileNet v2 0.5× achieves 65.4% accuracy on the ImageNet validation set. **The major reason for this accuracy degradation is that when expanding base model A to the next level A+B, new connections, not only from B to B, but also from B to A and from A to B, are added in the computation graph. The incremental training prohibits joint adaptation of weights A and B, significantly deteriorating the overall performance.**
+
+### Switchable Batch Normalization
+> Motivated by the investigations above, we present a simple and highly effective approach, named Switchable Batch Normalization (S-BN), that employs independent batch normalization (Ioffe & Szegedy, 2015) for different switches in a slimmable network. Batch normalization (BN) was originally proposed to reduce internal covariate shift by normalizing the feature: $y^{'}=\gamma\frac{y-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta$.
+where $y$ is the input to be normalized and $y^{'}$ is the output, $\gamma, \beta$ are learnable scale and bias, $\mu$, $\sigma^2$ are mean and variance of current mini-batch during training. During testing, moving averaged statistics of means and variances across all training images are used instead. BN enables faster and stabler training of deep neural networks (Ioffe & Szegedy, 2015; Radford et al., 2015), also it can encode conditional information to feature representations (Perez et al., 2017b; Li et al., 2016b).
+
+> To train slimmable networks, S-BN privatizes all batch normalization layers for each switch in a slimmable network. **Compared with the naive training approach, it solves the problem of feature aggregation inconsistency between different switches by independently normalizing the feature mean and variance during testing. The scale and bias in S-BN may be able to encode conditional information of width configuration of current switch (the scale and bias can be merged into variables of moving mean and variance after training, thus by default we also use independent scale and bias as they come for free)**. **Moreover, in contrast to incremental training, with S-BN we can jointly train all switches at different widths, therefore all weights are jointly updated to achieve a better performance**.
+
+S-BN also has two important advantages:
+1. The number of extra parameters is negligible.
+2. The runtime overhead is also negligible for deployment. In practice, batch normalization layers are typically fused into convolution layers for efficient inference. For slimmable networks, the re-fusing of batch normalization can be done on the fly at runtime since its time cost is negligible. After switching to a new configuration, the slimmable network becomes a normal network to run without additional runtime and memory cost.
+
+### Training of SNN
+> Our primary objective to train a slimmable neural network is to optimize its accuracy averaged from all switches. Thus, we compute the loss of the model by taking an un-weighted sum of all training losses of different switches. Algorithm 1 illustrates a memory-efficient implementation of the training framework, which is straightforward to integrate into current neural network libraries. The switchable width list is predefined, indicating the available switches in a slimmable network. During training, we accumulate back-propagated gradients of all switches, and update weights afterwards.
+
+![Training of SNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dl-snn/snn_training.jpg)
+
+
+
 ## Reference
 1. Krizhevsky A, Sutskever I, Hinton G E. [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)[C]//Advances in neural information processing systems. 2012: 1097-1105.
 2. Simonyan K, Zisserman A. [Very deep convolutional networks for large-scale image recognition](https://arxiv.org/pdf/1409.1556v6.pdf)[J]. arXiv preprint arXiv:1409.1556, 2014.
@@ -503,4 +543,5 @@ $$
 13. Yang Y, Zhong Z, Shen T, et al. [Convolutional Neural Networks with Alternately Updated Clique](http://openaccess.thecvf.com/content_cvpr_2018/papers/Yang_Convolutional_Neural_Networks_CVPR_2018_paper.pdf)[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018: 2413-2422.
 14. Zilly J G, Srivastava R K, Koutnı́k J, et al. [Recurrent Highway Networks](http://proceedings.mlr.press/v70/zilly17a/zilly17a.pdf)[C]//International Conference on Machine Learning. 2017: 4189-4198.
 15. Wang, Jun and Bohn, Tanner and Ling, Charles. [Pelee: A Real-Time Object Detection System on Mobile Devices](https://papers.nips.cc/paper/7466-pelee-a-real-time-object-detection-system-on-mobile-devices.pdf)[C]//Advances in Neural Information Processing Systems 31. 2018:1967--1976.
-16. Hu, Jie and Shen, Li and Sun, Gang. [Squeeze-and-Excitation Networks](http://openaccess.thecvf.com/content_cvpr_2018/papers/Hu_Squeeze-and-Excitation_Networks_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018
+16. Hu, Jie and Shen, Li and Sun, Gang. [Squeeze-and-Excitation Networks](http://openaccess.thecvf.com/content_cvpr_2018/papers/Hu_Squeeze-and-Excitation_Networks_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018.
+17. Yu, Jiahui, et al. ["Slimmable Neural Networks."](https://openreview.net/pdf?id=H1gMCsAqY7)[C]//ICLR (2019).
