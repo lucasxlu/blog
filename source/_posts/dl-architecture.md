@@ -500,7 +500,7 @@ SNN有以下好处：
 3. SNN可以应用到各种结构的网络中(FC/Conv/DW Conv/Group Conv/Dilated Conv)和各种不同的应用(Classification/Detection/Segmentation)中。
 4. 当Switch到不同configuration时，SNN的运行不需要额外的runtime和memory cost。
 
-![SNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dl-snn/snn.jpg)
+![SNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/snn.jpg)
 
 > Empirically training neural networks with multiple switches has an extremely low testing accuracy around 0.1% for 1000-class ImageNet classification. We conjecture it is mainly due to the problem that accumulating different number of channels results in different feature mean and variance. This discrepancy of feature mean and variance across different switches leads to inaccurate statistics of shared Batch Normalization layers (Ioffe & Szegedy, 2015), an important training stabilizer. To this end, we propose a simple and effective approach, switchable batch normalization, that privatizes batch normalization for different switches of a slimmable network. The variables of moving averaged means and variances can independently accumulate feature statistics of each switch. Moreover, Batch Normalization usually comes with two additional learnable scale and bias parameter to ensure same representation space (Ioffe & Szegedy, 2015). These two parameters may able to act as conditional parameters for different switches, since the computation graph of a slimmable network depends on the width configuration. It is noteworthy that the scale and bias can be merged into variables of moving mean and variance after training, thus by default we also use independent scale and bias as they come for free. Importantly, batch normalization layers usually have negligible size (less than 1%) in a model.
 
@@ -523,7 +523,7 @@ S-BN also has two important advantages:
 ### Training of SNN
 > Our primary objective to train a slimmable neural network is to optimize its accuracy averaged from all switches. Thus, we compute the loss of the model by taking an un-weighted sum of all training losses of different switches. Algorithm 1 illustrates a memory-efficient implementation of the training framework, which is straightforward to integrate into current neural network libraries. The switchable width list is predefined, indicating the available switches in a slimmable network. During training, we accumulate back-propagated gradients of all switches, and update weights afterwards.
 
-![Training of SNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dl-snn/snn_training.jpg)
+![Training of SNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/snn_training.jpg)
 
 
 
