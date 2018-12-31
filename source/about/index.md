@@ -41,6 +41,14 @@ Security Product & Technology
   * License completeness with 99.67% Precision and 99.68% Recall
   * Complete the writing of 20 patents related to safety products
 
+* [GeeTest](https://www.geetest.com/) &emsp; 
+2018.09 – 2018.09  
+Data Mining Intern  
+Behavior Verification Code Data Mining
+  * User behavior data analysis & mining base on Spark
+  * Feature extraction of black-and-white sample behavior dataset
+  * Complete the writing of data analysis report
+
 * [Guangzhou Yingzi Technology Co.,Ltd](http://www.yingzi.com/) &emsp; 2018.02 – 2018.03  
 Deep Learning/Python Engineer  
 Animal Identification Center
