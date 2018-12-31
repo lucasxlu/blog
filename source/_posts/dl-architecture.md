@@ -193,12 +193,9 @@ DCNN的架构大致是这样的：Conv + ReLU + (Pool) + (FC) + Softmax。DNN之
 
 尽管Inception的**split-transform-merge**策略是非常行之有效的，但是该网络结构过于复杂，人工设计的痕迹过重(相比之下VGG和ResNet则是由相同的block stacking而成)，给人的感觉就是专门为了ImageNet去做的优化，所以当你想要迁移到其他的dataset时就会比较麻烦。因此，ResNeXt的设计就是：在VGG/ResNet的stacking block的基础上，融合进了Inception的split-transform-merge策略。这就是ResNeXt的基础idea。作者在实验中发现cardinality (the size of the set of transformations)对performance的影响是最大的，甚至要大于width和depth。
 
-> Our method harnesses additions to aggregate a set of transformations. But we argue that it is imprecise to view
-our method as ensembling, because the members to be aggregated
-are trained jointly, not independently.
+> Our method harnesses additions to aggregate a set of transformations. But we argue that it is imprecise to view our method as ensembling, because the members to be aggregated are trained jointly, not independently.
 
-> The above operation can be recast as a combination of
-splitting, transforming, and aggregating. 
+> The above operation can be recast as a combination of splitting, transforming, and aggregating. 
 1. Splitting: the vector $x$ is sliced as a low-dimensional embedding, and in the above, it is a single-dimension subspace $x_i$. 
 2. Transforming: the low-dimensional representation is transformed, and in the above, it is simply scaled: $w_i x_i$.
 3. Aggregating: the transformations in all embeddings are aggregated by $\sum_{i=1}^D$.
@@ -230,7 +227,6 @@ $$
 DenseNet是CVPR2017 Best Paper，是继ResNet之后更加优秀的网络。[前面我们已经介绍过](https://lucasxlu.github.io/blog/2018/10/23/dl-architecture/#ResNet)，ResNet一定程度上解决了gradient vanishing的问题，通过ResNet中的identical mapping使得网络深度可以到达上千层。那么DenseNet又做了哪些改进呢？本文为你一一解答！
 
 在介绍DenseNet之前，我们先回顾一下ResNet做了什么改动，当shortcuts还未被引入DCNN之前，AlexNet/VGG/GoogLeNet都属于构造比较简单的feedforward network，即信息**一层一层往前传播，在BP时梯度一层一层往后传**，但是这样在网络结构很深的时候，就会存在gradient vanishing的问题。所以Kaiming He创造性地引入了skip connection，来使得信息可以从第$i$层之间做identical mapping传播到第$i+t$层，这样就保证了信息的高效流通。
-> 注: 关于ResNet更详细的介绍，请参考[这里](https://lucasxlu.github.io/blog/2018/10/23/dl-architecture/#ResNet)。
 
 ![Dense Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/dense_block.jpg)
 
@@ -257,10 +253,7 @@ where $[x_0,x_1,\cdots,x_{l-1}]$ refers to the concatenation of the feature-maps
 The concatenation operation used in Eq. (2) is not viable when the size of feature-maps changes. However, an essential part of convolutional networks is down-sampling layers that change the size of feature-maps. To facilitate down-sampling in our architecture we divide the network into multiple densely connected dense blocks; see Figure 2. We refer to layers between blocks as transition layers, which do convolution and pooling. The transition layers used in our experiments consist of a batch normalization layer and an $1\times 1$ convolutional layer followed by a $2\times 2$ average pooling layer.
 
 #### Growth rate
-If each function $H_l$ produces $k$ featuremaps, it follows that the $l$-th layer has $k_0 + k\times (l−1)$ input
-feature-maps, where $k_0$ is the number of channels in the input layer. An important difference between DenseNet and
-existing network architectures is that DenseNet can have
-very narrow layers, e.g., $k = 12$. We refer to the hyperparameter $k$ as the growth rate of the network. We show in Section 4 that a relatively small growth rate is sufficient to obtain state-of-the-art results on the datasets that we tested on.
+If each function $H_l$ produces $k$ feature maps, it follows that the $l$-th layer has $k_0 + k\times (l−1)$ input feature-maps, where $k_0$ is the number of channels in the input layer. An important difference between DenseNet and existing network architectures is that DenseNet can have very narrow layers, e.g., $k = 12$. We refer to the hyperparameter $k$ as the growth rate of the network. We show in Section 4 that a relatively small growth rate is sufficient to obtain state-of-the-art results on the datasets that we tested on.
 
 **One explanation for this is that each layer has access to all the preceding feature-maps in its block and, therefore, to the network's "collective knowledge". One can view the feature-maps as the global state of the network. Each layer adds $k$ feature-maps of its own to this state. The growth rate regulates how much new information each layer contributes to the global state. The global state, once written, can be accessed from everywhere within the network and, unlike in traditional network architectures, there is no need to replicate it from layer to layer**.
 
@@ -327,8 +320,7 @@ $$
 #### Discussions
 Paper里也对一些identical mapping的变体进行了实验与探讨，反正scaling, gating, $1\times 1$ convolutions, and dropout都效果不如原来的好。并且，**由于$1\times 1$ conv**引入了更多的参数，理论上讲representation learning ability是要比原来的ResNet要高的，结果却比原来低，说明这种performance drop不是因为representation ability，而是因为优化问题所致。
 
-> The shortcut connections are the most direct paths for the information to propagate. Multiplicative manipulations
-(scaling, gating, $1\times 1$ convolutions, and dropout) on the shortcuts can hamper information propagation and lead to optimization problems. It is noteworthy that the gating and $1\times 1$ convolutional shortcuts introduce more parameters, and should have stronger representational abilities than identity shortcuts. In fact, the shortcut-only gating and $1\times 1$ convolution cover the solution space of identity shortcuts (i.e., they could be optimized as identity shortcuts. However, their training error is higher than that of identity shortcuts,indicating that the degradation of these models is caused by optimization issues, instead of representational abilities.
+> The shortcut connections are the most direct paths for the information to propagate. Multiplicative manipulations (scaling, gating, $1\times 1$ convolutions, and dropout) on the shortcuts can hamper information propagation and lead to optimization problems. It is noteworthy that the gating and $1\times 1$ convolutional shortcuts introduce more parameters, and should have stronger representational abilities than identity shortcuts. In fact, the shortcut-only gating and $1\times 1$ convolution cover the solution space of identity shortcuts (i.e., they could be optimized as identity shortcuts. However, their training error is higher than that of identity shortcuts,indicating that the degradation of these models is caused by optimization issues, instead of representational abilities.
 
 此外，作者还验证了，当使用BN + ReLU作为pre-activation时，模型performance有了显著地改善。这种改善主要由两点带来：
 1. 因为$f$是identical mapping，所以整个模型的optimization更容易了。
@@ -458,8 +450,7 @@ $$
 $\star$代表卷积操作，$v_c^s$是2D spatial kernel，因此代表单通道$v_c$作用在$X$对应的channel上。因输出是所有channels的summation，所以channel dependencies被隐式地包含进了$v_c$。
 
 #### Squeeze: Global Information Embedding
-> In order to tackle the issue of exploiting channel dependencies,
-we first consider the signal to each channel in the output features. Each of the learned filters operates with a local receptive field and consequently each unit of the transformation output $U$ is unable to exploit contextual information outside of this region. This is an issue that becomes more severe in the lower layers of the network whose receptive field sizes are small.
+> In order to tackle the issue of exploiting channel dependencies, we first consider the signal to each channel in the output features. Each of the learned filters operates with a local receptive field and consequently each unit of the transformation output $U$ is unable to exploit contextual information outside of this region. This is an issue that becomes more severe in the lower layers of the network whose receptive field sizes are small.
 
 > To mitigate this problem, we propose to squeeze global spatial information into a channel descriptor. This is achieved by using global average pooling to generate channel-wise statistics. Formally, a statistic $z\in \mathbb{R}^C$ is generated by shrinking $U$ through spatial dimensions $H\times W$, where the $c$-th element of $z$ is calculated by:
 $$
