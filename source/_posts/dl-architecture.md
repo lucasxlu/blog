@@ -24,7 +24,7 @@ Deep Learning有三宝：Network Architecture，Loss Function and Optimization�
 
 AlexNet可以看作是Deep Learning在Large Scale Image Classification Task上第一次大放异彩。也是从AlexNet起，越来越多的Computer Vision Researcher开始将重心由设计更好的hand-crafted features转为设计更加精巧的网络结构。因此AlexNet是具备划时代意义的经典work。
 
-AlexNet整体结构其实非常非常简单，5层conv + 3层FC + Softmax。AlexNet使用了ReLU来代替Sigmoid作为non-linearity transformation，并且使用双GPU训练，以及一系列的Data Augmentation操作，Dropout，对于今天的工作仍然具备很深远的影响。
+AlexNet整体结构其实非常非常简单，5层conv + 2层FC + Softmax。AlexNet使用了ReLU来代替Sigmoid作为non-linearity transformation，并且使用双GPU训练，以及一系列的Data Augmentation操作，Dropout，对于今天的工作仍然具备很深远的影响。
 
 ## VGG
 > Paper: [Very deep convolutional networks for large-scale image recognition](https://arxiv.org/pdf/1409.1556v6.pdf)
