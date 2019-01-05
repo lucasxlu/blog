@@ -38,7 +38,7 @@ Security Product & Technology
   * Facial beauty prediction with 0.89 Pearson Correlation
   * License type recognition with 99.77% Precision and 99.76% Recall
   * Scene recognition (in car/out of car) with 99.89% Precision 99.90% Recall
-  * License completeness with 99.67% Precision and 99.68% Recall
+  * License completeness recognition with 99.67% Precision and 99.68% Recall
   * Complete the writing of 20 patents related to safety products
 
 * [GeeTest](https://www.geetest.com/) &emsp; 
@@ -63,7 +63,7 @@ Malicious Image Recognition
   * Developing deep model (Center Loss + Softmax Loss) to recognize politically sensitive images with 99.87% accuracy
   * Model training and deployment based on Django
 
-* [Beijing Jiewen Technology Co.,Ltd.](http://hxjw.aisino.com/), Huazhong Developing Center. &emsp; 2015.06 – 2016.06  
+* [Beijing Jiewen Technology Co.,Ltd.](http://www.jiewen.com.cn/), Huazhong Developing Center. &emsp; 2015.06 – 2016.06  
 Java/Web Spider Developer  
 Financial Information System & Multi-thread Web Crawling System
   * Develop and maintain web information system based on Java SSM framework and MySQL database.
