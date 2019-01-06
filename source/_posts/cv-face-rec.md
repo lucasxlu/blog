@@ -161,11 +161,7 @@ SphereFace里提出的Loss叫作```A-Softmax(Angular-Softmax)```，来让DCNN学
 
 ### Deep Hypersphere Embedding
 #### Introducing Angular Margin to Softmax Loss
-| Loss Function | Decision Boundary |
-| :---: | :---: |
-| Softmax Loss | $(W_1-W_2)x+b1-b2=0$ |
-| Modified Softmax Loss | $\|x\|(cos\theta_1-cos\theta_2)=0$ |
-| A-Softmax Loss | $\|x\|(cosm\theta_1-cos\theta_2)=0$ for class 1 $\|x\|(cos\theta_1-cosm\theta_2)=0$ for class 2|
+![Decision Boundary of Different Loss Functions](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/loss_decision_boundary.jpg)
 
 > Assume a learned feature $x$ from class 1 is given and $\theta_i$ is the angle between $x$ and $W_i$, it is known that the modified softmax loss requires $cos(\theta_1)>cos(\theta_2)$ to correctly classify $x$. But what if we instead require $cos(m\theta_1)>cos(\theta_2)$ where $m\geq 2$ is a integer in order to correctly classify $x$? It is essentially making the decision more stringent than previous, because we require a lower bound of $cos(\theta_1)$ to be larger than $cos(\theta_2)$. The decision boundary for class 1 is $cos(m\theta_1)= cos(\theta_2)$. Similarly, if we require $cos(m\theta_2)>cos(\theta_1)$ to correctly classify features from class 2, the decision boundary for class 2 is $cos(m\theta_2)=cos(\theta_1)$. Suppose all training samples are correctly classified, such decision boundaries will produce an angular margin of $\frac{m-1}{m+1}\theta_2^1$ where $\theta_2^1$ is the angle between $W_1$ and $W_2$. From angular perspective, correctly classifying $x$ from identity 1 requires $\theta_1<\frac{\theta_2}{m}$, while correctly classifying $x$ from identity 2 requires $\theta_2<\frac{\theta_1}{m}$. Both are more difficult than original $\theta_1<\theta_2$ and $\theta_2<\theta_1$, respectively. By directly formulating this idea into the modified softmax loss Eq. (5), we have:
 $$
