@@ -1,6 +1,6 @@
 ---
 title: "[CV] Medical Image Analysis"
-date: 2019-01-06 23:23:36
+date: 2019-01-12 22:37:36
 mathjax: true
 tags:
 - Computer Vision
@@ -27,12 +27,24 @@ Our experiments consistently demonstrated that
 3. neither shallow tuning nor deep tuning was the optimal choice for a particular application; and 
 4. our layer-wise fine-tuning scheme could offer a practical way to reach the best performance for the application at hand based on the amount of available data.
 
-简而言之，尽管我们观念上可能认为ImageNet中的natural images data distribution(例如semantic meaning, image resolution等等)和医学图像的data distribution差距很大，fine-tune似乎不可行，但是作者做了3类实验(classification/detection/segmentation)，发现```从ImageNet上pretrain的模型到医学图像分析认为上进行fine-tune是可行的，而且会带来性能提升，收敛也更快```。
+简而言之，尽管我们观念上可能认为ImageNet中的natural images data distribution(例如semantic meaning, image resolution等等)和医学图像的data distribution差距很大，fine-tune似乎不可行，但是作者做了3类实验(classification/detection/segmentation)，发现**从ImageNet上pretrain的模型到医学图像分析认为上进行fine-tune是可行的，而且会带来性能提升，收敛也更快**。
 
 ## Deep Learning for Skin Cancer Classification
 > Paper: [Dermatologist-level classification of skin cancer with deep neural networks](https://www.nature.com/articles/nature21056.epdf?author_access_token=8oxIcYWf5UNrNpHsUHd2StRgN0jAjWel9jnR3ZoTv0NXpMHRAJy8Qn10ys2O4tuPakXos4UhQAFZ750CsBNMMsISFHIKinKDMKjShCpHIlYPYUHhNzkn6pSnOCt0Ftf6)
 
+[Inception v3](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf) (pretrained on ImageNet)用于做skin cancer classification，算法效果超过了人类医生。模型没什么太大的新意，记一下医学图像领域常用的两个metric：
+$$
+sensitivity=\frac{True Positive}{Positive}
+$$
 
+$$
+specificity=\frac{True Negative}{Negative}
+$$
+
+## Deep Learning for Chest X-rays Recognition
+> Paper: [CheXNet: Radiologist-Level Pneumonia Detection on Chest X-Rays with Deep Learning](https://arxiv.org/pdf/1711.05225v3.pdf)
+
+Deep Model尽管性能超群，但是Interpretability却非常差，尤其是AI在医学、金融等领域的应用，就会非常看重Interpretability(所以好多金融系统依然还在用规则，而非Machine Learning)。CheXNet是Andrew Ng团队的成果，基础idea是DenseNet做classification，[CAM](http://openaccess.thecvf.com/content_cvpr_2016/papers/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf)做可视化，来显示哪些区域是最discriminative的。
 
 
 
