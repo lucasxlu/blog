@@ -234,7 +234,7 @@ Xception，即Extreme Inception，听名字也知道是Google家的模型啦。�
 
 ### The Xception Architecture
 作者主要基于这样一种假设：**CNN中feature map的cross-channel correlation和spatial correlation能够完全地被解耦**，此外，既然Kaiming大神验证了skip connection在DNN中的有效性，因此Xception自然也加入了shortcut结构。网络结构图和data flow如下图所示：
-![Xception](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/xception.g)
+![Xception](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/xception.png)
 
 实验结果当然是各种好了，值得一提的是：当时GoogLeNet是在中间层也添加了classification layer来辅助信息BP，这种additional classification layer可视为一种Regularization，但是作者在实验中并没有添加这种额外的auxiliary loss tower(读者不妨猜想一下原因？可能是因为当时还没有出现residual connection这种简单而有效的结构，所以在网络很deep的时候，需要在中间层施加loss layer来辅助梯度流通，但是自打residual shortcut被引进后，自然而然也就不需要了)。
 
