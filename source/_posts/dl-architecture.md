@@ -220,6 +220,33 @@ $$
 ![Equivalent Building Blocks of ResNeXt](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/equivalent_building_blocks_of_resnext.jpg)
 
 
+## Xception
+> Paper: [Xception: Deep Learning with Depthwise Separable Convolutions](http://openaccess.thecvf.com/content_cvpr_2017/papers/Chollet_Xception_Deep_Learning_CVPR_2017_paper.pdf)
+
+Xception，即Extreme Inception，听名字也知道是Google家的模型啦。我们前面已经提到过，GoogLeNet(即Inception v1)，是由一系列Inception Block堆积而成的，所以Xception自然也是由一系列basic block堆积而成的。只不过，作者将**depth-wise separable convolution视为一个Inception module**。既然用到了```depth-wise separable convolution```，读者自然也就容易联想到Xception也属于一种light-weighted architecture了。此外，我们都知道，一个deep model的learning ability是与其capacity有很大关联性的，而Xception与它的前辈[Inception v3](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf)在参数量上几乎是一样的，也就是说model capacity几乎一致。然而Xception却能带来显著的提升，这就说明**Xception相比于Inception v3做到了更加高效的参数利用**。
+
+### Basic
+回想一下，对于一个常规的conv layer，它试图在3D空间中学习filters，其中2D为width and height，另外1D为channel。因此**一个conv kernel需要同时处理cross-channel correlation和spatial correlation**。Inception module的想法是通过将其显式地分解为一系列独立处理cross-channel correlation和spatial correlation的操作，来使这个过程更容易、更有效。也就是说，Inception在设计之初就是向着cross-channel correlation和spatial correlation互相解耦这个方向的，所以不将cross-channel correlation和spatial correlation协同优化或许是更好的选择。Xception module和depth-wise separable convolution主要有以下两点区别：
+* operation的顺序：depth-wise convolution通常先进行channel-wise spatial convolution，再进行$1\times 1$ conv；而Xception module先进行$1\times 1$ conv。
+* 在Inception module中，每个operation后面都跟了ReLU，而depth-wise separable convolution后面没有接non-linearity transformation，因此Inception module的非线性能力会更强一些。
+
+其中，第一点是无关紧要的(因为既然是一系列block堆叠而成，那么我假设将第$n$个block的后半部分和第$n+1$个block的前半部分视为一个block呢？顺序是不是就不care了！)；但是第二点引入更多的non-linearity transformation是非常重要的。
+
+### The Xception Architecture
+作者主要基于这样一种假设：**CNN中feature map的cross-channel correlation和spatial correlation能够完全地被解耦**，此外，既然Kaiming大神验证了skip connection在DNN中的有效性，因此Xception自然也加入了shortcut结构。网络结构图和data flow如下图所示：
+![Xception](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/xception.g)
+
+实验结果当然是各种好了，值得一提的是：当时GoogLeNet是在中间层也添加了classification layer来辅助信息BP，这种additional classification layer可视为一种Regularization，但是作者在实验中并没有添加这种额外的auxiliary loss tower(读者不妨猜想一下原因？可能是因为当时还没有出现residual connection这种简单而有效的结构，所以在网络很deep的时候，需要在中间层施加loss layer来辅助梯度流通，但是自打residual shortcut被引进后，自然而然也就不需要了)。
+
+#### Effect of an intermediate activation after pointwise convolutions
+![Training profile with different activations between the depthwise and pointwise operations of the separable convolution layers](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/xception_experiment.png)
+
+从上图可以看到，**没有intermediate activation会带来更快的收敛和更好的performance**。作者也分析了这个原因：
+> It may be that the depth of the intermediate feature spaces on which spatial convolutions are applied is critical to the usefulness of the non-linearity: for deep feature spaces (e.g. those found in Inception modules) the non-linearity is helpful, but for shallow ones (e.g. the 1-channel deep feature spaces of depthwise separable convolutions) it becomes harmful, possibly due to a loss of information.
+
+简而言之，可能在deeper architecture会有用，但是在shallower architecture中引入过多的non-linearity transformation会带来information loss。
+
+
 ## DenseNet
 > Paper: [Densely Connected Convolutional Networks](http://openaccess.thecvf.com/content_cvpr_2017/papers/Huang_Densely_Connected_Convolutional_CVPR_2017_paper.pdf)
 
@@ -536,3 +563,4 @@ S-BN also has two important advantages:
 15. Wang, Jun and Bohn, Tanner and Ling, Charles. [Pelee: A Real-Time Object Detection System on Mobile Devices](https://papers.nips.cc/paper/7466-pelee-a-real-time-object-detection-system-on-mobile-devices.pdf)[C]//Advances in Neural Information Processing Systems 31. 2018:1967--1976.
 16. Hu, Jie and Shen, Li and Sun, Gang. [Squeeze-and-Excitation Networks](http://openaccess.thecvf.com/content_cvpr_2018/papers/Hu_Squeeze-and-Excitation_Networks_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018.
 17. Yu, Jiahui, et al. ["Slimmable Neural Networks."](https://openreview.net/pdf?id=H1gMCsAqY7)[C]//ICLR (2019).
+18. Szegedy, Christian, et al. ["Rethinking the inception architecture for computer vision."](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.
