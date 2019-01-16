@@ -1,6 +1,6 @@
 ---
 title: "[CV] Object Detection"
-date: 2018-12-21 12:14:05
+date: 2019-01-16 17:39:05
 mathjax: true
 tags:
 - Machine Learning
@@ -488,6 +488,70 @@ MTCNN的pipeline如下：
     \mathop{min} \sum_{i=1}^N \sum_{j\in \{det, box, landmark\}}\alpha_j \beta_i^j L_i^j
     $$
 5. Online hard sample mining: 在每个mini-batch里，我们对feedforwad propagation的samples按照loss进行排序，然后选择Top 70%作为hard samples，在BP的时候就只计算这些hard samples的gradients。这就意味着```太容易区分的样本就直接被舍弃了```。
+
+
+## FPN
+> [Feature Pyramid Networks for Object Detection](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf)
+
+最近在写硕士毕业论文，魔改了一个网络叫作Cascaded Feature Pyramid Network (CFPNet)，提到feature pyramid，那就不得不提[FPN](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf)了。熟悉detection的同学都知道，detection领域一个导致bbox框不准的原因就是scale variance。而解决multi-scale的方法常见的有Image Pyramid和Feature Pyramid，其中，Image Pyramid在MTCNN中用到过；Feature Pyramid在之前非deep的传统方法也是很常用的(其实SSD也一定程度上用到了multi-scale training)。这样虽然会提升精度，但是计算量也大大增加了，聪明的读者一点立马就想到了：既然CNN本身的feature map就是from coarse to fine + hierarchical multi-scale的结构，那可不可以直接取CNN的feature map来构造feature pyramid呢？没错！这就是FPN的main idea！
+
+构造Pyramid大致有一下几种常见的方法：
+![Pyramid Construction](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/construct_pyramid.png)
+
+> The principle advantage of featurizing each level of an image pyramid is that it produces a multi-scale feature representation in which all levels are semantically strong, including the high-resolution levels.
+
+本文提出的feature pyramid构造方式如下：up是只在finest level上做prediction，bottom是在每个level上都做prediction。
+![Feature Pyramid](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/feature_pyramid.png)
+
+### Feature Pyramid Networks
+FPN可以接受任意尺寸的single-scale image作为输入，然后以全卷积的方式输出对应成比例multi-scale的feature map。该步骤与具体的backbone network无关。FPN用到了**bottom-up pathway**，**top-down pathway**和**lateral connection**3种结构来构造feature pyramid。
+![FPN Block]((https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/fpn_block.png))
+
+#### Bottom-up pathway
+所谓bottom-up pathway，即从底层到高层，就是在网络中走了一遍feedforwad，然后产生了一系列multi-scale feature map hierarchy (scaling step=2 in ResNet)。熟悉ResNet的同学们都知道，ResNet中引入了skip connection来辅助信息流通，ResNet中的shortcut实际上就是```Element-wise addition```，也就是说每个```residual block的output feature map size都是相同的```。因此在FPN中作者定义这样的layer为stage，并且在每个stage中都定义一个pyramid level。作者选择每个stage最后一层的output来作为```reference set```，用来构造pyramid (因为每个stage中deepest layer有着strongest feature)。
+
+> Specifically, for ResNets [16] we use the feature activations output by each stage’s last residual block. We denote the output of these last residual blocks as {C2, C3, C4, C5} for conv2, conv3, conv4, and conv5 outputs, and note that they have strides of {4, 8, 16, 32} pixels with respect to the input image. We do not include conv1 into the pyramid due to its large memory footprint.
+
+#### Top-down pathway and lateral connections
+所谓top-down pathway，即从高层到底层，了解CNN的同学都知道，high layer包含更丰富的semantic meaning，而low layer包含更多的fine-grained details。但是high layer经过了多次的pooling，所以size自然变得更小了，所以我们就需要首先对其进行upsampling操作。然后通过lateral connection和bottom-up pathway一起enhance得到更强的representation。通过lateral connection连接的feature map size都是一致的，bottom-up的feature包含的semantic meaning比较少，但是细节信息比较多，所以非常适合localisation任务(因为没有经历那么多pooling layer丢失spatial information)。
+
+> With a coarser-resolution feature map, we upsample the spatial resolution by a factor of 2 (using nearest neighbor upsampling for simplicity). The upsampling pled map is then merged with the corresponding bottom-up map (which undergoes a 1×1 convolutional layer to reduce channel dimensions) by element-wise addition. This process is iterated until the finest resolution map is generated.
+
+> To start the iteration, we simply attach a 1×1 convolutional layer on C5 to produce the coarsest resolution map. Finally, we append a 3×3 convolution on each merged map to generate the final feature map, which is to reduce the aliasing effect of upsampling. This final set of feature maps is called {P2, P3, P4, P5}, corresponding to {C2, C3, C4, C5} that are respectively of the same spatial sizes.
+
+因为这些pyramids的所有level用的都是shared classifier/regressor，所以我们将feature dimension固定($d=256$)。
+
+
+#### Feature Pyramid Networks for RPN
+熟悉Faster RCNN的同学自然对RPN不会陌生了，RPN实际上就是个小的fully convolutional network，以sliding window的方式在feature map上滑动来产生region proposals。在最初的RPN设计中，用了一个小型的subnetwork来在dense $3\times 3$ sliding windows上做object classification和bbox regression。
+
+既然RPN是个fixed window size的sliding window detector，所以再scanning pyramid level的feature map之后，能够提升其对scale variance的鲁棒性。
+
+
+This is realized by a $3\times 3$ conv layer followed by two sibling $1\times 1$ conv for classification and regression.
+
+这里我们称之为```network head```，object/non-object和bbox regression target的定义取决于一系列reference boxes(我们称之为```anchors```)。这些anchors包含了pre-defined scales and aspect ratios来cover各种size和scale的object，以保证high recall。
+
+作者将RPN中的single-scale feature map替换为FPN，原来的结构保持不变，即依然是一个$3\times 3$ conv layer再接2个sibling $1\times 1$ conv 做object classification和bbox regression。只不过这个head接在了feature pyramid上。(换言之，输送到multi-task loss的feature是feature pyramid而非原来的single scale)。
+
+> Because the head slides densely over all locations in all pyramid levels, it is not necessary to have multi-scale anchors on a specific level. Instead, we assign anchors of a single scale to each level. Formally, we define the anchors to have areas of {322, 642, 1282, 2562, 5122} pixels on {P2, P3, P4, P5, P6} respectively.1 As in [29] we also use anchors of multiple aspect ratios {1:2, 1:1, 2:1} at each level. So in total there are 15 anchors over the pyramid.
+
+作者注意到，**head中的参数在所有feature pyramid levels都是共享的**，同时对比了不共享的实验，发现不共享的accuracy也是一样的。
+
+> The good performance of sharing parameters indicates that all levels of our pyramid share similar semantic levels. This advantage is analogous to that of using a featurized image pyramid, where a common head classifier can be applied to features computed at any image scale.
+
+#### Feature Pyramid Networks for Fast RCNN
+Fast RCNN通常运行在single-scale feature map上，为了将FPN用在Fast RCNN中，我们需要分配不同scale的RoI对应的pyramid levels。
+
+> We view our feature pyramid as if it were produced from an image pyramid. Thus we can adapt the assignment strategy of region-based detectors in the case when they are run on image pyramids. Formally, we assign an RoI of width $w$ and height $h$ (on the input image to the network) to the level $P_k$ of our feature pyramid by:
+$$
+k=\lfloor k_0 + log_2(\sqrt{wh}/224)\rfloor
+$$
+
+224是ImageNet pretraining size，$k_0$是RoI($w\times h=224^2$)应该被映射到的target level，实验中设置$k_0=4$。
+
+Intuitively, Eqn. (1) means that if the RoI's scale becomes smaller (say,1/2 of 224), it should be mapped into a finer-resolution level (say, $k=3$).
+
 
 
 ## Reference
