@@ -505,7 +505,7 @@ MTCNN的pipeline如下：
 
 ### Feature Pyramid Networks
 FPN可以接受任意尺寸的single-scale image作为输入，然后以全卷积的方式输出对应成比例multi-scale的feature map。该步骤与具体的backbone network无关。FPN用到了**bottom-up pathway**，**top-down pathway**和**lateral connection**3种结构来构造feature pyramid。
-![FPN Block]((https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/fpn_block.png))
+![FPN Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/fpn_block.png)
 
 #### Bottom-up pathway
 所谓bottom-up pathway，即从底层到高层，就是在网络中走了一遍feedforwad，然后产生了一系列multi-scale feature map hierarchy (scaling step=2 in ResNet)。熟悉ResNet的同学们都知道，ResNet中引入了skip connection来辅助信息流通，ResNet中的shortcut实际上就是```Element-wise addition```，也就是说每个```residual block的output feature map size都是相同的```。因此在FPN中作者定义这样的layer为stage，并且在每个stage中都定义一个pyramid level。作者选择每个stage最后一层的output来作为```reference set```，用来构造pyramid (因为每个stage中deepest layer有着strongest feature)。
