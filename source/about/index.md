@@ -31,7 +31,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 
 ## Experience
-* [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – Present  
+* [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
 Algorithm Intern  
 Security Product & Technology
   * License image quality recognition (reflection/blur) with 93.15% Precision and 98.35% Recall
@@ -41,8 +41,7 @@ Security Product & Technology
   * License completeness recognition with 99.67% Precision and 99.68% Recall
   * Complete the writing of 20 patents related to safety products
 
-* [GeeTest](https://www.geetest.com/) &emsp; 
-2018.09 – 2018.09  
+* [GeeTest](https://www.geetest.com/) &emsp; 2018.09 – 2018.09  
 Data Mining Intern  
 Behavior Verification Code Data Mining
   * User behavior data analysis & mining base on Spark
