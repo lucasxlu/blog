@@ -74,7 +74,7 @@ $$
 
 这篇文章将counting问题转化为了一个ranking问题，主要idea就是说**在一张图中，crop下来的部分中包含的crowd number是肯定要不多于原图的crowd number**。然后利用这个作为supervision signal，将其转化成为ranking问题。这样做就可以用到大量未标注crowd density的图片来做self supervised learning。
 
-![Using ranked sub-images for self-supervised training](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ranking_counting.jpg)
+![Using ranked sub-images for self-supervised training](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/ranking_counting.jpg)
 
 Counting近些年来得到了很大的关注，但是给这些人群密集的图片打label是非常麻烦的。最近self-supervised learning得到了越来越多的关注，它可以从auxiliary task(different but related to original supervised task)中进行学习。
 
@@ -103,7 +103,7 @@ $y_i$是groundtruth person density map，$\hat{y}_i$是prediction。
 Crowd counting的groundtruth通常包含一系列坐标点，代表**head center of a person**。为了将其转换为crowd density map，我们用标准差为15 pixels的Gaussian并将scene中所有的persons进行求和来得到$y_i$。
 
 网络结构如下：
-![The multi-task framework combining both counting and ranking information](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ranking_counting_framework.jpg)
+![The multi-task framework combining both counting and ranking information](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/ranking_counting_framework.jpg)
 
 此外，为了进一步提高性能，作者采用了multi-scale sampling策略，即使用56——448 pixels之间varying size的square patches作为输入，作者发现这种multi-scale input可以显著提高模型性能。
 
