@@ -1,6 +1,6 @@
 ---
 title: "[CV] Counting"
-date: 2019-01-12 22:44:44
+date: 2019-01-19 14:38:44
 mathjax: true
 tags:
 - Computer Vision
@@ -67,6 +67,85 @@ $$
 * 传统CNN往往会normalize input来得到fixed size image，但是MCNN支持arbitrary size的input。**因为resize会带来density map中的distortion问题，而这对于crowd density estimate是非常不利的**。
 * 和传统[Multi-column](https://arxiv.org/pdf/1202.2745.pdf)粗暴地将feature map进行average相比，MCNN通过$1\times 1$ conv对其进行linear weighted combination。
 * 在实验中，作者先单独pre-train 每个column，然后再将3个column进行fine-tune。
+
+
+## Leveraging Unlabeled Data for Crowd Counting by Learning to Rank
+> Paper: [Leveraging Unlabeled Data for Crowd Counting by Learning to Rank](http://openaccess.thecvf.com/content_cvpr_2018/papers/Liu_Leveraging_Unlabeled_Data_CVPR_2018_paper.pdf)
+
+这篇文章将counting问题转化为了一个ranking问题，主要idea就是说**在一张图中，crop下来的部分中包含的crowd number是肯定要不多于原图的crowd number**。然后利用这个作为supervision signal，将其转化成为ranking问题。这样做就可以用到大量未标注crowd density的图片来做self supervised learning。
+
+![Using ranked sub-images for self-supervised training](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ranking_counting.jpg)
+
+Counting近些年来得到了很大的关注，但是给这些人群密集的图片打label是非常麻烦的。最近self-supervised learning得到了越来越多的关注，它可以从auxiliary task(different but related to original supervised task)中进行学习。
+
+本文提出的Learning to rank主要基于这样一个idea：尽管我们没办法获知一张crowd image中精确的crowd number，但是可以确定的是，**crop samples from a crowd image contain the same or fewer persons than the original**。这样我们就可以产生一系列sub-images的ranking，去训练网络预估一张图是否比另一张图包含更多的persons。
+
+### Generating ranked image sets for counting
+* Input: A crowd scene image, number of patches $k$ and scale factor $s$.
+* A list of patches ordered according to the number of persons in the patch.
+
+Step 1: Choose an anchor point randomly from the anchor region. The anchor region is defined to be $1/r$ the size of the original image, centered at the original image center, and with the same aspect ratio as the original image.
+
+Step 2: Find the largest square patch centered at the anchor point and contained within the image boundaries.
+
+Step 3: Crop $k−1$ additional square patches, reducing size iteratively by a scale factor s. Keep all patches centered at anchor point.
+
+Step 4: Resize all $k$ patches to input size of network.
+
+### Learning from ranked image sets
+#### Crowd density estimation network
+作者使用VGG16作为backbone network来回归crowd density map，但是去掉了两个fully connected layers和pool5来保留住更多的spatial resolution，并且增加了一个$3\times 3\times 512$和zero padding来保证same size。这里直接使用Euclidean distance来作为loss：
+$$
+L_{c}=\frac{1}{M}\sum_{i=1}^M (y_i-\hat{y}_i)^2
+$$
+$y_i$是groundtruth person density map，$\hat{y}_i$是prediction。
+
+Crowd counting的groundtruth通常包含一系列坐标点，代表**head center of a person**。为了将其转换为crowd density map，我们用标准差为15 pixels的Gaussian并将scene中所有的persons进行求和来得到$y_i$。
+
+网络结构如下：
+![The multi-task framework combining both counting and ranking information](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ranking_counting_framework.jpg)
+
+此外，为了进一步提高性能，作者采用了multi-scale sampling策略，即使用56——448 pixels之间varying size的square patches作为输入，作者发现这种multi-scale input可以显著提高模型性能。
+
+#### Crowd ranking network
+对于ranking network，我们将Euclidean loss替换为average pooling layer + ranking loss。首先，average pooling layer将density map转换为每个spatial unit $\hat{c}(I_i)$中person number的estimate。其中，
+$$
+\hat{c}(I_i)=\frac{1}{M}\sum_{j}\hat{y}_i (x_j)
+$$
+> $x_j$ are the spatial coordinates of the density map, and $M = 14\times 14$ is the number of spatial units in the density map. The ranking which is on the total number of persons in the patch $\hat{C}_i$ also directly holds for its normalized version $\hat{c}_i$, since $\hat{C}(I_i)=M\times \hat{c}(I_i)$.
+
+这里使用了pairwise ranking hinge loss：
+$$
+L_{r}=max(0, \hat{c}(I_2) - \hat{c}(I_1) + \epsilon)
+$$
+$\epsilon$是margin，但是在本文中设为0，我们假定 $\hat{c}(I_1)$ 的rank比 $\hat{c}(I_2)$ 高。
+
+Ranking loss的梯度计算如下：
+$$
+\triangledown_{\theta}L_r=\begin{cases}
+    0 & \hat{c}(I_2) - \hat{c}(I_1) + \epsilon\leq 0\\
+    \triangledown_{\theta}\hat{c}(I_2) - \triangledown_{\theta}\hat{c}(I_1) & otherwise
+\end{cases}
+$$
+
+> When network outputs the correct ranking there is no backpropagated gradient. However, when the network estimates are not in accordance with the correct ranking the backpropagated gradient causes the network to increase its estimate for the patch with lower score and to decrease its estimate for the one with higher score (note that in backpropagation the gradient is subtracted).
+
+在实现中，作者将图片作为one batch(for regression & ranking)更为有效，因此ranking loss可以被计算为：
+$$
+L_r=\sum_{i=1}^M \sum_{j\in S(i)}max(0, \hat{c}(I_j) - \hat{c}(I_i) + \epsilon)
+$$
+> where $S(i)$ is the set of patches containing fewer people than patch $i$. Note that this relation is only defined for patches which are contained by patch $i$. In practice we sample minibatches of 25 images which contain 5 sets of 5 images which can be compared among them resulting in a total of $5\times (4 + 3 + 2 + 1) = 50$ pairs in one minibatch.
+
+#### Combining counting and ranking data
+Joint loss的叠加有以下3中方案：
+* **Ranking plus fine-tuning**: In this approach the network is first trained on the large dataset of ranking data, and is next fine-tuned on the smaller dataset for which density maps are available.
+* **Alternating-task training**: While ranking plus finetuning works well when the two tasks are closely related, it might perform bad for crowd counting because no supervision is performed to indicate what the network is actually supposed to count. Therefore, we propose to alternate between the tasks of counting and ranking. In practice we perform train for 300 minibatches on a single task before switching to the other, then repeat.
+* **Multi-task training**: In the third approach, we add the self-supervised task as a proxy to the supervised counting task and train both simultaneously.
+$$
+L=L_c + \lambda L_r
+$$
+
+
 
 
 
