@@ -1,6 +1,7 @@
 ---
 layout: "about"
 title: "About Me"
+date: 2019-01-19 12:19:56
 description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
