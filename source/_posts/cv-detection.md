@@ -1,6 +1,6 @@
 ---
 title: "[CV] Object Detection"
-date: 2019-01-16 17:39:05
+date: 2019-01-20 15:39:05
 mathjax: true
 tags:
 - Machine Learning
@@ -553,6 +553,36 @@ $$
 Intuitively, Eqn. (1) means that if the RoI's scale becomes smaller (say,1/2 of 224), it should be mapped into a finer-resolution level (say, $k=3$).
 
 
+## DetNet
+> Paper: [DetNet: A Backbone network for Object Detection](https://arxiv.org/pdf/1804.06215v2.pdf)
+
+Deep Learning在Detection取得了越来越多的成果，但是我们通常将分类网络直接拿过来作为detection的backbone，这样的好处是可以直接利用ImageNet pretrained weights。但是毕竟Classification和Detection是不一样的，detection除了要做object recognition之外，还需要给出**bbox location**。直接使用classification network作为detection的backbone有以下问题：
+* 需要额外的stage来处理multi-scale的object (例如FPN)
+* deep classification network中包含了许多的pooling layer，随着网络层数的加深，receptive fields是变大了，但是spatial information越来越少了。所以用于classification的网络结构未必是detection中最优的。
+
+在DetNet中，作者专门设计了additional stage来处理variant scales，但和分类网络不同的是：尽管新增了additional stage，feature map的spatial resolution依然保持不变。此外，为了保证efficiency，DetNet使用了dilated bottleneck structure，这样既可以保证high resolution的feature map，又可以保证large receptive fields。
+
+### DetNet: A Backbone network for Object Detection
+![Backbones in FPN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/backbones_in_fpn.jpg)
+
+#### Motivation
+* **The number of network stages is different**. 典型的classification network包含5个stage (如上图B所示)，每个stage经历$2\times$ pooling或stride=2的conv，因此spatial size被下采样了$2^5=32\times$ 次。和classification network不同，FPN通常采用了更多的stage。
+* **Weak visibility of large objects**. 包含rich semantic information的feature map相对于input image进行了$32\times$ donw-sampling，这样会得到large receptive fields，有利于classification。但是过多的down-sampling带来了spatial information lose，这样会降低detection的性能。
+* **Invisibility of small objects**. 随着context information被encode进来、feature map的spatial resolution越来越低，small object就越来越难被检测到。FPN采取的方法是在shallower layer中预测小物体。但是shallow layer包含的semantic meaning太少了，所以很难预测该object的类别。因此detector必须encode high-level representation来加强其分类能力。
+
+和传统detection backbone相比，DetNet有如下优点：
+* DetNet和其他backbone network有几乎一样数量的stage，因此extra stage可以直接在ImageNet上pretrain。
+* 受益于最后一个stage的high resolution feature map，DetNet在检测小物体方面更有优势。
+
+The detail design of our DetNet59 is illustrated as follows:
+* We introduce the extra stages, e.g., P6, in the backbone which will be later utilized for object detection as in FPN. Meanwhile, we fix the spatial resolution as $16\times$ downsampling even after stage 4.
+* Since the spatial size is xed after stage 4, in order to introduce a new stage, we employ a dilated [29,30,31] bottleneck with $1\times 1$ convolution projection (Fig. 2B) in the begining of the each stage. We nd the model in Fig. 2B is important for multi-stage detectors like FPN. 
+* We apply bottleneck with dilation as a basic network block to efficiently enlarge the receptive led. Since dilated convolution is still time consuming, our stage 5 and stage 6 keep the same channels as stage 4 (256 input channels for bottleneck block). This is dierent from traditional backbone design, which will double channels in a later stage.
+
+网络结构示意图如下：
+![DetNet](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/detnet.jpg)
+
+
 
 ## Reference
 1. Girshick, Ross, et al. ["Rich feature hierarchies for accurate object detection and semantic segmentation."](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
@@ -567,3 +597,4 @@ Intuitively, Eqn. (1) means that if the RoI's scale becomes smaller (say,1/2 of 
 10. Redmon, Joseph, and Ali Farhadi. ["YOLO9000: Better, Faster, Stronger." ](http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf)2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR). IEEE, 2017.
 11. Redmon, Joseph, and Ali Farhadi. ["Yolov3: An incremental improvement."](https://arxiv.org/pdf/1804.02767.pdf) arXiv preprint arXiv:1804.02767 (2018).
 12. Zhang, Kaipeng, et al. ["Joint face detection and alignment using multitask cascaded convolutional networks."](https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf) IEEE Signal Processing Letters 23.10 (2016): 1499-1503.
+13. Li, Zeming, et al. ["DetNet: A Backbone network for Object Detection."](https://arxiv.org/pdf/1804.06215v2.pdf) arXiv preprint arXiv:1804.06215 (2018).
