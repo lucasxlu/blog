@@ -539,9 +539,6 @@ Following [7], our loss function defined on each RoI is the summation of the cro
 ![R-FCN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rfcn.jpg)
 
 
-
-
-
 ## FPN
 > Paper: [Feature Pyramid Networks for Object Detection](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf)
 
