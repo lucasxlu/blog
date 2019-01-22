@@ -1,6 +1,6 @@
 ---
 title: "[CV] Object Detection"
-date: 2019-01-20 15:39:05
+date: 2019-01-22 15:39:05
 mathjax: true
 tags:
 - Machine Learning
@@ -488,10 +488,62 @@ MTCNN的pipeline如下：
     \mathop{min} \sum_{i=1}^N \sum_{j\in \{det, box, landmark\}}\alpha_j \beta_i^j L_i^j
     $$
 5. Online hard sample mining: 在每个mini-batch里，我们对feedforwad propagation的samples按照loss进行排序，然后选择Top 70%作为hard samples，在BP的时候就只计算这些hard samples的gradients。这就意味着```太容易区分的样本就直接被舍弃了```。
+ 
+
+## R-FCN
+> Paper: [R-FCN: Object Detection via Region-based Fully Convolutional Networks](https://papers.nips.cc/paper/6465-r-fcn-object-detection-via-region-based-fully-convolutional-networks.pdf)
+
+这篇文章主要提出了一个Region-based Fully Convolutional Network来处理detection问题，和之前的region-based detector (例如Fast/Faster RCNN)不同，R-FCN能够做到在整张图上共享计算量，而Fast/Faster RCNN需要应用一个per-region RoI subnetwork多次，这种方式计算量就太大了。
+
+我们知道，近些年来的一些网络结构(例如GoogLeNet/ResNet等)都是全卷积结构的，那么是否可以直接将全卷积网络直接用作detection的backbone呢？然而，这种方式在实验中发现检测精度非常低。因此，Kaiming在ResNet Paper中做detection的实验时，将RoI Pooling Layer插在两段conv layers之间，来产生deeper RoI-wise subnetwork以提高精度，但由于RoI Pooling Layer没有共享计算，所以速度上依然比较慢。
+
+作者认为，这种不合理设计(将RoI Pooling Layer插在两段conv layers之间，来产生deeper RoI-wise subnetwork)的根源在于：**image classification需要translation invariance (意思就是说无论你图像怎么平移、怎么变换，依然不会对label semantic meaning造成影响)，而object detection则需要translation variance (因为检测不仅需要object recognition，还需要bbox localisation)**。
+
+我们设想在一个图像分类网络的deeper conv layer对translation是很不敏感的，为了处理这个问题，**ResNet Paper中在conv layer中插入了RoI pooling layer，这种region-specific operation破坏了原来分类网络中的translation invariance，因此post-RoI conv layer在across different region evaluation时就不再是translation-invariant了**。但是因为引入了一些region-wise layers，所以速度上肯定就自然慢了一些。
+
+本文提出了R-FCN，来将translation variance引入到网络中来。通过一系列特殊的conv layer来构造position-sensitive score maps来作为FCN的输出。每个score map都encode了relative spatial position information (例如某个object的左边)。在FCN的顶层，作者额外添加了position-sensitive RoI pooling layer来从这些score maps中得到spatial information，并且没有引入任何额外的weight conv/fc layers。所有learnable layers都是conv layers，并且在整张图上共享，因此encode了detection所需的spatial information。
+
+![Key idea of RFCN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/idea_rfcn.jpg)
+
+### Delve into RFCN
+### Overview 
+先来看一下RFCN的大致流程：给定一系列region proposals (RoIs)，RFCN来将这些region proposals进行分类。FRCN中所有layers都是conv layer，并且是在entire image上进行计算的。最后一个conv layer对每一个category都产生一系列$k^2$个position-sensitive score maps。因此就得到了$k^2(C+1)$-channel的输出，其中$C+1$代表$C$个categories + $1$个background。$k^2$个score maps对应的$k\times k$的spatial grid描述了relative positions。
+
+> For example, with $k\times k = 3\times 3,$ the 9 score maps encode the cases of ```{top-left, top-center, top-right, ..., bottom-right}``` of an object category.
+
+RFCN以positive-sensitive RoI pooling layer结尾，该pooling layer将最后一个conv layer的输出进行综合，并对每个RoI输出scores。
+
+Note：**our position-sensitive RoI layer conducts selective pooling, and each of the $k\times k$ bin aggregates responses from only one score map out of the bank of $k\times k$ score maps. With end-to-end training, this RoI layer shepherds the last convolutional layer to learn specialized position-sensitive score maps.**。
+
+![Visualization of RoI](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/roi_viz.jpg)
+
+### Position-sensitive score maps & Position-sensitive RoI pooling
+为了将position information encode到RoI，我们将每个RoI rectangle划分到$k\times k$个bin (对于size为$w\times h$的RoI，每个bin的size是$\frac{w}{k}\times \frac{h}{k}$)。在RFCN中，最后一个conv layer用来对每个category产生$k^2$个score maps。在第$(i,j)$-th 个bin中，我们定义position-sensitive RoI pooling 来仅仅在第$(i,j)$-th 个score map上进行pool操作。
+$$
+r_c(i,j|\Theta)=\sum_{(x,y)\in bin(i,j)}z_{i,j,c} (x + x_0, y + y_0|\Theta)/n
+$$
+
+$r_c(i,j)$是对应第$c$个category、第$(i,j)$个bin的pooled response，$z_{i,j,c}$是$k^2(C+1)$之外的score map，$(x_0, y_0)$代表RoI中top-left corner (因为我们之前提到过这是relative spatial information)，$n$代表bin中的像素点。第$(i,j)$个bin横跨$\lfloor i \frac{w}{k}\rfloor \leq x < \lceil (i+1)\frac{w}{k}\rceil$、$\lfloor j \frac{h}{k}\rfloor \leq y < \lceil (j+1)\frac{h}{k}\rceil$。
+
+接下来，$k^2$个position-sensitive score在RoI上进行voting，本文简单粗暴地使用averaging来voting，然后对于每个RoI产生$(C+1)$-d的vector：$r_c(\Theta)=\sum_{i,j} r_c(i,j|\Theta)$，然后就是进softmax layer分类。
+
+> The concept of position-sensitive score maps is partially inspired by [3] that develops FCNs for instance-level semantic segmentation. We further introduce the position-sensitive RoI pooling layer that shepherds learning of the score maps for object detection. There is no learnable layer after the RoI layer, enabling nearly cost-free region-wise computation and speeding up both training and inference.
+
+### Training
+训练过程和Fast/Faster RCNN类似：
+> With pre-computed region proposals, it is easy to end-to-end train the R-FCN architecture.
+Following [7], our loss function defined on each RoI is the summation of the cross-entropy loss and the box regression loss: $L(s, t_{x,y,w,h})=L_{cls}(s_{c^{\star}}) + \lambda [c^{\star} > 0]L_{reg}(t,t^{\star})$. Here $c^{\star}$ is the RoI's ground-truth label ($c^{\star}=0$ means background). $L_{cls}(s_{c^{\star}})=-log(s_{c^{\star}})$ is the cross-entropy loss for classification, $L_{reg}$ is the bounding box regression loss as defined in [7], and $t^{\star}$ represents the ground truth box. $[c^{\star} > 0]$ is an indicator which equals to 1 if the argument is true and 0 otherwise. We set the balance weight $\lambda = 1$ as in [7]. We define positive examples as the RoIs that have intersection-over-union (IoU) overlap with a ground-truth box of at least 0.5, and negative otherwise.
+
+> It is easy for our method to adopt online hard example mining (OHEM) [23] during training. Our negligible per-RoI computation enables nearly cost-free example mining. Assuming $N$ proposals per image, in the forward pass, we evaluate the loss of all $N$ proposals. Then we sort all RoIs (positive and negative) by loss and select B RoIs that have the highest loss. Backpropagation [12] is performed based on the selected examples. Because our per-RoI computation is negligible, the forward time is nearly not affected by $N$, in contrast to OHEM Fast R-CNN in [23] that may double training time.
+
+![R-FCN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rfcn.jpg)
+
+
+
 
 
 ## FPN
-> [Feature Pyramid Networks for Object Detection](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf)
+> Paper: [Feature Pyramid Networks for Object Detection](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf)
 
 最近在写硕士毕业论文，魔改了一个网络叫作Cascaded Feature Pyramid Network (CFPNet)，提到feature pyramid，那就不得不提[FPN](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf)了。熟悉detection的同学都知道，detection领域一个导致bbox框不准的原因就是scale variance。而解决multi-scale的方法常见的有Image Pyramid和Feature Pyramid，其中，Image Pyramid在MTCNN中用到过；Feature Pyramid在之前非deep的传统方法也是很常用的(其实SSD也一定程度上用到了multi-scale training)。这样虽然会提升精度，但是计算量也大大增加了，聪明的读者一点立马就想到了：既然CNN本身的feature map就是from coarse to fine + hierarchical multi-scale的结构，那可不可以直接取CNN的feature map来构造feature pyramid呢？没错！这就是FPN的main idea！
 
@@ -598,3 +650,4 @@ The detail design of our DetNet59 is illustrated as follows:
 11. Redmon, Joseph, and Ali Farhadi. ["Yolov3: An incremental improvement."](https://arxiv.org/pdf/1804.02767.pdf) arXiv preprint arXiv:1804.02767 (2018).
 12. Zhang, Kaipeng, et al. ["Joint face detection and alignment using multitask cascaded convolutional networks."](https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf) IEEE Signal Processing Letters 23.10 (2016): 1499-1503.
 13. Li, Zeming, et al. ["DetNet: A Backbone network for Object Detection."](https://arxiv.org/pdf/1804.06215v2.pdf) arXiv preprint arXiv:1804.06215 (2018).
+14. Dai, Jifeng, et al. ["R-fcn: Object detection via region-based fully convolutional networks."](https://papers.nips.cc/paper/6465-r-fcn-object-detection-via-region-based-fully-convolutional-networks.pdf) Advances in neural information processing systems. 2016.
