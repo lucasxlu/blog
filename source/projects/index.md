@@ -12,13 +12,13 @@ description: "Projects for ML/CV/AI/Data Science."
 ## Computer Vision & Deep Learning
 
 * XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[Slides](../about/Presentation.pdf)]
-> An AI Cloud Platform with RESTful APIs. We provide common AI & data services such as *facial attributes analysis*, *data scrapping* etc. based on [[Java](https://github.com/lucasxlu/CVLH.git)] and [[Python](https://github.com/lucasxlu/XCloud.git)].
+> An AI Cloud Platform with RESTful APIs. We provide common AI & data services such as *facial attributes analysis*, *data scrapping* etc. based on [Java](https://github.com/lucasxlu/CVLH.git) and [Python](https://github.com/lucasxlu/XCloud.git).
 
 * XiaoLu AI [[Article-Face Beauty Recognition](https://zhuanlan.zhihu.com/p/29399781)] [[Article-Mate Face Recognition](https://zhuanlan.zhihu.com/p/35135539)] [[Code](https://github.com/lucasxlu/XiaoLuAI.git)]
 > A repository in computer vision and NLP.
 > **Note**: This repo has been ~~deprecated~~, since majority of the source code have been moved to other repositories.
 
-* Image Censorship System [[Article](https://zhuanlan.zhihu.com/p/29016317)] [[Code](https://github.com/lucasxlu/XiaoLuAI/tree/master/imgguarder)] [[Document](./ImageCensor_DocumentV0.1.pdf)]
+* Image Censorship System [[Article](https://zhuanlan.zhihu.com/p/29016317)] [[Code](https://github.com/lucasxlu/XCloud/tree/master/research/imgcensor)] [[Document](./ImageCensor_Document_V0.1.pdf)]
 > A repository for pornography image recognition based on deep learning, random forests with hand-crafted features, and skin model for fast recognition without GPU.
 
 

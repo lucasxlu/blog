@@ -1,6 +1,6 @@
 ---
 title: "[DL] Siamese Neural Network"
-date: 2019-01-25 16:24:38
+date: 2019-01-30 13:30:38
 mathjax: true
 tags:
 - Machine Learning
@@ -66,7 +66,31 @@ $$
 ## Siamese Network in Visual Tracking
 > Paper: [Learning by tracking: Siamese cnn for robust target association](https://www.cv-foundation.org//openaccess/content_cvpr_2016_workshops/w12/papers/Leal-Taixe_Learning_by_Tracking_CVPR_2016_paper.pdf)
 
+这是一篇利用Siamese Network做tracking的paper，由于关注点并非visual tracking，所以这里只记录Siamese Network的设计和使用部分。
 
+本文用到的tracking framework主要idea如下：
+* 利用CNN学习local-spatio-temporal features
+* 学习contextual features来encode position variants
+* XGBoost来对combined features(local + contextual)进行classification
+
+涉及到matching问题，一个很自然的idea就是使用Siamese Network + Contrastive Loss。Siamese Network的组合方式有如下3种：
+* **Cost Function**: Input patches are processed by two parallel branches featuring the same network structure and weights. Finally, the top layers of each branch are fed to a cost function [12, 49] that aims at learning a manifold where different classes are easily separable.
+* **In-Network**: The top layers of the parallel branches processing the two different inputs are concatenated and some more layers are added on top of that [21, 62]. Finally, the standard softmax log-loss function is employed.
+* **Joint data input**: The two input patches are stacked together forming a unified input to the CNN [21]. Again, the softmax log-loss function is used here.
+
+![Siamese CNN topologies](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-siamese-net/siam_net_topology.png)
+
+
+网络结构是这样的：
+![Siamese Network for Tracking Architecture](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-siamese-net/siam_net_tracking_arch.png)
+
+Input接受4种类型的information，即待比对的patch(normalized LUV color space) $I_1$和$I_2$，对应的optical flow components $O_1$和$O_2$。
+
+* Loss of Siamese Network:   
+  $E=\frac{1}{2N}\sum_{n=1}^N (y)d + (1-y)max(\tau - d,0)$  
+  其中，$d=\|a_n-b_n\|_2^2$代表$twin-subnetwork$顶层FC layer输出 $a_n$和$b_n$的$L_2$ normalized response。
+* CNN的结构：先走conv layer with PreReLU $C_{1,2,3}$；然后是max-pooling layer来使得网络对miss alignment更加robust；然后是fully-connected layers $F_{4,5,6,7}$来capture图片中distant parts features的correlation、以及cross-modal的dependencies；最后一个FC layer的输出进入到binary softmax layer，来产生class label (match/no match)的distribution。$F_6$的输出被用作raw patch matching的feature vector。
+* Data augmentation: geometric distortion (rotation, translation, skewing, scaling, flipping); image distortion (guassian blur, noise, gamma).
 
 
 ## Reference
