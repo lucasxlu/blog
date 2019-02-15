@@ -1,7 +1,7 @@
 ---
 layout: "about"
 title: "About Me"
-date: 2019-01-19 12:19:56
+date: 2019-02-15 12:19:56
 description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
@@ -40,7 +40,7 @@ Security Product & Technology
   * License type recognition with 99.77% Precision and 99.76% Recall
   * Scene recognition (in car/out of car) with 99.89% Precision 99.90% Recall
   * License completeness recognition with 99.67% Precision and 99.68% Recall
-  * Complete the writing of 20 patents related to safety products
+  * Complete the writing of 21 patents related to safety products
 
 * [GeeTest](https://www.geetest.com/) &emsp; 2018.09 – 2018.09  
 Data Mining Intern  
@@ -89,9 +89,13 @@ Financial Information System & Multi-thread Web Crawling System
 ## Report & Tutorial
 * Deep Learning for Face Analysis [[Slides](./DL_for_Face_Analysis.pdf)]
 
+## Professional Services
+* Journal Reviewer: [Neurocomputing](https://www.journals.elsevier.com/neurocomputing/)
+
 ## Interests
-* Coding  
 * Reading and Writing  
+* Coding [[Github](https://github.com/lucasxlu)]
+* Photography [[Instagram](https://www.instagram.com/lucas_xulu/)]
 * Design 
 
 
