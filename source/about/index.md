@@ -49,7 +49,7 @@ Behavior Verification Code Data Mining
   * Feature extraction of black-and-white sample behavior dataset
   * Complete the writing of data analysis report
 
-* [Guangzhou Yingzi Technology Co.,Ltd](http://www.yingzi.com/) &emsp; 2018.02 – 2018.03  
+* [Guangzhou Yingzi Technology Co.,Ltd](https://news.yingzi.com/) &emsp; 2018.02 – 2018.03  
 Deep Learning/Python Engineer  
 Animal Identification Center
   * Implementation of Amazon S3 data interaction module; Cleaning and pre-processing of existing Label-Me data
