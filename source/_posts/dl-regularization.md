@@ -1,6 +1,6 @@
 ---
 title: "[DL] Regularization"
-date: 2018-08-06 17:13:07
+date: 2019-02-17 15:35:07
 mathjax: true
 tags:
 - Machine Learning
@@ -155,6 +155,40 @@ Dropout训练与Bagging训练不太一样，Bagging中所有模型都是独立�
 
 Dropout是一个Regularization技术，它减少了模型的有效容量，为了抵消这种影响，我们必须增大模型规模。当Dropout用于Linear Regression时，相当于每个输入特征具有不同weight decay系数的$L_2$ weight decay。每个特征的weight decay系数的大小是由其方差来确定的。其他Linear Model也有类似的结果。对于Deep Model而言，Dropout与weight decay是不等同的。
 
+Dropout是一种非常有效的防止过拟合方法，它可以被理解为是在训练阶段，将神经网络中的一些结点及其连接按一定的概率$p$($p$通常设置为0.5或0.7)进行删减，可看作是许多子网络的Bagging。需要注意的是神经元结点的以概率$p$随机擦除只发生在训练阶段，在测试阶段，我们保留所有的神经元结点，但是需要对权重$w$乘以dropout概率$p$，即$\hat{w}\leftarrow w\times p$。这样可以保证任何隐层结点输出的期望和可以和实际输出保持一致。对原网络施加dropout等同于从原网络采样多个子网络，一个拥有$n$个结点的神经网络，可得到$2^n$个子网络结构。和Bagging不同的是，这些子网络的权重都是共享的，因此所有的参数量依然是$O(n^2)$。
+
+> Dropout的idea来自于生物进化理论：孩子需要从其父亲和母亲分别继承一般的基因，来让自己的生长、以及应对环境方面更加robust。那既然大自然都是这么做的，作者当然也将这个idea用在了Deep Learning里面。加了dropout之后，可以减少DNN中每个neuron对其他neuron的依赖，从而可以让自己学习到更加robust and discriminative的feature，哪怕其他neuron挂了(被dropout掉了)我也依然能让网络work。
+
+Dropout还可以被理解为向网络的hidden layer施加noise来作为regularization。
+
+以一个具备$L$个隐层的神经网络为例，另$l\in \{1,\cdots,L\}$代表第$l$个隐层，$z^{(l)}$代表第$l$个隐层的输入，$y^{(l)}$代表第$l$层的输出($y^{(0)}=x$为输入)，$W^{(l)}$和$b^{(l)}$分别代表第$l$层的权重和偏置，$f$代表非线性变换函数。未施加dropout时，网络的前向计算如下：
+$$
+z^{(l+1)}_i=w^{(l+1)}_i y^l + b^{(l+1)}_i
+$$
+
+$$
+y^{(l+1)}_i = f(z^{(l+1)}_i)
+$$
+
+施加dropout后，网络的前向计算如下：
+$$
+r_j^{(l)}\sim Bernoulli(p)
+$$
+
+$$
+\tilde{y}^{(l)} = r^{(l)}\ast y^{(l)}
+$$
+
+$$
+z^{(l+1)}_i=w^{(l+1)}_i \tilde{y}^l + b^{(l+1)}_i
+$$
+
+$$
+y^{(l+1)}_i = f(z^{(l+1)}_i)
+$$
+
+其中，$\ast$代表点乘运算，$r^{(l)}$代表相互独立的Bernoulli随机向量，其每一维值为1的概率是$p$。
+
 __DropConnect__ 是Dropout的一个特殊情况，其中一个标量权重和单个hidden unit状态之间的每个乘积被认为是可以丢弃的一个单元。
 
 __Batch Normalization__ 在训练时向hidden unit引入加性和乘性噪声重新参数化模型。BatchNorm主要目的是改善优化，但噪声具有正则化效果，有时没必要再使用Dropout。
@@ -163,3 +197,8 @@ __Batch Normalization__ 在训练时向hidden unit引入加性和乘性噪声重
 DNN对对抗样本非常不robust的主要原因之一是 __过度线性__。DNN主要是基于线性块构建的，因此在一些实验中，它们实现的整体函数被证明是高度线性的。这些线性函数很容易优化，不幸的是，如果一个线性函数具有许多输入，那么它的值可以非常迅速地改变。如果我们用$\epsilon$改变每个输入，那么权重为$w$的线性函数可以改变$\epsilon||w||_1$之多，如果$w$是高维的这会是一个非常大的数。Adverserial training通过鼓励网络在训练数据附近的局部区域恒定来限制这一高度敏感的局部线性行为。这可以看作一种明确地向监督NN引入局部恒定先验的方法。
 
 对抗样本也提供了一种实现semi-supervised learning的方法，在与数据集中的label不相关联的点$x$处，模型本身为其分配一些label $\hat{y}$。模型的label $\hat{y}$ 未必是真正的label，但如果模型是高品质的，那么$\hat{y}$提供正确标签的可能性很大。我们可以搜索一个对抗样本$x^{'}$，导致分类器输出一个标签$y^{'}$且$y^{'}\neq y$。不使用真正的label，而是由训练好的model提供label产生的adverserial samples被称为“虚拟对抗样本”。我们可以训练分类器为$x$和$x^{'}$分配相同的标签。__这鼓励classifier学习一个沿着未标注数据所在流形上任意微小变化都很robust的函数__。驱动这种方法的假设是，不同的类通常位于分离的流形上，并且小扰动不会使数据点从一个类的流形跳到另一个类的流形上。
+
+
+## Reference
+1. Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. [Deep learning](https://www.deeplearningbook.org/). MIT press, 2016.
+2. Srivastava, Nitish, et al. ["Dropout: a simple way to prevent neural networks from overfitting."](http://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b43&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer) The Journal of Machine Learning Research 15.1 (2014): 1929-1958.
