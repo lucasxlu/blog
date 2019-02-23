@@ -1,6 +1,6 @@
 ---
 title: "[DL] Regularization"
-date: 2019-02-17 15:35:07
+date: 2019-02-23 23:44:07
 mathjax: true
 tags:
 - Machine Learning
@@ -198,7 +198,49 @@ DNN对对抗样本非常不robust的主要原因之一是 __过度线性__。DNN
 
 对抗样本也提供了一种实现semi-supervised learning的方法，在与数据集中的label不相关联的点$x$处，模型本身为其分配一些label $\hat{y}$。模型的label $\hat{y}$ 未必是真正的label，但如果模型是高品质的，那么$\hat{y}$提供正确标签的可能性很大。我们可以搜索一个对抗样本$x^{'}$，导致分类器输出一个标签$y^{'}$且$y^{'}\neq y$。不使用真正的label，而是由训练好的model提供label产生的adverserial samples被称为“虚拟对抗样本”。我们可以训练分类器为$x$和$x^{'}$分配相同的标签。__这鼓励classifier学习一个沿着未标注数据所在流形上任意微小变化都很robust的函数__。驱动这种方法的假设是，不同的类通常位于分离的流形上，并且小扰动不会使数据点从一个类的流形跳到另一个类的流形上。
 
+## DropBlock
+> Paper: [DropBlock: A regularization method for convolutional networks](https://papers.nips.cc/paper/8271-dropblock-a-regularization-method-for-convolutional-networks.pdf)
+
+熟悉Dropout的同学们可能都知道，它是一种非常有效的正则化方法，并且通常用在**fully connected layers**，但是**在conv layers却不那么work**了。而造成这种现象的原因就在于**dropout是随机drop掉一些feature的，而conv layers中的activation units是spatially correlated的，所以即使你加了dropout，信息依然可以在不同conv layers之间流动，而没法儿完全解耦**。本文提出的DropBlock就是来弥补dropout的这个缺陷的。
+
+这是一篇发表在[NIPS'18]()上的paper，idea其实非常非常简单，下面就来进行一下简要的梳理吧。
+
+DropBlock，顾名思义，就是将feature map中的一块连续区域一起drop掉。因为DropBlock丢掉了correlated area的feature，所以使得网络不得不去其他area寻找合适的activation units来拟合数据。
+
+> 注：这部分的也可从生物进化的角度理解，和上面的dropout类似，读者可参考上面对dropout的讲解一起阅读，此处不再赘述。
+
+结合下图解释一下吧：  
+![DropBlock](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-regularization/dropblock_sample.png)
+
+图中蓝绿色区域代表image中包含semantic meaning最多的region，(b)是随机drop掉一些activation units，而随机drop掉activation units的方式不够effective，因为相邻的activation包含closely related information；(c)是DropBlock，即drop掉一块连续的semantic region，这样可以迫使网络中剩余的units学习到更好的feature来准确分类。
+
+作者在实验中发现使用DropBlock的正确姿势如下：在训练的初始阶段，先使用比较小的DropBlock ratio，然后线性增大DropBlock ratio。
+
+DropBlock有两个超参：$block\_size$和$\gamma$，其中$block\_size$就是feature map中被drop掉的大小，$\gamma$代表被drop掉的activation units的数量。
+
+DropBlock的算法细节如下：  
+![DropBlock](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-regularization/dropblock.png)
+
+和dropout一样，DropBlock也只在training阶段使用，不在inference的时候使用。DropBlock同样可以理解为exponentially-sized小网络的ensemble。These sub-networks
+include a special subset of sub-networks covered by dropout where each network does not see contiguous parts of feature maps.
+
+关于调整超参：
+* 当$block\_size=1$时，DropBlock就和dropout一样，当$block\_size$ cover到整个feature map时，就和另外一种regularization方法SpatialDropout一样了。
+* 在实际中，其实并不需要显示地指定$\gamma$的值，$\gamma$可通过如下方式计算：
+    $$
+    \gamma=\frac{1-keep\_prob}{block\_size^2}\times \frac{feat\_size^2}{feat\_size-block\_size+1}
+    $$
+
+下图是CAM可视化的结果：  
+![DropBlock CAM](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-regularization/dropblock_cam.png)
+
+可以明显看出，**用了DropBlock的网络学习到了spatially distributed representations**。而且**用了更大的block_size后的模型代表更强的regularization，因此模型效果也越好**。
+
+此外，在detection的实验中，作者发现train from scratch的RetinaNet效果比fine-tune from ImageNet的要好，而且加了DropBlock之后的RetinaNet能带来更大的提升，这说明**DropBlock对于object detection是一种非常有效的regularization方法**。
+
+
 
 ## Reference
 1. Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. [Deep learning](https://www.deeplearningbook.org/). MIT press, 2016.
 2. Srivastava, Nitish, et al. ["Dropout: a simple way to prevent neural networks from overfitting."](http://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b43&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer) The Journal of Machine Learning Research 15.1 (2014): 1929-1958.
+3. Ghiasi, Golnaz, Tsung-Yi Lin, and Quoc V. Le. ["DropBlock: A regularization method for convolutional networks."](https://papers.nips.cc/paper/8271-dropblock-a-regularization-method-for-convolutional-networks.pdf) Advances in Neural Information Processing Systems. 2018.
