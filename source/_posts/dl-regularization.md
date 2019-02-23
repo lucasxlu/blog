@@ -203,7 +203,7 @@ DNN对对抗样本非常不robust的主要原因之一是 __过度线性__。DNN
 
 熟悉Dropout的同学们可能都知道，它是一种非常有效的正则化方法，并且通常用在**fully connected layers**，但是**在conv layers却不那么work**了。而造成这种现象的原因就在于**dropout是随机drop掉一些feature的，而conv layers中的activation units是spatially correlated的，所以即使你加了dropout，信息依然可以在不同conv layers之间流动，而没法儿完全解耦**。本文提出的DropBlock就是来弥补dropout的这个缺陷的。
 
-这是一篇发表在[NIPS'18]()上的paper，idea其实非常非常简单，下面就来进行一下简要的梳理吧。
+这是一篇发表在[NIPS'18](https://nips.cc/Conferences/2018/Schedule)上的paper，idea其实非常非常简单，下面就来进行一下简要的梳理吧。
 
 DropBlock，顾名思义，就是将feature map中的一块连续区域一起drop掉。因为DropBlock丢掉了correlated area的feature，所以使得网络不得不去其他area寻找合适的activation units来拟合数据。
 
