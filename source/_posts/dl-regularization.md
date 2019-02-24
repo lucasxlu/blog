@@ -216,7 +216,7 @@ DropBlock，顾名思义，就是将feature map中的一块连续区域一起dro
 
 作者在实验中发现使用DropBlock的正确姿势如下：在训练的初始阶段，先使用比较小的DropBlock ratio，然后线性增大DropBlock ratio。
 
-DropBlock有两个超参：$block\_size$和$\gamma$，其中$block\_size$就是feature map中被drop掉的大小，$\gamma$代表被drop掉的activation units的数量。
+DropBlock有两个超参：$block\_{size}$和$\gamma$，其中$block\_{size}$就是feature map中被drop掉的大小，$\gamma$代表被drop掉的activation units的数量。
 
 DropBlock的算法细节如下：  
 ![DropBlock](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-regularization/dropblock.png)
@@ -225,10 +225,10 @@ DropBlock的算法细节如下：
 include a special subset of sub-networks covered by dropout where each network does not see contiguous parts of feature maps.
 
 关于调整超参：
-* 当$block\_size=1$时，DropBlock就和dropout一样，当$block\_size$ cover到整个feature map时，就和另外一种regularization方法SpatialDropout一样了。
+* 当$block\_{size}=1$时，DropBlock就和dropout一样，当$block\_{size}$ cover到整个feature map时，就和另外一种regularization方法SpatialDropout一样了。
 * 在实际中，其实并不需要显示地指定$\gamma$的值，$\gamma$可通过如下方式计算：
     $$
-    \gamma=\frac{1-keep\_prob}{block\_size^2}\times \frac{feat\_size^2}{feat\_size-block\_size+1}
+    \gamma=\frac{1-keep\_{prob}}{block\_{size}^2}\times \frac{feat\_{size}^2}{feat\_{size}-block\_{size}+1}
     $$
 
 下图是CAM可视化的结果：  
