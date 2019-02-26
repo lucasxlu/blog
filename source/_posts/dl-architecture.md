@@ -1,6 +1,6 @@
 ---
 title: "[DL] Architecture"
-date: 2018-11-18 22:29:40
+date: 2019-02-26 23:29:40
 mathjax: true
 tags:
 - Machine Learning
@@ -103,7 +103,7 @@ CNN驱动了许多视觉任务的飞速发展，然而传统结构例如ResNet�
 
 ### Depth-wise Separable Convolution
 MobileNet最主要的结构就是**Depth-wise Separable Convolution**。DW Conv为什么能减少model size呢？我们不妨先来细致分析一下传统的卷积需要多少参数:
-假设传统卷积层接受一个$D_F\times D_F\times M$的feature map作为输入，然后输出$D_F\times D_F\times N$的feature map，所以卷积核的size是$D_K\times D_K\times M\times N$，所以需要的计算量为：$D_K\times D_K\times M\times N\times D_F\times D_F$，所以Computational Cost依赖于input channel $M$，output channel $N$，卷积核尺寸$D_K\times D_K$和feature map的尺寸$D_F\times D_F$。
+假设传统卷积层接受一个$D_F\times D_F\times M$的feature map $F$作为输入，然后输出$D_G\times D_G\times N$的feature map $G$，所以卷积核的size是$D_K\times D_K\times M\times N$，所以需要的计算量为：$D_K\times D_K\times M\times N\times D_F\times D_F$，所以Computational Cost依赖于input channel $M$，output channel $N$，卷积核尺寸$D_K\times D_K$和feature map的尺寸$D_F\times D_F$。
 
 但是MobileNet应用Depth-wise Conv来对Kernel Size和Output Channel进行了解耦。传统Conv Operation通过filters来对features进行filter，然后重组(Combinations)以形成新的representations。Filtering和Combinations可通过DW Separable Conv来分成两步进行。
 
