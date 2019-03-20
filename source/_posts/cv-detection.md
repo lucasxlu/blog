@@ -411,6 +411,7 @@ YOLO V2用到了一下几个tricks：
 
     在output feature map的每个cell中，网络预测出了5个bounding boxes，对于每个bounding box有5个coordinates: $t_x, t_y, t_w, t_h, t_o$。
     > If the cell is offset from the top left corner of the image by $(c_x, c_y)$ and the bounding box prior has width and height $p_w, p_h$, then the predictions correspond to:
+    
     $$
     b_x=\sigma(t_x)+c_x
     $$
