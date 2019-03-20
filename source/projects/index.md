@@ -18,7 +18,7 @@ description: "Projects for ML/CV/AI/Data Science."
 > A repository in computer vision and NLP.
 > **Note**: This repo has been ~~deprecated~~, since majority of the source code have been moved to other repositories.
 
-* Image Censorship System [[Article](https://zhuanlan.zhihu.com/p/29016317)] [[Code](https://github.com/lucasxlu/XCloud/tree/master/research/imgcensor)] [[Document](./ImageCensor_Document_V0.1.pdf)]
+* Image Censorship System [[Article](https://zhuanlan.zhihu.com/p/29016317)] [[Code](https://github.com/lucasxlu/XCloud/tree/master/research/imgcensor)] [[Document](./ImageCensor_Document_V0.1.pdf)] [[Survey](./SIGAI_PornImageRec_Survey.pdf)]
 > A repository for pornography image recognition based on deep learning, random forests with hand-crafted features, and skin model for fast recognition without GPU.
 
 
