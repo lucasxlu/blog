@@ -25,7 +25,43 @@ catagories:
 
 We propose a novel training method that follows an intuitive approach: learning by association (Figure 1). We feed a batch of labeled and a batch of unlabeled data through a network, producing embeddings for both batches. Then, an imaginary walker is sent from samples in the labeled batch to samples in the unlabeled batch. The transition follows a probability distribution obtained from the similarity of the respective embeddings which we refer to as an association. In order to evaluate whether the association makes sense, a second step is taken back to the labeled batch - again guided by the similarity between the embeddings. It is now easy to check if the cycle ended at the same class from which it was started. We want to maximize the probability of consistent cycles, i.e., walks that return to the same class. **Hence, the network is trained to produce embeddings that capture the essence of the different classes, leveraging unlabeled data**. In addition, a classification loss can be specified, encouraging embeddings to generalize to the actual target task.
 
-![]()
+![Learning by Association](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ml-semi-sup-learning/lbya.jpg)
+
+### Purely Unsupervised Learning
+本文主角Learning by Association是Semi-supervised Learning，先来介绍一下Unsupervised Learning的特点，Unsupervised Learning的有效性依赖于合适的cost function与balanced datasets。对于分类任务而言，
+
+
+## Delve into Learning by association
+Learning by Association算法work的一个assumption就是**若unlabeled sample batch和labeled sample batch属于同一类，那么一个良好的embedding应该具备非常高的Similarity**。令$A_{img}$代表labeled images batch，$B_{img}$代表unlabeled images batch，DNN输出embedding vectors A 和 B，然后walker从根据其mutual similarity从A走到B，并且再从B返回到A，若该walker返回到了与其出发相同的class，则说明walk过程正确。
+
+数学上的problem formulation就是这样的：Learning by Association的目标就是最大化$A\to B\to A$正确的walk。A 和 B 是matrices，它的row代表batch中samples的索引，embedding A 和 B 的相似度定义为：
+$$
+M_{ij}:=A_i\cdot B_j
+$$
+
+然后通过softmax $M$ 将这些 similarities 转换到从 $A$ 到 $B$ 的 transition probabilities：
+$$
+P_{ij}^{ab}=P(B_j|A_i):=(softmax_{cols}(M))_{ij}=exp(M_{ij})/\sum_{j^{'}}exp(M_{ij^{'}})
+$$
+
+同样地，从 $B$ 再返回到 $A$ 的transition probability $P^{ba}$ 可以表示为：
+$$
+P_{ij}^{aba}:=(P^{ab}P^{ba})_{ij}=\sum_k P_{ik}^{ab} P_{kj}^{ba}
+$$
+
+correct walk的probability为：
+$$
+P(correct\_walk)=\frac{1}{|A|}\sum_{i\sim j} P_{ij}^{aba}
+$$
+$i\sim j$ 即 $class(A_i)=class(A_j)$。
+
+最终的 Loss 即为多个joint loss combination：
+$$
+\mathcal{L}_{total}=\mathcal{L}_{walker}+\mathcal{L}_{visit}+\mathcal{L}_{classification}
+$$
+
+* **Walker Loss**: 
+
 
 
 ## Reference
