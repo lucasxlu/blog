@@ -51,7 +51,7 @@ $$
 
 correct walk的probability为：
 $$
-P(correct\_walk)=\frac{1}{|A|}\sum_{i\sim j} P_{ij}^{aba}
+P(correct\_{walk})=\frac{1}{|A|}\sum_{i\sim j} P_{ij}^{aba}
 $$
 $i\sim j$ 即 $class(A_i)=class(A_j)$。
 
@@ -69,11 +69,11 @@ with the uniform target distribution
 $$
 T_{ij}=
 \begin{cases}
-    1/\#class(A_i) & class(A_i)=class(A_j)  \\
+    1/|class(A_i)| & class(A_i)=class(A_j)  \\
     0 & else \\
 \end{cases}
 $$
-where $\#class(A_i)$ is the number of occurrences of $\#class(A_i)$ in $A$.
+where $|class(A_i)|$ is the number of occurrences of $class(A_i)$ in $A$.
 
 * **Visit loss**. There might be samples in the unlabeled batch that are difficult, such as a badly drawn digit in MNIST. In order to make best use of all unlabeled samples, it should be beneficial to "visit" all of them, rather than just making associations among "easy" samples. This encourages embeddings that generalize better. The visit loss is defined as the cross-entropy $H$ between the uniform target distribution $V$ and the visit probabilities $P^{visit}$. If the unsupervised batch contains many classes that are not present in the supervised one, this regularization can be detrimental and needs to be weighted accordingly.
 $$
