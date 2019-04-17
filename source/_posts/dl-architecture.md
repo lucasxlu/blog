@@ -480,7 +480,7 @@ CNN驱动了很多视觉任务的发展，我们可以看到，从最初的AlexN
 SENet主要关注的是channel relationship，通过Squeeze-and-Excitation Unit可以做到feature recalibration，即利用global information来使得feature maps中more informative的feature得到关注，less useful的feature得到抑制(是不是有点Attention的意思?)。
 
 SE Block可以表示如下：对于任意一种变换$F_{tr}: X\to U,X\in \mathbb{R}^{H^{'}\times W^{'}\times C^{'}}, U\in \mathbb{R}^{H\times W\times C}$，我们可以利用SE Block来进行feature recalibration:   
-feature $U$首先经过 _squeeze operation_，来将跨spatial dimension的feature maps进行aggregation，来产生channel descriptor。因该channel descriptor包含了channel-wise feature response的global distribution信息，所以可以让lower layers利用global receptive fields的信息。在该步骤之后，会经历 _excitation operation_，即每一个channel通过 _self-gating mechanism_ 学习到的sample-specific activation，来掌握自己的excitation。然后feature map $U$ 被重新赋予不同的权重以产生SE Block最终的输出。整体示意图如下：
+feature $U$首先经过 __squeeze operation__，来将跨spatial dimension的feature maps进行aggregation，来产生channel descriptor。因该channel descriptor包含了channel-wise feature response的global distribution信息，所以可以让lower layers利用global receptive fields的信息。在该步骤之后，会经历 __excitation operation__，即每一个channel通过 __self-gating mechanism__ 学习到的sample-specific activation，来掌握自己的excitation。然后feature map $U$ 被重新赋予不同的权重以产生SE Block最终的输出。整体示意图如下：
 ![SE Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/se_block.jpg)
 
 Group Convolution可以被用来增加cardinality(即transformation的数量)，读者如果对ResNeXt有印象的话，此处应该不会陌生了。Multi-branch可以被视为group convolution的一种，它可以得到更加flexible的operator composition。
