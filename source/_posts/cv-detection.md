@@ -449,6 +449,19 @@ YOLO V2使用了一种joint training方法来训练classification和detection da
 * **Hierarchical classification**: 因ImageNet是Hierarchy的结构，所以为了让detector获取识别9000-category的识别能力，YOLO V2使用了一种Hierarchical classification方法。这个就不细说了，详情请参考[Paper原文](http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf)吧。
 
 
+## YOLO v3
+> Paper: [Yolov3: An incremental improvement](https://arxiv.org/pdf/1804.02767.pdf)
+
+YOLO v3在one-stage detector里面性能非常强大，与v1和v2相比，idea的novelty并没有什么太大的创新，更多的是借鉴了当前一些CV/DL领域的idea做了改进，本小节就来简要介绍一下YOLO v3。
+主要改进如下：
+1. Loss回传方面：若bbox prior没有被分配到groundtruth object，则不会引入coordinate loss和class prediction loss，而只有objectness。
+2. Class prediction方面：将softmax替换为independent logistic classifier，使得其更适合multi-label classification场景。
+3. 多尺度预测：在每个scale预测3个bbox，因此可以得到$N\times N\times [3\times (4+1+80)]$的tensor，来满足4个bbox offsets、1个objectness prediction，以及80个category。
+4. 借鉴FPN获取更rich的feature representation：将earlier layer的feature与upsample之后的high-level features进行concatenate，来获取高层semantic meaning更强的信息，以及低层更fine-grained的信息。然后添加额外的conv layers进行进一步提纯。
+5. 与YOLO v2一样，同样使用KMeans进行bbox prior的选取，一共有9个clusters：$(10\times 13), (16\times 30), (33\times 23), (30\times 61), (62\times 45), (59\times 119), (116\times 90), (156\times 198), (373\times 326)$。
+6. DarkNet53 as backbone：常规套路，引入了shortcut结构。
+
+
 ## MTCNN
 > Paper: [Joint face detection and alignment using multitask cascaded convolutional networks](https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf)
 

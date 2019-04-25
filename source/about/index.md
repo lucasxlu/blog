@@ -6,26 +6,29 @@ description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
 ## Self Introduction
-I am a third-year master major in machine learning and computer vision. My research interests include Facial Attribute Analysis, Deep Learning and Data Science. 
+I am a third-year master major in Machine Learning and Computer Vision. My research interests include Facial Attribute Analysis, Deep Learning and Data Science. 
 
 ![LucasX](https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg)
 
 __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)] 
 
+
 ## Academic Papers
 * **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//Pacific Rim Conference on Multimedia. Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[Code](https://github.com/lucasxlu/CRNet.git)]
 * Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition  
-* Multi-Task Tree Convolutional Neural Network for Facial Expression Recognition and Face Analysis
+* Multi-Task Tree Convolutional Neural Network for Facial Expression Recognition
 * Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform [[arXiv](https://arxiv.org/abs/1903.00384)] [[Code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
 * Transferring Rich Deep Features for Facial Beauty Prediction [[arXiv](https://arxiv.org/abs/1803.07253)] [[Code](https://github.com/lucasxlu/TransFBP.git)] [[Slides](./Presentation_TransFBP.pdf)]
 * An Automatic Method for Internet Terror Information Classification based on Deep Learning and Random Forests (Chinese)
 * Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Paper](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) among all papers of Hubei Province in 2015. Chinese) [[Code](https://github.com/xuludev/System.git)]  
+
 
 ## Projects
 * XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]  
   An AI cloud platform based on Java & Python, to provide RESTful APIs in web data crawling, text classification, sentiment analysis, document   similarity measuring, image classification and HTML5-based data visualization.
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
   A repository for job data crawling and data analysis based on Python3. This repo has received over **200 stars** and **120+ forks**. More details can be read at [here](https://www.zhihu.com/question/36132174/answer/94392659).
+
 
 ## Competition
 * My algorithm named **TreeCNN** ranks the 1st place on **Facial Expression Recognition Challenge** on [Real-word Affective Face Database (RAF-DB)](http://www.whdeng.cn/raf/model1.html).
@@ -79,23 +82,23 @@ Financial Information System & Multi-thread Web Crawling System
 * Database: MongoDB/MySQL/Oracle  
 * Others: Web Crawler/Web Development/PPT
 
+
 ## Award
-* 1st Prize in Academic Research Report (outperform all Ph.Ds). Deep Learning for Face Analysis and Fine-grained Visual Recognition. [[Slides](./DL_for_Face_Analysis_and_FGVC.pdf)]
-* 1st Prize in Academic Research Report (outperform all Ph.Ds). Combining Machine Learning and Data-driven Approaches for AI Services. [[Slides](./Presentation.pdf)]
 * 1st Scholar Prize [[Slides](./Research_Overview.pdf)]
 * 2nd Scholar Prize  
 * 3rd Prize in NECCS (national level)  
 
-## Report & Tutorial
-* Deep Learning for Face Analysis [[Slides](./DL_for_Face_Analysis.pdf)]
 
 ## Professional Activities
 * Elsevier Journal Reviewer of [Neurocomputing (NEUCOM)](https://www.journals.elsevier.com/neurocomputing/)
+* Report about Deep Learning for Face Analysis [[Slides](./DL_for_Face_Analysis.pdf)]
+* Academic Research Report (1st Prize). Deep Learning for Face Analysis and Fine-grained Visual Recognition. [[Slides](./DL_for_Face_Analysis_and_FGVC.pdf)]
+* Academic Research Report (1st Prize). Combining Machine Learning and Data-driven Approaches for AI Services. [[Slides](./Presentation.pdf)]
 
 ## Interests
 * Reading and Writing  
 * Coding [[Github](https://github.com/lucasxlu)]
-* Photography [[Instagram](https://www.instagram.com/lucas_xulu/)]
+* Photography [[Instagram](https://www.instagram.com/lucasx_xulu/)]
 * Design 
 
 
