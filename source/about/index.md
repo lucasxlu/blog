@@ -1,7 +1,7 @@
 ---
 layout: "about"
 title: "About Me"
-date: 2019-02-15 12:19:56
+date: 2019-04-25 12:19:56
 description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
@@ -23,14 +23,6 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Paper](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) among all papers of Hubei Province in 2015. Chinese) [[Code](https://github.com/xuludev/System.git)]  
 
 
-<<<<<<< HEAD
-=======
-## Academic Service
-* Elsevier Journal Reviewer of [Neurocomputing (NEUCOM)](https://www.journals.elsevier.com/neurocomputing/)
-* Report & Talk about **Deep Learning for Face Analysis** [[Slides](./DL_for_Face_Analysis.pdf)]
-
-
->>>>>>> f57e22e2d22454cd85ddc4e3cb9cee3c32c35599
 ## Projects
 * XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]  
   An AI cloud platform based on Java & Python, to provide RESTful APIs in web data crawling, text classification, sentiment analysis, document similarity measuring, image classification and HTML5-based data visualization.
@@ -96,25 +88,18 @@ Financial Information System & Multi-thread Web Crawling System
 * 2nd Scholar Prize  
 * 3rd Prize in NECCS (national level)  
 
-<<<<<<< HEAD
 
 ## Professional Activities
 * Elsevier Journal Reviewer of [Neurocomputing (NEUCOM)](https://www.journals.elsevier.com/neurocomputing/)
 * Report about Deep Learning for Face Analysis [[Slides](./DL_for_Face_Analysis.pdf)]
 * Academic Research Report (1st Prize). Deep Learning for Face Analysis and Fine-grained Visual Recognition. [[Slides](./DL_for_Face_Analysis_and_FGVC.pdf)]
 * Academic Research Report (1st Prize). Combining Machine Learning and Data-driven Approaches for AI Services. [[Slides](./Presentation.pdf)]
-=======
->>>>>>> f57e22e2d22454cd85ddc4e3cb9cee3c32c35599
 
 ## Interests
 * Reading and Writing
 * Movie and Music
 * Coding [[Github](https://github.com/lucasxlu)]
-<<<<<<< HEAD
 * Photography [[Instagram](https://www.instagram.com/lucasx_xulu/)]
-=======
-* Photography [[Instagram](https://www.instagram.com/lucasx_xulu)]
->>>>>>> f57e22e2d22454cd85ddc4e3cb9cee3c32c35599
 * Design 
 
 
