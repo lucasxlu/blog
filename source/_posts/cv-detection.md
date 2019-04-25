@@ -229,7 +229,7 @@ RPN是一个全卷积网络，可以接受任意尺寸的image作为输入，并
 $$
 L(\{p_i\},\{t_i\})=\frac{1}{N_{cls}} \sum_i L_{cls}(p_i,p_i^{\star}) + \lambda \frac{1}{N_{reg}} \sum_i p_i^{\star} L_{reg}(t_i,t_i^{\star})
 $$
-$p_i$是anchor $i$ 被预测为是一个object的概率，若anchor为positive，则groundtruth label $p_i^{{\star}}$为1；若anchor为negative则为0；$t_i$是包含4个预测bbox坐标点的向量，$t_i^{\star}$是groundtruth positive anchor坐标点的向量。$L_{cls}$是二分类的Log Loss(object VS non-object)。对于regression loss，文章使用$L_{reg}(t_i,t_i^{\star})=R(t_i-t_i^{\star})$，其中$R$是Smooth L1 Loss(和Fast RCNN中一样)。$p_i^{\star} L_{reg}$表示仅仅在positive anchor ($p_i^{\star}=1$)时才被激活，否则($p_i^{\star}=0$)不激活。
+$p_i$是anchor $i$ 被预测为是一个object的概率，若anchor为positive，则groundtruth label $p_i^{\star}$为1；若anchor为negative则为0；$t_i$是包含4个预测bbox坐标点的向量，$t_i^{\star}$是groundtruth positive anchor坐标点的向量。$L_{cls}$是二分类的Log Loss(object VS non-object)。对于regression loss，文章使用$L_{reg}(t_i,t_i^{\star})=R(t_i-t_i^{\star})$，其中$R$是Smooth L1 Loss(和Fast RCNN中一样)。$p_i^{\star} L_{reg}$表示仅仅在positive anchor ($p_i^{\star}=1$)时才被激活，否则($p_i^{\star}=0$)不激活。
 
 Bounding Box Regression依旧是采用之前的pipeline：
 $$
