@@ -196,7 +196,7 @@ $U$是由$W$前$t$个left-singular vectors组成的$u\times t$矩阵，$\Sigma_t
 ## Faster RCNN
 > Paper: [Faster r-cnn: Towards real-time object detection with region proposal networks](http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf)
 
-Faster RCNN也是Object Detection领域里一个非常具有代表性的工作，一个最大的改进就是Region Proposal Network(RPN)，RPN究竟神奇在什么地方呢？我们先来回顾一下RCNN--SPP--Fast RCNN，这些都属于two-stage detector，什么意思呢？就是先利用<font color="red">Selective Search</font>生成2000个Region Proposal，然后再将其转化为一个机器学习中的分类问题。而<font color="red">Selective Search</font>实际上是非常低效的，RPN则很好地完善了这一点，即直接从整个Network Architecture里生成Region Proposal。RPN是一种全卷积网络，它可以同时预测object bounds，以及objectness score。因为RPN的Feature是和Detection Network共享的，所以整个Region Proposal的生成几乎是cost-free的。所以，这也就是Faster RCNN中**Faster**一词的由来。
+Faster RCNN也是Object Detection领域里一个非常具有代表性的工作，一个最大的改进就是Region Proposal Network(RPN)，RPN究竟神奇在什么地方呢？我们先来回顾一下RCNN--SPP--Fast RCNN，这些都属于two-stage detector，什么意思呢？就是先利用Selective Search生成2000个Region Proposal，然后再将其转化为一个机器学习中的分类问题。而Selective Search实际上是非常低效的，RPN则很好地完善了这一点，即直接从整个Network Architecture里生成Region Proposal。RPN是一种全卷积网络，它可以同时预测object bounds，以及objectness score。因为RPN的Feature是和Detection Network共享的，所以整个Region Proposal的生成几乎是cost-free的。所以，这也就是Faster RCNN中**Faster**一词的由来。
 
 
 ### What is Faster RCNN?
@@ -204,9 +204,9 @@ $$
 Faster RCNN = Fast RCNN + RPN
 $$
 按照惯例，一个算法的提出显然是为了解决之前算法的不足。那之前的算法都有什么问题呢？
-如果对之前的detector熟悉的话，shared features between proposals已经被解决，但是<font color="red">Region Proposal的生成变成了最大的计算瓶颈</font>。这便是RPN产生的缘由。
+如果对之前的detector熟悉的话，shared features between proposals已经被解决，但是Region Proposal的生成变成了最大的计算瓶颈。这便是RPN产生的缘由。
 
-作者注意到，conv feature maps used by region-based detectors也可以被用于生成region proposals。在这些conv features顶端，<font color="red">通过添加两个额外的卷积层来构造RPN：一个conv layer用于encode每个conv feature map position到一个低维向量(256-d)；另一个conv layer在每一个conv feature map position中输出k个region proposal with various scales and aspect ratios的objectness score和regression bounds。</font>下面重点介绍一下RPN。
+作者注意到，conv feature maps used by region-based detectors也可以被用于生成region proposals。在这些conv features顶端，**通过添加两个额外的卷积层来构造RPN：一个conv layer用于encode每个conv feature map position到一个低维向量(256-d)；另一个conv layer在每一个conv feature map position中输出k个region proposal with various scales and aspect ratios的objectness score和regression bounds。**下面重点介绍一下RPN。
 
 ### Region Proposal Network
 RPN是一个全卷积网络，可以接受任意尺寸的image作为输入，并且输出一系列object proposals以及其对应的objectness score。那么RPN是如何生成region proposals的呢？
@@ -229,7 +229,7 @@ RPN是一个全卷积网络，可以接受任意尺寸的image作为输入，并
 $$
 L(\{p_i\},\{t_i\})=\frac{1}{N_{cls}} \sum_i L_{cls}(p_i,p_i^{\star}) + \lambda \frac{1}{N_{reg}} \sum_i p_i^{\star} L_{reg}(t_i,t_i^{\star})
 $$
-$p_i$是anchor $i$ 被预测为是一个object的概率，若anchor为positive，则groundtruth label $p_i^{{\star}}$为1；若anchor为negative则为0；$t_i$是包含4个预测bbox坐标点的向量，$t_i^{\star}$是groundtruth positive anchor坐标点的向量。$L_{cls}$是二分类的Log Loss(object VS non-object)。对于regression loss，文章使用$L_{reg}(t_i,t_i^{\star})=R(t_i-t_i^{\star})$，其中$R$是Smooth L1 Loss(和Fast RCNN中一样)。$p_i^{\star} L_{reg}$表示<font color="red">仅仅在positive anchor ($p_i^{\star}=1$)时才被激活，否则($p_i^{\star}=0$)不激活</font>。
+$p_i$是anchor $i$ 被预测为是一个object的概率，若anchor为positive，则groundtruth label $p_i^{{\star}}$为1；若anchor为negative则为0；$t_i$是包含4个预测bbox坐标点的向量，$t_i^{\star}$是groundtruth positive anchor坐标点的向量。$L_{cls}$是二分类的Log Loss(object VS non-object)。对于regression loss，文章使用$L_{reg}(t_i,t_i^{\star})=R(t_i-t_i^{\star})$，其中$R$是Smooth L1 Loss(和Fast RCNN中一样)。$p_i^{\star} L_{reg}$表示仅仅在positive anchor ($p_i^{\star}=1$)时才被激活，否则($p_i^{\star}=0$)不激活。
 
 Bounding Box Regression依旧是采用之前的pipeline：
 $$
