@@ -1,6 +1,6 @@
 ---
 title: "[CV] Counting"
-date: 2019-01-19 14:38:44
+date: 2019-03-20 19:38:44
 mathjax: true
 tags:
 - Computer Vision
@@ -146,7 +146,100 @@ L=L_c + \lambda L_r
 $$
 
 
+## Learning from Synthetic Data for Crowd Counting in the Wild
+> Paper: [Learning from Synthetic Data for Crowd Counting in the Wild](https://arxiv.org/pdf/1903.03303.pdf)
 
+这里介绍一篇CVPR'19上面一篇做counting的文章，主体思想比较简单，但是非常有意思 (利用GTA渲染的图片作为auxiliary data)。熟悉counting的同学都知道，给密集的图片标注是即容易出错、又难以标注的活。同时，玩过GTA游戏的同学也知道，现在最新版的GTA可以渲染出非常逼真的效果，那么可不可以利用GTA游戏渲染引起来手动生成synthetic data，然后再到target dataset上finetune呢？OK，现在问题是不是就转化成了如何去有效解决Transfer Learning中的domain adaptation问题了呢？
+
+Pattern Recognition task中，**feature matters!** 因此之前很多counting领域的工作都是在设计discriminative的feature，或者设计更加优秀的DNN去学习更加discriminative的feature，常见的套路就是“multi-scale”、“context”、“hierarchical”等等，具体的可以参考上面的讲解，此处不再赘述。
+
+为了有效解决transfer learning中的domain adaptation问题，作者提出了**SSIM Embedding Cycle GAN**来transfer synthetic scenes to realistic scenes。在训练过程中，作者使用了SSIM (Structural Similarity Index) Loss，它可以作为generator和original images中的penalty，使用了SSIM Loss的Cycle GAN能够得到比基础的Cycle GAN保留更多细节信息的图片。
+
+> 注：SSIM is nothing new. 熟悉Image Quality Assessment的同学应该很熟悉。
+
+### Supervised Crowd Counting
+基础网络的设计方面，作者改进了著名的VGG16至FCN-VGG16模型，然后新增了一个Spatial Encoder与regression layer来回归counting点数量。网络结构SFCN结构如下图所示，其他的没啥好说的。
+
+![SFCN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/sfcn.jpg)
+
+
+### Crowd Counting via Domain Adaptation
+接下来介绍一下本文的重点，即作者是如何使用SSIM Embedding Cycle GAN来将从GTA游戏中渲染的图片translate到photo-realistic images中的。
+
+#### SSIM Embedding Cycle GAN
+所谓Domain Adaptation，意思就是学习synthetic domain $\mathcal{S}$ 和real-world domain $\mathcal{R}$ 之间的某种translation mapping。其中，$\mathcal{S}$ 有图片 $I_{\mathcal{S}}$和count labels $L_{\mathcal{S}}$，而real-world domain $\mathcal{R}$ 只有图片 $I_\mathcal{R}$。因此，我们的任务就是给定图片 $I_{\mathcal{S}}$、count labels $L_{\mathcal{S}}$、图片 $I_\mathcal{R}$，来训练模型去预测 $\mathcal{R}$ 的density map。
+
+不妨先来介绍一下[Cycle GAN](http://openaccess.thecvf.com/content_ICCV_2017/papers/Zhu_Unpaired_Image-To-Image_Translation_ICCV_2017_paper.pdf)：  
+给定domain $\mathcal{S}$ 和domain $\mathcal{R}$，我们定义两个generator $G_{\mathcal{S}\to \mathcal{R}}$ 与 $G_{\mathcal{R}\to \mathcal{S}}$。在Cycle-consistent loss背景下，对于sample $i_{\mathcal{S}}$ 与 sample $i_{\mathcal{R}}$，我们的目标可以表示为：
+$$
+i_{\mathcal{S}}\to G_{\mathcal{S}\to \mathcal{R}}(i_{\mathcal{S}})\to G_{\mathcal{R}\to \mathcal{S}}(G_{\mathcal{S}\to \mathcal{R}}(i_{\mathcal{S}}))\approx i_{\mathcal{S}}
+$$
+
+同样地，对于 $i_{\mathcal{R}}$ 的优化目标，和上述 $i_{\mathcal{S}}$ 类似，只不过要将 $\mathcal{S}$ 和 $\mathcal{R}$ 进行逆转，此处不再赘述。
+
+Cycle-consistent Loss定义为Cycle Architecture上的$L_1$ penalty：
+$$
+\mathcal{L}_{cycle}(G_{\mathcal{S}\to \mathcal{R}}, G_{\mathcal{R}\to \mathcal{S}}, \mathcal{S}, \mathcal{R})=
+$$
+$$
+\mathbb{E}_{i_{\mathcal{S}}\sim I_{\mathcal{S}}}[\|G_{\mathcal{R}\to \mathcal{S}}(G_{\mathcal{S}\to \mathcal{R}}(i_{\mathcal{S}})) - i_{\mathcal{S}}\|_1] + 
+$$
+$$
+\mathbb{E}_{i_{\mathcal{R}}\sim I_{\mathcal{R}}}[\|G_{\mathcal{S}\to \mathcal{R}}(G_{\mathcal{R}\to \mathcal{S}}(i_{\mathcal{R}})) - i_{\mathcal{R}}\|_1]
+$$
+
+然后，discriminator $D_{\mathcal{R}}$ 被用来判别images是 $I_{\mathcal{R}}$ 还是 $G_{\mathcal{S}\to \mathcal{R}}(I_{\mathcal{S}})$，$D_{\mathcal{S}}$  被用来判别images是 $I_{\mathcal{S}}$ 还是 $G_{\mathcal{R}\to \mathcal{S}}(I_{\mathcal{R}})$。
+
+因此，training的adverserial loss为：
+$$
+\mathcal{L}_{GAN}(G_{\mathcal{S}\to \mathcal{R}}, D_{\mathcal{R}}, \mathcal{S}, \mathcal{R})=
+\mathbb{E}_{i_{\mathcal{R}}\sim I_{\mathcal{R}}}[log(D_{\mathcal{R}}(i_{\mathcal{R}}))]+
+\mathbb{E}_{i_{\mathcal{S}}\sim I_{\mathcal{S}}}[log(D_{\mathcal{S}}(i_{\mathcal{S}}))]
+$$
+
+因此，总体的Loss Function定义为：
+$$
+\mathcal{L}_{CycleGAN}(G_{\mathcal{S}\to \mathcal{R}},G_{\mathcal{R}\to \mathcal{S}},D_{\mathcal{R}}, D_{\mathcal{S}}, \mathcal{S}, \mathcal{R})=
+$$
+$$
+\mathcal{L}_{GAN}(G_{\mathcal{S}\to \mathcal{R}}, D_{\mathcal{R}}, \mathcal{S}, \mathcal{R})+
+$$
+$$
+\mathcal{L}_{GAN}(G_{\mathcal{R}\to \mathcal{S}}, D_{\mathcal{S}}, \mathcal{S}, \mathcal{R})+
+$$
+$$
+\lambda \mathcal{L}_{cycle}(G_{\mathcal{R}\to \mathcal{S}}, G_{\mathcal{S}\to \mathcal{R}}, \mathcal{S}, \mathcal{R})
+$$
+
+下面介绍一下本文另一个重点——**SSIM Embedding Cycle-consistent Loss**，在crowd场景下，high-density和low-density最大的区别就是local pattern和texture features。然而，若直接使用原始的Cycle-consistent loss会丢失掉很多细节信息，因此作者借用了Image Quality Assessment领域中经常使用的SSMI ($SSIM\in [-1, 1]$，若SSIM越大，则说明该图片质量越高)。**SSIM Embedding能够保证original images和reconstructed images有较高的结构相似性(Structural Similarity)，因此可促进两个generator在training过程中保持一定程度的SS**。
+
+SE Cycle-GAN的目标如下：
+$$
+\mathcal{L}_{SE_{cycle}}(G_{\mathcal{S}\to \mathcal{R}},G_{\mathcal{R}\to \mathcal{S}},\mathcal{S},\mathcal{R})=
+$$
+$$
+\mathbb{E}_{i_{\mathcal{S}}\sim I_{\mathcal{S}}}[1-SSIM(i_{\mathcal{S}},G_{\mathcal{R}\to \mathcal{S}}(G_{\mathcal{S}\to \mathcal{R}}(i_{\mathcal{S}})))]+
+$$
+$$
+\mathbb{E}_{i_{\mathcal{R}}\sim I_{\mathcal{R}}}[1-SSIM(i_{\mathcal{R}},G_{\mathcal{S}\to \mathcal{R}}(G_{\mathcal{R}\to \mathcal{S}}(i_{\mathcal{R}})))]
+$$
+
+最终的Loss如下：
+$$
+\mathcal{L}_{ours}(G_{\mathcal{S}\to \mathcal{R}},G_{\mathcal{R}\to \mathcal{S}},D_{\mathcal{R}}, D_{\mathcal{S}}, \mathcal{S}, \mathcal{R})=
+$$
+$$
+\mathcal{L}_{GAN}(G_{\mathcal{S}\to \mathcal{R}}, D_{\mathcal{R}}, \mathcal{S}, \mathcal{R})+
+$$
+$$
+\mathcal{L}_{GAN}(G_{\mathcal{R}\to \mathcal{S}}, D_{\mathcal{S}}, \mathcal{S}, \mathcal{R})+
+$$
+$$
+\lambda \mathcal{L}_{cycle}(G_{\mathcal{R}\to \mathcal{S}}, G_{\mathcal{S}\to \mathcal{R}}, \mathcal{S}, \mathcal{R})+
+$$
+$$
+\mu \mathcal{L}_{SE_{cycle}}(G_{\mathcal{S}\to \mathcal{R}},G_{\mathcal{R}\to \mathcal{S}},\mathcal{S},\mathcal{R})
+$$
 
 
 ## Reference
@@ -161,3 +254,4 @@ $$
 9.  Chattopadhyay, Prithvijit, et al. ["Counting everyday objects in everyday scenes."](http://openaccess.thecvf.com/content_cvpr_2017/papers/Chattopadhyay_Counting_Everyday_Objects_CVPR_2017_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2017.
 10. Ranjan, Viresh, Hieu Le, and Minh Hoai. ["Iterative crowd counting."](http://openaccess.thecvf.com/content_ECCV_2018/papers/Viresh_Ranjan_Iterative_Crowd_Counting_ECCV_2018_paper.pdf) Proceedings of the European Conference on Computer Vision (ECCV). 2018.
 11. Cao, Xinkun, et al. ["Scale aggregation network for accurate and efficient crowd counting."](http://openaccess.thecvf.com/content_ECCV_2018/papers/Xinkun_Cao_Scale_Aggregation_Network_ECCV_2018_paper.pdf) Proceedings of the European Conference on Computer Vision (ECCV). 2018.
+12. Wang, Qi, et al. ["Learning from Synthetic Data for Crowd Counting in the Wild."](https://arxiv.org/pdf/1903.03303.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. (2019).

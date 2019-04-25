@@ -1,6 +1,6 @@
 ---
 title: "[DL] Architecture"
-date: 2019-02-26 23:29:40
+date: 2019-03-25 20:17:40
 mathjax: true
 tags:
 - Machine Learning
@@ -35,6 +35,30 @@ VGG也是一篇非常经典的工作，并且在今天的很多任务上依旧�
 1. 两个堆叠的$3\times 3$卷积核对应$5\times 5$的receptive field。而三个$3\times 3$卷积核对应$7\times 7$的receptive field。那为啥不直接用$7\times 7$卷积呢？原因就在于通过堆叠的3个$3\times 3$卷积核，<font color="red">我们引入了更多的non-linearity transformation，这有助于我们的网络学习更加discriminative的特征表达</font>。
 2. 减少了参数：3个channel为$C$的$3\times 3$卷积的参数为: $3(3^2C^2)=27C^2$。而一个channel为$C$的$7\times 7$卷积的参数为: $7^2C^2=49C^2$。
     > This can be seen as imposing a regularisation on the $7\times 7$ conv. filters, forcing them to have a decomposition through the $3\times 3$ filters (with non-linearity injected in between)
+
+## Network in network 
+> Paper: [Network in network](https://arxiv.org/pdf/1312.4400v3.pdf)
+
+Network in network (NIN) 也是深度学习网络结构设计领域一篇非常insightful的paper，并且直接启发了GoogLeNet、CAM等算法的设计，NIN主要的contribution如下：
+1. 一种新型引入non-linearity transformation的方法：每个conv layer后接一个小型的MLP(即本文title Network in network)，以sliding window的方式在conv layer的输出进行滑动；相比之下，传统conv可视为一种generalized linear model，而没有mlpconv这么多非线性变换能力。
+2. 著名的$1\times 1$ conv，GoogLeNet、ShuffleNet中大量使用$1\times 1$ conv来进行升维、降维；$1\times 1$ conv也能起到整合cross channel information的作用。
+3. Global Average Pooling，GAP可视为一种Regularization方法。
+
+NIN的网络结构如下：
+![NIN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/nin.jpg)
+
+### Global Average Pooling
+GAP的优点：
+1. GAP is more native to the convolution structure by enforcing correspondences between feature maps and categories. Thus the feature maps can be easily interpreted as categories confidence maps.
+2. No parameters needed to optimize in GAP thus avoid overfitting.
+3. GAP sums out spatial information, thus it is more robust to spatial translations of the input.
+
+**We can see global average pooling as a structural regularizer that explicitly enforces feature maps to be confidence maps of concepts (categories). This is made possible by the mlpconv layers as they makes better approximation to the confidence maps than GLMs.**
+
+### Global Average Pooling as a Regularizer
+GAP和FC作用相似，都是对features进行一个linear combination，但是差异存在于transformation matrix。GAP中transformation matrix是固定的；而FC中是通过BP学习的。
+
+最后，通过可视化实验分析，作者发现，classification experiment中，activiation激活最高的区域恰恰是原图中object存在的区域，那说明GAP encode了非常强的category information，那可不可以用来做weakly supervised detection呢？答案是当然可以，于是[CAM](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf)就是受了本文的启发做出来的。
 
 
 ## GoogLeNet
@@ -456,7 +480,7 @@ CNN驱动了很多视觉任务的发展，我们可以看到，从最初的AlexN
 SENet主要关注的是channel relationship，通过Squeeze-and-Excitation Unit可以做到feature recalibration，即利用global information来使得feature maps中more informative的feature得到关注，less useful的feature得到抑制(是不是有点Attention的意思?)。
 
 SE Block可以表示如下：对于任意一种变换$F_{tr}: X\to U,X\in \mathbb{R}^{H^{'}\times W^{'}\times C^{'}}, U\in \mathbb{R}^{H\times W\times C}$，我们可以利用SE Block来进行feature recalibration:   
-feature $U$首先经过 _squeeze operation_，来将跨spatial dimension的feature maps进行aggregation，来产生channel descriptor。因该channel descriptor包含了channel-wise feature response的global distribution信息，所以可以让lower layers利用global receptive fields的信息。在该步骤之后，会经历 _excitation operation_，即每一个channel通过 _self-gating mechanism_ 学习到的sample-specific activation，来掌握自己的excitation。然后feature map $U$ 被重新赋予不同的权重以产生SE Block最终的输出。整体示意图如下：
+feature $U$首先经过 **squeeze operation**，来将跨spatial dimension的feature maps进行aggregation，来产生channel descriptor。因该channel descriptor包含了channel-wise feature response的global distribution信息，所以可以让lower layers利用global receptive fields的信息。在该步骤之后，会经历 **excitation operation**，即每一个channel通过 **self-gating mechanism** 学习到的sample-specific activation，来掌握自己的excitation。然后feature map $U$ 被重新赋予不同的权重以产生SE Block最终的输出。整体示意图如下：
 ![SE Block](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/se_block.jpg)
 
 Group Convolution可以被用来增加cardinality(即transformation的数量)，读者如果对ResNeXt有印象的话，此处应该不会陌生了。Multi-branch可以被视为group convolution的一种，它可以得到更加flexible的operator composition。
