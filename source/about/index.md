@@ -17,24 +17,26 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//Pacific Rim Conference on Multimedia. Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[Code](https://github.com/lucasxlu/CRNet.git)]
 * Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition  
 * Multi-Task Tree Convolutional Neural Network for Facial Expression Recognition
-* Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform [[arXiv](https://arxiv.org/abs/1903.00384)] [[Code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
-* Transferring Rich Deep Features for Facial Beauty Prediction [[arXiv](https://arxiv.org/abs/1803.07253)] [[Code](https://github.com/lucasxlu/TransFBP.git)] [[Slides](./Presentation_TransFBP.pdf)]
+* **Xu, Lu**, et al. "Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform". arXiv preprint arXiv:1903.00384 (2019). [[arXiv](https://arxiv.org/abs/1903.00384)] [[Code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
+* Xu, Lu}, Jinhai Xiang, and Xiaohui Yuan. "Transferring Rich Deep Features for Facial Beauty Prediction." arXiv preprint arXiv:1803.07253 (2018). [[arXiv](https://arxiv.org/abs/1803.07253)] [[Code](https://github.com/lucasxlu/TransFBP.git)] [[Slides](./Presentation_TransFBP.pdf)]
 * An Automatic Method for Internet Terror Information Classification based on Deep Learning and Random Forests (Chinese)
 * Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Paper](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) among all papers of Hubei Province in 2015. Chinese) [[Code](https://github.com/xuludev/System.git)]  
 
 
-## Projects
-* XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]  
-  An AI cloud platform based on Java & Python, to provide RESTful APIs in web data crawling, text classification, sentiment analysis, document similarity measuring, image classification and HTML5-based data visualization.
+## Projects & Competition
+* XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
   A repository for job data crawling and data analysis based on Python3. This repo has received over **230 stars** and **120+ forks**. More details can be read [here](https://www.zhihu.com/question/36132174/answer/94392659).
-
-
-## Competition
 * My algorithm named **TreeCNN** ranks the 1st place on **Facial Expression Recognition Challenge** on [Real-word Affective Face Database (RAF-DB)](http://www.whdeng.cn/raf/model1.html).
 
 
 ## Experience
+* [Blibee](https://www.bianlifeng.com/) &emsp; 2019.02 – Present  
+CV/DL Algorithm Intern  
+Store Intelligent Decision-making Department
+  * Screen digit recognition with 99.07% accuracy
+  * Kanto Cooking (Display & Discard) detection and recognition
+
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
 Algorithm Intern  
 Security Product & Technology
@@ -58,13 +60,6 @@ Animal Identification Center
   * Implementation of Amazon S3 data interaction module; Cleaning and pre-processing of existing Label-Me data
   * Implement and train face detection model (MTCNN), and face identification model (FaceNet) based on TensorFlow
   * Encapsulate RESTful API based on Django, V1.0 achieves an accuracy over 95%
-
-* [Wuhan ZhiLiFeng Information .,Ltd.](http://zlfinfo.com.cn/) &emsp; 2017.07 – 2017.09  
-Python/Machine Learning Engineer  
-Malicious Image Recognition 
-  * Developing machine learning & skin models to recognize pornographic images with 92.17% accuracy
-  * Developing deep model (Center Loss + Softmax Loss) to recognize politically sensitive images with 99.87% accuracy
-  * Model training and deployment based on Django
 
 * [Beijing Jiewen Technology Co.,Ltd.](http://www.jiewen.com.cn/), Huazhong Developing Center. &emsp; 2015.06 – 2016.06  
 Java/Web Spider Developer  
