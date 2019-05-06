@@ -1,6 +1,6 @@
 ---
 title: "[CV] Object Detection"
-date: 2019-04-25 21:48:05
+date: 2019-05-06 21:20:05
 mathjax: true
 tags:
 - Machine Learning
@@ -646,6 +646,74 @@ The detail design of our DetNet59 is illustrated as follows:
 ![DetNet](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/detnet.jpg)
 
 
+## Cascade RCNN
+> Paper: [Cascade R-CNN: Delving into High Quality Object Detection](http://openaccess.thecvf.com/content_cvpr_2018/papers/Cai_Cascade_R-CNN_Delving_CVPR_2018_paper.pdf)
+
+熟悉detection的同学都应该知道，现如今主流的two-stage detection framework是基于[RCNN](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf)改进而来的，即将detection问题转化为classification问题。而在classification的时候，我们通常会根据IOU的阈值来设定positive samples与negative samples。那么问题来了，若IOU卡得越严，positive samples的数量就会大幅度降低，而negative samples的数量则会大幅增加。因此会引发overfitting问题，并且DNN本身也无法得到最优解。通常情况下我们设定IOU threshold为0.5，但该阈值毕竟比较宽松，带来的缺陷就是很容易产生过多的FP(False Positive)。
+
+Cascade RCNN就是为了解决这些问题，cascade一词，意思为在训练过程中，通过逐渐增加IOU threshold的值来对FP识别得更好，以及通过resampling来保证sample size平衡。此外，与MTCNN中cascade一词类似，Cascade RCNN也是trained stage-by-stage，并且假定前一个stage中detector的输出能为下一个stage detector的training set提供很好的distribution，因此也是类似的“逐步提纯”的idea。
+
+在Cascade RCNN中，作者将一个hypotheses的``quality``定义为``其与groundtruth bbox的IOU``，并且将``quality of detector``定义为``用来训练模型的IOU阈值u``。每个threshold下的detector只负责自己学到当前最佳，也就是说在某个IOU threshold下最佳的detector并不一定能保证在其他IOU threshold下的最佳。
+
+### Fundamentation of Object Detection
+Cascade RCNN延续了Faster RCNN的设计风格，即head $H_0$生成region proposal(即preliminary detection hypotheses)；head $H_1$同时进行object classification + bbox regression。
+
+**为了使得regression对scale/location更加invariant，$L_{loc}$通常在distance vector $\Delta=(\delta_x, \delta_y, \delta_w, \delta_h)$上进行操作**。
+$$
+\delta_x = (g_x-b_x)/b_w
+$$
+
+$$
+\delta_y = (g_y-b_y)/b_h
+$$
+
+$$
+\delta_w = log(g_w/b_w)
+$$
+
+$$
+\delta_h = log(g_h/b_h)
+$$
+其中$g$代表groundtruth bbox，$b$代表candidate bbox。
+
+大多数情况下，bbox都是画得比较准的，也就是说bbox regression只会对candidate bbox $b$做细微的调整，因此regression loss会比classification loss小很多。为了提升multi-task learning的有效性，$\Delta$通常被mean和variance归一化，即$\delta_x$被替换为：
+$$
+\delta_x^{'}=(\delta_x-\mu_x)/\sigma_x
+$$
+
+近期的一些research work认为单个bbox regression无法实现对localization的精准定位，因此，这些工作将多个regressor串联起来作为post-processing step:
+$$
+f^{'}(x,b)=f\circ f\circ \cdots \circ f(x, b)
+$$
+这种方法称为**Interative BBox Regression**。
+
+前面提到过，在将bbox patch进行classification时，通常根据IOU threshold $u$ 来划分positive/negative samples，若 $u$ 太大，则positive samples数量比较少；若 $u$ 太小，positive samples的diversity和richness比较丰富，但detector却无法reject close FP samples。
+
+### Delve into Cascade RCNN
+#### Cascaded BBox Regression
+前面已经提到过，用一个regresso试图为每一个level提供良好的bbox regression result是非常困难的事情。在Cascade RCNN中被建模为cascade regression problem:
+$$
+f(x,b)=f_T\circ f_{T-1}\circ \cdots \circ f_1(x,b)
+$$
+其中，第 $t$ 个stage 的 regressor $f_t$ 是在上一个stage 输出的 $\{b^t\}$ 上进行优化，而非初始集合 $\{b^1\}$，即为``Cascade``一词的含义。
+
+和Iterative BBox Regression相比，Cascade BBox Regression主要有如下几点不同：
+1. Iterative BBox Regression是一个post-processing procedure，主要用来提升BBox；而Cascade BBox Regression是一个resampling procedure，主要为了改变不同stage下的hypotheses distribution。
+2. Cascade BBox Regression在training和inference阶段都使用。
+3. $\{f_T,f_{T-1},\cdots,f_1\}$在不同stage的resampled distribution下优化，而不是对最初的distribution $\{b^1\}$优化。
+
+![Cascade RCNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/cascade_rcnn.png)
+
+#### Cascaded Detection
+在原文的实现中，将后续stage的positive samples设定为一个恒定的值，来保证当IOU threshold增加时，training set依然有足够的positive samples。
+
+在第 $t$ 个stage、IOU threshold为 $u^t$ 的情况下，loss定义为：
+$$
+L(x^t,g)=L_{cls}(h_t(x^t), y^t) + \lambda [y^t\geq 1]L_{loc}(f_t(x^t, b^t), g)
+$$
+其中$b^t=f_{t-1}(x^{t-1},b^{t-1})$。
+
+
 
 ## Reference
 1. Girshick, Ross, et al. ["Rich feature hierarchies for accurate object detection and semantic segmentation."](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
@@ -662,3 +730,4 @@ The detail design of our DetNet59 is illustrated as follows:
 12. Zhang, Kaipeng, et al. ["Joint face detection and alignment using multitask cascaded convolutional networks."](https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf) IEEE Signal Processing Letters 23.10 (2016): 1499-1503.
 13. Li, Zeming, et al. ["DetNet: A Backbone network for Object Detection."](https://arxiv.org/pdf/1804.06215v2.pdf) arXiv preprint arXiv:1804.06215 (2018).
 14. Dai, Jifeng, et al. ["R-fcn: Object detection via region-based fully convolutional networks."](https://papers.nips.cc/paper/6465-r-fcn-object-detection-via-region-based-fully-convolutional-networks.pdf) Advances in neural information processing systems. 2016.
+15. Cai, Zhaowei, and Nuno Vasconcelos. ["Cascade r-cnn: Delving into high quality object detection."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Cai_Cascade_R-CNN_Delving_CVPR_2018_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.
