@@ -33,27 +33,23 @@ random(min,max)
 theme_color = hexo-config("theme_color")
 
 if theme_color and theme_color is 'random'
-  num = random(0, 5)
+  num = random(0, 4)
   if num == 0
-    color-theme = color-theme-green
+    color-theme = color-theme-blue
   if num == 1
     color-theme = color-theme-black
   if num == 2
-    color-theme = color-theme-green-light
+    color-theme = color-theme-orange
   if num == 3
     color-theme = color-theme-red
   if num == 4
     color-theme = color-theme-blue-twitter
-  if num == 5
-    color-theme = color-theme-orange
 else if theme_color is 'orange'
   color-theme = color-theme-orange
 else if theme_color is 'blue'
   color-theme = color-theme-blue-twitter
 else if theme_color is 'red'
   color-theme = color-theme-red
-else if theme_color is 'green'
-  color-theme = color-theme-green
 else if theme_color is 'black'
   color-theme = color-theme-black
 
