@@ -1,6 +1,6 @@
 ---
 title: "[CV] Object Detection"
-date: 2019-05-06 21:20:05
+date: 2019-05-09 21:37:05
 mathjax: true
 tags:
 - Machine Learning
@@ -714,6 +714,71 @@ $$
 其中$b^t=f_{t-1}(x^{t-1},b^{t-1})$。
 
 
+## Focal Loss
+> Paper: [Focal Loss for Dense Object Detection](http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf)
+
+Focal Loss是Kaiming He团队发表在ICCV'17上的工作，这篇paper主要contribution如下：
+1. 分析了one-stage在精度上不如two-stage detector的原因在于**严重的正负样本(background VS objects)不均衡**，Focal Loss通过down-weight easy examples的gradient来使模型在学习中更加地关注hard examples。
+2. 借助Focal Loss，设计了一个非常强大的one-stage detector——RetinaNet。
+
+下面来进行详细讲解，数据不平衡问题是Machine Learning领域一个非常常见且非常头疼的问题(有空我会将Leanring from Imbalanced Data写成一个专题，此处就先大致介绍一下paper中的related work吧)，imbalanced dataset会让模型更偏向数量多的类别，从而overwhelm整体性能。
+
+Imbalanced dataset learning主要有如下两点问题：
+1. Training是非常inefficient的，因为大多数都是easy negative samples，模型学不到什么真正有用的signal和精确的decision boundary。
+2. 模型会更偏向数量多的类，如前面我们提到的。
+
+值得一提的是，Focal Loss和Huber Loss之间的区别：
+* Huber Loss通过down-weight hard samples的loss来减少outliers的contribution。
+* 而Focal Loss则恰恰相反，它通过down-weight easy samples的loss来处理数据不平衡问题，即尽管easy samples的数量很多，但是它们对total loss的contribution就被抑制了。
+
+总而言之，Focal Loss的主体思路和Huber Loss恰好相反，它更多地关注a sparse set of hard examples。
+
+### Delve into Focal Loss
+在介绍Foal Loss之前，先来分析CrossEntropy Loss(CE)：
+$$
+CE(p,y)=
+\begin{cases}
+    -log(p) & \text{if}\quad y=1\\
+    -log(1-p) & otherwise
+\end{cases}
+$$
+令：
+$$
+p_t=
+\begin{cases}
+    p & \text{if}\quad y=1\\
+    1-p & otherwise
+\end{cases}
+$$
+可得：
+$$
+CE(p,y)=CE(p_t)=-log(p_t)
+$$
+但是CE有什么问题呢？通过可视化gt labels的probability可以发现：**即便是对于非常容易分类的easy examples，依然会引入不小的loss(如下图所示)**，而这些samples会影响数量较少对应类的学习。
+
+![Probability of Ground Truth Class](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/probability_of_ground_truth_class.png)
+
+常见的处理方法是``weighted cross entropy``，即引入一个权重系数$\alpha\in [0,1]$，对positive/negative分别分配$\alpha$与$1-\alpha$。在实践中，$\alpha$通常设置为对应类别frequency的倒数，或通过cross validation进行选取，$\alpha$-weighted CE可表示为：
+$$
+CE(p_t)=-\alpha_t log(p_t)
+$$
+
+Focal Loss定义如下：
+$$
+FL(p_t)=-(1-p_t)^{\gamma}log(p_t)
+$$
+Focal Loss有如下性质：
+1. 当一个sample被错误分类并且$p_t$很小时，调整系数$(1-p_t)^{\gamma}$接近1，因此loss几乎不受影响；而当$p_t$很大时，调整系数接近0，因此easy-classified samples的loss就被抑制了。
+2. $\gamma$可以平滑地调整easy samples被down-weighted的节奏。$\gamma=0$时，$FL=CE$；$\gamma$递增，调整系数的作用也递增，促使模型更多地关注hard samples、远离easy samples。实验中通常设置$\gamma=2$。
+
+$\alpha$-weighted Focal Loss即为：
+$$
+FL(p_t)=-\alpha_t (1-p_t)^{\gamma}log (p_t)
+$$
+
+**与Online Hard Example Mining的关系**：OHEM通过使用**high-loss examples来构造minibatch**，和Focal Loss类似，OHEM也是更关注misclassified examples；但与Focal Loss不同的是，OEHM完全丢弃了easy samples。
+
+
 
 ## Reference
 1. Girshick, Ross, et al. ["Rich feature hierarchies for accurate object detection and semantic segmentation."](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
@@ -731,3 +796,4 @@ $$
 13. Li, Zeming, et al. ["DetNet: A Backbone network for Object Detection."](https://arxiv.org/pdf/1804.06215v2.pdf) arXiv preprint arXiv:1804.06215 (2018).
 14. Dai, Jifeng, et al. ["R-fcn: Object detection via region-based fully convolutional networks."](https://papers.nips.cc/paper/6465-r-fcn-object-detection-via-region-based-fully-convolutional-networks.pdf) Advances in neural information processing systems. 2016.
 15. Cai, Zhaowei, and Nuno Vasconcelos. ["Cascade r-cnn: Delving into high quality object detection."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Cai_Cascade_R-CNN_Delving_CVPR_2018_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.
+16. Lin, Tsung-Yi, et al. ["Focal loss for dense object detection."](http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf) Proceedings of the IEEE international conference on computer vision. 2017.
