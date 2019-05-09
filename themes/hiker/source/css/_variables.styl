@@ -21,8 +21,9 @@ color-theme-blue-twitter = #00aced
 color-theme-red = #ff7e79
 color-theme-orange = #fb6d19
 color-theme-green = #39aa56
-color-theme-green-light = #42b983
+color-theme-green-light = #90EE90
 color-theme-black = #414141
+color-theme-aquamarine = #7FFFD4
 
 // Theme
 color-theme = color-theme-orange
@@ -32,24 +33,29 @@ random(min,max)
 
 theme_color = hexo-config("theme_color")
 
+
 if theme_color and theme_color is 'random'
-  num = random(0, 4)
+  num = random(0, 5)
   if num == 0
-    color-theme = color-theme-blue
+    color-theme = color-theme-aquamarine
   if num == 1
     color-theme = color-theme-black
   if num == 2
-    color-theme = color-theme-orange
+    color-theme = color-theme-green-light
   if num == 3
     color-theme = color-theme-red
   if num == 4
     color-theme = color-theme-blue-twitter
+  if num == 5
+    color-theme = color-theme-orange
 else if theme_color is 'orange'
   color-theme = color-theme-orange
 else if theme_color is 'blue'
   color-theme = color-theme-blue-twitter
 else if theme_color is 'red'
   color-theme = color-theme-red
+else if theme_color is 'green'
+  color-theme = color-theme-green-light
 else if theme_color is 'black'
   color-theme = color-theme-black
 
