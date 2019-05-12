@@ -1,6 +1,6 @@
 ---
 title: "[CV] Object Detection"
-date: 2019-05-09 21:37:05
+date: 2019-05-12 17:55:05
 mathjax: true
 tags:
 - Machine Learning
@@ -779,6 +779,71 @@ $$
 **与Online Hard Example Mining的关系**：OHEM通过使用**high-loss examples来构造minibatch**，和Focal Loss类似，OHEM也是更关注misclassified examples；但与Focal Loss不同的是，OEHM完全丢弃了easy samples。
 
 
+## Repulsion Loss
+> Paper: [Repulsion loss: Detecting pedestrians in a crowd](http://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Repulsion_Loss_Detecting_CVPR_2018_paper.pdf)
+
+熟悉detection的同学应该都知道，detection场景有一个非常棘手的问题就是密集、目标之间重叠严重的检测。Repulsion Loss就是为了一定程度上解决以上问题，Repulsion Loss是发表在CVPR'18上的paper，在行人检测和常规目标检测都取得了非常好的效果。Repulsion Loss是针对bbox regression步骤中的loss改进，主要idea就是**让predicted bbox与gt bbox尽可能接近，同时和其他object尽可能远离**。
+
+Detection中的occlusion可分为两种：
+1. inter-class occlusion: 不同category目标之间的遮挡
+2. intra-class occlusion: 被相同category目标相互之间的遮挡，也称为``crowd occlusion``，更多时候，intra-class occlusion是更棘手的，因为大多数场景下，相同类别的samples appearance总是比不同类别的samples appearance更相似
+
+传统的bbox regression loss(例如$L_2$ Loss, Smooth $L_1$ Loss)只会push让predicted bbox和target gt bbox更接近；而Repulsion Loss不仅可以让proposal bbox与gt bbox更接近，还能让该proposal bbox与其他gt bbox更远离，以及与其他非该类的proposal bbox也更远离。
+
+本文提出了两种Repulsion Loss：RepGT Loss与RepBox Loss。
+* RepGT Loss对shift到其他gt bbox的predicted bbox进行惩罚；**RepGT Loss对于减少FP非常有用**
+* RepBox Loss则需要每个predicted bbox都与其他不同target对应predicted bbox尽可能远离，这样可以使得detection results对NMS更加不敏感。
+
+![Repulsion Loss](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/repulsion_loss.png)
+
+### Delve into Repulsion Loss
+Repulsion Loss主要由以下3部分组成：
+$$
+L=L_{Attr} + \alpha\times L_{RepGT} + \beta\times L_{RepBox}
+$$
+其中，$L_{Attr}$代表attraction term，作用是让predicted bbox尽可能接近gt bbox；$L_{RepGT}$作用是让某个predicted bbox与它周围的gt bbox远离；$L_{RepBox}$作用是某个predicted bbox与其他predicted bbox远离。
+
+定义$P=\{l_P,t_P,w_P,h_P\}$代表proposal bbox，$G=\{l_G,t_G,w_G,h_G\}$代表gt bbox。$\mathcal{P}_{+}=\{P\}$代表所有positive proposals ($IOU\geq 0.5$) 的集合，$\mathcal{G}=\{G\}$代表一张图中所有的gt bbox。
+
+* Attraction Term可以定义为：
+$$
+L_{Attr}=\frac{\sum_{P\in \mathcal{P}_{+}} Smooth_{L1}(B^P,G_{Attr}^P)}{|\mathcal{P}_{+}|}
+$$
+
+* RepGT Loss的作用是让proposal bbox与其周围其他的 (非本proposal对应的gt) gt bbox远离。故RepGT objects可定义为：
+$$
+G_{Rep}^P=\mathop{argmax} \limits_{G\in \mathcal{G}\smallsetminus\{G_{Attr}^P\}} IoU(G, P)
+$$
+
+RepGT Loss为对$B^P$与$G_{Rep}^P$之间overlap的惩罚，其中overlap为$B^P$与$G_{Rep}^P$之间之间的IoG (Intersection over Groundtruth)：
+$$
+IoG(B,G)\triangleq \frac{area(B\bigcap G)}{area(G)}\in [0,1]
+$$
+
+因此，RepGT Loss为：
+$$
+L_{RepGT}=\frac{\sum_{P\in \mathcal{P}_{+}}Smooth_{ln}(IoG(B^P,G_{Rep}^P))}{|\mathcal{P}_{+}|}
+$$
+
+其中，
+$$
+Smooth_{ln}=\begin{cases}
+    -ln(1-x) & x\leq \sigma\\
+    \frac{x-\sigma}{1-\sigma}-ln(1-\sigma) & x> \sigma
+\end{cases}
+$$
+$\sigma$越小，loss对outliers越不敏感。
+
+* RepBox Loss作用是让proposal bbox与其他不同target的proposal bbox更远离。将proposal set $\mathcal{P}_{+}$划分为多个不相交的子集: $\mathcal{P}_{+}=\mathcal{P}_{1}\bigcap \mathcal{P}_{2}\bigcap \cdots \bigcap \mathcal{P}_{|\mathcal{G}|}$。因此对于任意两个randomly sampled proposal $P_i\in \mathcal{P}_i$与$P_j\in \mathcal{P}_j$，我们希望predicted bbox $B^{P_i}$与$B^{P_j}$之间的overlap尽可能小。因此，RepBox Loss可定义为：
+$$
+L_{RepBox}=\frac{\sum_{i\neq j}Smooth_{ln}(IoU(B^{P_i},B^{P_j}))}{\sum_{i\neq j}\mathbb{1}[IoU(B^{P_i},B^{P_j})>0] + \epsilon}
+$$
+
+在Repulsion Term中选择IoU或IoG，而非Smooth $L_1$作为distance metric的原因在于：IoU/IoG在$[0,1]$区间内，而Smooth $L_1$是boundless的。若在RepGT Loss中使用Smooth $L_1$，则会使得predicted bbox与repulsion gt bbox尽可能地远离。而IoG只会让predicted bbox与repulsion gt bbox之间的overlap最小化。
+
+此外，在RepGT Loss中采用IoG而非IoU的原因在于：若使用IoU-based loss，则bbox regressor会通过简单扩大bbox size来增大分母$area(B^P\bigcup G_{Rep}^P)$，从而达到最小化IoU loss的目的。而IoG的分母是一个常数，因此可以让bbox regressor直接最小化$area(B^P\bigcap G_{Rep}^P)$。
+
+
 
 ## Reference
 1. Girshick, Ross, et al. ["Rich feature hierarchies for accurate object detection and semantic segmentation."](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
@@ -797,3 +862,4 @@ $$
 14. Dai, Jifeng, et al. ["R-fcn: Object detection via region-based fully convolutional networks."](https://papers.nips.cc/paper/6465-r-fcn-object-detection-via-region-based-fully-convolutional-networks.pdf) Advances in neural information processing systems. 2016.
 15. Cai, Zhaowei, and Nuno Vasconcelos. ["Cascade r-cnn: Delving into high quality object detection."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Cai_Cascade_R-CNN_Delving_CVPR_2018_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.
 16. Lin, Tsung-Yi, et al. ["Focal loss for dense object detection."](http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf) Proceedings of the IEEE international conference on computer vision. 2017.
+17. Wang, Xinlong, et al. ["Repulsion loss: Detecting pedestrians in a crowd."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Repulsion_Loss_Detecting_CVPR_2018_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.
