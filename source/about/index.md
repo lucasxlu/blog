@@ -92,7 +92,7 @@ Financial Information System & Multi-thread Web Crawling System
 * Elsevier Journal Reviewer of [Neurocomputing (NEUCOM)](https://www.journals.elsevier.com/neurocomputing/)
 * Report about Deep Learning for Face Analysis [[Slides](./DL_for_Face_Analysis.pdf)]
 * Academic Research Report (1st Prize). Deep Learning for Face Analysis and Fine-grained Visual Recognition. [[Slides](./DL_for_Face_Analysis_and_FGVC.pdf)]
-* Academic Research Report (1st Prize). Combining Machine Learning and Data-driven Approaches for AI Services. [[Slides](./Presentation.pdf)]
+* Academic Research Report (1st Prize). Combining Machine Learning and Data-driven Approaches for AI Services. [[Slides](./Combining_ML_and_Data_driven_Approach_for_AI_Services​.pdf)]
 
 ## Interests
 * Reading and Writing
