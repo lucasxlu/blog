@@ -1,6 +1,6 @@
 ---
 title: "[CV] Counting"
-date: 2019-03-20 19:38:44
+date: 2019-06-13 17:53:44
 mathjax: true
 tags:
 - Computer Vision
@@ -12,7 +12,7 @@ catagories:
 - Deep Learning
 ---
 ## Introduction
-Counting是近年来CV领域一个受到关注越来越多的方向，它主要的应用场景就是密集场景下的人流估计、车辆估计等。Counting大体上可以分为两种方案，一种是基于detection的方式：即数bbox；另一种是直接回归density map的方式：即将counting问题转化为一个regression问题。基于detection的方法在目标非常密集的场景下就不适合了，所以在这种场景下density map regression还是目前的mainstream。
+Counting是近年来CV领域一个受到关注越来越多的方向，它主要的应用场景就是密集场景下的人流估计、车辆估计等。近年来非常火热的新零售、智慧安防都有Counting的应用场景。Counting大体上可以分为两种方案，一种是基于detection的方式：即数bbox；另一种是直接回归density map的方式：即将counting问题转化为一个regression问题。基于detection的方法在目标非常密集的场景下就不适合了，所以在这种场景下density map regression还是目前的mainstream。
 
 Counting的Metric通常为MAE和MSE，MAE评判counting heads的accuracy，MSE评判robustness。
 
@@ -242,6 +242,71 @@ $$
 $$
 
 
+## Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting
+> Paper: [Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting](http://openaccess.thecvf.com/content_CVPR_2019/papers/Zhao_Leveraging_Heterogeneous_Auxiliary_Tasks_to_Assist_Crowd_Counting_CVPR_2019_paper.pdf)
+
+
+### Basic Ideas
+[Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting](http://openaccess.thecvf.com/content_CVPR_2019/papers/Zhao_Leveraging_Heterogeneous_Auxiliary_Tasks_to_Assist_Crowd_Counting_CVPR_2019_paper.pdf)是发表在[CVPR'19](http://openaccess.thecvf.com/CVPR2019.py)上的成果，main idea也非常简单，顾名思义，即用multi-task learning的方法来regularize模型，从而提高main task的performance，之前有做过Face Analysis的Multi-task Learning，所以这篇大体上自然非常熟悉了。
+
+说到Counting，其本质上可视为一个Regression问题，严格意义上讲叫作density map regression，所以和其他machine learning task一样，feature matters! 不少research work专注于设计或融合multi-scale, context-aware features来产生更加robust的features。这篇文章主要是通过MTL的方法来向网络中embed **semantic/geometric/numeric**的信息，从而获取更加discriminative and robust的features来提高performance。
+* 对于geometric attribute，作者使用monocular depth prediction来强调relative depth variantions。
+* 对于semantic attribute，作者使用crowd segmentation来highlight foreground。
+* 对于numeric attribute，作者直接回归count estimation。
+
+虽然引入了多个任务，但是这些auxiliary task却并不需要额外的human-annotation，因为上述3个auxiliary task所需要的annotation均可以通过现有pre-trained model生成，或直接通过其他方式计算得来。
+
+> Learning of the auxiliary tasks will drive the intermediate features of the backbone CNN to embed desired information on geometry, semantics and the overall density level, which benefits the generation of robust features against the scale variations and clutter background.
+
+AT-CNN的网络结构如下图所示：  
+![AT-CNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/atcnn.jpg)
+
+### Methodology
+#### Auxiliary Tasks Prediction Based
+* Attentive Crowd Segmentation  
+  由于crowd scene occlusion和clutter background现象非常严重，crowd density通常noisy。为了解决该问题，作者引入了segmentation task来purify output prediction。
+
+  Ground-truth labels for crowd segmentation can be in- ferred from the dotted annotations of pedestrians provided in counting dataset [36, 35] by simple binarization as shown in Figure 3.
+
+  令$X$代表input crowd image，$S$代表gt attentive crowd segmentation map，Segmentation decoder的loss如下：
+  $$
+  L_1=\frac{1}{|X|}\sum_{(i,j)\in X}t_{ij}log o_{ij} + (1-t_{ij})log(1 - o_{ij})
+  $$
+  其中，$t_{ij}\in \{0,1\}$为1时代表foreground，为0代表background，$o_{ij}$代表pixel-wise probability。
+* Distilled Depth Prediction
+  该task的引入主要是为了处理perspective distortion现象。  
+  In the regions with larger depth values, the objects have smaller sizes and should be adversely assigned with larger density values to guarantee their summation gives accurate counts. By inferring the depth maps, the front-end CNN is imposed to take care of the scene geometry and hence gains the awareness of the intra-image scale variations, which will help generate more discriminative features for scale-aware density estimation.
+
+  在这里作者使用pre-trained DCNF来预测single-image depth，由于DCNF并不能完美adapt to crowd counting task中，因此作者计算了**distilled depth map** $D$，distilled depth map仅仅保留了attentive target areas的depth information。其计算方式如下：
+  $$
+  D=S\bigodot D_{raw}
+  $$
+  $\bigodot$代表Hadamard matrix multiplication. With the distilled depth as the supervision for depth prediction, the front-end CNN is desired to be especially aware of the depth relationships/scale variation between those attentive areas with target objects.
+
+  Depth map prediction的Loss如下：
+  $$
+  L_2=\frac{1}{|D|}\sum_{(i,j)\in D}\|\hat{D}_{ij}-D_{ij}\|_2^2
+  $$
+* Crowd Count Regression  
+  从feature map直接regress到count number，MSE Loss作为supervision。
+
+#### Main Tasks Prediction
+在文中，作者对每个dotted annotations使用2D Gaussian Kernels来生成density map，main task的decoder在density map $\hat{Y}$上采用$L_2$ loss:
+$$
+L_4 = \frac{1}{|Y|}\sum_{(i,j)\in Y}\|\hat{Y}_{ij} - Y_{ij}\|_2^2
+$$
+
+既然是MTL，那么overall optimization当然就是各个loss的linear combination啦:
+$$
+L_{mt}=\sum_{i=1}^4 \lambda_i L_i
+$$
+
+接下来就是实验了，当然是碾压各种prior arts。此外，作者还分析了不同weights $\lambda$对performance的影响：
+> Too small weights are hard to contribute to the main tasks while too large weights will drift the feature representations and deteriorate the performances. Similar situations can be be observed for the crowd segmentation loss and the count regression loss.
+
+
+
+
 ## Reference
 1. Zhang, Yingying, et al. ["Single-image crowd counting via multi-column convolutional neural network."](http://openaccess.thecvf.com/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.
 2. Shen, Zan, et al. ["Crowd Counting via Adversarial Cross-Scale Consistency Pursuit."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Shen_Crowd_Counting_via_CVPR_2018_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.
@@ -255,3 +320,4 @@ $$
 10. Ranjan, Viresh, Hieu Le, and Minh Hoai. ["Iterative crowd counting."](http://openaccess.thecvf.com/content_ECCV_2018/papers/Viresh_Ranjan_Iterative_Crowd_Counting_ECCV_2018_paper.pdf) Proceedings of the European Conference on Computer Vision (ECCV). 2018.
 11. Cao, Xinkun, et al. ["Scale aggregation network for accurate and efficient crowd counting."](http://openaccess.thecvf.com/content_ECCV_2018/papers/Xinkun_Cao_Scale_Aggregation_Network_ECCV_2018_paper.pdf) Proceedings of the European Conference on Computer Vision (ECCV). 2018.
 12. Wang, Qi, et al. ["Learning from Synthetic Data for Crowd Counting in the Wild."](https://arxiv.org/pdf/1903.03303.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. (2019).
+13. Zhao, Muming, et al. ["Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting."](http://openaccess.thecvf.com/content_CVPR_2019/papers/Zhao_Leveraging_Heterogeneous_Auxiliary_Tasks_to_Assist_Crowd_Counting_CVPR_2019_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2019.
