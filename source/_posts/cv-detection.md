@@ -1,5 +1,5 @@
 ---
-title: "[CV] Object Detection"
+title: "[CV] Detection"
 date: 2019-05-12 17:55:05
 mathjax: true
 tags:
@@ -14,7 +14,7 @@ catagories:
 - Object Detection
 ---
 ## Introduction
-Object Detection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本质旨在梳理RCNN--SPPNet--Fast RCNN--Faster RCNN--FCN--Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。
+Detection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本质旨在梳理RCNN--SPPNet--Fast RCNN--Faster RCNN--FCN--Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。
 
 > [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 

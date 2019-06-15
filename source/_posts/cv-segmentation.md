@@ -1,20 +1,20 @@
 ---
-title: "[CV] Semantic Segmentation"
+title: "[CV] Segmentation"
 date: 2019-01-05 15:33:05
 mathjax: true
 tags:
 - Machine Learning
 - Deep Learning
 - Computer Vision
-- Semantic Segmentation
+- Segmentation
 catagories:
 - Machine Learning
 - Deep Learning
 - Computer Vision
-- Semantic Segmentation
+- Segmentation
 ---
 ## Introduction
-Semantic segmentation也是Computer Vision领域一个非常重要的研究方向，和Classification，Detection一起是high-level vision里最重要的方向。我不是主要做Segmentation的，但由于Segmentation的广泛的应用方向(例如自动驾驶的场景感知)和研究热点，本文旨在梳理近些年CV顶会上一些非常有代表性的work。
+segmentation也是Computer Vision领域一个非常重要的研究方向，和Classification，Detection一起是high-level vision里最重要的方向。我不是主要做Segmentation的，但由于Segmentation的广泛的应用方向(例如自动驾驶的场景感知)和研究热点，本文旨在梳理近些年CV顶会上一些非常有代表性的work。
 
 > [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
