@@ -8,7 +8,7 @@ header-img: "img/header_img/archive-bg.png"
 ## Self Introduction
 I am a third-year master major in Machine Learning and Computer Vision. My research interests include Facial Analysis, Deep Learning and Machine Learning. I like reading and photography. 
 
-![LucasX](https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpeg)
+![LucasX](https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg)
 
 __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)] 
 
