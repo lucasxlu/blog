@@ -36,15 +36,18 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 ## Experience
 * [Blibee](https://www.bianlifeng.com/) &emsp; 2019.02 – Present  
-CV/DL Algorithm Intern  
+CV/DL Algorithm Engineer  
 Store Intelligent Decision-making Department
+
   * Convenience Store screen digit recognition with 99.07% accuracy
-	* Kanto Cooking (Display) detection with 0.898 mAP, and fine-grained recognition with 85.42% accuracy
-	* Kanto Cooking (Discard) detection with 0.785 mAP, and fine-grained recognition with 93.36% accuracy
+  * Image quality assessment model with 94.34% Top1 Accuracy
+  * Kanto Cooking (Display) detection with 0.898 mAP, and fine-grained recognition with 85.42% accuracy
+  * Kanto Cooking (Discard) detection with 0.891 mAP, and fine-grained recognition with 96.21% accuracy
 
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
 Algorithm Intern  
 Security Product & Technology
+
   * License image quality recognition (reflection/blur) with 93.15% Precision and 98.35% Recall
   * Facial beauty prediction with 0.89 Pearson Correlation
   * License type recognition with 99.77% Precision and 99.76% Recall
@@ -55,6 +58,7 @@ Security Product & Technology
 * [GeeTest](https://www.geetest.com/) &emsp; 2018.09 – 2018.09  
 Data Mining Intern  
 Behavior Verification Code Data Mining
+
   * User behavior data analysis & mining base on Spark
   * Feature extraction of black-and-white sample behavior dataset
   * Complete the writing of data analysis report
@@ -62,6 +66,7 @@ Behavior Verification Code Data Mining
 * [Guangzhou Yingzi Technology Co.,Ltd](https://www.yingzi.com/) &emsp; 2018.02 – 2018.03  
 Deep Learning/Python Engineer  
 Animal Identification Center
+
   * Implementation of Amazon S3 data interaction module; Cleaning and pre-processing of existing Label-Me data
   * Implement and train face detection model (MTCNN), and face identification model (FaceNet) based on TensorFlow
   * Encapsulate RESTful API based on Django, V1.0 achieves an accuracy over 95%
