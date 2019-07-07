@@ -40,7 +40,7 @@ $$
 H(x)=\sum_{i=1}^N \delta(x-x_i)
 $$
 
-为了将其转换为一个连续密度函数，我们使用Gaussian Kernel$G_{\sigma}$来对$H(x)$进行卷积，所以density就成了$F(x)=H(x)\star G_{\sigma}(x)$。然而，这样的density function需要假定**在图像空间中$x_i$都是互相独立的**。这显然是不太符合实际的，实际上，每个$x_i$都是3D scene中因perspective distortion带来的crowd density的一个样本，并且这些pixels和scene中对应不同size的样本$x_i$都是有关联的。
+为了将其转换为一个连续密度函数，我们使用Gaussian Kernel $G_{\sigma}$来对$H(x)$进行卷积，所以density就成了$F(x)=H(x)\star G_{\sigma}(x)$。然而，这样的density function需要假定**在图像空间中$x_i$都是互相独立的**。这显然是不太符合实际的，实际上，每个$x_i$都是3D scene中因perspective distortion带来的crowd density的一个样本，并且这些pixels和scene中对应不同size的样本$x_i$都是有关联的。
 
 因此，为了准确地预估crowd density $F$，我们需要考虑因ground plane和image plane的之间的homography带来的distortion问题。但是对于图片数据本身而言，我们并无法知道geometry scene是怎样的。然而，若我们假设每个head周围的crowd都是evenly distributed，那么这些head和其k近邻的平均距离就可以得到关于geometry distortion合理的预估。
 

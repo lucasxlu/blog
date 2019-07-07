@@ -6,7 +6,7 @@ description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
 ## Self Introduction
-I am a third-year master major in Machine Learning and Computer Vision. My research interests include Facial Analysis, Deep Learning and Machine Learning. I like reading and photography. 
+I am a third-year master major in Machine Learning and Computer Vision. My research interests include Facial Analysis, Deep Learning and Machine Learning. I like reading and photography. You can find me from my [Zhihu](https://www.zhihu.com/people/xulu-0620) and [Instagram](https://www.instagram.com/lucasx_xulu/).
 
 ![LucasX](https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg)
 
@@ -36,7 +36,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 ## Experience
 * [Blibee](https://www.bianlifeng.com/) &emsp; 2019.02 – Present  
-CV/DL Algorithm Engineer  
+Vision Algorithm Engineer  
 Store Intelligent Decision-making Department
 
   * Convenience Store screen digit recognition with 99.07% accuracy
@@ -99,6 +99,7 @@ Financial Information System & Multi-thread Web Crawling System
 * Report about Deep Learning for Face Analysis [[Slides](./DL_for_Face_Analysis.pdf)]
 * Academic Research Report (1st Prize). Deep Learning for Face Analysis and Fine-grained Visual Recognition. [[Slides](./DL_for_Face_Analysis_and_FGVC.pdf)]
 * Academic Research Report (1st Prize). Combining Machine Learning and Data-driven Approaches for AI Services. [[Slides](./Combining_ML_and_Data_driven_Approach_for_AI_Services​.pdf)]
+
 
 ## Interests
 * Reading and Writing
