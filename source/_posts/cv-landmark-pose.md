@@ -32,7 +32,7 @@ Facial Landmarks Localization，也称为Face Alignment，是人脸一个非常�
 通过**repeated pooling and upsampling**，以及**intermediate loss supervision**，特征在不同scale得到了联合，从而可以最好地capture到身体不同部位的spatial relationship，Hourglass Network在相关benchmark上均取得了非常好的性能。
 
 Stacked Hourglass Network的网络结构图如下：
-![Stacked Hourglass Network](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-landmarks-pose/stacked-hourglass-network.jpg)
+![Stacked Hourglass Network](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-landmarks-pose/stacked_hourglass_network.png)
 
 Hourglass module的设计，和图像分割/Encode-Decoder结构中的上采样有点类似，但是这些结构通常encoder的结构比decoder的结构更加heavy，而Hourglass module中donwn-sampling structure和up-sampling structure是完全对称的。
 
