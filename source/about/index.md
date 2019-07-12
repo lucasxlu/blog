@@ -43,6 +43,8 @@ Store Intelligent Decision-making Department
   * Image quality assessment model with 94.34% Top1 Accuracy
   * Kanto Cooking (Display) detection with 0.898 mAP, and fine-grained recognition with 85.42% accuracy
   * Kanto Cooking (Discard) detection with 0.891 mAP, and fine-grained recognition with 96.21% accuracy
+  * Daily fresh meal detection with 0.920 AP and 98.17% accuracy
+  * Air curtain & laminate detection with 0.860 mAP
 
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
 Algorithm Intern  
