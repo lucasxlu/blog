@@ -1,6 +1,6 @@
 ---
 title: "[CV] Detection"
-date: 2019-05-12 17:55:05
+date: 2019-07-20 23:31:05
 mathjax: true
 tags:
 - Machine Learning
@@ -844,6 +844,96 @@ $$
 此外，在RepGT Loss中采用IoG而非IoU的原因在于：若使用IoU-based loss，则bbox regressor会通过简单扩大bbox size来增大分母$area(B^P\bigcup G_{Rep}^P)$，从而达到最小化IoU loss的目的。而IoG的分母是一个常数，因此可以让bbox regressor直接最小化$area(B^P\bigcap G_{Rep}^P)$。
 
 
+## Libra RCNN
+> Paper: [Libra R-CNN: Towards Balanced Learning for Object Detection](http://openaccess.thecvf.com/content_CVPR_2019/papers/Pang_Libra_R-CNN_Towards_Balanced_Learning_for_Object_Detection_CVPR_2019_paper.pdf)
+
+Libra RCNN是发表在[CVPR'19](http://openaccess.thecvf.com/CVPR2019.py)上的文章，我在商品检测项目中也用到了这个算法，效果的确是非常nice，而且idea也非常简单易懂。本小节就来对这个工作进行介绍。
+
+从paper title也可以知道，Libra RCNN是属于RCNN系列的two-stage detector，并且着重点在于**balanced learning**，该算法主要从以下3点来解决imbalanced learning问题：
+* Sample level: 提出了IoU-balanced sampling
+* Feature level: 提出了balanced feature pyramid
+* Loss level: 提出了balanced L1 loss
+
+过去几年见证了Deep Learning在Object Detection领域的飞速发展，从最初的RCNN到本文的Libra RCNN，其关键性因素主要有如下3点：
+1. whether the selected region samples are representative
+2. whether the extracted visual features are fully utilized
+3. whether the designed objective function is optimal
+
+作者发现，在上述3点均存在着imbalance问题，而这些imbalance problem会影响模型的performance。既然发现问题是为了解决问题，而这3点分别对应了sample level、feature level以及loss level的imbalance problem。
+
+![Imbalance](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/imbalance_libra_rcnn.png)
+
+### Methodology
+#### IoU-balanced Sampling
+为了解决**sample level**的imbalance问题，作者提出了一种新的hard mining method——**IoU-balanced Sampling**:
+若要从$M$个candidate中选出$N$个 negative samples，那么random sampling的概率为$p=\frac{N}{M}$。为了提高negative samples被select的概率，首先根据IOU将sampling interval平均划分成$K$个bin，在每个bin内部negative samples都是evenly distributed。所以在IOU-balanced sampling下，selected probability为：
+$$
+p_k = \frac{N}{K}\times \frac{1}{M_k} k\in [0, K)
+$$
+where $M_k$ is the number of sampling candidates in the corresponding interval denoted by $k$. $K$ is set to 3 by default in our experiments.
+
+下图显示，采用了IOU-balanced sampling的方法，比randomly sampling选取的negative samples更接近真实的distribution。
+
+![IOU Balanced Sampling](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/iou_balanced_sampling.png)
+
+#### Balanced Feature Pyramid
+与FPN等通过lateral path来融合multi-level feature不同，Libra RCNN是通过使用same deeply integrated balanced semantic features来增强multi-level features。该步骤主要包含rescaling, integrating, refining and strengthening 4个步骤(如下图所示)。因为步骤非常简单，也很好理解，这里就直接引用一下原文吧，不做讲解了。
+
+![Balanced Feature Pyramid](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/balanced_feature_pyramid.png)
+
+* **Obtaining balanced semantic features**  
+    > Features at resolution level $l$ are denoted as $C_l$. The number of multi-level features is denoted as $L$. The indexes of involved lowest and highest levels are denoted as $l_{min}$ and $l_{max}$. In Figure 4, $C_2$ has the highest resolution. To integrate multi-level features and preserve their semantic hierarchy at the same time, we first resize the multi-level features $\{C_2, C_3, C_4, C_5\}$ to an intermediate size, i.e., the same size as $C_4$, with interpolation and max-pooling respectively. Once the features are rescaled, the balanced semantic features are obtained by simple averaging as:
+    $$
+    C=\frac{1}{L}\sum_{l=l_{min}}^{l_{max}}C_l
+    $$
+    
+    > The obtained features are then rescaled using the same but reverse procedure to strengthen the original features. Each resolution obtains equal information from others in this procedure. Note that this procedure does not contain any pa- rameter. We observe improvement with this nonparametric method, proving the effectiveness of the information flow.
+
+* **Refining balanced semantic features**  
+    > 作者采用了Gaussian non-local attention来enhance balanced semantic feature。
+    
+#### Balanced L1 Loss Classification
+现在的two-stage detector几乎都是在RCNN/Faster RCNN的改进，Faster RCNN的Loss如下：
+$$
+L_{p,u,t^u,v}=L_{cls}(p,u) + \lambda[u\geq 1]L_{loc}(t^u,v)
+$$
+
+$L_{p,u,t^u,v}$是个典型的multi-task loss，因此调整$\lambda$是个很头疼的问题。而由于regression loss unbound的特性，直接提高regression loss的权重会使得模型对outliers十分敏感。针对这个问题，作者提出了Balanced $L_1$ Loss。
+
+> These outliers, which can be regarded as hard samples, will produce excessively large gradients that are harmful to the training process. The inliers, which can be regarded as the easy samples, contribute little gradient to the overall gradients compared with the outliers.
+
+Balanced $L_1$ loss is derived from the conventional smooth $L_1$ loss, in which an inflection point is set to separate inliers from outliners, and clip the large gradients produced by outliers with a maximum value of 1.0.
+
+Balanced $L_1$ Loss的目的就是为了提升crucial regression gradients(例如inliers，即accurate samples)，从而让regression loss与classification loss更加balance。
+$$
+L_{loc}=\sum_{i\in \{x,y,w,h\}} L_b (t_i^u-v_i)
+$$
+其对应的gradients满足:
+$$
+\frac{\partial L_{loc}}{\partial w}\propto \frac{\partial L_b}{\partial t_i^u}\propto \frac{\partial L_b}{\partial x}
+$$
+Gradient formulation如下：
+$$
+\frac{\partial L_b}{\partial x}=\begin{cases}
+    \alpha ln(b|x|+1) & if |x|<1\\
+    \gamma & otherwise
+\end{cases}
+$$
+$\alpha$越小，inliers的gradient越大，但outliers的gradient未受影响。此外，$\gamma$也可用来调整regression error的upper bound，从而使得object function更好地balance classification/regression task。
+
+Balanced $L_1$ Loss定义如下：
+$$
+L_b(x)\begin{cases}
+    \frac{\alpha}{b}(b|x|+1)ln(b|x|+1)-\alpha |x| & if |x|<1\\
+    \gamma |x| + C & otherwise
+\end{cases}
+$$
+其中，$\gamma$, $\alpha$, $b$满足：
+$$
+\alpha ln(b+1)=\gamma
+$$
+
+
 
 ## Reference
 1. Girshick, Ross, et al. ["Rich feature hierarchies for accurate object detection and semantic segmentation."](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
@@ -863,3 +953,4 @@ $$
 15. Cai, Zhaowei, and Nuno Vasconcelos. ["Cascade r-cnn: Delving into high quality object detection."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Cai_Cascade_R-CNN_Delving_CVPR_2018_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.
 16. Lin, Tsung-Yi, et al. ["Focal loss for dense object detection."](http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf) Proceedings of the IEEE international conference on computer vision. 2017.
 17. Wang, Xinlong, et al. ["Repulsion loss: Detecting pedestrians in a crowd."](http://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Repulsion_Loss_Detecting_CVPR_2018_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.
+18. Pang, Jiangmiao, et al. ["Libra r-cnn: Towards balanced learning for object detection."](http://openaccess.thecvf.com/content_CVPR_2019/papers/Pang_Libra_R-CNN_Towards_Balanced_Learning_for_Object_Detection_CVPR_2019_paper.pdf) Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2019.
