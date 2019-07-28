@@ -6,7 +6,7 @@ description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
 ## Self Introduction
-I am a third-year master major in Machine Learning and Computer Vision. My research interests include Facial Analysis, Deep Learning and Machine Learning. I like reading and photography. You can find me from my [Zhihu](https://www.zhihu.com/people/xulu-0620) and [Instagram](https://www.instagram.com/lucasx_xulu/).
+I am a third-year master major in Machine Learning and Computer Vision. My research interests include Face Analysis, Deep Learning and Machine Learning. I like reading and photography. You can find me from [Zhihu](https://www.zhihu.com/people/xulu-0620) and [Instagram](https://www.instagram.com/lucasx_xulu/).
 
 ![LucasX](https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg)
 
@@ -41,10 +41,10 @@ Store Intelligent Decision-making Department
 
   * Convenience Store screen digit recognition with 99.07% accuracy
   * Image quality assessment model with 94.34% Top1 Accuracy
-  * Kanto Cooking (Display) detection with 0.898 mAP, and fine-grained recognition with 85.42% accuracy
-  * Kanto Cooking (Discard) detection with 0.891 mAP, and fine-grained recognition with 96.21% accuracy
+  * Kanto Cooking (Display) detection with 0.898 AP, and fine-grained recognition with 85.42% accuracy
+  * Kanto Cooking (Discard) detection with 0.950 AP, and fine-grained recognition with 95.23% accuracy
   * Daily fresh meal detection with 0.920 AP and 98.17% accuracy
-  * Air curtain & laminate detection with 0.860 mAP
+  * Air curtain & laminate detection with 0.90mAP
 
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
 Algorithm Intern  
