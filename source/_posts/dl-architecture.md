@@ -1,6 +1,6 @@
 ---
 title: "[DL] Architecture"
-date: 2019-03-25 20:17:40
+date: 2019-08-03 14:39:40
 mathjax: true
 tags:
 - Machine Learning
@@ -568,6 +568,23 @@ S-BN also has two important advantages:
 ![Training of SNN](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/snn_training.jpg)
 
 
+## MixNet
+> Paper: ["MixNet: Mixed Depthwise Convolutional Kernels."](https://arxiv.org/pdf/1907.09595.pdf)  
+> Code: [MixNet.TF](https://github.com/tensorflow/tpu/tree/master/models/official/mnasnet/mixnet)
+
+MixNet是Google发表在BMVC19上的文章，核心idea其实也非常简单。个人理解，就是将GoogLeNet中利用multi-size kernel设计Inception Block来获取multi-scale feature的思路用在了Depth-wise Conv上。
+
+作者首先分析了large scale对模型性能的影响：随着kernel size的增加，model size自然也随之增加，从$3\times 3$增加到$7\times 7$时，Acc也逐步增加，但是当kernel size大于$9\times 9$时则Acc会急剧下降，说明太大的kernel size会hurt模型的性能。同时，在MobileNet V1结构中，$7\times 7$取得最佳效果，而MobileNet V2中，$9\times 9$取得最佳效果。作者还意识到：single kernel size会有局限性，因此需要在网络中同时使用large kernel来capture high-resolution patterns，同时small kernels来capture low-resolution patterns，才能获得更好的Acc与efficiency。这也就是本文MixNet的初衷。
+
+![MixConv](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/mix-conv.png)
+
+MixConv首先将channels进行分组，并且为不同的组分配不同的conv kernel size来capture不同的patterns，这样就得到了学习了不同pattern的features：$<\hat{Y}_{x,y,z_1}^1,\cdots,\hat{Y}_{x,y,z_g}^g>$。接下来将这些features进行concatenate操作即可获得最终的feature representation：
+$$
+Y_{x,y,z_0}=Concat(\hat{Y}_{x,y,z_1}^1,\cdots,\hat{Y}_{x,y,z_g}^g)
+$$
+
+核心idea就是这么简单，作者在实验中也将这种思路分别用在了hand-crafted architecture与NAS中，发现均取得了很好地效果。
+
 
 ## Reference
 1. Krizhevsky A, Sutskever I, Hinton G E. [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)[C]//Advances in neural information processing systems. 2012: 1097-1105.
@@ -588,3 +605,4 @@ S-BN also has two important advantages:
 16. Hu, Jie and Shen, Li and Sun, Gang. [Squeeze-and-Excitation Networks](http://openaccess.thecvf.com/content_cvpr_2018/papers/Hu_Squeeze-and-Excitation_Networks_CVPR_2018_paper.pdf)[C]//The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). 2018.
 17. Yu, Jiahui, et al. ["Slimmable Neural Networks."](https://openreview.net/pdf?id=H1gMCsAqY7)[C]//ICLR (2019).
 18. Szegedy, Christian, et al. ["Rethinking the inception architecture for computer vision."](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.
+19. Tan, Mingxing, and Quoc V. Le. ["MixNet: Mixed Depthwise Convolutional Kernels."](https://arxiv.org/pdf/1907.09595.pdf) BMVC (2019).
