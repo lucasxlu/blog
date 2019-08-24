@@ -6,7 +6,7 @@ description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
 ## Self Introduction
-I am a third-year master major in Machine Learning and Computer Vision. My research interests include Face Analysis, Deep Learning and Machine Learning. I like reading and photography. You can find me from [Zhihu](https://www.zhihu.com/people/xulu-0620) and [Instagram](https://www.instagram.com/lucasx_xulu/).
+My research interests include Machine Learning and Computer Vision. I like reading and photography. You can find me from [Zhihu](https://www.zhihu.com/people/xulu-0620) and [Instagram](https://www.instagram.com/lucasx_xulu/).
 
 ![LucasX](https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg)
 
