@@ -1,17 +1,19 @@
 ---
 title: "[CV] Segmentation"
-date: 2019-01-05 15:33:05
+date: 2019-09-01 13:38:05
 mathjax: true
 tags:
 - Machine Learning
 - Deep Learning
 - Computer Vision
-- Segmentation
+- Semantic Segmentation
+- Instance Segmentation
 catagories:
 - Machine Learning
 - Deep Learning
 - Computer Vision
-- Segmentation
+- Semantic Segmentation
+- Instance Segmentation
 ---
 ## Introduction
 segmentation也是Computer Vision领域一个非常重要的研究方向，和Classification，Detection一起是high-level vision里最重要的方向。我不是主要做Segmentation的，但由于Segmentation的广泛的应用方向(例如自动驾驶的场景感知)和研究热点，本文旨在梳理近些年CV顶会上一些非常有代表性的work。
@@ -114,8 +116,25 @@ Our default instantiation predicts class-specific masks, i.e., one $m\times m$ m
 Segmentation is a pixel-to-pixel task and we exploit the spatial layout of masks by using an FCN. In Table 2e, we compare multi-layer perceptrons (MLP) and FCNs, using a ResNet-50-FPN backbone. Using FCNs gives a 2.1 mask AP gain over MLPs. We note that we choose this backbone so that the conv layers of the FCN head are not pre-trained, for a fair comparison with MLP.
 
 
+## FC_DenseNet
+> Paper: [The one hundred layers tiramisu: Fully convolutional densenets for semantic segmentation](http://openaccess.thecvf.com/content_cvpr_2017_workshops/w13/papers/Jegou_The_One_Hundred_CVPR_2017_paper.pdf)
+> Code: [Github](https://github.com/SimJeg/FC-DenseNet.git)
+
+本篇介绍一下CVPR Workshop 2017 上面的一篇paper，idea非常简单，就是单纯地将DenseNet扩展为FCN架构，然后取得了很不错的效果。笔者认为，该算法能work很大程度上取决于优秀的backbone——DenseNet，以及在segmentation非常work的工作——FCN。本文novelty很一般，但鉴于工程中实际上并不需要太复杂的方法，所以还是讲解一下吧。
+
+先回顾一下[FCN-based segmentation methods](http://openaccess.thecvf.com/content_cvpr_2015/papers/Long_Fully_Convolutional_Networks_2015_CVPR_paper.pdf)：
+(1) downsampling layers用来提取coarse semantic features
+(2) upsampling layers恢复到和input image相同size的output；因low-level features包含很多细节信息，所以常常会再网络中加入skip connection结构
+(3) CRF(Conditional Random Field)用于提纯上一步较coarse的prediction
+
+本文，作者对DenseNet进行了改进：首先将其改为FCN结构，但只在相邻dense block采用upsampling operation，对于相同dimension的feature map利用skip connection连接起来，来获取multi-scale的information。整体网络也借鉴了[UNet](https://arxiv.org/pdf/1505.04597.pdf)的结构：
+
+![FC-DenseNet](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/fc_densenet.jpg)
+
 
 
 ## Reference
 1. Long J, Shelhamer E, Darrell T. [Fully convolutional networks for semantic segmentation](http://openaccess.thecvf.com/content_cvpr_2015/papers/Long_Fully_Convolutional_Networks_2015_CVPR_paper.pdf)[C]//Proceedings of the IEEE conference on computer vision and pattern recognition. 2015: 3431-3440.
 2. He, Kaiming, et al. ["Mask r-cnn."](http://openaccess.thecvf.com/content_ICCV_2017/papers/He_Mask_R-CNN_ICCV_2017_paper.pdf) Computer Vision (ICCV), 2017 IEEE International Conference on. IEEE, 2017.
+3. Jégou S, Drozdzal M, Vazquez D, et al. [The one hundred layers tiramisu: Fully convolutional densenets for semantic segmentation](http://openaccess.thecvf.com/content_cvpr_2017_workshops/w13/papers/Jegou_The_One_Hundred_CVPR_2017_paper.pdf)[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops. 2017: 11-19.
+4. Ronneberger O, Fischer P, Brox T. [U-net: Convolutional networks for biomedical image segmentation](https://arxiv.org/pdf/1505.04597.pdf)[C]//International Conference on Medical image computing and computer-assisted intervention. Springer, Cham, 2015: 234-241.
