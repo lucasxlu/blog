@@ -1,7 +1,7 @@
 ---
 layout: "about"
 title: "About Me"
-date: 2019-06-30 15:18:56
+date: 2019-09-06 10:00:00
 description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
@@ -14,7 +14,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 
 ## Academic Papers
-* **Xu, Lu**, Heng Fan, and Jinhai Xiang. "Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition." [2019 26th IEEE International Conference on Image Processing (ICIP)](http://2019.ieeeicip.org/). IEEE, 2019.
+* **Xu, Lu**, Heng Fan, and Jinhai Xiang. "Hierarchical Multi-task Networks for Race, Gender and Facial Attractiveness Recognition." [2019 IEEE International Conference on Image Processing (ICIP)](http://2019.ieeeicip.org/). IEEE, 2019. [[Paper](https://ieeexplore.ieee.org/abstract/document/8803614)]
 * Fan H, **Xu L**, Xiang J. Complementary Siamese Networks for Robust Visual Tracking[C]//ICASSP 2019-2019 [IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)](https://2019.ieeeicassp.org/). IEEE, 2019: 2247-2251. [[Paper](https://ieeexplore.ieee.org/abstract/document/8682985/)]
 * **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//[Pacific Rim Conference on Multimedia](http://www.pcm2018.org/). Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[Code](https://github.com/lucasxlu/CRNet.git)]
 * **Xu, Lu**, Jinhai Xiang, and Xiaohui Yuan. "Learning Beauty by Transferring Rich Deep Features." [Concurrency and Computation: Practice and Experience](https://onlinelibrary.wiley.com/journal/15320634). (Accepted) [[arXiv](https://arxiv.org/abs/1803.07253)] [[Code](https://github.com/lucasxlu/TransFBP.git)] [[Slides](./Presentation_TransFBP.pdf)]
@@ -43,8 +43,9 @@ Store Intelligent Decision-making Department
   * Image quality assessment model with 94.34% Top1 Accuracy
   * Kanto Cooking (Display) detection with 0.898 AP, and fine-grained recognition with 85.42% accuracy
   * Kanto Cooking (Discard) detection with 0.950 AP, and fine-grained recognition with 95.23% accuracy
-  * Daily fresh meal detection with 0.920 AP and 98.17% accuracy
+  * Daily fresh meal detection with 0.920 AP and 99.60% accuracy
   * Air curtain & laminate detection with 0.90mAP
+  * Products Re-identification
 
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
 Algorithm Intern  
