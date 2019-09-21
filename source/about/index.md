@@ -38,12 +38,13 @@ Vision Algorithm Engineer
 Store Intelligent Decision-making Department
 
   * Convenience Store screen digit recognition with 99.07% accuracy
-  * Image quality assessment model with 94.34% Top1 Accuracy
   * Kanto Cooking (Display) detection with 0.898 AP, and fine-grained recognition with 85.42% accuracy
-  * Kanto Cooking (Discard) detection with 0.950 AP, and fine-grained recognition with 95.23% accuracy
-  * Daily fresh meal detection with 0.920 AP and 99.60% accuracy
-  * Air curtain & laminate detection with 0.90mAP
-  * Products Re-identification
+  * Kanto Cooking (Discard) detection with 0.963 AP, and fine-grained recognition with 95.66% accuracy
+  * Daily fresh meal recognition with 0.920 AP and 99.09% accuracy
+  * Air curtain & laminate detection with 0.905 mAP
+  * Products Re-identification with 99.43% rank-1 accuracy
+  * Model deployment with TensorRT and RESTful API
+
 
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
 Algorithm Intern  
