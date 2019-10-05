@@ -14,7 +14,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 
 ## Academic Papers
-* **Xu L**, Fan H, Xiang J. Hierarchical Multi-Task Network For Race, Gender and Facial Attractiveness Recognition[C]//2019 [IEEE International Conference on Image Processing (ICIP)](http://2019.ieeeicip.org/). IEEE, 2019: 3861-3865. [[Paper](https://ieeexplore.ieee.org/abstract/document/8803614)]
+* **Xu L**, Fan H, Xiang J. Hierarchical Multi-Task Network For Race, Gender and Facial Attractiveness Recognition[C]//2019 [IEEE International Conference on Image Processing (ICIP)](http://2019.ieeeicip.org/). IEEE, 2019: 3861-3865. [[Paper](https://ieeexplore.ieee.org/abstract/document/8803614)] [[Code](https://github.com/lucasxlu/HMTNet.git)] [[Slides](ICIP19_HMTNet_Slides.pdf)]
 * Fan H, **Xu L**, Xiang J. Complementary Siamese Networks for Robust Visual Tracking[C]//ICASSP 2019-2019 [IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)](https://2019.ieeeicassp.org/). IEEE, 2019: 2247-2251. [[Paper](https://ieeexplore.ieee.org/abstract/document/8682985/)]
 * **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//[Pacific Rim Conference on Multimedia](http://www.pcm2018.org/). Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[Code](https://github.com/lucasxlu/CRNet.git)]
 * **Xu, Lu**, Jinhai Xiang, and Xiaohui Yuan. "Learning Beauty by Transferring Rich Deep Features." [Concurrency and Computation: Practice and Experience](https://onlinelibrary.wiley.com/journal/15320634). (Accepted) [[arXiv](https://arxiv.org/abs/1803.07253)] [[Code](https://github.com/lucasxlu/TransFBP.git)] [[Slides](./Presentation_TransFBP.pdf)]
@@ -57,13 +57,6 @@ Security Product & Technology
   * License completeness recognition with 99.67% Precision and 99.68% Recall
   * Complete the writing of 21 patents related to safety products
 
-* [GeeTest](https://www.geetest.com/) &emsp; 2018.09 – 2018.09  
-Data Mining Intern  
-Behavior Verification Code Data Mining
-
-  * User behavior data analysis & mining base on Spark
-  * Feature extraction of black-and-white sample behavior dataset
-  * Complete the writing of data analysis report
 
 * [Guangzhou Yingzi Technology Co.,Ltd](https://www.yingzi.com/) &emsp; 2018.02 – 2018.03  
 Deep Learning/Python Engineer  
@@ -73,7 +66,7 @@ Animal Identification Center
   * Implement and train face detection model (MTCNN), and face identification model (FaceNet) based on TensorFlow
   * Encapsulate RESTful API based on Django, V1.0 achieves an accuracy over 95%
 
-* [Beijing Jiewen Technology Co.,Ltd.](http://www.jiewen.com.cn/), Huazhong Developing Center. &emsp; 2015.06 – 2016.06  
+* [Beijing Jiewen Technology Co.,Ltd.](http://www.aisino.com/), Huazhong Developing Center. &emsp; 2015.06 – 2016.06  
 Java/Web Spider Developer  
 Financial Information System & Multi-thread Web Crawling System
   * Develop and maintain web information system based on Java SSM framework and MySQL database.
