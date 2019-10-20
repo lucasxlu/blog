@@ -1,6 +1,6 @@
 ---
 title: "[DL] Architecture"
-date: 2019-08-03 14:39:40
+date: 2019-10-20 12:08:00
 mathjax: true
 tags:
 - Machine Learning
@@ -586,6 +586,62 @@ $$
 核心idea就是这么简单，作者在实验中也将这种思路分别用在了hand-crafted architecture与NAS中，发现均取得了很好地效果。
 
 
+## SKNet
+> Paper: [Selective Kernel Networks](http://openaccess.thecvf.com/content_CVPR_2019/papers/Li_Selective_Kernel_Networks_CVPR_2019_paper.pdf)
+> Code: [SKNet.Caffe](https://github.com/implus/SKNet.git)
+
+SKNet是发表在[CVPR'19](http://openaccess.thecvf.com/CVPR2019.py)上的paper，是手工设计网络的进一步进展（笔者认为，现如今其实[SENet](http://openaccess.thecvf.com/content_cvpr_2018/papers/Hu_Squeeze-and-Excitation_Networks_CVPR_2018_paper.pdf)在图像分类这个任务上已经做得足够好了），idea也非常简单，主体思路和[Inception](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Szegedy_Going_Deeper_With_2015_CVPR_paper.pdf)比较类似，就是如何获取**multi-scale information**。
+
+Paper开篇，作者先引用了神经学领域的一些工作来作为引子，引出**Receptive Fields size实际上并不是一样的**（PS：这一招可以学一学，增强文章逼格）。提到multi-scale information，就不得不提Inception网络了，因为Inception Block也是通过设计不同size的conv filter来处理multi-scale信息，但是处理完之后，Inception只是单纯的做linear aggregation，所以不一定能获取最佳的adaption ability。
+
+SK Unit一共由3个部分组成：
+* Split: 和Inception类似，multi-branch结构，设置不同size的conv filter，来获取multi-scale的信息。
+* Fuse: 对来自不同branch的multi-scale信息进行整合
+* Select: 根据selection weights重新对信息进行加权，即Attention，和SENet类似
+
+### Selective Kernel Convolution
+#### Split
+对于feature map $X\in \mathbb{R}^{H^{'}\times W^{'}\times C^{'}}$，经过两种transformations: $\tilde{\mathcal{F}}: X\rightarrow \tilde{U}\in \mathbb{R}^{H\times W\times C}$，以及$\hat{\mathcal{F}}: X\rightarrow \hat{U}\in \mathbb{R}^{H\times W\times C}$，前者kernel size为3，后者kernel size为5。为了进一步减小参数量，$5\times 5$ kernel由$stride=2$的$3\times 3$ dilatetion conv代替。
+
+#### Fuse
+先对上一步Split的两个branch信息进行Elt-wise summation:
+$$
+U=\tilde{U} + \hat{U}
+$$
+然后通过Global Average Pooling来embed global information，这个时候就得到了channel-wise statistics向量$s\in \mathbb{R}^C$，其中$s$向量中第$c$维的计算方式为:
+$$
+s_c=\mathcal{F}_{gap}(U_c)=\frac{1}{H\times W}\sum_{i=1}^H \sum_{j=1}^W U_c(i,j)
+$$
+紧接着再跟一个Fully connected layers来得到$z\in \mathbb{R}^{d\times 1}$，其中$d<C$，起到降维的作用。
+$$
+z=\mathcal{F}_{fc}(s)=\delta(\mathcal{B}(Ws))
+$$
+其中$\delta$是ReLU，$\mathcal{B}$是BatchNorm。为了研究$d$对模型efficiency的影响，作者在这里引入了参数$r$来控制$d$的值:
+$$
+d=max(C/r, L)
+$$
+
+#### Select
+和SENet类似，cross-channel的soft attention用于选择不同spatial scale的信息:
+$$
+a_c=\frac{e^{A_c z}}{e^{A_c z} + e^{B_c z}}
+$$
+
+$$
+b_c=\frac{e^{B_c z}}{e^{A_c z} + e^{B_c z}}
+$$
+其中$A,B\in \mathbb{R}^{C\times d}$，$a$和$b$分别代表$\tilde{U}$和$\hat{U}$的soft attention向量。经过attention加权，最终的feature map $V$为:
+$$
+V_c=a_c\cdot \tilde{U}_c + b_c\cdot \hat{U}_c
+$$
+其中$a_c+b_c=1$。
+
+SKNet的整体网络结构如下：
+![SKNet](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/sknet.jpg)
+
+此外，作者在实验中发现，target object越大，该object就得到越强的attention。
+
+
 ## Reference
 1. Krizhevsky A, Sutskever I, Hinton G E. [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)[C]//Advances in neural information processing systems. 2012: 1097-1105.
 2. Simonyan K, Zisserman A. [Very deep convolutional networks for large-scale image recognition](https://arxiv.org/pdf/1409.1556v6.pdf)[J]. arXiv preprint arXiv:1409.1556, 2014.
@@ -606,3 +662,4 @@ $$
 17. Yu, Jiahui, et al. ["Slimmable Neural Networks."](https://openreview.net/pdf?id=H1gMCsAqY7)[C]//ICLR (2019).
 18. Szegedy, Christian, et al. ["Rethinking the inception architecture for computer vision."](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.
 19. Tan, Mingxing, and Quoc V. Le. ["MixNet: Mixed Depthwise Convolutional Kernels."](https://arxiv.org/pdf/1907.09595.pdf) BMVC (2019).
+20. Li X, Wang W, Hu X, et al. [Selective Kernel Networks](http://openaccess.thecvf.com/content_CVPR_2019/papers/Li_Selective_Kernel_Networks_CVPR_2019_paper.pdf)[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2019: 510-519.
