@@ -24,12 +24,10 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Undergraduate Thesis](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) of Hubei Province in 2015. in Chinese) [[Code](https://github.com/xuludev/System.git)]  
 
 
-## Projects & Competition
+## Projects
 * XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
   A repository for job data crawling and data analysis based on Python3. This repo has received over **230 stars** and **120+ forks**. Technical details can be read [here](https://www.zhihu.com/question/36132174/answer/94392659).
-* State-of-the-art performance on **Facial Expression Recognition Challenge** on [Real-word Affective Face Database (RAF-DB)](http://www.whdeng.cn/raf/model1.html) with our proposed **TreeCNN** model.
-* State-of-the-art performance on **Skin Lesion Analysis** on [ISIC](https://isic-archive.com/) and [SD-198](http://cv.nankai.edu.cn/projects/sd-198/) datasets with our proposed **CFPNet** and **ANGELE** algorithm.
 
 
 ## Experience

@@ -1,6 +1,6 @@
 ---
 title: "[DL] Data Augmentation"
-date: 2019-01-30 20:48:23
+date: 2019-11-23 22:07:23
 mathjax: true
 tags:
 - Machine Learning
@@ -86,7 +86,41 @@ Hide-and-Seek (HaS)可视为一种提高localisation任务的data augmentation�
 * GAP VS GMP: 因为GAP促使模型关注**所有的discriminative parts**，而GMP**只关注最discriminative part**。那是否GMP无用呢？实验证明，接入了HaS后的GMP带来了很大的提升，这种improvement可以归因于**max pooling对noise更robust**。
 
 
+## SamplePairing
+> Paper: [Data Augmentation by Pairing Samples for Images Classification](https://arxiv.org/pdf/1801.02929.pdf)
+
+SamplePairing是Deep Learning领域一篇非常非常简单的paper，简单到几乎小学生都可以看懂。思想和前面的[Mixup](https://openreview.net/pdf?id=r1Ddp1-Rb)有点像，但是却更简单，而且数学解释也不如[Mixup](https://openreview.net/pdf?id=r1Ddp1-Rb)做得好。
+这里就大致讲一下SamplePairing的idea吧：
+挑选training set中（注：当然也可以从非training set中挑选，但作者做了实验发现**从training set中选取的能取得更好的效果**）图像$I$与图像$J$，然后合成新样本$I^{'}=0.5I + 0.5J$，其中新样本$I^{'}$的label与图像$I$保持一致，这样就可以从$N$个样本中合成$N^2$个样本。如下图所示：
+
+![Sample Pairing](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/sample_pairing.jpg)
+
+对于算法细节就不多说了，因为实在是太简单。下面介绍一下paper中值得注意的点吧：
+1. SamplePairing在100分类任务上的效果比1000分类任务上的效果更好。
+2. SamplePairing增大了training loss，但是却降低了validation loss（很好理解，mix了两个不同label的samples之后，模型在training set上肯定拟合的不如原来好）。
+3. 关于样本$I$与样本$J$的选择问题：随机从所有category中挑选能取得最好的效果。
+4. 关于样本$I$与样本$J$的权重设置问题：设置0.5（即equal intensity mix）效果最好。
+5. **很适合医学图像分析这类样本非常少的分类场景中**。
+
+
+## RandomErasing
+> Paper: [Random erasing data augmentation](https://arxiv.org/pdf/1708.04896.pdf)
+> Code: [RandomErasing.PyTorch](https://github.com/zhunzhong07/Random-Erasing)
+
+这篇也是非常非常简单的paper，核心idea就是在训练过程中挑选图像中一块连续的区域，然后填充随机数值，来使得模型对occlusion更鲁棒。与常见的data augmentation操作Random Crop有以下不同：
+1. 图像中的object只有一部分被occlude，而overall structure信息是完整的
+2. erased region被随机填充数值，可视为**在图片中添加了noise**
+
+算法细节如下图所示，因为太简单就不细说了：
+![Random Erasing](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/random_erasing.jpg)
+
+此外，作者在实验中还发现：
+1. RandomErasing和Random Flipping/Random Crop可以起到complementary的效果，因此可以放心地一起用。
+2. 填充值为Random Number时能取得最佳效果。
+
 
 ## Reference
 1. Zhang, Hongyi, et al. ["mixup: Beyond empirical risk minimization."](https://openreview.net/pdf?id=r1Ddp1-Rb) International Conference on Learning Representations (2018).
 2. Kumar Singh, Krishna, and Yong Jae Lee. ["Hide-and-seek: Forcing a network to be meticulous for weakly-supervised object and action localization."](http://openaccess.thecvf.com/content_ICCV_2017/papers/Singh_Hide-And-Seek_Forcing_a_ICCV_2017_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2017.
+3. Inoue, Hiroshi. ["Data augmentation by pairing samples for images classification."](https://arxiv.org/pdf/1801.02929.pdf) arXiv preprint arXiv:1801.02929 (2018).
+4. Zhong Z, Zheng L, Kang G, et al. [Random erasing data augmentation](https://arxiv.org/pdf/1708.04896.pdf)[J]. arXiv preprint arXiv:1708.04896, 2017.
