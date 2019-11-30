@@ -1,6 +1,6 @@
 ---
 title: "[DL] Data Augmentation"
-date: 2019-11-23 22:07:23
+date: 2019-11-30 22:45:23
 mathjax: true
 tags:
 - Machine Learning
@@ -118,9 +118,30 @@ SamplePairing是Deep Learning领域一篇非常非常简单的paper，简单到�
 1. RandomErasing和Random Flipping/Random Crop可以起到complementary的效果，因此可以放心地一起用。
 2. 填充值为Random Number时能取得最佳效果。
 
+## Cutout
+> Paper: [Improved regularization of convolutional neural networks with cutout](https://arxiv.org/pdf/1708.04552.pdf)
+
+又是一篇非常简单的paper，即在input image中随机mask掉一块连续区域来使得模型**更好地利用full context image information，而非仅仅那么一小块的specific visual features**，思想和[Random Erasing](https://arxiv.org/pdf/1708.04896.pdf)其实非常相似。
+
+[Dropout](http://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)被广泛应用于DNN（主要是FC layer和MLP）的regularization中，但是在conv layer却并没有MLP中那么有效，原因主要如下：
+1. conv layer因parameter sharing机制，参数本来就已经比FC layer少了很多，因此overfitting现象自然比FC layer轻。
+2. 图像中neighboring pixel共享相同的信息，因此若其中某些pixel被drop掉，那么下一层网络依然可以从neighbor pixel获取相似的信息。
+
+因此，Dropout在conv layer中仅仅起到增强对noisy inputs鲁棒性的作用，而非起到像FC layer中的model averaging effect。
+
+Mask image pixel的方式如下：
+1. 在每一次epoch中，提取并存储每张图maximally activated feature map
+2. 在下一个epoch中，upsample上一步存储的feature map到input resolution，再利用feature map的均值来作为mask
+
+此外，作者还发现：
+1. mask掉的区域不能太大
+2. 随着category数量的增加，最佳的cutout size逐步变小，原因可能是**细粒度分类中context信息并不如object的细节重要**
+
 
 ## Reference
 1. Zhang, Hongyi, et al. ["mixup: Beyond empirical risk minimization."](https://openreview.net/pdf?id=r1Ddp1-Rb) International Conference on Learning Representations (2018).
 2. Kumar Singh, Krishna, and Yong Jae Lee. ["Hide-and-seek: Forcing a network to be meticulous for weakly-supervised object and action localization."](http://openaccess.thecvf.com/content_ICCV_2017/papers/Singh_Hide-And-Seek_Forcing_a_ICCV_2017_paper.pdf) Proceedings of the IEEE International Conference on Computer Vision. 2017.
 3. Inoue, Hiroshi. ["Data augmentation by pairing samples for images classification."](https://arxiv.org/pdf/1801.02929.pdf) arXiv preprint arXiv:1801.02929 (2018).
 4. Zhong Z, Zheng L, Kang G, et al. [Random erasing data augmentation](https://arxiv.org/pdf/1708.04896.pdf)[J]. arXiv preprint arXiv:1708.04896, 2017.
+5. DeVries T, Taylor G W. [Improved regularization of convolutional neural networks with cutout](https://arxiv.org/pdf/1708.04552.pdf)[J]. arXiv preprint arXiv:1708.04552, 2017.
+6. Yun S, Han D, Oh S J, et al. [Cutmix: Regularization strategy to train strong classifiers with localizable features](http://openaccess.thecvf.com/content_ICCV_2019/papers/Yun_CutMix_Regularization_Strategy_to_Train_Strong_Classifiers_With_Localizable_Features_ICCV_2019_paper.pdf)[C]. CVPR, 2019.
