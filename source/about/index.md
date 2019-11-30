@@ -35,13 +35,10 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 Vision Algorithm Engineer  
 Store Intelligent Decision-making Department
 
-  * Convenience Store screen digit recognition with 99.07% accuracy
-  * Kanto Cooking (Display) detection with 0.898 AP, and fine-grained recognition with 85.42% accuracy
   * Kanto Cooking (Discard) detection with 0.963 AP, and fine-grained recognition with 95.66% accuracy
-  * Daily fresh meal recognition with 0.920 AP and 99.09% accuracy
-  * Air curtain & laminate detection with 0.905 mAP
-  * Products Re-identification with 99.43% rank-1 accuracy
-  * Model deployment with TensorRT and RESTful API
+	* Daily fresh food recognition with 0.920 AP and 99.09% accuracy
+	* Products Re-identification with 99.43% rank-1 accuracy
+	* Model deployment with RESTful API (Django + TensorRT + Nginx)
 
 
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
@@ -56,16 +53,8 @@ Security Product & Technology
   * Complete the writing of 21 patents related to safety products
 
 
-* [Guangzhou Yingzi Technology Co.,Ltd](https://www.yingzi.com/) &emsp; 2018.02 – 2018.03  
-Deep Learning/Python Engineer  
-Animal Identification Center
-
-  * Implementation of Amazon S3 data interaction module; Cleaning and pre-processing of existing Label-Me data
-  * Implement and train face detection model (MTCNN), and face identification model (FaceNet) based on TensorFlow
-  * Encapsulate RESTful API based on Django, V1.0 achieves an accuracy over 95%
-
 * [Beijing Jiewen Technology Co.,Ltd.](http://www.aisino.com/), Huazhong Developing Center. &emsp; 2015.06 – 2016.06  
-Java/Web Spider Developer  
+Java/Web Spider Developer
 Financial Information System & Multi-thread Web Crawling System
   * Develop and maintain web information system based on Java SSM framework and MySQL database.
   * Develop web crawlers to collect data from O2O websites (e.g. [Ctrip](http://www.ctrip.com/), [Dazhong Dianping](http://www.dianping.com/), [AMap](https://www.amap.com/)) based on Python/Java and MySQL/MongoDB.

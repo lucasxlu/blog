@@ -144,4 +144,4 @@ Mask image pixel的方式如下：
 3. Inoue, Hiroshi. ["Data augmentation by pairing samples for images classification."](https://arxiv.org/pdf/1801.02929.pdf) arXiv preprint arXiv:1801.02929 (2018).
 4. Zhong Z, Zheng L, Kang G, et al. [Random erasing data augmentation](https://arxiv.org/pdf/1708.04896.pdf)[J]. arXiv preprint arXiv:1708.04896, 2017.
 5. DeVries T, Taylor G W. [Improved regularization of convolutional neural networks with cutout](https://arxiv.org/pdf/1708.04552.pdf)[J]. arXiv preprint arXiv:1708.04552, 2017.
-6. Yun S, Han D, Oh S J, et al. [Cutmix: Regularization strategy to train strong classifiers with localizable features](http://openaccess.thecvf.com/content_ICCV_2019/papers/Yun_CutMix_Regularization_Strategy_to_Train_Strong_Classifiers_With_Localizable_Features_ICCV_2019_paper.pdf)[C]. CVPR, 2019.
+6. Yun S, Han D, Oh S J, et al. [Cutmix: Regularization strategy to train strong classifiers with localizable features](http://openaccess.thecvf.com/content_ICCV_2019/papers/Yun_CutMix_Regularization_Strategy_to_Train_Strong_Classifiers_With_Localizable_Features_ICCV_2019_paper.pdf)[C]. ICCV, 2019.
