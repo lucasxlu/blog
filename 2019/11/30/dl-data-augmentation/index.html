@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[dl] data augmentation | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningData Augmentation" />
+  
+  
+  
+  
+  <meta name="description" content="Introduction众所周知，Deep Learning现如今的繁荣，和大数据、GPU和深度学习算法都是离不开关系的。Deep Learning模型参数众多，需要海量的数据进行拟合，否则很容易overfitting到training set上。而现实情况下，我们不一定能很容易地获取大量高质量标注样本，因此，Data Augmentation则起到了非常大的作用了。这便是本文所要讲述的主角。 M">
+<meta name="keywords" content="Machine Learning,Deep Learning,Data Augmentation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[DL] Data Augmentation">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2019/11/30/dl-data-augmentation/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Introduction众所周知，Deep Learning现如今的繁荣，和大数据、GPU和深度学习算法都是离不开关系的。Deep Learning模型参数众多，需要海量的数据进行拟合，否则很容易overfitting到training set上。而现实情况下，我们不一定能很容易地获取大量高质量标注样本，因此，Data Augmentation则起到了非常大的作用了。这便是本文所要讲述的主角。 M">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/has_main_idea.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/has.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/sample_pairing.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/random_erasing.jpg">
+<meta property="og:updated_time" content="2019-11-30T14:53:08.324Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[DL] Data Augmentation">
+<meta name="twitter:description" content="Introduction众所周知，Deep Learning现如今的繁荣，和大数据、GPU和深度学习算法都是离不开关系的。Deep Learning模型参数众多，需要海量的数据进行拟合，否则很容易overfitting到training set上。而现实情况下，我们不一定能很容易地获取大量高质量标注样本，因此，Data Augmentation则起到了非常大的作用了。这便是本文所要讲述的主角。 M">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/has_main_idea.png">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-dl-data-augmentation" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [DL] Data Augmentation
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2019/11/30/dl-data-augmentation/" class="article-date">
+	  <time datetime="2019-11-30T14:45:23.000Z" itemprop="datePublished">2019-11-30</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>众所周知，Deep Learning现如今的繁荣，和<strong>大数据</strong>、<strong>GPU</strong>和<strong>深度学习算法</strong>都是离不开关系的。Deep Learning模型参数众多，需要海量的数据进行拟合，否则很容易overfitting到training set上。而现实情况下，我们不一定能很容易地获取大量高质量标注样本，因此，Data Augmentation则起到了非常大的作用了。这便是本文所要讲述的主角。</p>
+<h2 id="Mixup"><a href="#Mixup" class="headerlink" title="Mixup"></a>Mixup</h2><blockquote>
+<p>Paper: <a href="https://openreview.net/pdf?id=r1Ddp1-Rb" target="_blank" rel="noopener">mixup: Beyond Empirical Risk Minimization</a></p>
+</blockquote>
+<p>Mixup的核心idea如下：<br>$$<br>\tilde{x}=\lambda x_i + (1-\lambda) x_j<br>$$</p>
+<p>$$<br>\tilde{y}=\lambda y_i + (1-\lambda) y_j<br>$$<br>其中，$x_i, x_j$为raw input vectors，$y_i, y_j$为one-hot encodings。</p>
+<blockquote>
+<p>Mixup extends the training distribution by incorporating the prior knowledge that linear interpolations of feature vectors should lead to linear interpolations of the associated targets.</p>
+</blockquote>
+<p>Mixup的PyTorch代码如下，是不是非常简洁？<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># y1, y2 should be one-hot vectors</span></span><br><span class="line"><span class="keyword">for</span> (x1, y1), (x2, y2) <span class="keyword">in</span> zip(loader1, loader2):</span><br><span class="line">    lam = numpy.random.beta(alpha, alpha)</span><br><span class="line">    x = Variable(lam * x1 + (<span class="number">1.</span> - lam) * x2)</span><br><span class="line">    y = Variable(lam * y1 + (<span class="number">1.</span> - lam) * y2)</span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    loss(net(x), y).backward()</span><br><span class="line">    optimizer.step()</span><br></pre></td></tr></table></figure></p>
+<h3 id="What-is-mixup-doing"><a href="#What-is-mixup-doing" class="headerlink" title="What is mixup doing?"></a>What is mixup doing?</h3><p>The mixup vicinal distribution can be understood as a form of data augmentation that encourages the model $f$ to behave linearly in-between training examples. We argue that this linear behaviour reduces the amount of undesirable oscillations when predicting outside the training examples. Also, linearity is a good inductive bias from the perspective of Occam’s razor, since it is one of the simplest possible behaviors.</p>
+<p>mixup is a data augmentation method that consists of only two parts: random convex combination of raw inputs, and correspondingly, convex combination of one-hot label encodings.</p>
+<h2 id="Hide-and-Seek"><a href="#Hide-and-Seek" class="headerlink" title="Hide-and-Seek"></a>Hide-and-Seek</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Singh_Hide-And-Seek_Forcing_a_ICCV_2017_paper.pdf" target="_blank" rel="noopener">Hide-and-seek: Forcing a network to be meticulous for weakly-supervised object and action localization</a></p>
+</blockquote>
+<p>Hide-and-Seek (HaS)可视为一种提高localisation任务的data augmentation方法，其核心思想也非常简单，即在训练阶段，将input image先划分成$S\times S$个grid，然后随机以概率$p$hidden掉一些grid，来消除DCNN仅仅对image中最discriminative parts的强依赖，而是对relevent parts都产生一定的response，从而提高模型在预测阶段的robustness。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/has_main_idea.png" alt="Main Idea of HaS"></p>
+<blockquote>
+<p>已上图为例，若该image中最discriminative part是dog face，我们在训练阶段从input image中random drop的时候将dog face hidden掉了，那么这样就会迫使模型去寻找其他relevent parts (例如tail和leg)来辅助学习。通过在每个training epoch中随机hidden different parts，模型接受了image不同的parts作为输入，来使得模型关注不同的relevent parts，而不是最discriminative part。</p>
+</blockquote>
+<h3 id="Delving-Into-HaS"><a href="#Delving-Into-HaS" class="headerlink" title="Delving Into HaS"></a>Delving Into HaS</h3><h4 id="Hiding-random-image-patches"><a href="#Hiding-random-image-patches" class="headerlink" title="Hiding random image patches"></a>Hiding random image patches</h4><p>通过randomly hide patches，我们可以保证input image中最discriminative的part并非总是可以被模型get到，既然模型没法总是get到最discriminative的part，那么它自然就会从其他relevent but not that discriminative part中进行学习，从而解决了模型对discriminative part强依赖的缺陷。</p>
+<p>具体来讲，是这样的：给定一张size为 $W\times H\times 3$的 training image $I$，我们首先将其划分为固定size的patches ($S\times S$)，然后就得到了一共$(W\times H)/(S\times S)$个patches，然后以概率$p_{hide}$进行patch hiding操作。这样我们就得到了new image $I^{‘}$，来作为classification CNN的输入。在test阶段，将整张图作为输入(不做任何hiding)。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/has.png" alt="HaS Overview"></p>
+<h4 id="Setting-the-hidden-pixel-values"><a href="#Setting-the-hidden-pixel-values" class="headerlink" title="Setting the hidden pixel values"></a>Setting the hidden pixel values</h4><p>因为training阶段做了patch hiding而test阶段没有，这就存在discrepancy。这就会导致training阶段和test阶段的第一个conv layer activation有不同的distribution。而<strong>一个trained network要拥有良好的泛化能力，activiation的distribution应该是大致一样的</strong>。也就是说，对于DNN中连接到$x$ units的$w$ weights，$w^Tx$的distribution在training/test阶段应该大致相同。然而，在我们的设定中，因一些patch被hidden，而另一些没有被hidden，因此就不能保证activation distribution大致相同了。</p>
+<p>假设size为$K\times K$的conv kernel $F$，对应3-dimensional weights $W=\{w_1,\cdots,w_{k\times k}\}$，应用到一个RGB patch $X=\{x_1,\cdots,x_{k\times k}\}$上。另$v$代表每一个hidden pixel的RGB value。我们可以得到3种activation:</p>
+<ol>
+<li>$F$完全在<strong>visible patch</strong>中，得到输出$\sum_{i=1}^{k\times k} w_i^T x_i$。</li>
+<li>$F$完全在<strong>hidden patch</strong>中，得到输出$\sum_{i=1}^{k\times k}w_i^T v$。</li>
+<li>$F$部分<strong>位于visible patch，部分位于hidden patch</strong>，得到输出$\sum_{m\in visible}w_m^Tx_m + \sum_{n\in hidden}w_n^T v$。</li>
+</ol>
+<p>在test阶段，$F$总会位于visible patch中(因为HaS只在training阶段work)，因此会输出$\sum_{i=1}^{k\times k}w_i^T x_i$。这种输出仅仅会match到我们上面提到的第一种情况(即$F$完全在<strong>visible patch</strong>中)。对于后面两种情况，training阶段的activation和test阶段的activation也还是不同。</p>
+<p>我们通过<strong>将hidden pixel的RGB value设置为整个数据集上图片的mean RGB vector</strong> $v=\mu=\frac{1}{N_{pixels}}\sum_j x_j$来解决以上问题。<br>其中，$N_{pixels}$代表数据集上的所有像素。</p>
+<p>我们不妨来分析一下为什么这能work？<br>根据期望，一个patch的输出和averaged-valued patch的输出应该是一样的：$\mathbb{E}[\sum_{i=1}^{k\times k}w_i^Tx_i]=\sum_{i=1}^{k\times k}w_i^T\mu$。若将$v$换成$\mu$，那么上面提到的第2种和第3种情况的输出都会是$\sum_{i=1}^{k\times k}w_i^T \mu$，然后就会和test阶段的expected output能match上。</p>
+<p>文中用到的检测算法属于weakly-supervised detector (即仅仅给定image的category annotation，不给bbox)，因此整体framework是基于<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf" target="_blank" rel="noopener">CAM</a>的，不熟悉的读者可以去阅读<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf" target="_blank" rel="noopener">CAM</a>的原文。</p>
+<h3 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h3><ul>
+<li>With dropout: 因dropout随机drop掉了RGB channel pixels，image中最discriminative的information依然可以以很高的可能性被模型get到，因此还是会促使模型更多地关注最discriminative的部分。</li>
+<li>GAP VS GMP: 因为GAP促使模型关注<strong>所有的discriminative parts</strong>，而GMP<strong>只关注最discriminative part</strong>。那是否GMP无用呢？实验证明，接入了HaS后的GMP带来了很大的提升，这种improvement可以归因于<strong>max pooling对noise更robust</strong>。</li>
+</ul>
+<h2 id="SamplePairing"><a href="#SamplePairing" class="headerlink" title="SamplePairing"></a>SamplePairing</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1801.02929.pdf" target="_blank" rel="noopener">Data Augmentation by Pairing Samples for Images Classification</a></p>
+</blockquote>
+<p>SamplePairing是Deep Learning领域一篇非常非常简单的paper，简单到几乎小学生都可以看懂。思想和前面的<a href="https://openreview.net/pdf?id=r1Ddp1-Rb" target="_blank" rel="noopener">Mixup</a>有点像，但是却更简单，而且数学解释也不如<a href="https://openreview.net/pdf?id=r1Ddp1-Rb" target="_blank" rel="noopener">Mixup</a>做得好。<br>这里就大致讲一下SamplePairing的idea吧：<br>挑选training set中（注：当然也可以从非training set中挑选，但作者做了实验发现<strong>从training set中选取的能取得更好的效果</strong>）图像$I$与图像$J$，然后合成新样本$I^{‘}=0.5I + 0.5J$，其中新样本$I^{‘}$的label与图像$I$保持一致，这样就可以从$N$个样本中合成$N^2$个样本。如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/sample_pairing.jpg" alt="Sample Pairing"></p>
+<p>对于算法细节就不多说了，因为实在是太简单。下面介绍一下paper中值得注意的点吧：</p>
+<ol>
+<li>SamplePairing在100分类任务上的效果比1000分类任务上的效果更好。</li>
+<li>SamplePairing增大了training loss，但是却降低了validation loss（很好理解，mix了两个不同label的samples之后，模型在training set上肯定拟合的不如原来好）。</li>
+<li>关于样本$I$与样本$J$的选择问题：随机从所有category中挑选能取得最好的效果。</li>
+<li>关于样本$I$与样本$J$的权重设置问题：设置0.5（即equal intensity mix）效果最好。</li>
+<li><strong>很适合医学图像分析这类样本非常少的分类场景中</strong>。</li>
+</ol>
+<h2 id="RandomErasing"><a href="#RandomErasing" class="headerlink" title="RandomErasing"></a>RandomErasing</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1708.04896.pdf" target="_blank" rel="noopener">Random erasing data augmentation</a><br>Code: <a href="https://github.com/zhunzhong07/Random-Erasing" target="_blank" rel="noopener">RandomErasing.PyTorch</a></p>
+</blockquote>
+<p>这篇也是非常非常简单的paper，核心idea就是在训练过程中挑选图像中一块连续的区域，然后填充随机数值，来使得模型对occlusion更鲁棒。与常见的data augmentation操作Random Crop有以下不同：</p>
+<ol>
+<li>图像中的object只有一部分被occlude，而overall structure信息是完整的</li>
+<li>erased region被随机填充数值，可视为<strong>在图片中添加了noise</strong></li>
+</ol>
+<p>算法细节如下图所示，因为太简单就不细说了：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-data-aug/random_erasing.jpg" alt="Random Erasing"></p>
+<p>此外，作者在实验中还发现：</p>
+<ol>
+<li>RandomErasing和Random Flipping/Random Crop可以起到complementary的效果，因此可以放心地一起用。</li>
+<li>填充值为Random Number时能取得最佳效果。</li>
+</ol>
+<h2 id="Cutout"><a href="#Cutout" class="headerlink" title="Cutout"></a>Cutout</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1708.04552.pdf" target="_blank" rel="noopener">Improved regularization of convolutional neural networks with cutout</a></p>
+</blockquote>
+<p>又是一篇非常简单的paper，即在input image中随机mask掉一块连续区域来使得模型<strong>更好地利用full context image information，而非仅仅那么一小块的specific visual features</strong>，思想和<a href="https://arxiv.org/pdf/1708.04896.pdf" target="_blank" rel="noopener">Random Erasing</a>其实非常相似。</p>
+<p><a href="http://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf" target="_blank" rel="noopener">Dropout</a>被广泛应用于DNN（主要是FC layer和MLP）的regularization中，但是在conv layer却并没有MLP中那么有效，原因主要如下：</p>
+<ol>
+<li>conv layer因parameter sharing机制，参数本来就已经比FC layer少了很多，因此overfitting现象自然比FC layer轻。</li>
+<li>图像中neighboring pixel共享相同的信息，因此若其中某些pixel被drop掉，那么下一层网络依然可以从neighbor pixel获取相似的信息。</li>
+</ol>
+<p>因此，Dropout在conv layer中仅仅起到增强对noisy inputs鲁棒性的作用，而非起到像FC layer中的model averaging effect。</p>
+<p>Mask image pixel的方式如下：</p>
+<ol>
+<li>在每一次epoch中，提取并存储每张图maximally activated feature map</li>
+<li>在下一个epoch中，upsample上一步存储的feature map到input resolution，再利用feature map的均值来作为mask</li>
+</ol>
+<p>此外，作者还发现：</p>
+<ol>
+<li>mask掉的区域不能太大</li>
+<li>随着category数量的增加，最佳的cutout size逐步变小，原因可能是<strong>细粒度分类中context信息并不如object的细节重要</strong></li>
+</ol>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Zhang, Hongyi, et al. <a href="https://openreview.net/pdf?id=r1Ddp1-Rb" target="_blank" rel="noopener">“mixup: Beyond empirical risk minimization.”</a> International Conference on Learning Representations (2018).</li>
+<li>Kumar Singh, Krishna, and Yong Jae Lee. <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Singh_Hide-And-Seek_Forcing_a_ICCV_2017_paper.pdf" target="_blank" rel="noopener">“Hide-and-seek: Forcing a network to be meticulous for weakly-supervised object and action localization.”</a> Proceedings of the IEEE International Conference on Computer Vision. 2017.</li>
+<li>Inoue, Hiroshi. <a href="https://arxiv.org/pdf/1801.02929.pdf" target="_blank" rel="noopener">“Data augmentation by pairing samples for images classification.”</a> arXiv preprint arXiv:1801.02929 (2018).</li>
+<li>Zhong Z, Zheng L, Kang G, et al. <a href="https://arxiv.org/pdf/1708.04896.pdf" target="_blank" rel="noopener">Random erasing data augmentation</a>[J]. arXiv preprint arXiv:1708.04896, 2017.</li>
+<li>DeVries T, Taylor G W. <a href="https://arxiv.org/pdf/1708.04552.pdf" target="_blank" rel="noopener">Improved regularization of convolutional neural networks with cutout</a>[J]. arXiv preprint arXiv:1708.04552, 2017.</li>
+<li>Yun S, Han D, Oh S J, et al. <a href="http://openaccess.thecvf.com/content_ICCV_2019/papers/Yun_CutMix_Regularization_Strategy_to_Train_Strong_Classifiers_With_Localizable_Features_ICCV_2019_paper.pdf" target="_blank" rel="noopener">Cutmix: Regularization strategy to train strong classifiers with localizable features</a>[C]. ICCV, 2019.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2019/11/30/dl-data-augmentation/" target="_blank" title="[DL] Data Augmentation">https://lucasxlu.github.io/blog/2019/11/30/dl-data-augmentation/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2019/10/20/dl-architecture/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DL] Architecture</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mixup"><span class="nav-number">2.</span> <span class="nav-text">Mixup</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-mixup-doing"><span class="nav-number">2.1.</span> <span class="nav-text">What is mixup doing?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hide-and-Seek"><span class="nav-number">3.</span> <span class="nav-text">Hide-and-Seek</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Delving-Into-HaS"><span class="nav-number">3.1.</span> <span class="nav-text">Delving Into HaS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Hiding-random-image-patches"><span class="nav-number">3.1.1.</span> <span class="nav-text">Hiding random image patches</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Setting-the-hidden-pixel-values"><span class="nav-number">3.1.2.</span> <span class="nav-text">Setting the hidden pixel values</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Analysis"><span class="nav-number">3.2.</span> <span class="nav-text">Analysis</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SamplePairing"><span class="nav-number">4.</span> <span class="nav-text">SamplePairing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RandomErasing"><span class="nav-number">5.</span> <span class="nav-text">RandomErasing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cutout"><span class="nav-number">6.</span> <span class="nav-text">Cutout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">7.</span> <span class="nav-text">Reference</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

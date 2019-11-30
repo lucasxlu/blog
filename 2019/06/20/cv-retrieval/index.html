@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[cv] retrieval | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningComputer VisionRetrieval" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionRetrieval (图搜) 也是CV领域一个应用非常广泛的方向，在安防场景下，我们常常会根据摄像头抓怕的嫌疑人头像去人脸数据库里进行搜索；在电商平台，用户也会拍摄图片进行上传，我们的算法应返回对应的SKU，此为“拍照购”。Retrieval的难点主要在于如何训练表示能力良好的embedding模型，以及如何高效地进行feature similarity searching">
+<meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision,Retrieval">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[CV] Retrieval">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2019/06/20/cv-retrieval/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionRetrieval (图搜) 也是CV领域一个应用非常广泛的方向，在安防场景下，我们常常会根据摄像头抓怕的嫌疑人头像去人脸数据库里进行搜索；在电商平台，用户也会拍摄图片进行上传，我们的算法应返回对应的SKU，此为“拍照购”。Retrieval的难点主要在于如何训练表示能力良好的embedding模型，以及如何高效地进行feature similarity searching">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-retrieval/DHCQ.jpg">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.772Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[CV] Retrieval">
+<meta name="twitter:description" content="IntroductionRetrieval (图搜) 也是CV领域一个应用非常广泛的方向，在安防场景下，我们常常会根据摄像头抓怕的嫌疑人头像去人脸数据库里进行搜索；在电商平台，用户也会拍摄图片进行上传，我们的算法应返回对应的SKU，此为“拍照购”。Retrieval的难点主要在于如何训练表示能力良好的embedding模型，以及如何高效地进行feature similarity searching">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-retrieval/DHCQ.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-cv-retrieval" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [CV] Retrieval
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2019/06/20/cv-retrieval/" class="article-date">
+	  <time datetime="2019-06-20T07:05:57.000Z" itemprop="datePublished">2019-06-20</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Retrieval (图搜) 也是CV领域一个应用非常广泛的方向，在安防场景下，我们常常会根据摄像头抓怕的嫌疑人头像去人脸数据库里进行搜索；在电商平台，用户也会拍摄图片进行上传，我们的算法应返回对应的SKU，此为“拍照购”。Retrieval的难点主要在于<strong>如何训练表示能力良好的embedding模型</strong>，以及<strong>如何高效地进行feature similarity searching</strong>，尤其是库里SKU种类达到亿级别的时候，为了保证良好的用户体验，如何能快速而准确地给用户返回匹配信息，是一直以来不少研究者和工程师致力于解决的问题。由于Deep Learning的飞速发展，Retrieval在工业应用方面越来越成熟，常规流程如下：</p>
+<ol>
+<li>训练embedding模型，可视为一个Classification或Metric Learning问题</li>
+<li>如果对检索速度有高要求，可能需要做Hash或Quantization</li>
+<li>利用<a href="https://github.com/facebookresearch/faiss" target="_blank" rel="noopener">FAISS</a>做大规模相似性搜索</li>
+<li>Similarity衡量标准一般是$L_2$ distance或Cosine Similarity</li>
+</ol>
+<p>本文主要分享一些读过的顶会/顶刊上的paper。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：本文长期更新。</p>
+</blockquote>
+<h2 id="Supervised-Deep-Hashing-for-Scalable-Face-Image-Retrieval"><a href="#Supervised-Deep-Hashing-for-Scalable-Face-Image-Retrieval" class="headerlink" title="Supervised Deep Hashing for Scalable Face Image Retrieval"></a>Supervised Deep Hashing for Scalable Face Image Retrieval</h2><blockquote>
+<p>Paper: <a href="https://www.sciencedirect.com/science/article/abs/pii/S0031320317301383" target="_blank" rel="noopener">Supervised Deep Hashing for Scalable Face Image Retrieval</a></p>
+</blockquote>
+<p>这是一篇Face Retrieval方向的文章，整体framework和idea也非常简单：</p>
+<ol>
+<li>Deep hash的引入，Multi-task Loss: 同时优化Classification Loss和Quantization Loss。</li>
+<li>low-level和high-level information的fusion，来获取multi-scale的信息</li>
+</ol>
+<p>因Retrieval场景的特殊性(亿级别的item + 高维特征向量匹配)，以及用户对速度与精度的需求，不少Retrieval方法会采用Hashing来生成图像的compact binary codes，而binary codes的Similarity Search会非常快：</p>
+<ol>
+<li>Hamming distance的计算可以仅通过XOR operation得到。</li>
+<li>将highly compressed data加载进内存，减小了大容量内存的需求。</li>
+</ol>
+<p>当前的hashing方法主要有两种：</p>
+<ol>
+<li>Data-independent: 使用random projection来产生binary codes，例如Locality-Sensitive Hashing (LSH)。</li>
+<li>Data-dependent: 在尽可能保留data structure的情况下从数据中学习Hashing function。</li>
+</ol>
+<p>而Learning-based Hashing methods又可以被分为unsupervised hashing (例如random projection, reconstruction error minimization, graph-based hashing, quantization error minimization) 和supervised hashing两类。</p>
+<p>本文模型网络结构图如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-retrieval/DHCQ.jpg" alt="DHCQ"></p>
+<p>Learning-based hashing methods旨在学习某种hashing function来为每张图生成compact binary codes，即$X\to B\in \{0,1\}^{k\times N}$，$k$为binary codes的length。</p>
+<p>在实验中，作者用了一种非常Naive的方法来进行quantize，即将最后一个隐层的输出作为sigmoid function的输入，使其被squeeze到$(0, 1)$区间，然后再通过符号函数二值化：<br>$$<br>sign(x)=\begin{cases}<br>    1 &amp; if x\geq 0.5 \\<br>    0 &amp; otherwise<br>\end{cases}<br>$$</p>
+<p>Softmax Loss作为classification loss，$L_2$ loss作为quantization loss:<br>$$<br>min |B-H|_F^2<br>$$<br>其中，$B=sign(H)$，通过优化quantization loss，$H$会越来越接近1或者0。</p>
+<p>实验中，作者发现，classification criterion比quantization loss在explore discriminative information方面更重要。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Zhao, Bo, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Zhao_Memory-Augmented_Attribute_Manipulation_CVPR_2017_paper.pdf" target="_blank" rel="noopener">“Memory-augmented attribute manipulation networks for interactive fashion search.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2017.</li>
+<li>Chum, Ondrej, et al. <a href="http://www.robots.ox.ac.uk/~vgg/publications-new/Public/2007/Chum07b/chum07b.pdf" target="_blank" rel="noopener">“Total recall: Automatic query expansion with a generative feature model for object retrieval.”</a> 2007 IEEE 11th International Conference on Computer Vision. IEEE, 2007.</li>
+<li>Tang, Jinhui, Zechao Li, and Xiang Zhu. <a href="https://www.sciencedirect.com/science/article/abs/pii/S0031320317301383" target="_blank" rel="noopener">“Supervised deep hashing for scalable face image retrieval.”</a> Pattern Recognition 75 (2018): 25-32.</li>
+<li>Radenović, Filip, Giorgos Tolias, and Ondrej Chum. <a href="https://arxiv.org/pdf/1711.02512" target="_blank" rel="noopener">“Fine-tuning CNN image retrieval with no human annotation.”</a> IEEE transactions on pattern analysis and machine intelligence (2018).</li>
+<li>Babenko, Artem, and Victor Lempitsky. <a href="http://openaccess.thecvf.com/content_iccv_2015/papers/Babenko_Aggregating_Local_Deep_ICCV_2015_paper.pdf" target="_blank" rel="noopener">“Aggregating local deep features for image retrieval.”</a> Proceedings of the IEEE international conference on computer vision. 2015.</li>
+<li>Mousavian, Arsalan, and Jana Kosecka. <a href="https://arxiv.org/pdf/1509.06033.pdf" target="_blank" rel="noopener">“Deep convolutional features for image based retrieval and scene categorization.”</a> arXiv preprint arXiv:1509.06033 (2015).</li>
+<li>Gordo, Albert, et al. <a href="https://arxiv.org/pdf/1604.01325" target="_blank" rel="noopener">“Deep image retrieval: Learning global representations for image search.”</a> European conference on computer vision. Springer, Cham, 2016.</li>
+<li>Huang, Junshi, et al. <a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Huang_Cross-Domain_Image_Retrieval_ICCV_2015_paper.pdf" target="_blank" rel="noopener">“Cross-domain image retrieval with a dual attribute-aware ranking network.”</a> Proceedings of the IEEE international conference on computer vision. 2015.</li>
+<li>Xie, Lingxi, et al. <a href="http://bigml.cs.tsinghua.edu.cn/~lingxi/PDFs/Xie_ICMR15_ONE.pdf" target="_blank" rel="noopener">“Image classification and retrieval are one.”</a> Proceedings of the 5th ACM on International Conference on Multimedia Retrieval. Acm, 2015.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2019/06/20/cv-retrieval/" target="_blank" title="[CV] Retrieval">https://lucasxlu.github.io/blog/2019/06/20/cv-retrieval/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2019/07/08/cv-landmark-pose/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [CV] Facial Landmarks and Pose Estimation
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2019/06/13/cv-counting/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[CV] Counting</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Supervised-Deep-Hashing-for-Scalable-Face-Image-Retrieval"><span class="nav-number">2.</span> <span class="nav-text">Supervised Deep Hashing for Scalable Face Image Retrieval</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

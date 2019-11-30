@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[cv] counting | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningComputer Vision" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionCounting是近年来CV领域一个受到关注越来越多的方向，它主要的应用场景就是密集场景下的人流估计、车辆估计等。近年来非常火热的新零售、智慧安防都有Counting的应用场景。Counting大体上可以分为两种方案，一种是基于detection的方式：即数bbox；另一种是直接回归density map的方式：即将counting问题转化为一个regression问题。基">
+<meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[CV] Counting">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2019/06/13/cv-counting/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionCounting是近年来CV领域一个受到关注越来越多的方向，它主要的应用场景就是密集场景下的人流估计、车辆估计等。近年来非常火热的新零售、智慧安防都有Counting的应用场景。Counting大体上可以分为两种方案，一种是基于detection的方式：即数bbox；另一种是直接回归density map的方式：即将counting问题转化为一个regression问题。基">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/MCNN.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/ranking_counting.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/ranking_counting_framework.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/sfcn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/atcnn.jpg">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.746Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[CV] Counting">
+<meta name="twitter:description" content="IntroductionCounting是近年来CV领域一个受到关注越来越多的方向，它主要的应用场景就是密集场景下的人流估计、车辆估计等。近年来非常火热的新零售、智慧安防都有Counting的应用场景。Counting大体上可以分为两种方案，一种是基于detection的方式：即数bbox；另一种是直接回归density map的方式：即将counting问题转化为一个regression问题。基">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/MCNN.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-cv-counting" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [CV] Counting
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2019/06/13/cv-counting/" class="article-date">
+	  <time datetime="2019-06-13T09:53:44.000Z" itemprop="datePublished">2019-06-13</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Counting是近年来CV领域一个受到关注越来越多的方向，它主要的应用场景就是密集场景下的人流估计、车辆估计等。近年来非常火热的新零售、智慧安防都有Counting的应用场景。Counting大体上可以分为两种方案，一种是基于detection的方式：即数bbox；另一种是直接回归density map的方式：即将counting问题转化为一个regression问题。基于detection的方法在目标非常密集的场景下就不适合了，所以在这种场景下density map regression还是目前的mainstream。</p>
+<p>Counting的Metric通常为MAE和MSE，MAE评判counting heads的accuracy，MSE评判robustness。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：本文长期更新。</p>
+</blockquote>
+<h2 id="Multi-Column-CNN"><a href="#Multi-Column-CNN" class="headerlink" title="Multi-Column CNN"></a>Multi-Column CNN</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf" target="_blank" rel="noopener">Single-image crowd counting via multi-column convolutional neural network</a></p>
+</blockquote>
+<p>MCNN (Multi-Column CNN)主要idea来自于2012年上的一篇CVPR Paper <a href="https://arxiv.org/pdf/1202.2745.pdf" target="_blank" rel="noopener">Multi-column Deep Neural Networks for Image Classification</a>，什么叫<code>multi-column</code>呢？意思就是给定一张图，分3个并行的branch，每个branch采用不同的conv size/pooling stride等，最后用$1\times 1$ conv对这3个不同branch输出的feature map做linear weighted combination。注：Counting属于content geometry-sensitive task，一般不直接warp到fixed size。</p>
+<p>MCNN有以下好处：</p>
+<ul>
+<li>通过3个receptive fields不同(small/medium/large)column，每个column可以更好地适应由不同图像分辨率带来的不同尺度问题。</li>
+<li>在MCNN中，作者将最后一层的FC替换为了$1\times 1$的conv layer，因此<strong>input image可以为任意尺寸，而不需要强行warp导致变形</strong>。网络的输出就是density estimate。</li>
+</ul>
+<h3 id="Delve-into-MCNN"><a href="#Delve-into-MCNN" class="headerlink" title="Delve into MCNN"></a>Delve into MCNN</h3><h4 id="Density-map-based-crowd-counting"><a href="#Density-map-based-crowd-counting" class="headerlink" title="Density map based crowd counting"></a>Density map based crowd counting</h4><p>通过DCNN来进行crowd counting主要有以下两种思路：第一种是直接回归(输入image，输出counting number)；第二种是输出crowd的density map(即每一平米有多少head count)，然后通过integration的方式进行head count计算。MCNN选用了第二种方式(即基于density map)，这样做有如下优点：</p>
+<ul>
+<li>Density map保留了更多的信息；与直接regress head count相比，density map保留了input image中crowd的spatial distribution，而这种spatial distribution information在很多任务中都是非常有用的。例如某个small region的density比其他regions要高很多，那么就可以说明这个region出现了something abnormal。</li>
+<li>通过CNN学习density map，learned filters可以更好地适应于不同size的human head(因为实际场景中因拍摄角度、距离等因素，会造成人头尺寸在图片中不同的大小)，因此这些learned filters会更加semantic meaningful，进而提高整个模型的performance。</li>
+</ul>
+<p>若pixel $x_i$有head，我们将其表示为一个函数$\delta(x-x_i)$，因此有$N$个labeled head的图片可以表示为：<br>$$<br>H(x)=\sum_{i=1}^N \delta(x-x_i)<br>$$</p>
+<p>为了将其转换为一个连续密度函数，我们使用Gaussian Kernel $G_{\sigma}$来对$H(x)$进行卷积，所以density就成了$F(x)=H(x)\star G_{\sigma}(x)$。然而，这样的density function需要假定<strong>在图像空间中$x_i$都是互相独立的</strong>。这显然是不太符合实际的，实际上，每个$x_i$都是3D scene中因perspective distortion带来的crowd density的一个样本，并且这些pixels和scene中对应不同size的样本$x_i$都是有关联的。</p>
+<p>因此，为了准确地预估crowd density $F$，我们需要考虑因ground plane和image plane的之间的homography带来的distortion问题。但是对于图片数据本身而言，我们并无法知道geometry scene是怎样的。然而，若我们假设每个head周围的crowd都是evenly distributed，那么这些head和其k近邻的平均距离就可以得到关于geometry distortion合理的预估。</p>
+<p>因此，我们需要根据图片中每个person head的size来确定spread parameter $\sigma$。但现实中很难精确知道head size的大小，以及head size和density map的关系。作者发现，<strong>head size is relative to the distance between the centers of two neighboring persons in crowd scene</strong>。因此对于这些crowded scene的density map，<strong>可基于每个person head与其k近邻的平均距离</strong>来adaptively determine spread parameter。</p>
+<p>对于图片中的每个head $x_i$，我们定义其k近邻为$\{d_1^i,d_2^i,\cdots,d_m^i\}$，平均距离为$\bar{d^i}=\frac{1}{m}\sum_{j=1}^m d_j^i$。因此，和$x_i$相关像素所对应在scene ground中的区域，与$\bar{d^i}$大致成半径比例。因此，为了估计pixel $x_i$周围的crowd density，我们用以与$\bar{d^i}$成比例的$\sigma_i$为variance的Gaussian Kernel去对$\delta(x-x_i)$进行卷积。Density $F$为：<br>$$<br>F(x)=\sum_{i=1}^N \delta(x-x_i)\star G_{\sigma_i}(x), \sigma_i=\beta \bar{d^i}<br>$$</p>
+<blockquote>
+<p>for some parameter $\beta$. In other words, we convolve the labels $H$ with density kernels adaptive to the local geometry around each data point, referred to as geometry-adaptive kernels.</p>
+</blockquote>
+<h4 id="Multi-column-CNN-for-density-map-estimation"><a href="#Multi-column-CNN-for-density-map-estimation" class="headerlink" title="Multi column CNN for density map estimation"></a>Multi column CNN for density map estimation</h4><p>因perspective distortion，图片通常会包含各种不同size的head，因此不同receptive fields的conv filter能够capture到不同scale的crowd density。对应large receptive fields的conv filter对于estimate large head size的crowd更有用。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/MCNN.jpg" alt="MCNN"></p>
+<p>那么如何将feature map映射到density map呢？<br>作者是这样做的：将CNN所有的output feature maps堆叠起来，并使用$1\times 1$进行conv(实际上就是linear weighted combination；这个方法和Point-wise Convolution比较类似)。然后用Euclidean distance来measure estimated density map和groundtruth之间的difference。<br>$$<br>L(\Theta)=\frac{1}{2N}\sum_{i=1}^N|F(X_i;\Theta)-F_i|_2^2<br>$$</p>
+<p>有这样一些data tricks值得mention一下：</p>
+<ul>
+<li>传统CNN往往会normalize input来得到fixed size image，但是MCNN支持arbitrary size的input。<strong>因为resize会带来density map中的distortion问题，而这对于crowd density estimate是非常不利的</strong>。</li>
+<li>和传统<a href="https://arxiv.org/pdf/1202.2745.pdf" target="_blank" rel="noopener">Multi-column</a>粗暴地将feature map进行average相比，MCNN通过$1\times 1$ conv对其进行linear weighted combination。</li>
+<li>在实验中，作者先单独pre-train 每个column，然后再将3个column进行fine-tune。</li>
+</ul>
+<h2 id="Leveraging-Unlabeled-Data-for-Crowd-Counting-by-Learning-to-Rank"><a href="#Leveraging-Unlabeled-Data-for-Crowd-Counting-by-Learning-to-Rank" class="headerlink" title="Leveraging Unlabeled Data for Crowd Counting by Learning to Rank"></a>Leveraging Unlabeled Data for Crowd Counting by Learning to Rank</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Liu_Leveraging_Unlabeled_Data_CVPR_2018_paper.pdf" target="_blank" rel="noopener">Leveraging Unlabeled Data for Crowd Counting by Learning to Rank</a></p>
+</blockquote>
+<p>这篇文章将counting问题转化为了一个ranking问题，主要idea就是说<strong>在一张图中，crop下来的部分中包含的crowd number是肯定要不多于原图的crowd number</strong>。然后利用这个作为supervision signal，将其转化成为ranking问题。这样做就可以用到大量未标注crowd density的图片来做self supervised learning。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/ranking_counting.jpg" alt="Using ranked sub-images for self-supervised training"></p>
+<p>Counting近些年来得到了很大的关注，但是给这些人群密集的图片打label是非常麻烦的。最近self-supervised learning得到了越来越多的关注，它可以从auxiliary task(different but related to original supervised task)中进行学习。</p>
+<p>本文提出的Learning to rank主要基于这样一个idea：尽管我们没办法获知一张crowd image中精确的crowd number，但是可以确定的是，<strong>crop samples from a crowd image contain the same or fewer persons than the original</strong>。这样我们就可以产生一系列sub-images的ranking，去训练网络预估一张图是否比另一张图包含更多的persons。</p>
+<h3 id="Generating-ranked-image-sets-for-counting"><a href="#Generating-ranked-image-sets-for-counting" class="headerlink" title="Generating ranked image sets for counting"></a>Generating ranked image sets for counting</h3><ul>
+<li>Input: A crowd scene image, number of patches $k$ and scale factor $s$.</li>
+<li>A list of patches ordered according to the number of persons in the patch.</li>
+</ul>
+<p>Step 1: Choose an anchor point randomly from the anchor region. The anchor region is defined to be $1/r$ the size of the original image, centered at the original image center, and with the same aspect ratio as the original image.</p>
+<p>Step 2: Find the largest square patch centered at the anchor point and contained within the image boundaries.</p>
+<p>Step 3: Crop $k−1$ additional square patches, reducing size iteratively by a scale factor s. Keep all patches centered at anchor point.</p>
+<p>Step 4: Resize all $k$ patches to input size of network.</p>
+<h3 id="Learning-from-ranked-image-sets"><a href="#Learning-from-ranked-image-sets" class="headerlink" title="Learning from ranked image sets"></a>Learning from ranked image sets</h3><h4 id="Crowd-density-estimation-network"><a href="#Crowd-density-estimation-network" class="headerlink" title="Crowd density estimation network"></a>Crowd density estimation network</h4><p>作者使用VGG16作为backbone network来回归crowd density map，但是去掉了两个fully connected layers和pool5来保留住更多的spatial resolution，并且增加了一个$3\times 3\times 512$和zero padding来保证same size。这里直接使用Euclidean distance来作为loss：<br>$$<br>L_{c}=\frac{1}{M}\sum_{i=1}^M (y_i-\hat{y}_i)^2<br>$$<br>$y_i$是groundtruth person density map，$\hat{y}_i$是prediction。</p>
+<p>Crowd counting的groundtruth通常包含一系列坐标点，代表<strong>head center of a person</strong>。为了将其转换为crowd density map，我们用标准差为15 pixels的Gaussian并将scene中所有的persons进行求和来得到$y_i$。</p>
+<p>网络结构如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/ranking_counting_framework.jpg" alt="The multi-task framework combining both counting and ranking information"></p>
+<p>此外，为了进一步提高性能，作者采用了multi-scale sampling策略，即使用56——448 pixels之间varying size的square patches作为输入，作者发现这种multi-scale input可以显著提高模型性能。</p>
+<h4 id="Crowd-ranking-network"><a href="#Crowd-ranking-network" class="headerlink" title="Crowd ranking network"></a>Crowd ranking network</h4><p>对于ranking network，我们将Euclidean loss替换为average pooling layer + ranking loss。首先，average pooling layer将density map转换为每个spatial unit $\hat{c}(I_i)$中person number的estimate。其中，<br>$$<br>\hat{c}(I_i)=\frac{1}{M}\sum_{j}\hat{y}_i (x_j)<br>$$</p>
+<blockquote>
+<p>$x_j$ are the spatial coordinates of the density map, and $M = 14\times 14$ is the number of spatial units in the density map. The ranking which is on the total number of persons in the patch $\hat{C}_i$ also directly holds for its normalized version $\hat{c}_i$, since $\hat{C}(I_i)=M\times \hat{c}(I_i)$.</p>
+</blockquote>
+<p>这里使用了pairwise ranking hinge loss：<br>$$<br>L_{r}=max(0, \hat{c}(I_2) - \hat{c}(I_1) + \epsilon)<br>$$<br>$\epsilon$是margin，但是在本文中设为0，我们假定 $\hat{c}(I_1)$ 的rank比 $\hat{c}(I_2)$ 高。</p>
+<p>Ranking loss的梯度计算如下：<br>$$<br>\triangledown_{\theta}L_r=\begin{cases}<br>    0 &amp; \hat{c}(I_2) - \hat{c}(I_1) + \epsilon\leq 0\\<br>    \triangledown_{\theta}\hat{c}(I_2) - \triangledown_{\theta}\hat{c}(I_1) &amp; otherwise<br>\end{cases}<br>$$</p>
+<blockquote>
+<p>When network outputs the correct ranking there is no backpropagated gradient. However, when the network estimates are not in accordance with the correct ranking the backpropagated gradient causes the network to increase its estimate for the patch with lower score and to decrease its estimate for the one with higher score (note that in backpropagation the gradient is subtracted).</p>
+</blockquote>
+<p>在实现中，作者将图片作为one batch(for regression &amp; ranking)更为有效，因此ranking loss可以被计算为：<br>$$<br>L_r=\sum_{i=1}^M \sum_{j\in S(i)}max(0, \hat{c}(I_j) - \hat{c}(I_i) + \epsilon)<br>$$</p>
+<blockquote>
+<p>where $S(i)$ is the set of patches containing fewer people than patch $i$. Note that this relation is only defined for patches which are contained by patch $i$. In practice we sample minibatches of 25 images which contain 5 sets of 5 images which can be compared among them resulting in a total of $5\times (4 + 3 + 2 + 1) = 50$ pairs in one minibatch.</p>
+</blockquote>
+<h4 id="Combining-counting-and-ranking-data"><a href="#Combining-counting-and-ranking-data" class="headerlink" title="Combining counting and ranking data"></a>Combining counting and ranking data</h4><p>Joint loss的叠加有以下3中方案：</p>
+<ul>
+<li><strong>Ranking plus fine-tuning</strong>: In this approach the network is first trained on the large dataset of ranking data, and is next fine-tuned on the smaller dataset for which density maps are available.</li>
+<li><strong>Alternating-task training</strong>: While ranking plus finetuning works well when the two tasks are closely related, it might perform bad for crowd counting because no supervision is performed to indicate what the network is actually supposed to count. Therefore, we propose to alternate between the tasks of counting and ranking. In practice we perform train for 300 minibatches on a single task before switching to the other, then repeat.</li>
+<li><strong>Multi-task training</strong>: In the third approach, we add the self-supervised task as a proxy to the supervised counting task and train both simultaneously.<br>$$<br>L=L_c + \lambda L_r<br>$$</li>
+</ul>
+<h2 id="Learning-from-Synthetic-Data-for-Crowd-Counting-in-the-Wild"><a href="#Learning-from-Synthetic-Data-for-Crowd-Counting-in-the-Wild" class="headerlink" title="Learning from Synthetic Data for Crowd Counting in the Wild"></a>Learning from Synthetic Data for Crowd Counting in the Wild</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1903.03303.pdf" target="_blank" rel="noopener">Learning from Synthetic Data for Crowd Counting in the Wild</a></p>
+</blockquote>
+<p>这里介绍一篇CVPR’19上面一篇做counting的文章，主体思想比较简单，但是非常有意思 (利用GTA渲染的图片作为auxiliary data)。熟悉counting的同学都知道，给密集的图片标注是即容易出错、又难以标注的活。同时，玩过GTA游戏的同学也知道，现在最新版的GTA可以渲染出非常逼真的效果，那么可不可以利用GTA游戏渲染引起来手动生成synthetic data，然后再到target dataset上finetune呢？OK，现在问题是不是就转化成了如何去有效解决Transfer Learning中的domain adaptation问题了呢？</p>
+<p>Pattern Recognition task中，<strong>feature matters!</strong> 因此之前很多counting领域的工作都是在设计discriminative的feature，或者设计更加优秀的DNN去学习更加discriminative的feature，常见的套路就是“multi-scale”、“context”、“hierarchical”等等，具体的可以参考上面的讲解，此处不再赘述。</p>
+<p>为了有效解决transfer learning中的domain adaptation问题，作者提出了<strong>SSIM Embedding Cycle GAN</strong>来transfer synthetic scenes to realistic scenes。在训练过程中，作者使用了SSIM (Structural Similarity Index) Loss，它可以作为generator和original images中的penalty，使用了SSIM Loss的Cycle GAN能够得到比基础的Cycle GAN保留更多细节信息的图片。</p>
+<blockquote>
+<p>注：SSIM is nothing new. 熟悉Image Quality Assessment的同学应该很熟悉。</p>
+</blockquote>
+<h3 id="Supervised-Crowd-Counting"><a href="#Supervised-Crowd-Counting" class="headerlink" title="Supervised Crowd Counting"></a>Supervised Crowd Counting</h3><p>基础网络的设计方面，作者改进了著名的VGG16至FCN-VGG16模型，然后新增了一个Spatial Encoder与regression layer来回归counting点数量。网络结构SFCN结构如下图所示，其他的没啥好说的。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/sfcn.jpg" alt="SFCN"></p>
+<h3 id="Crowd-Counting-via-Domain-Adaptation"><a href="#Crowd-Counting-via-Domain-Adaptation" class="headerlink" title="Crowd Counting via Domain Adaptation"></a>Crowd Counting via Domain Adaptation</h3><p>接下来介绍一下本文的重点，即作者是如何使用SSIM Embedding Cycle GAN来将从GTA游戏中渲染的图片translate到photo-realistic images中的。</p>
+<h4 id="SSIM-Embedding-Cycle-GAN"><a href="#SSIM-Embedding-Cycle-GAN" class="headerlink" title="SSIM Embedding Cycle GAN"></a>SSIM Embedding Cycle GAN</h4><p>所谓Domain Adaptation，意思就是学习synthetic domain $\mathcal{S}$ 和real-world domain $\mathcal{R}$ 之间的某种translation mapping。其中，$\mathcal{S}$ 有图片 $I_{\mathcal{S}}$和count labels $L_{\mathcal{S}}$，而real-world domain $\mathcal{R}$ 只有图片 $I_\mathcal{R}$。因此，我们的任务就是给定图片 $I_{\mathcal{S}}$、count labels $L_{\mathcal{S}}$、图片 $I_\mathcal{R}$，来训练模型去预测 $\mathcal{R}$ 的density map。</p>
+<p>不妨先来介绍一下<a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Zhu_Unpaired_Image-To-Image_Translation_ICCV_2017_paper.pdf" target="_blank" rel="noopener">Cycle GAN</a>：<br>给定domain $\mathcal{S}$ 和domain $\mathcal{R}$，我们定义两个generator $G_{\mathcal{S}\to \mathcal{R}}$ 与 $G_{\mathcal{R}\to \mathcal{S}}$。在Cycle-consistent loss背景下，对于sample $i_{\mathcal{S}}$ 与 sample $i_{\mathcal{R}}$，我们的目标可以表示为：<br>$$<br>i_{\mathcal{S}}\to G_{\mathcal{S}\to \mathcal{R}}(i_{\mathcal{S}})\to G_{\mathcal{R}\to \mathcal{S}}(G_{\mathcal{S}\to \mathcal{R}}(i_{\mathcal{S}}))\approx i_{\mathcal{S}}<br>$$</p>
+<p>同样地，对于 $i_{\mathcal{R}}$ 的优化目标，和上述 $i_{\mathcal{S}}$ 类似，只不过要将 $\mathcal{S}$ 和 $\mathcal{R}$ 进行逆转，此处不再赘述。</p>
+<p>Cycle-consistent Loss定义为Cycle Architecture上的$L_1$ penalty：<br>$$<br>\mathcal{L}_{cycle}(G_{\mathcal{S}\to \mathcal{R}}, G_{\mathcal{R}\to \mathcal{S}}, \mathcal{S}, \mathcal{R})=<br>$$<br>$$<br>\mathbb{E}_{i_{\mathcal{S}}\sim I_{\mathcal{S}}}[|G_{\mathcal{R}\to \mathcal{S}}(G_{\mathcal{S}\to \mathcal{R}}(i_{\mathcal{S}})) - i_{\mathcal{S}}|_1] +<br>$$<br>$$<br>\mathbb{E}_{i_{\mathcal{R}}\sim I_{\mathcal{R}}}[|G_{\mathcal{S}\to \mathcal{R}}(G_{\mathcal{R}\to \mathcal{S}}(i_{\mathcal{R}})) - i_{\mathcal{R}}|_1]<br>$$</p>
+<p>然后，discriminator $D_{\mathcal{R}}$ 被用来判别images是 $I_{\mathcal{R}}$ 还是 $G_{\mathcal{S}\to \mathcal{R}}(I_{\mathcal{S}})$，$D_{\mathcal{S}}$  被用来判别images是 $I_{\mathcal{S}}$ 还是 $G_{\mathcal{R}\to \mathcal{S}}(I_{\mathcal{R}})$。</p>
+<p>因此，training的adverserial loss为：<br>$$<br>\mathcal{L}_{GAN}(G_{\mathcal{S}\to \mathcal{R}}, D_{\mathcal{R}}, \mathcal{S}, \mathcal{R})=<br>\mathbb{E}_{i_{\mathcal{R}}\sim I_{\mathcal{R}}}[log(D_{\mathcal{R}}(i_{\mathcal{R}}))]+<br>\mathbb{E}_{i_{\mathcal{S}}\sim I_{\mathcal{S}}}[log(D_{\mathcal{S}}(i_{\mathcal{S}}))]<br>$$</p>
+<p>因此，总体的Loss Function定义为：<br>$$<br>\mathcal{L}_{CycleGAN}(G_{\mathcal{S}\to \mathcal{R}},G_{\mathcal{R}\to \mathcal{S}},D_{\mathcal{R}}, D_{\mathcal{S}}, \mathcal{S}, \mathcal{R})=<br>$$<br>$$<br>\mathcal{L}_{GAN}(G_{\mathcal{S}\to \mathcal{R}}, D_{\mathcal{R}}, \mathcal{S}, \mathcal{R})+<br>$$<br>$$<br>\mathcal{L}_{GAN}(G_{\mathcal{R}\to \mathcal{S}}, D_{\mathcal{S}}, \mathcal{S}, \mathcal{R})+<br>$$<br>$$<br>\lambda \mathcal{L}_{cycle}(G_{\mathcal{R}\to \mathcal{S}}, G_{\mathcal{S}\to \mathcal{R}}, \mathcal{S}, \mathcal{R})<br>$$</p>
+<p>下面介绍一下本文另一个重点——<strong>SSIM Embedding Cycle-consistent Loss</strong>，在crowd场景下，high-density和low-density最大的区别就是local pattern和texture features。然而，若直接使用原始的Cycle-consistent loss会丢失掉很多细节信息，因此作者借用了Image Quality Assessment领域中经常使用的SSMI ($SSIM\in [-1, 1]$，若SSIM越大，则说明该图片质量越高)。<strong>SSIM Embedding能够保证original images和reconstructed images有较高的结构相似性(Structural Similarity)，因此可促进两个generator在training过程中保持一定程度的SS</strong>。</p>
+<p>SE Cycle-GAN的目标如下：<br>$$<br>\mathcal{L}_{SE_{cycle}}(G_{\mathcal{S}\to \mathcal{R}},G_{\mathcal{R}\to \mathcal{S}},\mathcal{S},\mathcal{R})=<br>$$<br>$$<br>\mathbb{E}_{i_{\mathcal{S}}\sim I_{\mathcal{S}}}[1-SSIM(i_{\mathcal{S}},G_{\mathcal{R}\to \mathcal{S}}(G_{\mathcal{S}\to \mathcal{R}}(i_{\mathcal{S}})))]+<br>$$<br>$$<br>\mathbb{E}_{i_{\mathcal{R}}\sim I_{\mathcal{R}}}[1-SSIM(i_{\mathcal{R}},G_{\mathcal{S}\to \mathcal{R}}(G_{\mathcal{R}\to \mathcal{S}}(i_{\mathcal{R}})))]<br>$$</p>
+<p>最终的Loss如下：<br>$$<br>\mathcal{L}_{ours}(G_{\mathcal{S}\to \mathcal{R}},G_{\mathcal{R}\to \mathcal{S}},D_{\mathcal{R}}, D_{\mathcal{S}}, \mathcal{S}, \mathcal{R})=<br>$$<br>$$<br>\mathcal{L}_{GAN}(G_{\mathcal{S}\to \mathcal{R}}, D_{\mathcal{R}}, \mathcal{S}, \mathcal{R})+<br>$$<br>$$<br>\mathcal{L}_{GAN}(G_{\mathcal{R}\to \mathcal{S}}, D_{\mathcal{S}}, \mathcal{S}, \mathcal{R})+<br>$$<br>$$<br>\lambda \mathcal{L}_{cycle}(G_{\mathcal{R}\to \mathcal{S}}, G_{\mathcal{S}\to \mathcal{R}}, \mathcal{S}, \mathcal{R})+<br>$$<br>$$<br>\mu \mathcal{L}_{SE_{cycle}}(G_{\mathcal{S}\to \mathcal{R}},G_{\mathcal{R}\to \mathcal{S}},\mathcal{S},\mathcal{R})<br>$$</p>
+<h2 id="Leveraging-Heterogeneous-Auxiliary-Tasks-to-Assist-Crowd-Counting"><a href="#Leveraging-Heterogeneous-Auxiliary-Tasks-to-Assist-Crowd-Counting" class="headerlink" title="Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting"></a>Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Zhao_Leveraging_Heterogeneous_Auxiliary_Tasks_to_Assist_Crowd_Counting_CVPR_2019_paper.pdf" target="_blank" rel="noopener">Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting</a></p>
+</blockquote>
+<h3 id="Basic-Ideas"><a href="#Basic-Ideas" class="headerlink" title="Basic Ideas"></a>Basic Ideas</h3><p><a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Zhao_Leveraging_Heterogeneous_Auxiliary_Tasks_to_Assist_Crowd_Counting_CVPR_2019_paper.pdf" target="_blank" rel="noopener">Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting</a>是发表在<a href="http://openaccess.thecvf.com/CVPR2019.py" target="_blank" rel="noopener">CVPR’19</a>上的成果，main idea也非常简单，顾名思义，即用multi-task learning的方法来regularize模型，从而提高main task的performance，之前有做过Face Analysis的Multi-task Learning，所以这篇大体上自然非常熟悉了。</p>
+<p>说到Counting，其本质上可视为一个Regression问题，严格意义上讲叫作density map regression，所以和其他machine learning task一样，feature matters! 不少research work专注于设计或融合multi-scale, context-aware features来产生更加robust的features。这篇文章主要是通过MTL的方法来向网络中embed <strong>semantic/geometric/numeric</strong>的信息，从而获取更加discriminative and robust的features来提高performance。</p>
+<ul>
+<li>对于geometric attribute，作者使用monocular depth prediction来强调relative depth variantions。</li>
+<li>对于semantic attribute，作者使用crowd segmentation来highlight foreground。</li>
+<li>对于numeric attribute，作者直接回归count estimation。</li>
+</ul>
+<p>虽然引入了多个任务，但是这些auxiliary task却并不需要额外的human-annotation，因为上述3个auxiliary task所需要的annotation均可以通过现有pre-trained model生成，或直接通过其他方式计算得来。</p>
+<blockquote>
+<p>Learning of the auxiliary tasks will drive the intermediate features of the backbone CNN to embed desired information on geometry, semantics and the overall density level, which benefits the generation of robust features against the scale variations and clutter background.</p>
+</blockquote>
+<p>AT-CNN的网络结构如下图所示：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-counting/atcnn.jpg" alt="AT-CNN"></p>
+<h3 id="Methodology"><a href="#Methodology" class="headerlink" title="Methodology"></a>Methodology</h3><h4 id="Auxiliary-Tasks-Prediction-Based"><a href="#Auxiliary-Tasks-Prediction-Based" class="headerlink" title="Auxiliary Tasks Prediction Based"></a>Auxiliary Tasks Prediction Based</h4><ul>
+<li><p>Attentive Crowd Segmentation<br>由于crowd scene occlusion和clutter background现象非常严重，crowd density通常noisy。为了解决该问题，作者引入了segmentation task来purify output prediction。</p>
+<p>Ground-truth labels for crowd segmentation can be in- ferred from the dotted annotations of pedestrians provided in counting dataset [36, 35] by simple binarization as shown in Figure 3.</p>
+<p>令$X$代表input crowd image，$S$代表gt attentive crowd segmentation map，Segmentation decoder的loss如下：<br>$$<br>L_1=\frac{1}{|X|}\sum_{(i,j)\in X}t_{ij}log o_{ij} + (1-t_{ij})log(1 - o_{ij})<br>$$<br>其中，$t_{ij}\in \{0,1\}$为1时代表foreground，为0代表background，$o_{ij}$代表pixel-wise probability。</p>
+</li>
+<li><p>Distilled Depth Prediction<br>该task的引入主要是为了处理perspective distortion现象。<br>In the regions with larger depth values, the objects have smaller sizes and should be adversely assigned with larger density values to guarantee their summation gives accurate counts. By inferring the depth maps, the front-end CNN is imposed to take care of the scene geometry and hence gains the awareness of the intra-image scale variations, which will help generate more discriminative features for scale-aware density estimation.</p>
+<p>在这里作者使用pre-trained DCNF来预测single-image depth，由于DCNF并不能完美adapt to crowd counting task中，因此作者计算了<strong>distilled depth map</strong> $D$，distilled depth map仅仅保留了attentive target areas的depth information。其计算方式如下：<br>$$<br>D=S\bigodot D_{raw}<br>$$<br>$\bigodot$代表Hadamard matrix multiplication. With the distilled depth as the supervision for depth prediction, the front-end CNN is desired to be especially aware of the depth relationships/scale variation between those attentive areas with target objects.</p>
+<p>Depth map prediction的Loss如下：<br>$$<br>L_2=\frac{1}{|D|}\sum_{(i,j)\in D}|\hat{D}_{ij}-D_{ij}|_2^2<br>$$</p>
+</li>
+<li>Crowd Count Regression<br>从feature map直接regress到count number，MSE Loss作为supervision。</li>
+</ul>
+<h4 id="Main-Tasks-Prediction"><a href="#Main-Tasks-Prediction" class="headerlink" title="Main Tasks Prediction"></a>Main Tasks Prediction</h4><p>在文中，作者对每个dotted annotations使用2D Gaussian Kernels来生成density map，main task的decoder在density map $\hat{Y}$上采用$L_2$ loss:<br>$$<br>L_4 = \frac{1}{|Y|}\sum_{(i,j)\in Y}|\hat{Y}_{ij} - Y_{ij}|_2^2<br>$$</p>
+<p>既然是MTL，那么overall optimization当然就是各个loss的linear combination啦:<br>$$<br>L_{mt}=\sum_{i=1}^4 \lambda_i L_i<br>$$</p>
+<p>接下来就是实验了，当然是碾压各种prior arts。此外，作者还分析了不同weights $\lambda$对performance的影响：</p>
+<blockquote>
+<p>Too small weights are hard to contribute to the main tasks while too large weights will drift the feature representations and deteriorate the performances. Similar situations can be be observed for the crowd segmentation loss and the count regression loss.</p>
+</blockquote>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Zhang, Yingying, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf" target="_blank" rel="noopener">“Single-image crowd counting via multi-column convolutional neural network.”</a> Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.</li>
+<li>Shen, Zan, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Shen_Crowd_Counting_via_CVPR_2018_paper.pdf" target="_blank" rel="noopener">“Crowd Counting via Adversarial Cross-Scale Consistency Pursuit.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.</li>
+<li>Liu, Xialei, Joost van de Weijer, and Andrew D. Bagdanov. <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Liu_Leveraging_Unlabeled_Data_CVPR_2018_paper.pdf" target="_blank" rel="noopener">“Leveraging Unlabeled Data for Crowd Counting by Learning to Rank.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.</li>
+<li>Marsden, Mark, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Marsden_People_Penguins_and_CVPR_2018_paper.pdf" target="_blank" rel="noopener">“People, Penguins and Petri Dishes: Adapting Object Counting Models To New Visual Domains And Object Types Without Forgetting.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.</li>
+<li>Liu, Jiang, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Liu_DecideNet_Counting_Varying_CVPR_2018_paper.pdf" target="_blank" rel="noopener">“Decidenet: Counting varying density crowds through attention guided detection and density estimation.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.</li>
+<li>Hinami, Ryota, Tao Mei, and Shin’ichi Satoh. <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Hinami_Joint_Detection_and_ICCV_2017_paper.pdf" target="_blank" rel="noopener">“Joint detection and recounting of abnormal events by learning deep generic knowledge.”</a> Proceedings of the IEEE International Conference on Computer Vision. 2017.</li>
+<li>Hsieh, Meng-Ru, Yen-Liang Lin, and Winston H. Hsu. <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Hsieh_Drone-Based_Object_Counting_ICCV_2017_paper.pdf" target="_blank" rel="noopener">“Drone-based object counting by spatially regularized regional proposal network.”</a> The IEEE International Conference on Computer Vision (ICCV). Vol. 1. 2017.</li>
+<li>Sam, Deepak Babu, Shiv Surya, and R. Venkatesh Babu. <a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Sam_Switching_Convolutional_Neural_CVPR_2017_paper.pdf" target="_blank" rel="noopener">“Switching convolutional neural network for crowd counting.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. Vol. 1. No. 3. 2017.</li>
+<li>Chattopadhyay, Prithvijit, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Chattopadhyay_Counting_Everyday_Objects_CVPR_2017_paper.pdf" target="_blank" rel="noopener">“Counting everyday objects in everyday scenes.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2017.</li>
+<li>Ranjan, Viresh, Hieu Le, and Minh Hoai. <a href="http://openaccess.thecvf.com/content_ECCV_2018/papers/Viresh_Ranjan_Iterative_Crowd_Counting_ECCV_2018_paper.pdf" target="_blank" rel="noopener">“Iterative crowd counting.”</a> Proceedings of the European Conference on Computer Vision (ECCV). 2018.</li>
+<li>Cao, Xinkun, et al. <a href="http://openaccess.thecvf.com/content_ECCV_2018/papers/Xinkun_Cao_Scale_Aggregation_Network_ECCV_2018_paper.pdf" target="_blank" rel="noopener">“Scale aggregation network for accurate and efficient crowd counting.”</a> Proceedings of the European Conference on Computer Vision (ECCV). 2018.</li>
+<li>Wang, Qi, et al. <a href="https://arxiv.org/pdf/1903.03303.pdf" target="_blank" rel="noopener">“Learning from Synthetic Data for Crowd Counting in the Wild.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. (2019).</li>
+<li>Zhao, Muming, et al. <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Zhao_Leveraging_Heterogeneous_Auxiliary_Tasks_to_Assist_Crowd_Counting_CVPR_2019_paper.pdf" target="_blank" rel="noopener">“Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2019.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2019/06/13/cv-counting/" target="_blank" title="[CV] Counting">https://lucasxlu.github.io/blog/2019/06/13/cv-counting/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2019/06/20/cv-retrieval/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [CV] Retrieval
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2019/03/25/ml-semi-sup-learning/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[ML] Semi-supervised &amp; Unsupervised Learning</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multi-Column-CNN"><span class="nav-number">2.</span> <span class="nav-text">Multi-Column CNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Delve-into-MCNN"><span class="nav-number">2.1.</span> <span class="nav-text">Delve into MCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Density-map-based-crowd-counting"><span class="nav-number">2.1.1.</span> <span class="nav-text">Density map based crowd counting</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Multi-column-CNN-for-density-map-estimation"><span class="nav-number">2.1.2.</span> <span class="nav-text">Multi column CNN for density map estimation</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Leveraging-Unlabeled-Data-for-Crowd-Counting-by-Learning-to-Rank"><span class="nav-number">3.</span> <span class="nav-text">Leveraging Unlabeled Data for Crowd Counting by Learning to Rank</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Generating-ranked-image-sets-for-counting"><span class="nav-number">3.1.</span> <span class="nav-text">Generating ranked image sets for counting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Learning-from-ranked-image-sets"><span class="nav-number">3.2.</span> <span class="nav-text">Learning from ranked image sets</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Crowd-density-estimation-network"><span class="nav-number">3.2.1.</span> <span class="nav-text">Crowd density estimation network</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Crowd-ranking-network"><span class="nav-number">3.2.2.</span> <span class="nav-text">Crowd ranking network</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Combining-counting-and-ranking-data"><span class="nav-number">3.2.3.</span> <span class="nav-text">Combining counting and ranking data</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Learning-from-Synthetic-Data-for-Crowd-Counting-in-the-Wild"><span class="nav-number">4.</span> <span class="nav-text">Learning from Synthetic Data for Crowd Counting in the Wild</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Supervised-Crowd-Counting"><span class="nav-number">4.1.</span> <span class="nav-text">Supervised Crowd Counting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Crowd-Counting-via-Domain-Adaptation"><span class="nav-number">4.2.</span> <span class="nav-text">Crowd Counting via Domain Adaptation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SSIM-Embedding-Cycle-GAN"><span class="nav-number">4.2.1.</span> <span class="nav-text">SSIM Embedding Cycle GAN</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Leveraging-Heterogeneous-Auxiliary-Tasks-to-Assist-Crowd-Counting"><span class="nav-number">5.</span> <span class="nav-text">Leveraging Heterogeneous Auxiliary Tasks to Assist Crowd Counting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Basic-Ideas"><span class="nav-number">5.1.</span> <span class="nav-text">Basic Ideas</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Methodology"><span class="nav-number">5.2.</span> <span class="nav-text">Methodology</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Auxiliary-Tasks-Prediction-Based"><span class="nav-number">5.2.1.</span> <span class="nav-text">Auxiliary Tasks Prediction Based</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Main-Tasks-Prediction"><span class="nav-number">5.2.2.</span> <span class="nav-text">Main Tasks Prediction</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

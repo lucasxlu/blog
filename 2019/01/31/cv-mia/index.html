@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[cv] medical image analysis | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningComputer VisionMedical Image Analysis" />
+  
+  
+  
+  
+  <meta name="description" content="Introduction医疗AI是现如今工业界和学术界都非常火热的方向，也是AI落地非常有价值的方向。因毕业论文需要涉及Medical Image Analysis相关的方向，所以本文旨在收集并梳理Deep Learning在Medical Image Analysis领域一些具有代表性的Paper以及Report。  @LucasX注：本文长期更新。  CNN for Medical Image">
+<meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision,Medical Image Analysis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[CV] Medical Image Analysis">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2019/01/31/cv-mia/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Introduction医疗AI是现如今工业界和学术界都非常火热的方向，也是AI落地非常有价值的方向。因毕业论文需要涉及Medical Image Analysis相关的方向，所以本文旨在收集并梳理Deep Learning在Medical Image Analysis领域一些具有代表性的Paper以及Report。  @LucasX注：本文长期更新。  CNN for Medical Image">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.772Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[CV] Medical Image Analysis">
+<meta name="twitter:description" content="Introduction医疗AI是现如今工业界和学术界都非常火热的方向，也是AI落地非常有价值的方向。因毕业论文需要涉及Medical Image Analysis相关的方向，所以本文旨在收集并梳理Deep Learning在Medical Image Analysis领域一些具有代表性的Paper以及Report。  @LucasX注：本文长期更新。  CNN for Medical Image">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-cv-mia" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [CV] Medical Image Analysis
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2019/01/31/cv-mia/" class="article-date">
+	  <time datetime="2019-01-31T06:34:36.000Z" itemprop="datePublished">2019-01-31</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>医疗AI是现如今工业界和学术界都非常火热的方向，也是AI落地非常有价值的方向。因毕业论文需要涉及Medical Image Analysis相关的方向，所以本文旨在收集并梳理Deep Learning在Medical Image Analysis领域一些具有代表性的Paper以及Report。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：本文长期更新。</p>
+</blockquote>
+<h2 id="CNN-for-Medical-Image-Analysis-Full-Training-or-Fine-Tuning"><a href="#CNN-for-Medical-Image-Analysis-Full-Training-or-Fine-Tuning" class="headerlink" title="CNN for Medical Image Analysis. Full Training or Fine Tuning?"></a>CNN for Medical Image Analysis. Full Training or Fine Tuning?</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1706.00712.pdf" target="_blank" rel="noopener">Convolutional neural networks for medical image analysis: Full training or fine tuning?</a></p>
+</blockquote>
+<p>Our experiments consistently demonstrated that </p>
+<ol>
+<li>the use of a pre-trained CNN with adequate fine-tuning outperformed or, in the worst case, performed as well as a CNN trained from scratch;</li>
+<li>fine-tuned CNNs were more robust to the size of training sets than CNNs trained from scratch; </li>
+<li>neither shallow tuning nor deep tuning was the optimal choice for a particular application; and </li>
+<li>our layer-wise fine-tuning scheme could offer a practical way to reach the best performance for the application at hand based on the amount of available data.</li>
+</ol>
+<p>简而言之，尽管我们观念上可能认为ImageNet中的natural images data distribution(例如semantic meaning, image resolution等等)和医学图像的data distribution差距很大，fine-tune似乎不可行，但是作者做了3类实验(classification/detection/segmentation)，发现<strong>从ImageNet上pretrain的模型到医学图像分析认为上进行fine-tune是可行的，而且会带来性能提升，收敛也更快</strong>。</p>
+<h2 id="Deep-Learning-for-Skin-Cancer-Classification"><a href="#Deep-Learning-for-Skin-Cancer-Classification" class="headerlink" title="Deep Learning for Skin Cancer Classification"></a>Deep Learning for Skin Cancer Classification</h2><blockquote>
+<p>Paper: <a href="https://www.nature.com/articles/nature21056.epdf?author_access_token=8oxIcYWf5UNrNpHsUHd2StRgN0jAjWel9jnR3ZoTv0NXpMHRAJy8Qn10ys2O4tuPakXos4UhQAFZ750CsBNMMsISFHIKinKDMKjShCpHIlYPYUHhNzkn6pSnOCt0Ftf6" target="_blank" rel="noopener">Dermatologist-level classification of skin cancer with deep neural networks</a></p>
+</blockquote>
+<p><a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf" target="_blank" rel="noopener">Inception v3</a> (pretrained on ImageNet)用于做skin cancer classification，算法效果超过了人类医生。模型没什么太大的新意，记一下医学图像领域常用的两个metric：<br>$$<br>sensitivity=\frac{True Positive}{Positive}<br>$$</p>
+<p>$$<br>specificity=\frac{True Negative}{Negative}<br>$$</p>
+<h2 id="Deep-Learning-for-Chest-X-rays-Recognition"><a href="#Deep-Learning-for-Chest-X-rays-Recognition" class="headerlink" title="Deep Learning for Chest X-rays Recognition"></a>Deep Learning for Chest X-rays Recognition</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1711.05225v3.pdf" target="_blank" rel="noopener">CheXNet: Radiologist-Level Pneumonia Detection on Chest X-Rays with Deep Learning</a></p>
+</blockquote>
+<p>Deep Model尽管性能超群，但是Interpretability却非常差，尤其是AI在医学、金融等领域的应用，就会非常看重Interpretability(所以好多金融系统依然还在用规则，而非Machine Learning)。CheXNet是Andrew Ng团队的成果，基础idea是DenseNet做classification，<a href="http://openaccess.thecvf.com/content_cvpr_2016/papers/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf" target="_blank" rel="noopener">CAM</a>做可视化，来显示哪些区域是最discriminative的。</p>
+<h2 id="Clinical-Skin-Lesion-Diagnosis-using-Representations-Inspired-by-Dermatologist-Criteria"><a href="#Clinical-Skin-Lesion-Diagnosis-using-Representations-Inspired-by-Dermatologist-Criteria" class="headerlink" title="Clinical Skin Lesion Diagnosis using Representations Inspired by Dermatologist Criteria"></a>Clinical Skin Lesion Diagnosis using Representations Inspired by Dermatologist Criteria</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers_backup/Yang_Clinical_Skin_Lesion_CVPR_2018_paper.pdf" target="_blank" rel="noopener">Clinical skin lesion diagnosis using representations inspired by dermatologist criteria</a></p>
+</blockquote>
+<p>这是一篇发表在<a href="http://openaccess.thecvf.com/CVPR2018.py" target="_blank" rel="noopener">CVPR’18</a>上的文章，主要contribution是设计了一种novel的手工feature来进行skin disease recognition。该手工特征主要涉及Structure, Color, Shape。并且在SD-198 dataset上取得了State-of-the-art的效果。医学图像和我们常规的natural image不同，intra-class diversity非常大，我看了SD-198的图片，DNN实在是非常不好分。</p>
+<ul>
+<li>对于Structure，由texture distribution来表示；主要通过multiple space的symmetry property来决定。</li>
+<li>对于Color，通过ColorName来和skin lesion相关的color来表示；以及通过引入每种颜色的continuous value来区分颜色相同、但颜色程度不同的情况。</li>
+<li>对于Shape，作者利用peripheral symmetry和constrained compactness来进行表示。</li>
+</ul>
+<h3 id="Criteria-of-Skin-Disease"><a href="#Criteria-of-Skin-Disease" class="headerlink" title="Criteria of Skin Disease"></a>Criteria of Skin Disease</h3><p>作者通过调研了大量skin lesion的文献，总结了skin diagnosis的ABCD criteria:</p>
+<ul>
+<li>A (Asymmetry): lesion shape, contour, colors and structures.</li>
+<li>B (Border): ill-defined and irregular border of lesion.</li>
+<li>C (Color variegation): skin lesion的color并非统一。</li>
+<li>D (Diameter): skin lesion的大致直径。</li>
+</ul>
+<h3 id="Medical-Representations"><a href="#Medical-Representations" class="headerlink" title="Medical Representations"></a>Medical Representations</h3><p>介绍完了上面的ABCD criteria，下面我们直接来看本文的核心——medical representation。Medical representation可以通过如下方式生成：</p>
+<ul>
+<li>skin lesion的面积、直径(D)、边缘(B)由连通区域的像素点数量，以及主轴决定。</li>
+<li>A可由连通区域的geometric information决定。</li>
+<li>C可通过不同color space共同决定，这样可以保证即使有略微的颜色变化(例如illumination影响)，依然具备discrimination。</li>
+</ul>
+<p>下面我们来进行详细的讲解。</p>
+<h4 id="Structure-Representation"><a href="#Structure-Representation" class="headerlink" title="Structure Representation"></a>Structure Representation</h4><h5 id="Multi-Space-Texture-of-Lesion-MST-L"><a href="#Multi-Space-Texture-of-Lesion-MST-L" class="headerlink" title="Multi-Space Texture of Lesion (MST-L)"></a>Multi-Space Texture of Lesion (MST-L)</h5><p>为了有效地表示skin lesion的structure，我们基于不同的color space来计算texture representation，来减少环境的影响。对于每一张clinical image $x$，我们提出了multi-space texture ($MST(x)$):<br>$$<br>MST(x)=[G_i(x)]_{i=1}^K<br>$$<br>$G_i(x)$代表从第$i$个color channel抽取的texture feature，$K$代表color space总数。在本文中，作者使用了3个color space，即Hue, Saturation, Brightness；并对每一个color space利用SIFT进行feature extraction。</p>
+<h5 id="Texture-Symmetry-of-Lesion-TS-L"><a href="#Texture-Symmetry-of-Lesion-TS-L" class="headerlink" title="Texture Symmetry of Lesion (TS-L)"></a>Texture Symmetry of Lesion (TS-L)</h5><p>skin lesion的不对称性也是个非常discriminative的特征。作者利用MBD+算法进行lesion region检测，然后根据主轴对检测出的区域划分为两个部分——$L(x)_1$和$L(x)_2$。然后对每个部分进行texture feature extraction，最后对第$i$个color space的texture symmetry进行如下表示：<br>$$<br>TS_i(x)=[G_i(L(x)_1), G_i(L(x)_2), S_i(x)]<br>$$<br>其中，$S_i(x)=\{|g_{ij}^1-g_{ij}^2|\}_{j=1}^d$，$d$代表抽取feature的dimension，$g_{ij}^1$和$g_{ij}^2$代表第$j$个entry $G_i(L(x)_1)$和$G_i(L(x)_2)$。<strong>我们在Hue space中进行texture symmetry度量，因为Hue space在不同light intensity情况下依然是scale-invariant + shift-invariant</strong>。</p>
+<h4 id="Color-Representation"><a href="#Color-Representation" class="headerlink" title="Color Representation"></a>Color Representation</h4><h5 id="Color-Name-of-Lesion-CN-L"><a href="#Color-Name-of-Lesion-CN-L" class="headerlink" title="Color Name of Lesion (CN-L)"></a>Color Name of Lesion (CN-L)</h5><p>在$L\times a\times b$ space中，我们对每一个color bin计算pprobability vector $P=[p(C_l|c)]_{l=1}^M$：<br>$$<br>[p(C_l|c)]_{l=1}^M\propto \sum_i^N p(C_l|c_i)g^{\sigma}(|c_i-c|_{Lab})<br>$$<br>$c$代表color bin的original value，$c_i$代表$c$的Lab value，$N=387$代表color bin的总数，$C$代表basic colors set。$g^{\sigma}$代表$\sigma=5$的guassian kernel。作者通过对skin lesion的调研，设置$M=8$，$C=\{red, pink, purple, yellow, white, black, brown, blue\}$。最终lesion的color name $CN(x)$为：<br>$$<br>CN(x)=\mathop{argmax} \limits_{C_l}[p(C_l|c)]_{l=1}^M<br>$$</p>
+<h5 id="Continuous-Color-Values-of-Lesion-CCV-L"><a href="#Continuous-Color-Values-of-Lesion-CCV-L" class="headerlink" title="Continuous Color Values of Lesion (CCV-L)"></a>Continuous Color Values of Lesion (CCV-L)</h5><p>除了CN-L，作者还对每个lesion设置了continuous value来代表color的不同程度。对于每个bin $c$，我们定义continuous color value $CCV(c)$:<br>$$<br>CCV(c)\propto p(C,c)\times \theta(c)<br>$$</p>
+<p>其中$p(C,c)$代表将color bin $c$ 映射到其最近color name $C$的概率。$\theta(c)$代表pixel的权重值：<br>$$<br>\theta(c)=\sum_{|c|}n(c)u(c)<br>$$<br>$n(c)$代表图片中对于color的frequency，$u(c)$代表RGB space中color bin $c$的color value。</p>
+<h4 id="Shape-Representation"><a href="#Shape-Representation" class="headerlink" title="Shape Representation"></a>Shape Representation</h4><p>对于形状特征，本文主要关注 (1) shape symmetry，(2) lesion的constrained compactness。</p>
+<h5 id="Peripheral-Symmetry-of-Lesion-PS-L"><a href="#Peripheral-Symmetry-of-Lesion-PS-L" class="headerlink" title="Peripheral Symmetry of Lesion (PS-L)"></a>Peripheral Symmetry of Lesion (PS-L)</h5><p>同样应用MBD+算法进行lesion region detection，划分等面积的两个部分$L(x)_1$和$L(x)_2$。然后计算两个parts lesion的peripheral symmetry：<br>$$<br>PS(x)=F(A(L(x)^1), A(L(x)^2))<br>$$<br>其中$A(\cdot)$代表从lesion中抽取的feature，$F(\cdot, \cdot)$代表concatenation operation。</p>
+<h5 id="Adaptive-Compactness-of-Lesion-AC-L"><a href="#Adaptive-Compactness-of-Lesion-AC-L" class="headerlink" title="Adaptive Compactness of Lesion (AC-L)"></a>Adaptive Compactness of Lesion (AC-L)</h5><p>对于skin disease region，圆的近似程度对diagnosis非常有帮助。因此可以用如下方式来表示：<br>$$<br>Com=\frac{4\pi A}{P^2}<br>$$<br>$A$代表面积，$P$代表lesion的周长。</p>
+<p>lesion的面积表示：<br>$$<br>A_L=\sum_{z\in L(x)}p(C|c,z)<br>$$<br>$z$代表lesion $L(x)$的像素，$p(C|c,z)$是在color name feature中将color映射到特定颜色类型的概率，$p(C|c,z)$反映了像素$z$位于lesion center的重要性。</p>
+<p>实验结果表明，本文设计的特征比传统方法/DCNN都要好，metric为Accuracy和Sensitivity。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Ding, Yiming, et al. <a href="https://pubs.rsna.org/doi/pdf/10.1148/radiol.2018180958" target="_blank" rel="noopener">“A deep learning model to predict a diagnosis of Alzheimer disease by using 18F-FDG PET of the brain.”</a> Radiology (2018): 180958.</li>
+<li>Tajbakhsh, Nima, et al. <a href="https://arxiv.org/pdf/1706.00712.pdf" target="_blank" rel="noopener">“Convolutional neural networks for medical image analysis: Full training or fine tuning?.”</a> IEEE transactions on medical imaging 35.5 (2016): 1299-1312.</li>
+<li>De Fauw, Jeffrey, et al. <a href="https://www.nature.com/articles/s41591-018-0107-6" target="_blank" rel="noopener">“Clinically applicable deep learning for diagnosis and referral in retinal disease.”</a> Nature medicine 24.9 (2018): 1342. </li>
+<li>Kermany, Daniel S., et al. <a href="https://www.cell.com/cell/fulltext/S0092-8674(18" target="_blank" rel="noopener">“Identifying medical diagnoses and treatable diseases by image-based deep learning.”</a>30154-5?code=cell-site) Cell 172.5 (2018): 1122-1131.</li>
+<li>Gulshan, Varun, et al. <a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/45732.pdf" target="_blank" rel="noopener">“Development and validation of a deep learning algorithm for detection of diabetic retinopathy in retinal fundus photographs.”</a> Jama 316.22 (2016): 2402-2410.</li>
+<li>Rajpurkar, Pranav, et al. <a href="https://journals.plos.org/plosmedicine/article/file?id=10.1371/journal.pmed.1002686&amp;type=printable" target="_blank" rel="noopener">“Deep learning for chest radiograph diagnosis: A retrospective comparison of the CheXNeXt algorithm to practicing radiologists.”</a> PLOS Medicine 15.11 (2018): e1002686.</li>
+<li><a href="https://journals.plos.org/plosmedicine/article/file?id=10.1371/journal.pmed.1002699&amp;type=printable" target="_blank" rel="noopener">Deep-learning-assisted diagnosis for knee magnetic resonance imaging: Development and retrospective validation of MRNet</a> Bien N, Rajpurkar P, Ball RL, Irvin J, Park A, et al. (2018) Deep-learning-assisted diagnosis for knee magnetic resonance imaging: Development and retrospective validation of MRNet. PLOS Medicine 15(11): e1002699. <a href="https://doi.org/10.1371/journal.pmed.1002699" target="_blank" rel="noopener">https://doi.org/10.1371/journal.pmed.1002699</a></li>
+<li><a href="https://journals.plos.org/plosmedicine/article/file?id=10.1371/journal.pmed.1002686&amp;type=printable" target="_blank" rel="noopener">Deep learning for chest radiograph diagnosis: A retrospective comparison of the CheXNeXt algorithm to practicing radiologists</a> Rajpurkar P, Irvin J, Ball RL, Zhu K, Yang B, et al. (2018) Deep learning for chest radiograph diagnosis: A retrospective comparison of the CheXNeXt algorithm to practicing radiologists. PLOS Medicine 15(11): e1002686. <a href="https://doi.org/10.1371/journal.pmed.1002686" target="_blank" rel="noopener">https://doi.org/10.1371/journal.pmed.1002686</a></li>
+<li>Esteva, Andre, et al. <a href="https://www.nature.com/articles/nature21056.epdf?author_access_token=8oxIcYWf5UNrNpHsUHd2StRgN0jAjWel9jnR3ZoTv0NXpMHRAJy8Qn10ys2O4tuPakXos4UhQAFZ750CsBNMMsISFHIKinKDMKjShCpHIlYPYUHhNzkn6pSnOCt0Ftf6" target="_blank" rel="noopener">“Dermatologist-level classification of skin cancer with deep neural networks.”</a> Nature 542.7639 (2017): 115.</li>
+<li>Codella, Noel CF, et al. <a href="https://arxiv.org/ftp/arxiv/papers/1610/1610.04662.pdf" target="_blank" rel="noopener">“Deep learning ensembles for melanoma recognition in dermoscopy images.”</a> IBM Journal of Research and Development 61.4 (2017): 5-1.</li>
+<li>Haofu, Liao, and Jiebo Luo. <a href="https://www.aaai.org/ocs/index.php/WS/AAAIW17/paper/view/15094/14715" target="_blank" rel="noopener">“A Deep Multi-Task Learning Approach to Skin Lesion Classification.”</a> Workshops at the Thirty-First AAAI Conference on Artificial Intelligence. 2017.</li>
+<li>Yang, Jufeng, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers_backup/Yang_Clinical_Skin_Lesion_CVPR_2018_paper.pdf" target="_blank" rel="noopener">“Clinical skin lesion diagnosis using representations inspired by dermatologist criteria.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.</li>
+<li>Ge, Zongyuan, et al. <a href="https://link.springer.com/chapter/10.1007/978-3-319-66179-7_29" target="_blank" rel="noopener">“Skin disease recognition using deep saliency features and multimodal learning of dermoscopy and clinical images.”</a> International Conference on Medical Image Computing and Computer-Assisted Intervention. Springer, Cham, 2017.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2019/01/31/cv-mia/" target="_blank" title="[CV] Medical Image Analysis">https://lucasxlu.github.io/blog/2019/01/31/cv-mia/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2019/02/05/cv-video-cls/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [CV] Video Classification
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2019/01/30/dl-siamese-net/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DL] Siamese Neural Network</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CNN-for-Medical-Image-Analysis-Full-Training-or-Fine-Tuning"><span class="nav-number">2.</span> <span class="nav-text">CNN for Medical Image Analysis. Full Training or Fine Tuning?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deep-Learning-for-Skin-Cancer-Classification"><span class="nav-number">3.</span> <span class="nav-text">Deep Learning for Skin Cancer Classification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deep-Learning-for-Chest-X-rays-Recognition"><span class="nav-number">4.</span> <span class="nav-text">Deep Learning for Chest X-rays Recognition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Clinical-Skin-Lesion-Diagnosis-using-Representations-Inspired-by-Dermatologist-Criteria"><span class="nav-number">5.</span> <span class="nav-text">Clinical Skin Lesion Diagnosis using Representations Inspired by Dermatologist Criteria</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Criteria-of-Skin-Disease"><span class="nav-number">5.1.</span> <span class="nav-text">Criteria of Skin Disease</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medical-Representations"><span class="nav-number">5.2.</span> <span class="nav-text">Medical Representations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Structure-Representation"><span class="nav-number">5.2.1.</span> <span class="nav-text">Structure Representation</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Multi-Space-Texture-of-Lesion-MST-L"><span class="nav-number">5.2.1.1.</span> <span class="nav-text">Multi-Space Texture of Lesion (MST-L)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Texture-Symmetry-of-Lesion-TS-L"><span class="nav-number">5.2.1.2.</span> <span class="nav-text">Texture Symmetry of Lesion (TS-L)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Color-Representation"><span class="nav-number">5.2.2.</span> <span class="nav-text">Color Representation</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Color-Name-of-Lesion-CN-L"><span class="nav-number">5.2.2.1.</span> <span class="nav-text">Color Name of Lesion (CN-L)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Continuous-Color-Values-of-Lesion-CCV-L"><span class="nav-number">5.2.2.2.</span> <span class="nav-text">Continuous Color Values of Lesion (CCV-L)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shape-Representation"><span class="nav-number">5.2.3.</span> <span class="nav-text">Shape Representation</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Peripheral-Symmetry-of-Lesion-PS-L"><span class="nav-number">5.2.3.1.</span> <span class="nav-text">Peripheral Symmetry of Lesion (PS-L)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Adaptive-Compactness-of-Lesion-AC-L"><span class="nav-number">5.2.3.2.</span> <span class="nav-text">Adaptive Compactness of Lesion (AC-L)</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

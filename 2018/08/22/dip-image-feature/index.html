@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[dip] image feature | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Computer VisionDigital Image Processing" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionComputer Vision已进入Deep Learning时代，但传统图像特征提取方法依然在很多方向有着不少的应用。毕竟DNN计算复杂度太高，且过于依赖Large Scale Labeled Dataset，所以Deep Learning也并非万能的。本文就传统图像特征提取算子做一下简单的归纳。  本文内容主要来源于TPAMI的一篇文章《A Performance Ev">
+<meta name="keywords" content="Computer Vision,Digital Image Processing">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[DIP] Image Feature">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/08/22/dip-image-feature/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionComputer Vision已进入Deep Learning时代，但传统图像特征提取方法依然在很多方向有着不少的应用。毕竟DNN计算复杂度太高，且过于依赖Large Scale Labeled Dataset，所以Deep Learning也并非万能的。本文就传统图像特征提取算子做一下简单的归纳。  本文内容主要来源于TPAMI的一篇文章《A Performance Ev">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.776Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[DIP] Image Feature">
+<meta name="twitter:description" content="IntroductionComputer Vision已进入Deep Learning时代，但传统图像特征提取方法依然在很多方向有着不少的应用。毕竟DNN计算复杂度太高，且过于依赖Large Scale Labeled Dataset，所以Deep Learning也并非万能的。本文就传统图像特征提取算子做一下简单的归纳。  本文内容主要来源于TPAMI的一篇文章《A Performance Ev">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-dip-image-feature" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [DIP] Image Feature
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/08/22/dip-image-feature/" class="article-date">
+	  <time datetime="2018-08-22T07:53:01.000Z" itemprop="datePublished">2018-08-22</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Computer Vision已进入Deep Learning时代，但传统图像特征提取方法依然在很多方向有着不少的应用。毕竟DNN计算复杂度太高，且过于依赖Large Scale Labeled Dataset，所以Deep Learning也并非万能的。本文就传统图像特征提取算子做一下简单的归纳。</p>
+<blockquote>
+<p>本文内容主要来源于TPAMI的一篇文章《<a href="https://github.com/lucasxlu/blog/raw/master/source/_posts/dip-image-feature/TPAMI-A%20performance%20evaluation%20of%20local%20descriptors.pdf" target="_blank" rel="noopener">A Performance Evaluation of Local Descriptors</a>》，详情请阅读原文！</p>
+</blockquote>
+<h2 id="Image-Descriptors"><a href="#Image-Descriptors" class="headerlink" title="Image Descriptors"></a>Image Descriptors</h2><h3 id="Image-Pixels"><a href="#Image-Pixels" class="headerlink" title="Image Pixels"></a>Image Pixels</h3><p>简单，但是高维向量带来的复杂计算量。可通过下采样、PCA等方式进行降维。</p>
+<h3 id="Distribution-Based-Descriptors"><a href="#Distribution-Based-Descriptors" class="headerlink" title="Distribution-Based Descriptors"></a>Distribution-Based Descriptors</h3><p>A simple descriptor is the distribution of the pixel intensities represented by a histogram. </p>
+<h4 id="SIFT"><a href="#SIFT" class="headerlink" title="SIFT"></a>SIFT</h4><p>The descriptor is represented by a 3D histogram of gradient locations and orientations; see Fig. 1 for an illustration. The contribution to the locationand orientation bins is weighted by the gradient magnitude. <strong>The quantization of gradient locations and orientations makes the descriptor robust to small geometric distortions and small errors in the region detection</strong>. Geometric histogram [1] and shape context [3] implement the same idea and are very similar to the SIFT descriptor. Both methods <strong>compute a histogram describing the edge distribution in a region</strong>. These descriptors were successfully used, for example, for shape recognition of drawings for which edges are reliable features.</p>
+<h2 id="EXPERIMENTAL-SETUP"><a href="#EXPERIMENTAL-SETUP" class="headerlink" title="EXPERIMENTAL SETUP"></a>EXPERIMENTAL SETUP</h2><h3 id="Support-Regions"><a href="#Support-Regions" class="headerlink" title="Support Regions"></a>Support Regions</h3><p>Lindeberg [23] has developed a scaleinvariant “blob” detector, where <strong>a “blob” is defined by a maximum of the normalized Laplacian in scale-space</strong>. Lowe [25] approximates the Laplacian with difference-of-Gaussian (DoG) filters and also detects local extrema in scalespace. Lindeberg and Ga°rding [24] make the blob detector affine-invariant using an affine adaptation process based on the second moment matrix.</p>
+<h4 id="Region-Detectors"><a href="#Region-Detectors" class="headerlink" title="Region Detectors"></a>Region Detectors</h4><p><strong>Harris points</strong> [15] are invariant to rotation. The support region is a fixed size neighborhood of $41\times 41$ pixels centered at the interest point.</p>
+<p><strong>Harris-Laplace regions</strong> [29] are invariant to rotation and scale changes. The points are detected by the scale-adapted Harris function and selected in scale-space by the Laplacian- of-Gaussian operator. Harris-Laplace detects cornerlike structures.</p>
+<p><strong>Hessian-Laplace regions</strong> [25], [32] are invariant to rotation and scale changes. Points are localized in space at the local maxima of the Hessian determinant and in scale at the local maxima of the Laplacian-of-Gaussian. This detector is similar to the DoG approach [26], which localizes points at local scale-space maxima of the difference-of-Gaussian. Both approaches detect similar blob-like structures. However, Hessian-Laplace obtains a higher localization accuracy in scale-space, as DoG also responds to edges and detection is unstable in this case. The scale selection accuracy is also higher than in the case of the Harris-Laplace detector. Laplacian scale selection acts as a matched filter and works better on blob-like structures than on corners since the shape of the Laplacian kernel fits to the blobs. The accuracy of the detectors affects the descriptor performance.</p>
+<p><strong>Harris-Affine regions</strong> [32] are invariant to affine image transformations. Localization and scale are estimated by the Harris-Laplace detector. The affine neighborhood is determined by the affine adaptation process based on the second moment matrix. </p>
+<p><strong>Hessian-Affine regions</strong> [33] are invariant to affine image transformations. Localization and scale are estimated by the Hessian-Laplace detector and the affine neighborhood is determined by the affine adaptation process.</p>
+<p><strong>Hessian-Affine and Hessian-Laplace detect mainly blob-like structures for which the signal variations lie on the blob boundaries</strong>. To include these signal changes into the description, the measurement region is three times larger than the detected region. This factor is used for all scale and affine detectors. All the regions are mapped to a circular region of constant radius to obtain scale and affine invariance. The size of the normalized region should not be too small in order to represent the local structure at a sufficient resolution. In all experiments, this size is arbitrarily set to 41 pixels.</p>
+<h3 id="Descriptors"><a href="#Descriptors" class="headerlink" title="Descriptors"></a>Descriptors</h3><h4 id="SIFT-1"><a href="#SIFT-1" class="headerlink" title="SIFT"></a>SIFT</h4><p>SIFT descriptors are computed for normalized image patches with the code provided by Lowe [25]. A descriptor is a 3D histogram of gradient location and orientation, where location is quantized into a $4\times 4$ location grid and the gradient angle is quantized into eight orientations. The resulting descriptor is of dimension 128.</p>
+<p>Each orientation plane represents the gradient magnitude corresponding to a given orientation. To obtain illumination invariance, the descriptor is normalized by the square root of the sum of squared components.</p>
+<h4 id="Gradient-location-orientation-histogram-GLOH"><a href="#Gradient-location-orientation-histogram-GLOH" class="headerlink" title="Gradient location-orientation histogram (GLOH)"></a>Gradient location-orientation histogram (GLOH)</h4><p>Gradient location-orientation histogram (GLOH) is an extension of the SIFT descriptor designed to increase its robustness and distinctiveness. We compute the SIFT descriptor for a log-polar location grid with three bins in radial direction (the radius set to 6, 11, and 15) and 8 in angular direction, which results in 17 location bins. Note that the central bin is not divided in angular directions. The gradient orientations are quantized in 16 bins. This gives a 272 bin histogram. The size of this descriptor is reduced with PCA. The covariance matrix for PCA is estimated on 47,000 image patches collected from various images (see Section 3.3.1). The 128 largest eigenvectors are used for description.</p>
+<h4 id="Shape-context"><a href="#Shape-context" class="headerlink" title="Shape context"></a>Shape context</h4><p>Shape context is similar to the SIFT descriptor, but is based on edges. Shape context is a 3D histogram of edge point locations and orientations. Edges are extracted by the Canny [5] detector. Location is quantized into nine bins of a log-polar coordinate system as displayed in Fig. 1e with the radius set to 6, 11, and 15 and orientation quantized into four bins (horizontal, vertical, and two diagonals). We therefore obtain a 36 dimensional descriptor.</p>
+<h4 id="PCA-SIFT"><a href="#PCA-SIFT" class="headerlink" title="PCA-SIFT"></a>PCA-SIFT</h4><p>PCA-SIFT descriptor is a vector of image gradients in x and y direction computed within the support region. The gradient region is sampled at $39\times 39$ locations, therefore, the vector is of dimension 3,042. The dimension is reduced to 36 with PCA.</p>
+<h4 id="Spin-image"><a href="#Spin-image" class="headerlink" title="Spin image"></a>Spin image</h4><p>Spin image is a histogram of quantized pixel locations and intensity values. The intensity of a normalized patch is quantized into 10 bins. A 10 bin normalized histogram is computed for each of five rings centered on the region. The dimension of the spin descriptor is 50.</p>
+<h4 id="Cross-correlation"><a href="#Cross-correlation" class="headerlink" title="Cross correlation"></a>Cross correlation</h4><p>Cross correlation. To obtain this descriptor, the region is smoothed and uniformly sampled. To limit the descriptor dimension, we sample at $9\times 9$ pixel locations. The similarity between two descriptors is measured with cross-correlation.</p>
+<h2 id="DISCUSSION-AND-CONCLUSIONS"><a href="#DISCUSSION-AND-CONCLUSIONS" class="headerlink" title="DISCUSSION AND CONCLUSIONS"></a>DISCUSSION AND CONCLUSIONS</h2><p>In most of the tests, GLOH obtains the best results, closely followed by SIFT. This shows the robustness and the distinctive character of the region-based SIFT descriptor. Shape context also shows a high performance. However, for textured scenes or when edges are not reliable, its score is lower. The best low-dimensional descriptors are gradientmoments and steerable filters. They can be considered as an alternative when the high dimensionality of the histogram-based descriptors is an issue. Differential invariants give significantly worse results than steerable filters, which is surprising as they are based on the same basic components (Gaussian derivatives). The multiplication of derivatives necessary to obtain rotation invariance increases the instability. Cross correlation gives unstable results. The performance depends on the accuracy of interest point and region detection, which decreases for significant geometric transformations. Cross correlation is more sensitive to these errors than other high dimensional descriptors. Regions detected by Hessian-Laplace and Hessian-Affine are mainly blob-like structures. There are no significant signal changes in the center of the blob therefore descriptors perform better on larger neighborhoods. The results are slightly but systematically better on Hessian regions than on Harris regions due to their higher accuracy. The ranking of the descriptors is similar for different matching strategies. We can observe that SIFT gives relatively better results if nearest neighbor distance ratio is used for thresholding. Note that the precision is higher for nearest neighbor based matching than for threshold based matching.</p>
+<h2 id="Appendix"><a href="#Appendix" class="headerlink" title="Appendix"></a>Appendix</h2><h3 id="颜色直方图"><a href="#颜色直方图" class="headerlink" title="颜色直方图"></a>颜色直方图</h3><p>颜色直方图是在许多图像检索系统中被广泛采用的颜色特征。颜色直方图所描述的是不同色彩在整幅图像中所占的比例，而并不关心每种色彩所处的空间位置，即无法描述图像中的对象或物体。颜色直方图特别适于描述那些难以进行自动分割的图像。计算颜色直方图需要将颜色空间划分成若干个小的颜色区间，每个小区间成为直方图的一个 Bin。这个过程称为颜色量化（Color Quantization）。然后，通过计算颜色落在每个小区间内的像素数量可以得到颜色直方图。颜色量化有许多方法，例如向量量化、聚类方法或者神经网络方法。最为常用的做法是将颜色空间的各个分量（维度）均匀地进行划分。选择合适的颜色小区间（即直方图的 Bin）数目和颜色量化方法与具体应用的性能和效率要求有关。一般来说，颜色小区间的数目越多，直方图对颜色的分辨能力就越强。然而，Bin 的数目很大的颜色直方图不但会增加计算负担，也不利于在大型图像库中建立索引。而且对于某些应用来说，使用非常精细的颜色空间划分方法不一定能够提高检索效果，特别是对于不能容忍对相关图像错漏的那些应用。另一种有效减少直方图 Bin 的数目的办法是只选用那些数值最大（即像素数目最多）的 Bin 来构造图像特征，因为这些表示主要颜色的 Bin 能够表达图像中大部分像素的颜色。实验证明这种方法并不会降低颜色直方图的检索效果。事实上，由于忽略了那些数值较小的 Bin，颜色直方图对噪声的敏感程度降低了，检索效果也更好。</p>
+<h3 id="灰度直方图"><a href="#灰度直方图" class="headerlink" title="灰度直方图"></a>灰度直方图</h3><p>灰度直方图是灰度级的函数，它表示图像中具有每种灰度级的象素的个数，反映图像中每种灰度出现的频率。由于灰度直方图维数最多只能有 256 维，描述能力有限，所以利用灰度直方图表示图像特征的研究比较少。灰度直方图的横坐标是灰度级，纵坐标是该灰度级出现的频率，是图像的最基本的统计特征。</p>
+<h3 id="LBP"><a href="#LBP" class="headerlink" title="LBP"></a>LBP</h3><p><strong>LBP(Local  Binary  Pattern，缩写为 LBP)是一种用来描述图像局部纹理特征的算子</strong>；显然，它的作用是进行特征提取，而且，提取的特征是图像的纹理特征，并且，是局部的纹理特征。LBP 算子定义为 <strong>在 $3\times 3$ 的窗口内，以窗口中心像素为阈值，将相邻的 8 个像素的灰度值与其进行比较，若周围像素值大于中心像素值，则该像素点的位置被标记为 1，否则为 0。这样，3*3 领域内的 8 个点可产生 8 bit 的无符号数，即得到该窗口的 LBP值，并用这个值来反映该区域的纹理信息</strong>。<br>虽然 LBP 直方图和灰度直方图一样，只有 256 维，但由于灰度直方图是对图像的整体统计，而 LBP 是对图像的局部的特征描述，因此比灰度直方图有更好的特征表达能力。</p>
+<h3 id="SIFT-2"><a href="#SIFT-2" class="headerlink" title="SIFT"></a>SIFT</h3><p>SIFT 是一种提取局部特征的算法，在尺度空间寻找极值点，提取位置，尺度，旋转不变量。SIFT 特征是图像的局部特征，其对旋转、尺度缩放、亮度变化保持不变性，对视角变化、仿射变换、噪声也保持一定程度的稳定性。 SIFT 算法步骤：检测尺度空间极值点，精确定位极值点，为每个关键点指定方向参数，关键点描述子的生成。</p>
+<p><strong>SIFT检测到的每个关键点有三个信息：位置、所处尺度、方向</strong>。</p>
+<h3 id="HOG"><a href="#HOG" class="headerlink" title="HOG"></a>HOG</h3><p>梯度方向直方图（Histogram of Oriented Gradients，简称 HOG） 描述子是应用在计算机视觉和图像处理领域，用于目标检测的特征描述器。这项技术是用来计算局部图像梯度的方向信息的统计值。</p>
+<p>HOG 描述器最重要的思想是：在一副图像中，局部目标的表象和形状（Appearance and Shape）能够被梯度或边缘的方向密度分布很好地描述。具体的实现方法是：首先将图像分成小的连通区域，我们把它叫细胞单元。然后采集细胞单元中各像素点的梯度的或边缘的方向直方图。最后把这些直方图组合起来就可以构成特征描述器。为了提高性能，我们还可以把这些局部直方图在图像的更大的范围内（我们把它叫区间或 Block）进行对比度归一化（Contrast-Normalized），所采用的方法是：先计算各直方图在这个区间（Block）中的密度，然后根据这个密度对区间中的各个细胞单元做归一化。通过这个归一化后，能对光照变化和阴影获得更好的效果。与其他的特征描述方法相比，HOG 描述器后很多优点: <strong>由于 HOG 方法是在图像的局部细胞单元上操作，所以它对图像几何的（Geometric）和光学的（Photometric）形变都能保持很好的不变性</strong>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/08/22/dip-image-feature/" target="_blank" title="[DIP] Image Feature">https://lucasxlu.github.io/blog/2018/08/22/dip-image-feature/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/08/22/dl-ae/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [DL] Auto Encoder
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/08/20/ml-dimen-red-metric-learning/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[ML] Dimension Reduction and Metric Learning</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Image-Descriptors"><span class="nav-number">2.</span> <span class="nav-text">Image Descriptors</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Image-Pixels"><span class="nav-number">2.1.</span> <span class="nav-text">Image Pixels</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Distribution-Based-Descriptors"><span class="nav-number">2.2.</span> <span class="nav-text">Distribution-Based Descriptors</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SIFT"><span class="nav-number">2.2.1.</span> <span class="nav-text">SIFT</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EXPERIMENTAL-SETUP"><span class="nav-number">3.</span> <span class="nav-text">EXPERIMENTAL SETUP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Support-Regions"><span class="nav-number">3.1.</span> <span class="nav-text">Support Regions</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Region-Detectors"><span class="nav-number">3.1.1.</span> <span class="nav-text">Region Detectors</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Descriptors"><span class="nav-number">3.2.</span> <span class="nav-text">Descriptors</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SIFT-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">SIFT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gradient-location-orientation-histogram-GLOH"><span class="nav-number">3.2.2.</span> <span class="nav-text">Gradient location-orientation histogram (GLOH)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shape-context"><span class="nav-number">3.2.3.</span> <span class="nav-text">Shape context</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PCA-SIFT"><span class="nav-number">3.2.4.</span> <span class="nav-text">PCA-SIFT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Spin-image"><span class="nav-number">3.2.5.</span> <span class="nav-text">Spin image</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cross-correlation"><span class="nav-number">3.2.6.</span> <span class="nav-text">Cross correlation</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DISCUSSION-AND-CONCLUSIONS"><span class="nav-number">4.</span> <span class="nav-text">DISCUSSION AND CONCLUSIONS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Appendix"><span class="nav-number">5.</span> <span class="nav-text">Appendix</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#颜色直方图"><span class="nav-number">5.1.</span> <span class="nav-text">颜色直方图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#灰度直方图"><span class="nav-number">5.2.</span> <span class="nav-text">灰度直方图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LBP"><span class="nav-number">5.3.</span> <span class="nav-text">LBP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SIFT-2"><span class="nav-number">5.4.</span> <span class="nav-text">SIFT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HOG"><span class="nav-number">5.5.</span> <span class="nav-text">HOG</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[ml] dimension reduction and metric learning | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningData Science" />
+  
+  
+  
+  
+  <meta name="description" content="Low-Dimension Embedding在高维情形下出现的数据样本稀疏、距离计算困难等问题，是所有ML算法共同面临的严重障碍，被称为curse of dimensionality。 Why dimension reduction works?在很多时候，人们观测或收集到的数据样本虽是高维的，但与学习任务密切相关的也许仅仅是某个低维分布，即高维空间中的一个低维Embedding。 Multip">
+<meta name="keywords" content="Machine Learning,Data Science">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[ML] Dimension Reduction and Metric Learning">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/08/20/ml-dimen-red-metric-learning/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Low-Dimension Embedding在高维情形下出现的数据样本稀疏、距离计算困难等问题，是所有ML算法共同面临的严重障碍，被称为curse of dimensionality。 Why dimension reduction works?在很多时候，人们观测或收集到的数据样本虽是高维的，但与学习任务密切相关的也许仅仅是某个低维分布，即高维空间中的一个低维Embedding。 Multip">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.881Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[ML] Dimension Reduction and Metric Learning">
+<meta name="twitter:description" content="Low-Dimension Embedding在高维情形下出现的数据样本稀疏、距离计算困难等问题，是所有ML算法共同面临的严重障碍，被称为curse of dimensionality。 Why dimension reduction works?在很多时候，人们观测或收集到的数据样本虽是高维的，但与学习任务密切相关的也许仅仅是某个低维分布，即高维空间中的一个低维Embedding。 Multip">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-ml-dimen-red-metric-learning" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [ML] Dimension Reduction and Metric Learning
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/08/20/ml-dimen-red-metric-learning/" class="article-date">
+	  <time datetime="2018-08-20T14:02:55.000Z" itemprop="datePublished">2018-08-20</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Low-Dimension-Embedding"><a href="#Low-Dimension-Embedding" class="headerlink" title="Low-Dimension Embedding"></a>Low-Dimension Embedding</h2><p>在高维情形下出现的数据样本稀疏、距离计算困难等问题，是所有ML算法共同面临的严重障碍，被称为curse of dimensionality。</p>
+<p><strong>Why dimension reduction works?</strong><br>在很多时候，人们观测或收集到的数据样本虽是高维的，但与学习任务密切相关的也许仅仅是某个低维分布，即高维空间中的一个低维Embedding。</p>
+<h3 id="Multiple-Dimensional-Scaling"><a href="#Multiple-Dimensional-Scaling" class="headerlink" title="Multiple Dimensional Scaling"></a>Multiple Dimensional Scaling</h3><p>MDS算法的目标是获得样本在$d^{‘}$维空间的表示$Z\in \mathbb{R}^{d^{‘}\times m},d^{‘}\leq d$，且任意两个样本在$d^{‘}$维空间中的欧氏距离等于原始空间中的距离，即$||z_i - z_j||=dist_{ij}$。</p>
+<p>令$B=Z^TZ\in \mathbb{R}^{m\times m}$，其中$B$为降维后样本的内积矩阵，$b_{ij}=z_i^Tz_j$，有<br>$$<br>dist_{ij}^2=||z_i||^2+||z_j||^2-2z_i^Tz_j=b_{ii}+b_{jj}-2b_ib_j<br>$$</p>
+<p>令降维后的样本$Z$被中心化，即$\sum_{i=1}^mz_i=0$。显然，矩阵$B$的行和列之和均为0，易知：<br>$$<br>\sum_{i=1}^m dist_{ij}^2=tr(B)+mb_{jj} \\<br>\sum_{j=1}^m dist_{ij}^2=tr(B)+mb_{ii} \\<br>\sum_{i=1}^m\sum_{j=1}^m dist_{ij}^2=2tr(B)<br>$$</p>
+<p>其中$tr(B)=\sum_{i=1}^m||z_i||^2$，令：<br>$$<br>dist_{i\cdot}^2=\frac{1}{m}\sum_{j=1}^m dist_{ij}^2 \\<br>dist_{\cdot j}^2=\frac{1}{m}\sum_{i=1}^m dist_{ij}^2 \\<br>dist_{\cdot \cdot}^2=\frac{1}{m}\sum_{i=1}^m \sum_{j=1}^m dist_{ij}^2 \\<br>$$</p>
+<p>可得：<br>$$<br>b_{ij}=-\frac{1}{2}(dist_{ij}^2-dist_{i\cdot}^2-dist_{\cdot j}^2+dist_{\cdot \cdot}^2)<br>$$</p>
+<p>由此即可通过降维前后保持不变的距离$D$求取内积矩阵$B$。</p>
+<p>对矩阵$B$做特征值分解，$B=V\bigwedge V^T$，其中$\bigwedge=diag(\lambda_1,\lambda_2,\cdots,\lambda_d)$为特征值构成的对角矩阵，$\lambda_1\geq \lambda_2\geq \cdots\geq \lambda_d$，$V$为特征向量矩阵。假定其中有$d^{\star}$个非零特征值，它们构成对角矩阵$\bigwedge_{\star}=diag(\lambda_1,\lambda_2,\cdots,\lambda_{d^{\star}})$，另$V_{\star}$表示相应的特征向量矩阵，则$Z$可表达为：<br>$$<br>Z=\bigwedge_{\star}^{1/2}V_{\star}^T\in \mathbb{R}^{d^{\star}\times m}<br>$$</p>
+<p>在现实应用中为了有效降维，往往仅需降维后的距离与原始空间中的距离 <strong>尽可能相近</strong>，而不必严格相等。此时可取$d^{‘}\ll d$个最大特征值构成对角矩阵$\tilde{\bigwedge}=diag(\lambda_1,\cdots,\lambda_{d^{‘}})$，另$\tilde{V}$表示相应的特征向量矩阵，则$Z$可表达为：<br>$$<br>Z=\tilde{\bigwedge}^{1/2}\tilde{V}^T\in \mathbb{R}^{d^{‘}\times m}<br>$$</p>
+<h2 id="PCA"><a href="#PCA" class="headerlink" title="PCA"></a>PCA</h2><p>假定数据进行了中心化，即$\sum_i x_i=0$；再假定投影变换后得到的新坐标系为$\{w_1,w_2,\cdots,w_d\}$，其中$w_i$是标准正交基向量，$||w_i||_2=1,w_i^Tw_j=0 (i\neq j)$。若丢弃新坐标系中的部分坐标，即将维度降低到$d^{‘}&lt; d$，则样本点$x_i$在低维坐标系中的投影是$z_i=(z_{i1},z_{i2},\cdots,z_{id^{‘}})$，其中$z_{ij}=w_j^Tx_i$是$x_i$在低维坐标系下第$j$维的坐标。若基于$z_i$来重构$x_i$，则会得到$\hat{x}_i=\sum_{j=1}^{d^{‘}z_{ij}w_j}$。</p>
+<p>$$<br>\min \limits_{W} -tr(W^TXX^TW) \quad s.t. W^TW=I<br>$$</p>
+<p>样本点$x_i$在新空间中超平面上的投影是$W^Tx_i$，若所有样本点的投影能尽可能分开，则应使 <strong>投影后样本点的方差最大</strong>。</p>
+<p>即：<br>$$<br>\max \limits_{W} tr(W^TXX^TW) \quad s.t. W^TW=I<br>$$</p>
+<p>对上式使用拉格朗日乘子法可得：<br>$$<br>XX^TW=\lambda W<br>$$</p>
+<p>于是，只需对协方差矩阵$XX^T$进行特征值分解，将求得的特征值排序：$\lambda_1\geq \lambda_2\geq \cdots \lambda_d$，再取前$d^{‘}$个特征值对应的特征向量构成$W=(w_1,w_2,\cdots,w_{d^{‘}})$。这就是PCA的解。</p>
+<p>降维会导致$d-d^{‘}$个特征值的特征向量被舍弃了，这样带来的好处是：一方面，舍弃这部分信息之后能使样本采样密度增大，这正是降维的重要动机；另一方面，当数据受到噪声影响时，最小的特征值所对应的特征向量往往与噪声有关，将它们舍弃能在一定程度上起到去噪的作用。</p>
+<h2 id="Kernel-Linear-Dimension-Reduction"><a href="#Kernel-Linear-Dimension-Reduction" class="headerlink" title="Kernel Linear Dimension Reduction"></a>Kernel Linear Dimension Reduction</h2><p>线性降维方法假设从高维空间到低维空间的函数映射是线性的，然而，在不少现实任务中，可能需要非线性映射才能找到恰当的低维嵌入。</p>
+<p>非线性降维的一种常见方法是基于Kernel Tricks(读者若对SVM熟悉，此处自然不会陌生了，SVM在对线性不可分的情况下也是利用Kernel Tricks将原始空间映射到高维超平面再基于软间隔最大化去分类)对线性降维方法进行“核化”。</p>
+<p>以Kernel PCA为例，假定我们将在高维空间中把数据投影到由$W$确定的超平面上，即PCA欲求解：<br>$$<br>(\sum_{i=1}^m z_iz_i^T)W=\lambda W<br>$$</p>
+<p>其中$z_i$是样本点$x_i$在高维特征空间中的像，易知：<br>$$<br>W=\frac{1}{\lambda}(\sum_{i=1}^m z_iz_i^T)W=\sum_{i=1}^m z_i \frac{z_i^T W}{\lambda}=\sum_{i=1}^m z_i \alpha_i<br>$$<br>其中$\alpha_i=\frac{1}{\lambda}z_i^TW$，假定$z_i$是由原始属性空间中的样本点$x_i$通过映射$\phi$产生，即$z_i=\phi(x_i),i=1,2,\cdots,m$。若$\phi$能被显式表达出来，则通过它将样本映射至高维特征空间，再在特征空间中实施PCA即可。有：<br>$$<br>(\sum_{i=1}^m \phi(x_i)\phi(x_i)^T)W=\lambda W<br>$$</p>
+<p>$$<br>W=\sum_{i=1}^m \phi(x_i) \alpha_i<br>$$</p>
+<p>一般情况下，我们不清楚$\phi$的具体形式，于是引入核函数：<br>$$<br>\mathcal{k}(x_i,x_j)=\phi(x_i)^T\phi(x_j)<br>$$</p>
+<p>化简可得：<br>$$<br>KA=\lambda A<br>$$<br>其中$K$为$\mathcal{k}$对应的核矩阵，$(K)_{ij}=\mathcal{k}(x_i,x_j), A=(\alpha_1;\alpha_2,\cdots,\alpha_m)$。显然，上式是特征值分解问题，取$K$最大的$d^{‘}$个特征值对应的特征向量即可。</p>
+<p>对新样本$x$，其投影后的第$j (j=1,2,\cdots,d^{‘})$维坐标为：<br>$$<br>z_j=w_j^T\phi(x)=\sum_{i=1}^m \alpha_i^j \phi(x_i)^T \phi(x) = \sum_{i=1}^m \alpha_i^j \mathcal{k}(x_i, x)<br>$$<br>其中$\alpha_i$已经过规范化，$\alpha_i^j$是$\alpha_i$的第$j$个分量。</p>
+<h2 id="Manifold-Learning"><a href="#Manifold-Learning" class="headerlink" title="Manifold Learning"></a>Manifold Learning</h2><p>Manifold是在局部与欧式空间同胚的空间，换言之，<font color="red">它在局部具有欧式空间的性质，能用欧氏距离来进行距离计算</font>。这给降维带来了很大的启发：若低维流形嵌入到高维空间中，则数据样本在高维空间的分布虽然看上去非常复杂，但在<font color="red">局部上仍具有欧式空间的性质</font>。因此可以容易地在局部建立降维映射关系，然后再设法将局部映射关系推广到全局。</p>
+<h3 id="Isometric-Mapping"><a href="#Isometric-Mapping" class="headerlink" title="Isometric Mapping"></a>Isometric Mapping</h3><p>Isomap认为低维流形嵌入到高维空间后，直接在高维空间计算直线距离具有误导性，因为高维空间中的直线距离在低维嵌入流形上是不可达的。</p>
+<p>我们可利用<font color="red">流行在局部上与欧式空间同胚</font>这个性质，对每一个点基于欧式距离找出其近邻点，然后就能建立一个近邻连接图，图中近邻点之间存在连接，而非近邻点之间不存在连接。于是，计算两点之间测地线距离问题就转换为计算<font color="red">近邻连接图上两点之间的最短路径</font>问题。</p>
+<p>对近邻图的构建通常有两种做法，一种是指定近邻点个数，例如欧氏距离最近的$k$个点为近邻点，这样得到的近邻图称为$k$近邻图；另一种是指定距离阈值$\epsilon$，距离小于$\epsilon$的点被认为是近邻点，这样得到的近邻图称为$\epsilon$近邻图。</p>
+<h3 id="Locally-Linear-Embedding-LLE"><a href="#Locally-Linear-Embedding-LLE" class="headerlink" title="Locally Linear Embedding (LLE)"></a>Locally Linear Embedding (LLE)</h3><p>与Isomap试图保持近邻样本之间的距离不同，<font color="red">LLE试图保持邻域内样本之间的线性关系</font>。假定样本点$x_i$的坐标能通过它的近邻样本$x_j,x_k,x_l$的坐标通过线性组合而重构出来，即：<br>$$<br>x_i = w_{ij}x_j + w_{ik}x_k + w_{il}x_l<br>$$<br>LLE先为每个样本$x_i$找到其近邻下标集合$Q_i$，然后计算出基于$Q_i$中的样本点对$x_i$进行线性重构的系数$w_i$:<br>$$<br>\mathop{min} \limits_{w_1,w_2,\cdots,w_m} \sum_{i=1}^m ||x_i - \sum_{j\in Q_i} w_{ij}x_j||^2_2 \quad \sum_{j\in Q_i}w_{ij}=1<br>$$<br>其中$x_i$和$x_j$均为已知，令$C_{jk}=(x_i-x_j)^T(x_i-x_k)$，$w_{ij}$有close-form solution：<br>$$<br>w_{ij}=\frac{\sum_{k\in Q_i}C_{jk}^{-1}}{\sum_{l,s\in Q_i}C_{ls}^{-1}}<br>$$<br>LLE在低维空间中保持$w_i$不变，于是$x_i$对应的低维空间坐标$z_i$可通过下式求解:<br>$$<br>\mathop{min} \limits_{z_1,z_2,\cdots,z_m} \sum_{i=1}^m ||z_i-\sum_{j\in Q_i}w_{ij}z_j||_2^2<br>$$</p>
+<p>令$Z=(z_1,z_2,\cdots,z_m)\in \mathbb{R}^{d^{‘}\times m}, (W)_{ij}=w_{ij}$，<br>$$<br>M=(I-W)^T(I-W)<br>$$<br>则有：<br>$$<br>\mathop{min} \limits_{Z} tr(ZMZ^T) \quad s.t. \quad ZZ^T=I<br>$$<br>可通过特征值分解求解：$M$最小的$d^{‘}$个特征值对应的特征向量组成的矩阵即为$Z^T$。</p>
+<h2 id="Metric-Learning"><a href="#Metric-Learning" class="headerlink" title="Metric Learning"></a>Metric Learning</h2><p>Machine Learning中，对高维数据进行降维的目的是希望找到一个合适的低维空间，在此空间中进行学习能比原始空间性能更好。事实上，每个空间对应了在样本属性上定义的一个距离度量，而寻找合适的空间，实际上就是字寻找一个合适的距离度量。那么为何不直接尝试学习出一个合适的Distance Metric呢？这就是Metric Learning的idea。</p>
+<p>对两个$d$维样本$x_i$和$x_j$，它们之间的$L_2$ Distance可表示为：<br>$$<br>dist_{ed}^2(x_i,x_j)=||x_i - x_j||_2^2=dist_{ij,1}^2+dist_{ij,2}^2+\cdots +dist_{ij,d}^2<br>$$<br>其中$dist_{ij,k}^2$表示$x_i$与$x_j$在第$k$维上的距离。若假定不同属性的重要性不同，则可引入权重$w$，得到：<br>$$<br>dist_{wed}^2(x_i,x_j)=||x_i - x_j||_2^2=w_1\cdot dist_{ij,1}^2+w_2\cdot dist_{ij,2}^2+\cdots +w_d\cdot dist_{ij,d}^2=(x_i-x_j)^TW(x_i-x_j)<br>$$<br>其中$w_i\geq 0, W=diag(w)$是一个对角矩阵，$(W)_{ii}=w_i$。</p>
+<p>我们不仅可以将Error Rate这样的监督学习目标作为度量学习的优化目标，还能在度量学习中引入领域知识。例如，若已知某些样本相似、另一些样本不相似，则可定义must-link约束集合$\mathcal{M}$和cannot-link约束集合$\mathcal{C}$。$(x_i,x_j)\in \mathcal{M}$表示$x_i$与$x_j$相似，$(x_i,x_k)\in \mathcal{C}$表示$x_i$与$x_k$不相似。显然，我们希望相似的样本之间距离较小，不相似的样本之间距离较大。于是可通过求解下面的凸优化问题获得适当的度量矩阵：<br>$$<br>\mathop{min} \limits_{M} \quad \sum_{(x_i,x_j)\in \mathcal{M}} ||x_i-x_j||_M^2 \quad s.t. \quad \sum_{(x_i,x_k)\in \mathcal{C}}||x_i-x_k||_M^2\geq 1,M\succeq 0<br>$$<br>$M\succeq 0$表明M必须是半正定的。上式要求在不相似样本间的距离不小于1的前提下，使相似样本间的距离尽可能小。</p>
+<p><font color="red">若$M$是一个低秩矩阵，则通过对$M$进行特征分解，总能找到一组正交基，其正交基数目为矩阵$M$的秩$rank(M)$，小于原属性数$d$。于是，Metric Learning学得的结果可衍生出一个降维矩阵$P\in \mathbb{R}^{d\times rank(M)}$，能用于降维的目的</font>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/08/20/ml-dimen-red-metric-learning/" target="_blank" title="[ML] Dimension Reduction and Metric Learning">https://lucasxlu.github.io/blog/2018/08/20/ml-dimen-red-metric-learning/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/08/22/dip-image-feature/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [DIP] Image Feature
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/08/20/ml-feml/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[ML] Feature Engineering in Machine Learning</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Low-Dimension-Embedding"><span class="nav-number">1.</span> <span class="nav-text">Low-Dimension Embedding</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Multiple-Dimensional-Scaling"><span class="nav-number">1.1.</span> <span class="nav-text">Multiple Dimensional Scaling</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCA"><span class="nav-number">2.</span> <span class="nav-text">PCA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-Linear-Dimension-Reduction"><span class="nav-number">3.</span> <span class="nav-text">Kernel Linear Dimension Reduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Manifold-Learning"><span class="nav-number">4.</span> <span class="nav-text">Manifold Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Isometric-Mapping"><span class="nav-number">4.1.</span> <span class="nav-text">Isometric Mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Locally-Linear-Embedding-LLE"><span class="nav-number">4.2.</span> <span class="nav-text">Locally Linear Embedding (LLE)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Metric-Learning"><span class="nav-number">5.</span> <span class="nav-text">Metric Learning</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

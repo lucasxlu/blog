@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[dl] rnn | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningData ScienceRNNNLP" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionRNN(Recurrent Neural Network)是一类专门处理序列数据的网络。RNN主要在NLP领域有着非常广泛的应用，也是当今火热的Deep Learning的其中模型之一。RNN在模型的不同部分共享参数，从而使得模型能够扩展到不同形式的样本并进行泛化。 展开Computational Graph 我们可以用一个函数$g^{(t)}$代表经过 $t$ 步展开后的">
+<meta name="keywords" content="Machine Learning,Deep Learning,Data Science,RNN,NLP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[DL] RNN">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/12/22/dl-rnn/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionRNN(Recurrent Neural Network)是一类专门处理序列数据的网络。RNN主要在NLP领域有着非常广泛的应用，也是当今火热的Deep Learning的其中模型之一。RNN在模型的不同部分共享参数，从而使得模型能够扩展到不同形式的样本并进行泛化。 展开Computational Graph 我们可以用一个函数$g^{(t)}$代表经过 $t$ 步展开后的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/cg-unfold.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/rnn1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/rnn2.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/rnn3.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/teacher-forcing.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/rnn-bp.jpg">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.871Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[DL] RNN">
+<meta name="twitter:description" content="IntroductionRNN(Recurrent Neural Network)是一类专门处理序列数据的网络。RNN主要在NLP领域有着非常广泛的应用，也是当今火热的Deep Learning的其中模型之一。RNN在模型的不同部分共享参数，从而使得模型能够扩展到不同形式的样本并进行泛化。 展开Computational Graph 我们可以用一个函数$g^{(t)}$代表经过 $t$ 步展开后的">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/cg-unfold.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-dl-rnn" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [DL] RNN
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/12/22/dl-rnn/" class="article-date">
+	  <time datetime="2018-12-22T06:18:19.000Z" itemprop="datePublished">2018-12-22</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>RNN(Recurrent Neural Network)是一类专门处理序列数据的网络。RNN主要在NLP领域有着非常广泛的应用，也是当今火热的Deep Learning的其中模型之一。RNN在模型的不同部分共享参数，从而使得模型能够扩展到不同形式的样本并进行泛化。</p>
+<h2 id="展开Computational-Graph"><a href="#展开Computational-Graph" class="headerlink" title="展开Computational Graph"></a>展开Computational Graph</h2><p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/cg-unfold.jpg" alt="Computational Graph Unfold"></p>
+<p>我们可以用一个函数$g^{(t)}$代表经过 $t$ 步展开后的循环：<br>$$<br>h^{(t)}=g^{(t)}(x^{(t)}, x^{(t-1)}, x^{(t-2)}, \cdots, x^{(1)})=f(h^{(t-1)}, x^{(t)}; \theta)<br>$$</p>
+<ol>
+<li>无论序列的长度，学成的model始终具有相同的输入大小，因为它指定的是从一种状态到另一种状态的转移，而不是在可变长度的历史状态上操作。</li>
+<li>我们可以在每个时间步使用相同参数的转移函数 $f$。</li>
+</ol>
+<p>学习单一的共享模型允许泛化到没有见过的序列长度(not appear in training data)，并且估计模型所需的training samples远远少于不带参数共享的模型。</p>
+<h2 id="Recurrent-Neural-Network"><a href="#Recurrent-Neural-Network" class="headerlink" title="Recurrent Neural Network"></a>Recurrent Neural Network</h2><p>RNN的一些重要设计模式包括以下几种：</p>
+<ol>
+<li><p>每个时间步都有输出，并且hidden units有循环连接的循环网络：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/rnn1.jpg" alt="RNN"></p>
+</li>
+<li><p>每个时间步都产生一个输出，只有当前时刻的输出到下个时刻的hidden units之间有循环单元：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/rnn2.jpg" alt="RNN"></p>
+</li>
+<li><p>Hidden units之间存在循环连接，但读取整个sequence之后产生单个输出：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/rnn3.jpg" alt="RNN"></p>
+</li>
+</ol>
+<p>表示离散变量的常规方式是把输出 $o$ 作为每个离散变量可能值的非标准化对数概率，然后我们可以应用Softmax处理，得到标准化后的概率输出向量$\hat{y}$。RNN从特定的初始状态$h^{(0)}$开始前向传播。从$t=1$到$t=\tau$的每个时间步，我们应用以下更新方程：<br>$$<br>a^{(t)} = Wh^{(t-1)}+Ux^{(t)}+b<br>$$</p>
+<p>$$<br>h^{(t)}=tanh(a^{(t)})<br>$$</p>
+<p>$$<br>o^{(t)}=Vh^{(t)}+c<br>$$</p>
+<p>$$<br>\hat{y}^{(t)}=softmax(o^{(t)})<br>$$<br>$U, V, W$分别对应 input layers to hidden layers，hidden layers to output layers，hidden to next hidden layers的连接。该RNN将一个input sequence映射到相同长度的output sequence。<strong>与 $x$ 序列配对的 $y$ 的总Loss就是所有时间步的Loss之和</strong>。</p>
+<h3 id="Teacher-Forcing-and-Networks-with-Output-Recurrence"><a href="#Teacher-Forcing-and-Networks-with-Output-Recurrence" class="headerlink" title="Teacher Forcing and Networks with Output Recurrence"></a>Teacher Forcing and Networks with Output Recurrence</h3><p>由输出反馈到模型而产生循环连接的model可用teacher forcing进行训练。训练模型时，teacher forcing不再使用最大似然准则，而在时刻 $t+1$ 接收真实值 $y^{(t)}$ 作为输入。条件最大似然准则是：<br>$$<br>log p(y^{(1)}, y^{(2)}|x^{(1)},y^{(2)})=log p(y^{(2)}|y^{(1)},x^{(1)},y^{(2)})+log p(y^{(1)}|x^{(1)},y^{(2)})<br>$$</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/teacher-forcing.jpg" alt="Teacher Forcing"></p>
+<h3 id="Computing-the-Gradient-in-RNN"><a href="#Computing-the-Gradient-in-RNN" class="headerlink" title="Computing the Gradient in RNN"></a>Computing the Gradient in RNN</h3><p>以最终的Loss开始，计算：<br>$\frac{\partial L}{\partial L^{(t)}}=1$</p>
+<p>对所有 $i,t$ 关于时间步 $t$ 输出的梯度 $\triangledown_{o^{(t)}}L$ 如下：<br>$(\triangledown_{o^{(t)}}L)_i=\frac{\partial L}{\partial o_i^{(t)}}=\frac{\partial L}{\partial L^{(t)}} \frac{\partial L^{(t)}}{\partial o_i^{(t)}}=\hat{y}_i^{(t)}-\textbf{1}_{i,y^{(t)}}$</p>
+<p>从序列的末尾开始，反向进行计算，在最后的时间步 $\tau, h^{(\tau)}$ 只有 $o^{(\tau)}$ 作为后续结点，因此这个梯度计算很简单：<br>$\triangledown_{h^{(\tau)}}L=V^T\triangledown_{o^{(\tau)}}L$</p>
+<p>然后，我们从时刻$t=\tau -1$到$t=1$反向迭代，通过时间反向传播梯度，注意 $h^{(t)} (t&lt;\tau)$同时具有 $o^{(t)}$ 和 $h^{(t+1)}$两个后续结点。因此，它的梯度如下计算：<br>$$<br>\triangledown_{h^{(t)}}L=(\frac{\partial h^{(t+1)}}{\partial h^{(t)}})^T(\triangledown_{h^{(t+1)}}L)+(\frac{\partial o^{(t)}}{\partial h^{(t)}})^T(\triangledown_{o^{(t)}}L)=W^T(\triangledown_{h^{(t+1)}}L)diag(1-(h^{(t+1)})^2)+V^T(\triangledown_{o^{(t)}}L)<br>$$</p>
+<p>剩下的参数梯度可以由下式给出：</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-rnn/rnn-bp.jpg" alt="RNN-BP"></p>
+<h3 id="Recurrent-Networks-as-Directed-Graphical-Models"><a href="#Recurrent-Networks-as-Directed-Graphical-Models" class="headerlink" title="Recurrent Networks as Directed Graphical Models"></a>Recurrent Networks as Directed Graphical Models</h3>
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/12/22/dl-rnn/" target="_blank" title="[DL] RNN">https://lucasxlu.github.io/blog/2018/12/22/dl-rnn/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/12/23/ml-model-selection-metric/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [ML] Model Selection and Performance Metric
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/12/04/book-ml-practice-at-meituan/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[Book] ML Practice At MeiTuan</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#展开Computational-Graph"><span class="nav-number">2.</span> <span class="nav-text">展开Computational Graph</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Recurrent-Neural-Network"><span class="nav-number">3.</span> <span class="nav-text">Recurrent Neural Network</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Teacher-Forcing-and-Networks-with-Output-Recurrence"><span class="nav-number">3.1.</span> <span class="nav-text">Teacher Forcing and Networks with Output Recurrence</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Computing-the-Gradient-in-RNN"><span class="nav-number">3.2.</span> <span class="nav-text">Computing the Gradient in RNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Recurrent-Networks-as-Directed-Graphical-Models"><span class="nav-number">3.3.</span> <span class="nav-text">Recurrent Networks as Directed Graphical Models</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

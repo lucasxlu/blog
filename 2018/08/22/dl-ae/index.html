@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[dl] auto encoder | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningData ScienceAuto Encoder" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionAuto Encoder是深度学习里一个用途非常广的无监督学习模型，常常用来降维或者特征学习(例如我在豆瓣评论情感挖掘这个repository里就使用了Deep AutoEncoder来学习300维word2vec里更discriminative的特征表达)。近年来随着GAN的火热，AutoEncoder也常常站在了generative model的前沿。 Undercom">
+<meta name="keywords" content="Machine Learning,Deep Learning,Data Science,Auto Encoder">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[DL] Auto Encoder">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/08/22/dl-ae/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionAuto Encoder是深度学习里一个用途非常广的无监督学习模型，常常用来降维或者特征学习(例如我在豆瓣评论情感挖掘这个repository里就使用了Deep AutoEncoder来学习300维word2vec里更discriminative的特征表达)。近年来随着GAN的火热，AutoEncoder也常常站在了generative model的前沿。 Undercom">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.805Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[DL] Auto Encoder">
+<meta name="twitter:description" content="IntroductionAuto Encoder是深度学习里一个用途非常广的无监督学习模型，常常用来降维或者特征学习(例如我在豆瓣评论情感挖掘这个repository里就使用了Deep AutoEncoder来学习300维word2vec里更discriminative的特征表达)。近年来随着GAN的火热，AutoEncoder也常常站在了generative model的前沿。 Undercom">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-dl-ae" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [DL] Auto Encoder
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/08/22/dl-ae/" class="article-date">
+	  <time datetime="2018-08-22T11:17:56.000Z" itemprop="datePublished">2018-08-22</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Auto Encoder是深度学习里一个用途非常广的无监督学习模型，常常用来降维或者特征学习(例如我在<a href="https://github.com/lucasxlu/XiaoLuAI/tree/master/nlp" target="_blank" rel="noopener">豆瓣评论情感挖掘这个repository</a>里就使用了Deep AutoEncoder来学习300维word2vec里更discriminative的特征表达)。近年来随着GAN的火热，AutoEncoder也常常站在了generative model的前沿。</p>
+<h2 id="Undercomplete-AutoEncoder"><a href="#Undercomplete-AutoEncoder" class="headerlink" title="Undercomplete AutoEncoder"></a>Undercomplete AutoEncoder</h2><p>从AutoEncoder里获得有用特征的一种方法是限制$h$的维度比$x$小，这种编码维度小于输入维度的AutoEncoder称为Undercomplete AutoEncoder。学习undercomplete representation将强制AutoEncoder捕捉training data中最显著的特征。</p>
+<p>当Decoder是线性的且Loss是MSE，Undercomplete AutoEncoder会学习出与PCA相同的生成子空间。这种情况下，AutoEncoder在训练来执行复制任务的同时学到了training data的主元子空间。因此，拥有non-linear Encoder和non-linear Decoder的AutoEncoder能够学习出更强大的PCA非线性推广。</p>
+<p>若Encoder和Decoder被赋予过大的容量，AutoEncoder会执行复制任务而捕捉不到任何有关数据分布的有用信息。</p>
+<h2 id="Regularized-AutoEncoder"><a href="#Regularized-AutoEncoder" class="headerlink" title="Regularized AutoEncoder"></a>Regularized AutoEncoder</h2><p>若隐藏编码的维度允许与输入相等，或隐藏编码维数大于输入的overcomplete情况下，即使是linear Encoder和linear Decoder也可以学会将输入复制到输出，而学不到任何有关数据分布的有用信息。</p>
+<p>Regularized AutoEncoder使用的Loss Function鼓励模型学习其他特征(除了将输入复制到输出)，而不必限制使用浅层的Encoder和Decoder以及小的编码维数来限制模型容量。</p>
+<p>Sparse AutoEncoder简单地在训练时结合Encoder层的稀疏惩罚$\Omega(h)$和重构误差：<br>$$<br>L(x,g(f(x)))+\Omega(h)<br>$$<br>Sparse AutoEncoder一般用来学习特征。</p>
+<p>除了向Cost Function增加一个Regularization，我们也可以通过改变重构误差项来获得一个能学到有用信息的AutoEncoder。</p>
+<p>Denoising AutoEncoder最小化：<br>$$<br>L(x,g(f(\tilde{x})))<br>$$<br>其中$\tilde{x}$是被某种噪声损坏的副本，因此DAE必须撤销这些损坏，而不是简单地复制输入。</p>
+<p>另一个Regularized AutoEncoder的策略是使用一个类似Sparse AutoEncoder中的惩罚项$\Omega$，<br>$$<br>L(x,g(f(x)))+\Omega(h,x)<br>$$<br>但$\Omega$的形式不同：<br>$$<br>\Omega(h,x)=\lambda \sum_i ||\triangledown_xh_i||^2<br>$$<br>这迫使模型学习一个在$x$变化很小时目标也没有太大变化的函数。因为这个惩罚只对training data适用，它迫使AutoEncoder学习可以反映training data distribution information的特征。这样的正则化AutoEncoder称为Contractive AutoEncoder(CAE)。</p>
+<h2 id="Details-of-Denosing-AutoEncoder"><a href="#Details-of-Denosing-AutoEncoder" class="headerlink" title="Details of Denosing AutoEncoder"></a>Details of Denosing AutoEncoder</h2><p>DAE是一类接受损坏数据作为输入，并训练来预测原始未被损坏数据作为输出的AutoEncoder。DAE的训练过程如下：我们引入一个损坏过程$C(\tilde{x}|x)$，这个条件分布代表给定数据样本$x$产生损坏样本$\tilde{x}$的概率。自编码器则根据以下过程，从训练数据对$(x,\tilde{x})$中学习重构分布$p_{reconstruct}(x|\tilde{x})$:</p>
+<ol>
+<li>从training data中采一个训练样本$x$</li>
+<li>从$C(\tilde{x}|x=x)$采一个损坏样本$\tilde{x}$</li>
+<li>将$(x,\tilde{x})$作为训练样本来估计AutoEncoder的重构分布$p_{reconstruct}(x|\tilde{x})=p_{decoder}(x|h)$，其中$h$是Encoder$f(\tilde{x})$的输出，$p_{decoder}$根据解码函数$g(h)$定义。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/08/22/dl-ae/" target="_blank" title="[DL] Auto Encoder">https://lucasxlu.github.io/blog/2018/08/22/dl-ae/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/10/30/cv-antispoofing/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [CV] Face Anti-Spoofing
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/08/22/dip-image-feature/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DIP] Image Feature</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Undercomplete-AutoEncoder"><span class="nav-number">2.</span> <span class="nav-text">Undercomplete AutoEncoder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Regularized-AutoEncoder"><span class="nav-number">3.</span> <span class="nav-text">Regularized AutoEncoder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Details-of-Denosing-AutoEncoder"><span class="nav-number">4.</span> <span class="nav-text">Details of Denosing AutoEncoder</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

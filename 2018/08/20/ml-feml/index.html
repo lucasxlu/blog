@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[ml] feature engineering in machine learning | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningData ScienceFeature Engineering" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionFeature Engineering 是 Machine Learning 中一个非常非常重要的部分，尤其是工业界。很多时候，为了追求模型的可解释性，效率，我们会更加的倾向于选择合适的特征 + 较为简单的模型，而不会像research那样使用非常复杂的模型来刷分。因此本文主要对ML中常用的特征工程方法做一个简单的介绍。 Numerical FeaturesScaleExa">
+<meta name="keywords" content="Machine Learning,Data Science,Feature Engineering">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[ML] Feature Engineering in Machine Learning">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/08/20/ml-feml/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionFeature Engineering 是 Machine Learning 中一个非常非常重要的部分，尤其是工业界。很多时候，为了追求模型的可解释性，效率，我们会更加的倾向于选择合适的特征 + 较为简单的模型，而不会像research那样使用非常复杂的模型来刷分。因此本文主要对ML中常用的特征工程方法做一个简单的介绍。 Numerical FeaturesScaleExa">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ml-feml/blackoff_bin.png">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.881Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[ML] Feature Engineering in Machine Learning">
+<meta name="twitter:description" content="IntroductionFeature Engineering 是 Machine Learning 中一个非常非常重要的部分，尤其是工业界。很多时候，为了追求模型的可解释性，效率，我们会更加的倾向于选择合适的特征 + 较为简单的模型，而不会像research那样使用非常复杂的模型来刷分。因此本文主要对ML中常用的特征工程方法做一个简单的介绍。 Numerical FeaturesScaleExa">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ml-feml/blackoff_bin.png">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-ml-feml" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [ML] Feature Engineering in Machine Learning
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/08/20/ml-feml/" class="article-date">
+	  <time datetime="2018-08-20T11:19:59.000Z" itemprop="datePublished">2018-08-20</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Feature Engineering 是 Machine Learning 中一个非常非常重要的部分，尤其是工业界。很多时候，为了追求模型的<em>可解释性</em>，<em>效率</em>，我们会更加的倾向于选择<em>合适的特征</em> + <em>较为简单的模型</em>，而不会像research那样使用非常复杂的模型来刷分。因此本文主要对ML中常用的特征工程方法做一个简单的介绍。</p>
+<h2 id="Numerical-Features"><a href="#Numerical-Features" class="headerlink" title="Numerical Features"></a>Numerical Features</h2><h3 id="Scale"><a href="#Scale" class="headerlink" title="Scale"></a>Scale</h3><p>Examples include <strong>k-means clustering, nearest neighbors methods, radial basis function (RBF) kernels, and anything that uses the Euclidean distance</strong>. For these models and modeling components, <strong>it is often a good idea to normalize the features so that the output stays on an expected scale</strong>.</p>
+<p>Logical functions, on the other hand, are not sensitive to input feature scale<strong>. Their output is binary no matter what the inputs are. For instance, the logical AND takes any two variables and outputs 1 if and only if both of the inputs are true. Another example of a logical function is the step function (e.g., is input $x$ greater than 5?). </strong>Decision tree models consist of step functions of input features. Hence, models based on space-partitioning trees (decision trees, gradient boosted machines, random forests) are not sensitive to scale**. The only exception is if the scale of the input grows over time, which is the case if the feature is an accumulated count of some sort—eventually it will grow outside of the range that the tree was trained on. If this might be the case, then it might be necessary to rescale the inputs periodically.</p>
+<h3 id="Distribution"><a href="#Distribution" class="headerlink" title="Distribution"></a>Distribution</h3><p>It’s also important to consider the distribution of numeric features. Distribution summarizes the probability of taking on a particular value. The distribution of input features matters to some models more than others. For instance, the training process of a linear regression model assumes that prediction errors are distributed like a Gaussian. This is usually fine, except when the prediction target spreads out over several orders of magnitude. In this case, the Gaussian error assumption likely no longer holds. <strong>One way to deal with this is to transform the output target in order to tame the magnitude of the growth. (Strictly speaking this would be target engineering, not feature engineering.) Log transforms, which are a type of power transform, take the distribution of the variable closer to Gaussian</strong>.</p>
+<h3 id="Quantization"><a href="#Quantization" class="headerlink" title="Quantization"></a>Quantization</h3><p>Raw counts that span several orders of magnitude are problematic for many models. In a linear model, the same linear coefficient would have to work for all possible values of the count. Large counts could also wreak havoc in unsupervised learning methods such as k-means clustering, which uses Euclidean distance as a similarity function to measure the similarity between data points. A large count in one element of the data vector would outweigh the similarity in all other elements, which could throw off the entire similarity measurement. One solution is to contain the scale by quantizing the count. In other words, we group the counts into bins, and get rid of the actual count values. Quantization maps a continuous number to a discrete one. We can think of the discretized numbers as an ordered sequence of bins that represent a measure of intensity.</p>
+<p>In order to quantize data, we have to decide how wide each bin should be. The solutions fall into two categories: <strong>fixed-width</strong> or <strong>adaptive</strong>. We will give an example of each type.</p>
+<h3 id="Fixed-width-binning"><a href="#Fixed-width-binning" class="headerlink" title="Fixed-width binning"></a>Fixed-width binning</h3><p>With fixed-width binning, each bin contains a specific numeric range. The ranges can be custom designed or automatically segmented, and they can be linearly scaled or exponentially scaled. For example, we can group people into age ranges by decade: 0–9 years old in bin 1, 10–19 years in bin 2, etc. <strong>To map from the count to the bin, we simply divide by the width of the bin and take the integer part</strong>.</p>
+<p>It’s also common to see custom-designed age ranges that better correspond to stages of life. When the numbers span multiple magnitudes, it may be better to group by powers of 10 (or powers of any constant): 0–9, 10–99, 100–999, 1000–9999, etc. The bin widths grow exponentially, going from O(10), to O(100), O(1000), and beyond. To map from the count to the bin, we take the log of the count.</p>
+<h3 id="Quantile-binning"><a href="#Quantile-binning" class="headerlink" title="Quantile binning"></a>Quantile binning</h3><p>Fixed-width binning is easy to compute. But if there are large gaps in the counts, then there will be many empty bins with no data. This problem can be solved byadaptively positioning the bins based on the distribution of the data. This can be done using the quantiles of the distribution. Quantiles are values that divide the data into equal portions. For example, the median divides the data in halves; half the data points are smaller and half larger than the median. The quartiles divide the data into quarters, the deciles into tenths, etc.</p>
+<h3 id="Log-Transformation"><a href="#Log-Transformation" class="headerlink" title="Log Transformation"></a>Log Transformation</h3><p>The log transform is a powerful tool for dealing with positive numbers with a heavy-tailed distribution. (A heavy-tailed distribution places more probability mass in the tail range than a Gaussian distribution.) It compresses the long tail in the high end of the distribution into a shorter tail, and expands the low end into a longer head.</p>
+<h3 id="Power-Transforms-Generalization-of-the-Log"><a href="#Power-Transforms-Generalization-of-the-Log" class="headerlink" title="Power Transforms: Generalization of the Log"></a>Power Transforms: Generalization of the Log</h3><p>Transform The log transform is a specific example of a family of transformations known as power transforms. In statistical terms, these are variance-stabilizing transformations. To understand why variance stabilization is good, consider the Poisson distribution. This is a heavy-tailed distribution with a variance that is equal to its mean: hence, the larger its center of mass, the larger its variance, and the heavier the tail. Power transforms change the distribution of the variable so that the variance is no longer dependent on the mean.</p>
+<p>A simple generalization of both the square root transform and the log transform is known as the Box-Cox transform:<br>$$<br>\tilde{x}=<br>\begin{cases}<br>\frac{x^{\lambda}-1}{\lambda} &amp; if \lambda \neq 0,\\<br>ln(x) &amp; if \lambda = 0<br>\end{cases}<br>$$</p>
+<p>The Box-Cox formulation only works when the data is positive. For nonpositive data, one could shift the values by adding a fixed constant. When applying the Box-Cox transformation or a more general power transform, we have to determine a value for the parameter $\lambda$. This may be done via maximum likelihood (finding the $\lambda$ that maximizes the Gaussian likelihood of the resulting transformed signal) or Bayesian methods.</p>
+<h3 id="Feature-Scaling-or-Normalization"><a href="#Feature-Scaling-or-Normalization" class="headerlink" title="Feature Scaling or Normalization"></a>Feature Scaling or Normalization</h3><p>Smooth functions of the input, such as linear regression, logistic regression, or anything that involves a matrix, are affected by the scale of the input. Tree-based models, on the other hand, couldn’t care less. If your model is sensitive to the scale of input features, feature scaling could help. As the name suggests, feature scaling changes the scale of the feature. Sometimes people also call it feature normalization. Feature scaling is usually done individually to each feature.</p>
+<h4 id="Min-Max-Scaling"><a href="#Min-Max-Scaling" class="headerlink" title="Min-Max Scaling"></a>Min-Max Scaling</h4><p>$\tilde{x}\frac{x-min(x)}{max(x)-min(x)}$</p>
+<h4 id="Standardization-Variance-Scaling"><a href="#Standardization-Variance-Scaling" class="headerlink" title="Standardization (Variance Scaling)"></a>Standardization (Variance Scaling)</h4><p>$\tilde{x}=\frac{x-mean(x)}{sqrt{(var(x))}}$</p>
+<p>It subtracts off the mean of the feature (over all data points)and divides by the variance. Hence, it can also be called variance scaling. The resulting scaled feature has a mean of 0 and a variance of 1. If the original feature has a Gaussian distribution, then the scaled feature does too.</p>
+<blockquote>
+<p>Use caution when performing min-max scaling and standardization on sparse features. Both subtract a quantity from the original feature value. For min-max scaling, the shift is the minimum over all values of the current feature; for standardization, it is the mean. If the shift is not zero, then these two transforms can turn a sparse feature vector where most values are zero into a dense one. This in turn could create a huge computational burden for the classifier, depending on how it is implemented (not to mention that it would be horrendous if the representation now included every word that didn’t appear in a document!). Bag-of-words is a sparse representation, and most classification libraries optimize for sparse inputs.</p>
+</blockquote>
+<h4 id="L-2-Normalization"><a href="#L-2-Normalization" class="headerlink" title="$L^2$ Normalization"></a>$L^2$ Normalization</h4><p>$\tilde{x}=\frac{x}{||x||_2}$</p>
+<h3 id="Feature-Selection"><a href="#Feature-Selection" class="headerlink" title="Feature Selection"></a>Feature Selection</h3><p>Feature selection techniques prune away nonuseful features in order to reduce the complexity of the resulting model. The end goal is a parsimonious model that is quicker to compute, with little or no degradation in predictive accuracy. In order to arrive at such a model, some feature selection techniques require training more than one candidate model. In other words, feature selection is not about reducing training time—in fact, some techniques increase overall training time—but about reducing model scoring time.</p>
+<p>Roughly speaking, feature selection techniques fall into three classes:</p>
+<h4 id="Filtering"><a href="#Filtering" class="headerlink" title="Filtering"></a>Filtering</h4><p>Filtering techniques preprocess features to remove ones that are unlikely to be useful for the model. For example, one could compute the correlation or mutual information between each feature and the response variable, and filter out the features that fall below a threshold. Chapter 3 discusses examples of these techniques for text features. Filtering techniques are much cheaper than the wrapper techniques described next, but they do not take into account the model being employed. Hence, they may not be able to select the right features for the model. It is best to do prefiltering conservatively, so as not to inadvertently eliminate useful features before they even make it to the model training step.</p>
+<h4 id="Wrapper-methods"><a href="#Wrapper-methods" class="headerlink" title="Wrapper methods"></a>Wrapper methods</h4><p>These techniques are expensive, but they allow you to try out subsets of features, which means you won’t accidentally prune away features that are uninformative by themselves but useful when taken in combination. The wrapper method treats the model as a black box that provides a quality score of a proposed subset for features. There is a separate method that iteratively refines the subset.</p>
+<h4 id="Embedded-methods"><a href="#Embedded-methods" class="headerlink" title="Embedded methods"></a>Embedded methods</h4><p>These methods perform feature selection as part of the model training process. For example, a decision tree inherently performs feature selection because it selects one feature on which to split the tree at each training step. Another example is the regularizer, which can be added to the training objective of any linear model. The regularizer encourages models that use a few features as opposed to a lot of features, so it’s also known as a sparsity constraint on the model. Embedded methods incorporate feature selection as part of the model training process. They are not as powerful as wrapper methods, but they are nowhere near as expensive. Compared to filtering, embedded methods select features that are specific to the model. In this sense, embedded methods strike a balance between computational expense and quality of results.</p>
+<h2 id="Categorical-Variables-Counting-Eggs-in-the-Age-of-Robotic-Chickens"><a href="#Categorical-Variables-Counting-Eggs-in-the-Age-of-Robotic-Chickens" class="headerlink" title="Categorical Variables: Counting Eggs in the Age of Robotic Chickens"></a>Categorical Variables: Counting Eggs in the Age of Robotic Chickens</h2><h3 id="Encoding-Categorical-Variables"><a href="#Encoding-Categorical-Variables" class="headerlink" title="Encoding Categorical Variables"></a>Encoding Categorical Variables</h3><h4 id="One-Hot-Encoding"><a href="#One-Hot-Encoding" class="headerlink" title="One-Hot Encoding"></a>One-Hot Encoding</h4><p>A better method is to use a group of bits. Each bit represents a possible category. If the variable cannot belong to multiple categories at once, then only one bit in the group can be “on.” This is called one-hot encoding, and it is implemented in scikit-learn as sklearn.preprocessing.OneHotEncoder. Each of the bits is a feature. Thus, a categorical variable with k possible categories is encoded as a feature vector of length k.</p>
+<h4 id="Dummy-Coding"><a href="#Dummy-Coding" class="headerlink" title="Dummy Coding"></a>Dummy Coding</h4><p>The problem with one-hot encoding is that it allows for k degrees of freedom, while the variable itself needs only k–1. Dummy coding removes the extra degree of freedom by using only k–1 features in the representation (see Table 5-2). One feature is thrown under the bus and represented by the vector of all zeros. This is known as the reference category. Dummy coding and one-hot encoding are both implemented in Pandas as pandas.get_dummies.</p>
+<h4 id="Effect-Coding"><a href="#Effect-Coding" class="headerlink" title="Effect Coding"></a>Effect Coding</h4><p>Yet another variant of categorical variable encoding is effect coding. Effect coding is very similar to dummy coding, with the difference that the reference category is now represented by the vector of all –1’s.</p>
+<h4 id="Pros-and-Cons-of-Categorical-Variable-Encodings"><a href="#Pros-and-Cons-of-Categorical-Variable-Encodings" class="headerlink" title="Pros and Cons of Categorical Variable Encodings"></a>Pros and Cons of Categorical Variable Encodings</h4><p>One-hot, dummy, and effect coding are very similar to one another. They each have pros and cons. One-hot encoding is redundant, which allows for multiplevalid models for the same problem. The nonuniqueness is sometimes problematic for interpretation, but the advantage is that each feature clearly corresponds to a category. Moreover, missing data can be encoded as the allzeros vector, and the output should be the overall mean of the target variable. Dummy coding and effect coding are not redundant. They give rise to unique and interpretable models. The downside of dummy coding is that it cannot easily handle missing data, since the all-zeros vector is already mapped to the reference category. It also encodes the effect of each category relative to the reference category, which may look strange. Effect coding avoids this problem by using a different code for the reference category, but the vector of all –1’s is a dense vector, which is expensive for both storage and computation. For this reason, popular ML software packages such as Pandas and scikit-learn have opted for dummy coding or one-hot encoding instead of effect coding. All three encoding techniques break down when the number of categories becomes very large. Different strategies are needed to handle extremely large categorical variables.</p>
+<h3 id="Dealing-with-Large-Categorical-Variables"><a href="#Dealing-with-Large-Categorical-Variables" class="headerlink" title="Dealing with Large Categorical Variables"></a>Dealing with Large Categorical Variables</h3><p>Existing solutions can be categorized as follows:</p>
+<ol>
+<li>Do nothing fancy with the encoding. Use a simple model that is cheap to train. Feed one-hot encoding into a linear model (logistic regression or linear support vector machine) on lots of machines.</li>
+<li>Compress the features. There are two choices: <ul>
+<li>Feature hashing, popular with linear models </li>
+<li>Bin counting, popular with linear models as well as trees</li>
+</ul>
+</li>
+</ol>
+<h4 id="Feature-Hashing"><a href="#Feature-Hashing" class="headerlink" title="Feature Hashing"></a>Feature Hashing</h4><p>The idea of bin counting is deviously simple: rather than using the value of the categorical variable as the feature, instead use the conditional probability of the target under that value. In other words, instead of encoding the identity of the categorical value, we compute the association statistics between that value and the target that we wish to predict. For those familiar with naive Bayes classifiers, this statistic should ring a bell, because it is the conditional probability of the class under the assumption that all features are independent.</p>
+<h4 id="What-about-rare-categories"><a href="#What-about-rare-categories" class="headerlink" title="What about rare categories?"></a>What about rare categories?</h4><p>One way to deal with this is through back-off, a simple technique that accumulates the counts of all rare categories in a special bin (see Figure 5-3). If the count is greater than a certain threshold, then the category gets its own count statistics. Otherwise, we use the statistics from the back-off bin. This essentially reverts the statistics for a single rare category to the statistics computed on all rare categories. When using the back-off method, it helps to also add a binary indicator for whether or not the statistics come from the back-off bin.</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ml-feml/blackoff_bin.png" alt="Black-off Bin"></p>
+<p>There is another way to deal with this problem, called the count-min sketch (Cormode and Muthukrishnan, 2005). In this method, all the categories, rare or frequent alike, are mapped through multiple hash functions with an output range, m, much smaller than the number of categories, k. When retrieving a statistic, recompute all the hashes of the category and return the smallest statistic. Having multiple hash functions mitigates the probability of collision within a single hash function. The scheme works because the number of hash functions times m, the size of the hash table, can be made smaller than k, the number of categories, and still retain low overall collision probability.</p>
+<h4 id="Counts-without-bounds"><a href="#Counts-without-bounds" class="headerlink" title="Counts without bounds"></a>Counts without bounds</h4><p>If the statistics are updated continuously given more and more historical data, the raw counts will grow without bounds. This could be a problem for the model. A trained model “knows” the input data up to the observed scale.</p>
+<p>For this reason, <strong>it is often better to use normalized counts that are guaranteed to be bounded in a known interval</strong>. For instance, the estimated click-through probability is bounded between [0, 1]. Another method is to take the log transform, which imposes a strict bound, but the rate of increase will be very slow when the count is very large.</p>
+<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><h4 id="Plain-one-hot-encoding"><a href="#Plain-one-hot-encoding" class="headerlink" title="Plain one-hot encoding"></a>Plain one-hot encoding</h4><p><strong>Space requirement</strong> $O(n)$ using the sparse vector format, where n is the number of data points.</p>
+<p><strong>Computation requirement</strong> $O(nk)$ under a linear model, where k is the number of categories.</p>
+<p><strong>Pros</strong></p>
+<ul>
+<li>Easiest to implement</li>
+<li>Potentially most accurate</li>
+<li>Feasible for online learning</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+<li>Computationally inefficient</li>
+<li>Does not adapt to growing categories</li>
+<li>Not feasible for anything other than linear models</li>
+<li>Requires large-scale distributed optimization with truly<br>large datasets</li>
+</ul>
+<h4 id="Feature-hashing"><a href="#Feature-hashing" class="headerlink" title="Feature hashing"></a>Feature hashing</h4><p><strong>Space requirement</strong> $O(n)$ using the sparse matrix format, where n is the number of data points.</p>
+<p><strong>Computation requirement</strong> $O(nm)$ under a linear or kernel model, where m is the number of hash bins.</p>
+<p><strong>Pros</strong> </p>
+<ul>
+<li>Easy to implement</li>
+<li>Makes model training cheaper</li>
+<li>Easily adaptable to new categories</li>
+<li>Easily handles rare categories</li>
+<li>Feasible for online learning</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+<li>Only suitable for linear or kernelized models</li>
+<li>Hashed features not interpretable</li>
+<li>Mixed reports of accuracy</li>
+</ul>
+<h4 id="Bin-counting"><a href="#Bin-counting" class="headerlink" title="Bin-counting"></a>Bin-counting</h4><p><strong>Space requirement</strong> $O(n+k)$ for small, dense representation of each data point, plus the count statistics that must be kept for each category.</p>
+<p><strong>Computation requirement</strong> $O(n)$ for linear models; also usable for nonlinear models such as trees.</p>
+<p><strong>Pros</strong> </p>
+<ul>
+<li>Smallest computational burden at training time</li>
+<li>Enables tree-based models</li>
+<li>Relatively easy to adapt to new categories</li>
+<li>Handles rare categories with back-off or count-min sketch</li>
+<li>Interpretable</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+<li>Requires historical data</li>
+<li>Delayed updates required, not completely suitable for online<br>learning</li>
+<li>Higher potential for leakage</li>
+</ul>
+<h2 id="Dimensionality-Reduction-Squashing-the-Data-Pancake-with-PCA"><a href="#Dimensionality-Reduction-Squashing-the-Data-Pancake-with-PCA" class="headerlink" title="Dimensionality Reduction: Squashing the Data Pancake with PCA"></a>Dimensionality Reduction: Squashing the Data Pancake with PCA</h2>
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/08/20/ml-feml/" target="_blank" title="[ML] Feature Engineering in Machine Learning">https://lucasxlu.github.io/blog/2018/08/20/ml-feml/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/08/20/ml-dimen-red-metric-learning/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [ML] Dimension Reduction and Metric Learning
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/08/11/book-storytelling-with-data/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[Book] Storytelling With Data</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Numerical-Features"><span class="nav-number">2.</span> <span class="nav-text">Numerical Features</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Scale"><span class="nav-number">2.1.</span> <span class="nav-text">Scale</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Distribution"><span class="nav-number">2.2.</span> <span class="nav-text">Distribution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Quantization"><span class="nav-number">2.3.</span> <span class="nav-text">Quantization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fixed-width-binning"><span class="nav-number">2.4.</span> <span class="nav-text">Fixed-width binning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Quantile-binning"><span class="nav-number">2.5.</span> <span class="nav-text">Quantile binning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Log-Transformation"><span class="nav-number">2.6.</span> <span class="nav-text">Log Transformation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Power-Transforms-Generalization-of-the-Log"><span class="nav-number">2.7.</span> <span class="nav-text">Power Transforms: Generalization of the Log</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Feature-Scaling-or-Normalization"><span class="nav-number">2.8.</span> <span class="nav-text">Feature Scaling or Normalization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Min-Max-Scaling"><span class="nav-number">2.8.1.</span> <span class="nav-text">Min-Max Scaling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Standardization-Variance-Scaling"><span class="nav-number">2.8.2.</span> <span class="nav-text">Standardization (Variance Scaling)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#L-2-Normalization"><span class="nav-number">2.8.3.</span> <span class="nav-text">$L^2$ Normalization</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Feature-Selection"><span class="nav-number">2.9.</span> <span class="nav-text">Feature Selection</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Filtering"><span class="nav-number">2.9.1.</span> <span class="nav-text">Filtering</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Wrapper-methods"><span class="nav-number">2.9.2.</span> <span class="nav-text">Wrapper methods</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Embedded-methods"><span class="nav-number">2.9.3.</span> <span class="nav-text">Embedded methods</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Categorical-Variables-Counting-Eggs-in-the-Age-of-Robotic-Chickens"><span class="nav-number">3.</span> <span class="nav-text">Categorical Variables: Counting Eggs in the Age of Robotic Chickens</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Encoding-Categorical-Variables"><span class="nav-number">3.1.</span> <span class="nav-text">Encoding Categorical Variables</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#One-Hot-Encoding"><span class="nav-number">3.1.1.</span> <span class="nav-text">One-Hot Encoding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dummy-Coding"><span class="nav-number">3.1.2.</span> <span class="nav-text">Dummy Coding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Effect-Coding"><span class="nav-number">3.1.3.</span> <span class="nav-text">Effect Coding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Pros-and-Cons-of-Categorical-Variable-Encodings"><span class="nav-number">3.1.4.</span> <span class="nav-text">Pros and Cons of Categorical Variable Encodings</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dealing-with-Large-Categorical-Variables"><span class="nav-number">3.2.</span> <span class="nav-text">Dealing with Large Categorical Variables</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Feature-Hashing"><span class="nav-number">3.2.1.</span> <span class="nav-text">Feature Hashing</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#What-about-rare-categories"><span class="nav-number">3.2.2.</span> <span class="nav-text">What about rare categories?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Counts-without-bounds"><span class="nav-number">3.2.3.</span> <span class="nav-text">Counts without bounds</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Summary"><span class="nav-number">3.3.</span> <span class="nav-text">Summary</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Plain-one-hot-encoding"><span class="nav-number">3.3.1.</span> <span class="nav-text">Plain one-hot encoding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Feature-hashing"><span class="nav-number">3.3.2.</span> <span class="nav-text">Feature hashing</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bin-counting"><span class="nav-number">3.3.3.</span> <span class="nav-text">Bin-counting</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dimensionality-Reduction-Squashing-the-Data-Pancake-with-PCA"><span class="nav-number">4.</span> <span class="nav-text">Dimensionality Reduction: Squashing the Data Pancake with PCA</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

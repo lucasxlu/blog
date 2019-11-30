@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[cv] face recognition | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningComputer VisionFace Recognition" />
+  
+  
+  
+  
+  <meta name="description" content="Introduction人脸识别(Face Recognition)是工业界和学术界都非常火热的一个方向，并且已经催生出许多成功的应用落地场景，比如刷脸支付、安检等。而Face Recognition最大的突破也是由Deep Learning Architecture + 一系列精巧的Loss Function带来的。本文旨在对Face Recognition领域里的一些经典Paper进行梳理，详">
+<meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision,Face Recognition">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[CV] Face Recognition">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2019/01/06/cv-face-rec/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Introduction人脸识别(Face Recognition)是工业界和学术界都非常火热的一个方向，并且已经催生出许多成功的应用落地场景，比如刷脸支付、安检等。而Face Recognition最大的突破也是由Deep Learning Architecture + 一系列精巧的Loss Function带来的。本文旨在对Face Recognition领域里的一些经典Paper进行梳理，详">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/deepid.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/facenet.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/centerloss_update.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/centerloss_nn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/loss_vis.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/loss_decision_boundary.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/geo_int.jpg">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.765Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[CV] Face Recognition">
+<meta name="twitter:description" content="Introduction人脸识别(Face Recognition)是工业界和学术界都非常火热的一个方向，并且已经催生出许多成功的应用落地场景，比如刷脸支付、安检等。而Face Recognition最大的突破也是由Deep Learning Architecture + 一系列精巧的Loss Function带来的。本文旨在对Face Recognition领域里的一些经典Paper进行梳理，详">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/deepid.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-cv-face-rec" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [CV] Face Recognition
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2019/01/06/cv-face-rec/" class="article-date">
+	  <time datetime="2019-01-06T04:18:11.000Z" itemprop="datePublished">2019-01-06</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>人脸识别(Face Recognition)是工业界和学术界都非常火热的一个方向，并且已经催生出许多成功的应用落地场景，比如刷脸支付、安检等。而Face Recognition最大的突破也是由Deep Learning Architecture + 一系列精巧的Loss Function带来的。本文旨在对Face Recognition领域里的一些经典Paper进行梳理，详情请参阅Reference部分的Paper原文。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：本文长期更新。</p>
+</blockquote>
+<h2 id="Face-Recognition-as-N-Categories-Classification-Problems"><a href="#Face-Recognition-as-N-Categories-Classification-Problems" class="headerlink" title="Face Recognition as N-Categories Classification Problems"></a>Face Recognition as N-Categories Classification Problems</h2><p>在Metric Learning里的一系列优秀的Loss还未被引入Face Recognition之前，Face Verification/Identification一个非常直观的想法就是直接train 一个 n-categories classifier。然后将最后一层的输出作为input image的特征，再选取合适的distance metric来决定这两张脸是否属于同一个人。这种做法的一些经典工作就是<a href="http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf" target="_blank" rel="noopener">DeepID</a>。这篇Paper发表在CVPR2014上面，属于非常古董的模型了，鉴于近年来已经几乎不这么做了，所以本文仅仅象征性地回顾一下这几篇具有代表性的Paper。我们会把讨论重心放在Metric Learning的一系列Loss上。</p>
+<blockquote>
+<p>Paper: <a href="http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf" target="_blank" rel="noopener">Deep learning face representation from predicting 10,000 classes</a></p>
+</blockquote>
+<p>这篇Paper其实idea非常简单，就是把Face Recognition问题转换为一个$N$-类Classification问题，其中$N$代表dataset中identity的数量。为了增强feature representation能力，作者也将各个facial region的特征做concatenation。<a href="http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf" target="_blank" rel="noopener">DeepID</a>的Architecture如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/deepid.jpg" alt="DeepID"></p>
+<p>注意到DeepID的输入部分，除了后一个conv layer的feature map之外，还有前一个max-pooling的输出，这样做的好处在于Network能够获取multi-scale的input，也可以视为一种skipping layer(将lower level feature和higher level feature做feature fusion)。那么最后一个hidden layer的输入就是这样子的：<br>$$<br>y_j=max(0, \sum_i x_i^1\cdot w_{i,j}^1 + \sum_i x_i^2\cdot w_{i,j}^2 + b_j)<br>$$</p>
+<p>另外，作者在实验中意识到，<strong>随着identity 数量的增加，整个网络的feature representation learning和performance都会随之增加</strong>。<a href="http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf" target="_blank" rel="noopener">DeepID</a>在LFW上达到了97.45%的精度。</p>
+<h2 id="FaceNet"><a href="#FaceNet" class="headerlink" title="FaceNet"></a>FaceNet</h2><p>Google的<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf" target="_blank" rel="noopener">FaceNet</a>是我个人认为在Face Recognition领域里一篇非常insightful的Paper，通过引入triplets并直接在<strong>Euclidean Space</strong>作为feature vector度量，<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf" target="_blank" rel="noopener">FaceNet</a>在LFW上达到了99.63%的效果。</p>
+<blockquote>
+<p>Paper: <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf" target="_blank" rel="noopener">Facenet: A unified embedding for face recognition and clustering.</a></p>
+</blockquote>
+<h3 id="What-is-FaceNet"><a href="#What-is-FaceNet" class="headerlink" title="What is FaceNet?"></a>What is FaceNet?</h3><p><a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf" target="_blank" rel="noopener">FaceNet</a>的Idea其实也比较简单。简而言之呢，就是通过DNN学习一种<strong>Euclidean Embedding</strong>，来使得inter-class更加compact，inter-class更加地separable，这就是本文的核心角色——<a href="https://papers.nips.cc/paper/2795-distance-metric-learning-for-large-margin-nearest-neighbor-classification.pdf" target="_blank" rel="noopener">Triplet Loss</a>。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/facenet.jpg" alt="FaceNet"></p>
+<h3 id="Details-of-Triplet-Loss"><a href="#Details-of-Triplet-Loss" class="headerlink" title="Details of Triplet Loss"></a>Details of Triplet Loss</h3><p>Triplet Embedding是通过一个Network将输入$x$映射到$d$-维输出$f(x)\in \mathbb{R}^d$，文章中将其做了一个Normalization，即$||f(x)||_2=1$。Triplet Loss的目的就是为了找到一个person的anchor $x_i^a$，使得它与相同identity的positive images $x_i^p$更加地close，而与不同identity的negative images更加地separate。写成公式就是：<br>$$<br>||x_i^a-x_i^p||_2^2 + \alpha &lt; ||x_i^a-x_i^n||_2^2 \quad \forall (x_i^a,x_i^p,x_i^n)\in \mathcal{T}<br>$$<br>$\alpha$就代表margin，那么Minimization of Triplet Loss就是：<br>$$<br>\sum_{i}^N [||f(x_i^a)-f(x_i^p)||_2^2 - ||f(x_i^a)-f(x_i^n)||_2^2 + \alpha ]_+<br>$$<br>Triplet Loss确定了，那么下一步就是如何选择合适的Triplets。</p>
+<h3 id="Triplet-Selection"><a href="#Triplet-Selection" class="headerlink" title="Triplet Selection"></a>Triplet Selection</h3><p><strong>为了保证快速收敛，我们需要violate triplet的constraint，即挑选anchor $x_i^a$，来挑选hard positive $x_i^p$来满足$\mathop{argmax} \limits_{x_i^p}||f(x_i^a)-f(x_i^p)||_2^2$，以及hard negative $x_i^n$来满足$\mathop{argmin} \limits_{x_i^p}||f(x_i^a)-f(x_i^n)||_2^2$</strong>。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：读者仔细体会一下这里和triplet loss definition的区别，为啥是相反的？这里可视为一种<a href="http://cs.brown.edu/people/pfelzens/papers/lsvm-pami.pdf" target="_blank" rel="noopener">hard negative mining</a>。</p>
+</blockquote>
+<p>在整个training set上计算$argmax$和$argmin$是不太现实的，文中采取了两个做法：</p>
+<ul>
+<li>训练每$n$步离线来生成triplets，使用most recent network checkpoint和dataset的子集来计算$argmax$和$argmin$。</li>
+<li>在线生成triplets，这种做法可视为在一个mini-batch选择hard positive/negative exemplars。</li>
+</ul>
+<p>Selecting the hardest negatives can in practice lead to bad local minima early on in training,specifically it can result in a collapsed model (i.e. $f(x) = 0$). In order to mitigate this, it helps to select $x^n_i$ such that:<br>$$<br>||f(x_i^a)-f(x_i^p)||_2^2 &lt; ||f(x_i^a)-f(x_i^n)||_2^2<br>$$<br><strong>We call these negative exemplars semi-hard, as they are further away from the anchor than the positive exemplar, but still hard because the squared distance is close to the anchorpositive distance. Those negatives lie inside the margin $\alpha$.</strong></p>
+<h3 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h3><p>对于Face Verification Task，判断两张图是否为一个人，我们仅需比较这两个特征向量的squared $L_2$ distance $D(x_i,x_j)$是否超过了某个阈值即可。</p>
+<ul>
+<li>True Accepts代表face pairs $(i,j)被正确分类到同一个identity$:<br>$TA(d)=\{(i,j)\in \mathcal{P}_{same},\quad with \quad D(x_i,x_j)\leq d\}$</li>
+<li>False Accepts代表face pairs $(i,j)被错误分类到同一个identity$:<br>$FA(d)=\{(i,j)\in \mathcal{P}_{diff},\quad with \quad D(x_i,x_j)\leq d\}$</li>
+</ul>
+<h2 id="Center-Loss"><a href="#Center-Loss" class="headerlink" title="Center Loss"></a>Center Loss</h2><blockquote>
+<p>Paper: <a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">A discriminative feature learning approach for deep face recognition</a></p>
+</blockquote>
+<p>Face Recognition领域，除了设计更加优秀的Network Architecture，也有另一个方向的工作是在设计更加优秀的Loss。<a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">Center Loss</a>就是其中之一。和FaceNet中使用<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf" target="_blank" rel="noopener">Triplet Loss</a>的目的一样，<a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">Center Loss</a>依然是为了使得intra-class more compact and inter-class more separate。本文就来简要介绍一下<a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">Center Loss</a>。</p>
+<p><a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">Center Loss</a>通过学习每一个类的中心向量，来同时更新这个center，以及最小化deep features和其对应class的centers之间的距离。CNN的Loss为Softmax Loss与<a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">Center Loss</a>的加权。Softmax Loss仅仅会让不同的class分开，但<a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">Center Loss</a>还会使得相同class的deep features更加靠近类的centers。通过这种joint supervision(Softmax + Center Loss)，不仅仅inter-class的difference被加大了，而且intra-class的variantions也被减小了。因此便可以学得更加discriminative的feature representation。这便是<a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">Center Loss</a>的大致idea。</p>
+<h3 id="What-is-Center-Loss"><a href="#What-is-Center-Loss" class="headerlink" title="What is Center Loss?"></a>What is Center Loss?</h3><p>Softmax Loss是这样的：<br>$$<br>\mathcal{L}_S=-\sum_{i=1}^m log\frac{e^{W_{y_i}^Tx_i+b_{y_i}}}{\sum_{j=1}^n e^{W_j^Tx_i+b_j}}<br>$$</p>
+<p><a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">Center Loss</a>则是这样的：<br>$$<br>\mathcal{L}_C=\frac{1}{2}\sum_{i=1}^m ||x_i-c_{y_i}||_2^2<br>$$<br>为了更新center vector $c_{y_i}$，文中采取的做法是在每一个mini-batch中进行更新(而不是在整个training set中更新)，然后center vector $c_{y_i}$的计算为相关class feature的平均值。此外，为了避免mislabeled samples，我们使用$\alpha$来控制center vector的learning rate。Center Loss的梯度求导可以表示为：<br>$$<br>\frac{\partial \mathcal{L}_C}{\partial x_i}=x_i - c_{y_i}<br>$$</p>
+<p>$$<br>\Delta c_j=\frac{\sum_{i=1}^m \delta(y_i=j)\cdot (c_j-x_i)}{1+\sum_{i=1}^m\delta(y_i=j)}<br>$$</p>
+<p>where $\delta(condition) = 1$ if the condition is satisfied, and $\delta(condition) = 0$ if not. $\alpha$ is restricted in $[0, 1]$. We adopt the joint supervision of softmax loss and center loss to train the CNNs for discriminative feature learning. The formulation is given in Eq. 5.<br>$$<br>\mathcal{L}=\mathcal{L}_S+\lambda \mathcal{L}_C=-\sum_{i=1}^m log\frac{e^{W_{y_i}^Tx_i + b_{y_i}}}{\sum_{j=1}^n e^{W_j^Tx_i + b_j}} + \frac{\lambda}{2} \sum_{i=1}^m ||x_i-c_{y_i}||_2^2<br>$$</p>
+<p>整个学习算法如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/centerloss_update.jpg" alt="Learning of Center Loss"></p>
+<p>网络结构如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/centerloss_nn.jpg" alt="Center Loss Architecture"></p>
+<p>Center Loss的好处在于：</p>
+<ul>
+<li>Joint supervision of Softmax Loss and Center Loss能够大大加强DCNN的feature learning能力。</li>
+<li>其他Metric Learning的Loss例如<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf" target="_blank" rel="noopener">Triplet Loss</a>, Contractive Loss等pairs selection是非常麻烦的一件事情，但是Center Loss则不需要复杂的triplet pairs selection。</li>
+</ul>
+<p>网络学习完成，在做Face Verification/Identification时，<strong>第一个 FC Layers的feature被当作特征，同时，我们也将水平翻转图片的feature进行concatenation，作为最终的face feature，PCA降维之后，Cosine Distance, Nearest Neighbor and Threshold comparison用来作为判断是否为同一个人的依据</strong>。</p>
+<h2 id="SphereFace"><a href="#SphereFace" class="headerlink" title="SphereFace"></a>SphereFace</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Liu_SphereFace_Deep_Hypersphere_CVPR_2017_paper.pdf" target="_blank" rel="noopener">Sphereface: Deep hypersphere embedding for face recognition</a></p>
+</blockquote>
+<p><a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Liu_SphereFace_Deep_Hypersphere_CVPR_2017_paper.pdf" target="_blank" rel="noopener">SphereFace</a>是发表在<a href="http://openaccess.thecvf.com/CVPR2017.py" target="_blank" rel="noopener">CVPR2017</a>上的Paper，也是Face Recognition领域里一篇非常insightful的Paper。自从<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf" target="_blank" rel="noopener">FaceNet</a>起，近些年来人脸识别领域大多都是在做相同的事情：</p>
+<blockquote>
+<p>设计更加优秀的Loss，来使得intra-class更加compact，inter-class更加separable，从而提升识别精度。SphereFace自然也不例外。</p>
+</blockquote>
+<p>SphereFace里提出的Loss叫作<code>A-Softmax(Angular-Softmax)</code>，来让DCNN学习angularly discriminative features。<code>A-Softmax</code>可以看作是在hyper-sphere施加了discriminative constraints，来满足faces分布在相同流形的先验。此外，A-Softmax也是基于margin的，angular margin可以通过参数<code>m</code>进行调节。<code>m</code>越大会得到更大的angular margin(即流形上更discriminative的feature distribution)。</p>
+<p>根据testing protocol，人脸识别可以分为以下两类：</p>
+<ul>
+<li><strong>Close-set protocol</strong>: For closed-set protocol, all testing identities are predefined in training set. It is natural to classify testing face images to the given identities. In this scenario, <strong>face verification is equivalent to performing identification for a pair of faces respectively (see left side of Fig. 1). Therefore, closed-set FR can be well addressed as a classification problem, where features are expected to be separable</strong>.</li>
+<li><strong>Open-set protocol</strong>: For open-set protocol, the testing identities are usually disjoint from the training set, which makes FR more challenging yet close to practice. Since it is impossible to classify faces to known identities in training set, we need to map faces to a discriminative feature space. In this scenario, face identification can be viewed as performing face verification between the probe face and every identity in the gallery (see right side of Fig. 1). Open-set FR is essentially a metric learning problem, where the key is to learn discriminative large-margin features.</li>
+</ul>
+<p>良好的facial representation需要满足这样的条件：<strong>maximal intra-class distance需要比minimal inter-class distance还要小</strong>。一些比较老的深度学习算法将人脸识别视为一个N-category classification问题，但是<code>Softmax Loss学习的feature不够discriminative</code>。为了解决这个问题，后来一大批工作都是在设计更加优秀的Loss Function(例如<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf" target="_blank" rel="noopener">Triplet Loss</a>, <a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">Center Loss</a>, <a href="http://www.cs.toronto.edu/~hinton/csc2535/readings/hadsell-chopra-lecun-06-1.pdf" target="_blank" rel="noopener">Contrastive Loss</a>等等)。但是Center Loss仅仅显示地促使intra-class更加compact，Contractive Loss和Triplet Loss都不能对每个sample都施加constrain，因此需要carefully designed pairs mining。</p>
+<p>之前的工作都是在<code>Euclidean Space</code>上施加的constraint，但这样未必是有效的。</p>
+<blockquote>
+<p>It seems to be a widely recognized choice to impose Euclidean margin to learned features, but a question arises: Is Euclidean margin always suitable for learning discriminative face features? To answer this question, we first look into how Euclidean margin based losses are applied to FR. Most recent approaches [25, 28, 34] combine Euclidean margin based losses with softmax loss to construct a joint supervision. However, as can be observed from Fig. 2, the features learned by softmax loss have intrinsic angular distribution (also verified by [34]). In some sense, Euclidean margin based losses are incompatible with softmax loss, so <strong>it is not well motivated to combine these two type of losses</strong>.</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/loss_vis.jpg" alt="Loss Visualization"></p>
+<p>而在SphereFace中，作者选用了Angular Margin来代替Euclidean Margin。 </p>
+<blockquote>
+<p>In this paper, we propose to incorporate angular margin instead. We start with a binary-class case to analyze the softmax loss. The decision boundary in softmax loss is $(W_1−W_2)x+b_1−b_2=0$, where $W_i$ and $b_i$ are weights and bias in softmax loss, respectively. If we define $x$ as a feature vector and constrain $||W_1||=||W_2||=1$ and $b_1=b_2=0$, the decision boundary becomes $||x||(cos(\theta_1)− cos(\theta_2))=0$, where $\theta_i$ is the angle between $W_i$ and $x$. The new decision boundary only depends on $\theta_1$ and $\theta_2$. Modified softmax loss is able to directly optimize angles, enabling CNNs to learn angularly distributed features (Fig. 2).</p>
+</blockquote>
+<blockquote>
+<p>Compared to original softmax loss, the features learned by modified softmax loss are angularly distributed, but not necessarily more discriminative. To the end, we generalize the modified softmax loss to angular softmax (A-Softmax) loss. Specifically, we introduce an integer $m (m\geq 1)$ to quantitatively control the decision boundary. In binaryclass case, the decision boundaries for class 1 and class 2 become $||x||(cos(m\theta_1)−cos(\theta_2))=0$ and $||x||(cos(\theta_1)− cos(m\theta_2))=0$, respectively. $m$ quantitatively controls the size of angular margin. Furthermore, A-Softmax loss can be easily generalized to multiple classes, similar to softmax loss. <strong>By optimizing A-Softmax loss, the decision regions become more separated, simultaneously enlarging the inter-class margin and compressing the intra-class angular distribution</strong>.</p>
+</blockquote>
+<blockquote>
+<p>A-Softmax loss has clear geometric interpretation. Supervised by A-Softmax loss, the learned features construct a discriminative angular distance metric that is equivalent to geodesic distance on a hypersphere manifold. A-Softmax loss can be interpreted as constraining learned features to be discriminative on a hypersphere manifold, which intrinsically matches the prior that face images lie on a manifold [14, 5, 31]. The close connection between A-Softmax loss and hypersphere manifolds makes the learned features more effective for face recognition. For this reason, we term the learned features as SphereFace.</p>
+</blockquote>
+<blockquote>
+<p>Moreover, <strong>A-Softmax loss can quantitatively adjust the angular margin via a parameter $m$</strong>, enabling us to do quantitative analysis. In the light of this, we derive lower bounds for the parameter m to approximate the desired open-set FR criterion that the maximal intra-class distance should be smaller than the minimal inter-class distance.</p>
+</blockquote>
+<h3 id="Preliminary"><a href="#Preliminary" class="headerlink" title="Preliminary"></a>Preliminary</h3><h4 id="Metric-Learning"><a href="#Metric-Learning" class="headerlink" title="Metric Learning"></a>Metric Learning</h4><p>提到Face Recognition，就不得不提Metric Learning了，那么究竟什么是Metric Learning呢？</p>
+<blockquote>
+<p>Metric learning aims to learn a similarity (distance) function. Traditional metric learning [36, 33, 12, 38] usually learns a matrix A for a distance metric $||x_1-x_2||_A=\sqrt{(x_1-x_2)^TA(x_1-x_2)}$ upon the given features $x_1$, $x_2$. Recently, prevailing deep metric learning [7, 17, 24, 30, 25, 22, 34] usually uses neural networks to automatically learn discriminative features $x_1, x_2$ followed by a simple distance metric such as Euclidean distance $||x_1-x_2||_2$. <strong>Most widely used loss functions for deep metric learning are contrastive loss [1, 3] and triplet loss [32, 22, 6], and both impose Euclidean margin to features</strong>.</p>
+</blockquote>
+<blockquote>
+<p>L-Softmax loss [16] also implicitly involves the concept of angles. As a regularization method, it shows great improvement on closed-set classification problems. Differently, A-Softmax loss is developed to learn discriminative face embedding. The explicit connections to hypersphere manifold makes our learned features particularly suitable for open-set FR problem, as verified by our experiments. In addition, the angular margin in A-Softmax loss is explicitly imposed and can be quantitatively controlled (e.g. lower bounds to approximate desired feature criterion), while [16] can only be analyzed qualitatively.</p>
+</blockquote>
+<h3 id="Deep-Hypersphere-Embedding"><a href="#Deep-Hypersphere-Embedding" class="headerlink" title="Deep Hypersphere Embedding"></a>Deep Hypersphere Embedding</h3><h4 id="Introducing-Angular-Margin-to-Softmax-Loss"><a href="#Introducing-Angular-Margin-to-Softmax-Loss" class="headerlink" title="Introducing Angular Margin to Softmax Loss"></a>Introducing Angular Margin to Softmax Loss</h4><p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/loss_decision_boundary.jpg" alt="Decision Boundary of Different Loss Functions"></p>
+<blockquote>
+<p>Assume a learned feature $x$ from class 1 is given and $\theta_i$ is the angle between $x$ and $W_i$, it is known that the modified softmax loss requires $cos(\theta_1)&gt;cos(\theta_2)$ to correctly classify $x$. But what if we instead require $cos(m\theta_1)&gt;cos(\theta_2)$ where $m\geq 2$ is a integer in order to correctly classify $x$? It is essentially making the decision more stringent than previous, because we require a lower bound of $cos(\theta_1)$ to be larger than $cos(\theta_2)$. The decision boundary for class 1 is $cos(m\theta_1)= cos(\theta_2)$. Similarly, if we require $cos(m\theta_2)&gt;cos(\theta_1)$ to correctly classify features from class 2, the decision boundary for class 2 is $cos(m\theta_2)=cos(\theta_1)$. Suppose all training samples are correctly classified, such decision boundaries will produce an angular margin of $\frac{m-1}{m+1}\theta_2^1$ where $\theta_2^1$ is the angle between $W_1$ and $W_2$. From angular perspective, correctly classifying $x$ from identity 1 requires $\theta_1&lt;\frac{\theta_2}{m}$, while correctly classifying $x$ from identity 2 requires $\theta_2&lt;\frac{\theta_1}{m}$. Both are more difficult than original $\theta_1&lt;\theta_2$ and $\theta_2&lt;\theta_1$, respectively. By directly formulating this idea into the modified softmax loss Eq. (5), we have:<br>$$<br>L_{ang}=\frac{1}{N}\sum_{i}-log(\frac{e^{|x_i|cos(m\theta_{y_i,i})}}{e^{|x_i|cos(m\theta_{y_i,i})} + \sum_{j\neq y_i}e^{|x_i|cos(m\theta_{j,i})}})<br>$$</p>
+</blockquote>
+<blockquote>
+<p>where $\theta_{y_i,i}$ has to be in the range of $[0, \frac{\pi}{m}]$. In order to get rid of this restriction and make it optimizable in CNNs, we expand the definition range of $cos(\theta_{y_i,i})$ by generalizing it to a monotonically decreasing angle function $\psi(\theta_{yi,i})$ which should be equal to $cos(\theta_{y_i,i})$ in $[0, \frac{\pi}{m}]$. Therefore our proposed A-Softmax loss is formulated as:<br>$$<br>L_{ang}=\frac{1}{N}\sum_{i}-log(\frac{e^{|x_i|\psi(\theta_{y_i,i})}}{e^{|x_i|\psi(\theta_{y_i,i})} + \sum_{j\neq y_i}e^{|x_i|cos(\theta_{j,i})}})<br>$$</p>
+</blockquote>
+<blockquote>
+<p>in which we define $\psi(\theta_{y_i,i})=(-1)^kcos(m\theta_{y_i,i})-2k, \theta_{y_i,i}\in [\frac{k\pi}{m},\frac{(k+1)\pi}{m}]$ and $k\in [0, m-1]$. $m\geq 1$ is an integer that controls the size of angular margin. When $m=1$, it becomes the modified softmax loss.</p>
+</blockquote>
+<blockquote>
+<p>The justification of A-Softmax loss can also be made from decision boundary perspective. A-Softmax loss adopts different decision boundary for different class (each boundary is more stringent than the original), thus producing angular margin. The comparison of decision boundaries is given in Table 1. From original softmax loss to modified softmax loss, it is from optimizing inner product to optimizing angles. From modified softmax loss to A-Softmax loss, it makes the decision boundary more stringent and separated. The angular margin increases with larger m and be zero if $m=1$.</p>
+</blockquote>
+<blockquote>
+<p>Supervised by A-Softmax loss, CNNs learn face features with geometrically interpretable angular margin. Because ASoftmax loss requires $W_i=1, b_i=0$, it makes the prediction only depends on angles between the sample $x$ and $W_i$. So $x$ can be classified to the identity with smallest angle. The parameter $m$ is added for the purpose of learning an angular margin between different identities.</p>
+</blockquote>
+<h4 id="Hypersphere-Interpretation-of-A-Softmax-Loss"><a href="#Hypersphere-Interpretation-of-A-Softmax-Loss" class="headerlink" title="Hypersphere Interpretation of A-Softmax Loss"></a>Hypersphere Interpretation of A-Softmax Loss</h4><p>A-Softmax loss is equivalent to learning features that are discriminative on a hypersphere manifold, while Euclidean margin losses learn features in Euclidean space.</p>
+<p>To simplify, We take the binary case to analyze the hypersphere interpretation. Considering a sample $x$ from class 1 and two column weights $W_1,W_2$, the classification rule for A-Softmax loss is $cos(m\theta_1)&gt;cos(\theta_2)$, equivalently $m\theta_1&lt; \theta_2$. Notice that $\theta_1, \theta_2$ are equal to their corresponding arc length $\omega_1,\omega_2$ on unit hypershere $\{v_j,\forall j| \sum_j v_j^2=1,v\geq 0\}$. Because $|W|_1=|W|_2=1$, the decision replies on the arc length $\omega_1$ and $\omega_2$. The decision boundary is equivalent to $m\omega_1=\omega_2$, and the constrained region for correctly classifying $x$ to class 1 is $m\omega_1&lt;\omega_2$. Geometrically speaking, this is a hypercircle-like region lying on a hypersphere manifold.</p>
+<p>Note that larger $m$ leads to smaller hypercircle-like region for each class, which is an explicit discriminative constraint on a manifold. For better understanding, Fig. 3 provides 2D and 3D visualizations. One can see that A-Softmax loss imposes arc length constraint on a unit circle in 2D case and circle-like region constraint on a unit sphere in 3D case. Our analysis shows that optimizing angles with A-Softmax loss essentially makes the learned features more discriminative on a hypersphere.</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/geo_int.jpg" alt="Geometry Interpretation of Euclidean margin loss"></p>
+<h4 id="Discussions-About-A-Softmax-Loss"><a href="#Discussions-About-A-Softmax-Loss" class="headerlink" title="Discussions About A-Softmax Loss"></a>Discussions About A-Softmax Loss</h4><ul>
+<li><p><strong>Why angular margin</strong>. First and most importantly, angular margin directly links to discriminativeness on a manifold, which intrinsically matches the prior that faces also lie on a manifold. Second, incorporating angular margin to softmax loss is actually a more natural choice. As Fig. 2 shows, features learned by the original softmax loss have an intrinsic angular distribution. So directly combining Euclidean margin constraints with softmax loss is not reasonable.</p>
+</li>
+<li><p><strong>Comparison with existing losses</strong>. In deep FR task, the most popular and well-performing loss functions include contrastive loss, triplet loss and center loss. First, they only impose Euclidean margin to the learned features (w/o normalization), while ours instead directly considers angular margin which is naturally motivated. Second, both contrastive loss and triplet loss suffer from data expansion when constituting the pairs/triplets from the training set, while ours requires no sample mining and imposes discriminative constraints to the entire mini-batches (compared to contrastive and triplet loss that only affect a few representative pairs/triplets).</p>
+</li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Sun, Yi, Xiaogang Wang, and Xiaoou Tang. <a href="http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf" target="_blank" rel="noopener">“Deep learning face representation from predicting 10,000 classes.”</a> Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.</li>
+<li>Schroff, Florian, Dmitry Kalenichenko, and James Philbin. <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf" target="_blank" rel="noopener">“Facenet: A unified embedding for face recognition and clustering.”</a> Proceedings of the IEEE conference on computer vision and pattern recognition. 2015.</li>
+<li>Wen Y, Zhang K, Li Z, Qiao Y. <a href="https://ydwen.github.io/papers/WenECCV16.pdf" target="_blank" rel="noopener">A discriminative feature learning approach for deep face recognition</a>. In European Conference on Computer Vision 2016 Oct 8 (pp. 499-515). Springer, Cham.</li>
+<li>Wang F, Xiang X, Cheng J, Yuille AL. <a href="https://arxiv.org/pdf/1704.06369v4.pdf" target="_blank" rel="noopener">Normface: L2 hypersphere embedding for face verification</a>. InProceedings of the 2017 ACM on Multimedia Conference 2017 Oct 23 (pp. 1041-1049). ACM.</li>
+<li>Liu, Weiyang, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Liu_SphereFace_Deep_Hypersphere_CVPR_2017_paper.pdf" target="_blank" rel="noopener">“Sphereface: Deep hypersphere embedding for face recognition.”</a> The IEEE Conference on Computer Vision and Pattern Recognition (CVPR). Vol. 1. 2017.</li>
+<li>Hadsell, Raia, Sumit Chopra, and Yann LeCun. <a href="http://www.cs.toronto.edu/~hinton/csc2535/readings/hadsell-chopra-lecun-06-1.pdf" target="_blank" rel="noopener">“Dimensionality reduction by learning an invariant mapping.”</a> null. IEEE, 2006.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2019/01/06/cv-face-rec/" target="_blank" title="[CV] Face Recognition">https://lucasxlu.github.io/blog/2019/01/06/cv-face-rec/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2019/01/30/dl-siamese-net/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [DL] Siamese Neural Network
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/12/23/dl-cnn/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DL] CNN</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Face-Recognition-as-N-Categories-Classification-Problems"><span class="nav-number">2.</span> <span class="nav-text">Face Recognition as N-Categories Classification Problems</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FaceNet"><span class="nav-number">3.</span> <span class="nav-text">FaceNet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-FaceNet"><span class="nav-number">3.1.</span> <span class="nav-text">What is FaceNet?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Details-of-Triplet-Loss"><span class="nav-number">3.2.</span> <span class="nav-text">Details of Triplet Loss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Triplet-Selection"><span class="nav-number">3.3.</span> <span class="nav-text">Triplet Selection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Experiments"><span class="nav-number">3.4.</span> <span class="nav-text">Experiments</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Center-Loss"><span class="nav-number">4.</span> <span class="nav-text">Center Loss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-Center-Loss"><span class="nav-number">4.1.</span> <span class="nav-text">What is Center Loss?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SphereFace"><span class="nav-number">5.</span> <span class="nav-text">SphereFace</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Preliminary"><span class="nav-number">5.1.</span> <span class="nav-text">Preliminary</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Metric-Learning"><span class="nav-number">5.1.1.</span> <span class="nav-text">Metric Learning</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deep-Hypersphere-Embedding"><span class="nav-number">5.2.</span> <span class="nav-text">Deep Hypersphere Embedding</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Introducing-Angular-Margin-to-Softmax-Loss"><span class="nav-number">5.2.1.</span> <span class="nav-text">Introducing Angular Margin to Softmax Loss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hypersphere-Interpretation-of-A-Softmax-Loss"><span class="nav-number">5.2.2.</span> <span class="nav-text">Hypersphere Interpretation of A-Softmax Loss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Discussions-About-A-Softmax-Loss"><span class="nav-number">5.2.3.</span> <span class="nav-text">Discussions About A-Softmax Loss</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

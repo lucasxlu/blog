@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[book] ml practice at meituan | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Book NotesMachine LearningDeep Learning" />
+  
+  
+  
+  
+  <meta name="description" content="Introduction本文主要记录一下最近在看的一本书《美团机器学习实践》，这本书和我们所熟知的PRML/MLAPP/DL Book等不同的是，它非常偏实践，而非理论，所以可作为参考书使用。一千个读者会产生一千个哈姆雷特，对这本书的评价也看读者自己吧，个人给3.5/5 $\star$，模型层面上可能没有太大的新意，但是结合了美团的具体业务场景，所以还是推荐阅读。 问题建模评估指标分类指标$$Pr">
+<meta name="keywords" content="Book Notes,Machine Learning,Deep Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Book] ML Practice At MeiTuan">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/12/04/book-ml-practice-at-meituan/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Introduction本文主要记录一下最近在看的一本书《美团机器学习实践》，这本书和我们所熟知的PRML/MLAPP/DL Book等不同的是，它非常偏实践，而非理论，所以可作为参考书使用。一千个读者会产生一千个哈姆雷特，对这本书的评价也看读者自己吧，个人给3.5/5 $\star$，模型层面上可能没有太大的新意，但是结合了美团的具体业务场景，所以还是推荐阅读。 问题建模评估指标分类指标$$Pr">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.736Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Book] ML Practice At MeiTuan">
+<meta name="twitter:description" content="Introduction本文主要记录一下最近在看的一本书《美团机器学习实践》，这本书和我们所熟知的PRML/MLAPP/DL Book等不同的是，它非常偏实践，而非理论，所以可作为参考书使用。一千个读者会产生一千个哈姆雷特，对这本书的评价也看读者自己吧，个人给3.5/5 $\star$，模型层面上可能没有太大的新意，但是结合了美团的具体业务场景，所以还是推荐阅读。 问题建模评估指标分类指标$$Pr">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-book-ml-practice-at-meituan" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [Book] ML Practice At MeiTuan
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/12/04/book-ml-practice-at-meituan/" class="article-date">
+	  <time datetime="2018-12-04T12:15:11.000Z" itemprop="datePublished">2018-12-04</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>本文主要记录一下最近在看的一本书<a href="https://book.douban.com/subject/30243136/" target="_blank" rel="noopener">《美团机器学习实践》</a>，这本书和我们所熟知的PRML/MLAPP/DL Book等不同的是，它非常偏实践，而非理论，所以可作为参考书使用。一千个读者会产生一千个哈姆雷特，对这本书的评价也看读者自己吧，个人给3.5/5 $\star$，模型层面上可能没有太大的新意，但是结合了美团的具体业务场景，所以还是推荐阅读。</p>
+<h2 id="问题建模"><a href="#问题建模" class="headerlink" title="问题建模"></a>问题建模</h2><h3 id="评估指标"><a href="#评估指标" class="headerlink" title="评估指标"></a>评估指标</h3><h4 id="分类指标"><a href="#分类指标" class="headerlink" title="分类指标"></a>分类指标</h4><p>$$<br>Precision=\frac{TP}{TP+FP}<br>$$</p>
+<p>$$<br>Recall=\frac{TP}{TP+FN}<br>$$</p>
+<p>$$<br>Accuracy=\frac{TP+TN}{TP+FP+FN+TN}<br>$$</p>
+<p>$$<br>Error Rate=\frac{FP+FN}{TP+FP+FN+TN}<br>$$</p>
+<p>ROC曲线的纵轴是TPR，横轴是FPR。<br>$$<br>TPR=\frac{TP}{TP+FN}<br>$$</p>
+<p>$$<br>FPR=\frac{FP}{FP+TN}<br>$$</p>
+<h4 id="回归指标"><a href="#回归指标" class="headerlink" title="回归指标"></a>回归指标</h4><ul>
+<li>MAE</li>
+<li>Weighted MAE<br>$$<br>WMAE=\frac{1}{N}\cdot \sum_{i=1}^N w_i|y_i-p_i|<br>$$</li>
+<li>Mean Absolute Percentage Error (MAPE)<br>$$<br>MAPE=\frac{100}{N}\cdot \sum_{i=1}^N |\frac{y_i-p_i}{y_i}|, y_i\neq 0<br>$$<blockquote>
+<p>MAPE通过计算绝对误差百分比来表示预测效果，其取值越小越好。若MAPE=10，说明预测值平均偏离真实值10%。</p>
+</blockquote>
+</li>
+<li>RMSE</li>
+<li>Root Mean Squared Logarithmic Error (RMSLE)<br>$$<br>RMSLE=\sqrt{\frac{1}{N}\sum_{i=1}^N (log(y_i+1)-log(p_i+1))^2}<br>$$<blockquote>
+<p>RMSLE对预测值偏小的样本惩罚比对预测值偏大的样本惩罚更大。若评价指标采用RMSLE，没法直接优化RMSLE，所以通常会先对预测目标进行对数变换$y_{new}=log(y+1)$，最后预测值再还原为 $p=exp(p_{new})-1$</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="排序指标"><a href="#排序指标" class="headerlink" title="排序指标"></a>排序指标</h4><ul>
+<li><p>Mean Average Precision (MAP)<br>$$<br>AP@K=\frac{\sum_{k=1}^{min(M,K)}P(k)\cdot rel(k)}{min(M,K)}<br>$$<br>$$<br>P(i)=\frac{前i个结果中相关文档数量}{i}<br>$$</p>
+<blockquote>
+<p>其中，$AP@K$ 代表计算前 $K$ 个结果的平均准确率；$M$ 代表每次排序的文档总数，可能一次返回文档数不足 $K$ 个；$P(k)$ 表示前$K$ 个结果是否是相关文档，相关取1，不相关取0。</p>
+</blockquote>
+<p>$$<br>MAP@K=\sum_{q=1}^Q \frac{AP_q@K}{Q}<br>$$<br>其中$Q$ 为查询数量，$AP_q@K$ 为第$q$ 次查询的 $AP@K$ 结果。</p>
+</li>
+<li><p>Normalized Discounted Cumulative Gain (NDCG)<br>$$<br>DCG@K=\sum_{k=1}^K \frac{2^{rel_k}-1}{log_2(k+1)}<br>$$</p>
+<p>$$<br>IDCG@K=\sum_{k=1}^{|REL|}\frac{2^{rel_k}-1}{log_2(K+1)}<br>$$</p>
+<p>$$<br>NDCG@K=\frac{DCG@K}{IDCG_K}<br>$$<br>其中，$NDCG@K$ 表示计算前$K$ 个结果的NDCG，$rel_k$ 表示第$k$ 个位置的相关性得分，$IDCG@K$ 是前$K$ 个排序返回结果能得到的最佳排序结果，用于归一化$DCG@K$，$|REL|$为结果集按相关性排序后的相关性得分列表。</p>
+</li>
+</ul>
+<h2 id="Model-Ensemble"><a href="#Model-Ensemble" class="headerlink" title="Model Ensemble"></a>Model Ensemble</h2><h3 id="理论分析"><a href="#理论分析" class="headerlink" title="理论分析"></a>理论分析</h3><h4 id="模型多样性度量"><a href="#模型多样性度量" class="headerlink" title="模型多样性度量"></a>模型多样性度量</h4><p>假设binary classification分类结果如下：<br>|  | $h_i=1$ | $h_i=0$ |<br>| :—: | :—: | :—: |<br>| $h_j=1$ | a | c |<br>| $h_j=0$ | b | d |</p>
+<ul>
+<li><p>不一致度量<br>$$<br>dis_{i,j}=\frac{b+c}{m}<br>$$</p>
+</li>
+<li><p>相关系数<br>$$<br>\rho_{ij}=\frac{ad-bc}{\sqrt{(a+b)(a+c)(c+d)(b+d)}}<br>$$</p>
+</li>
+<li><p>Q统计<br>$$<br>Q_{ij}=\frac{ad-bc}{ad+bc}<br>$$</p>
+</li>
+<li><p>K统计<br>$$<br>K=\frac{p_1-p_2}{1-p_2}<br>$$</p>
+<p>$$<br>p_1=\frac{a+d}{m}<br>$$</p>
+<p>$$<br>p_2=\frac{(a+b)(a+c) + (c+d)(b+d)}{m^2}<br>$$</p>
+</li>
+<li><p>双次失败度量<br>$$<br>df_{ij}=\frac{\sum_{k=1}^m \prod (h_i(x_k)\neq y_k \bigwedge h_j(x_k)\neq y_k)}{m}<br>$$</p>
+</li>
+<li><p>KW 差异<br>$$<br>KW=\frac{1}{mT^2}\sum_{k=1}^m l(x_k)(T-l(x_k))<br>$$</p>
+</li>
+<li><p>k 度量<br>$$<br>k=1-\frac{1}{(T-1)\bar{p}(1-\bar{p})}KW<br>$$</p>
+<p>$$<br>\bar{p}=\frac{1}{mT}\sum_{i=1}^T \sum_{k=1}^m \prod (h_i(x_k)=y_k)<br>$$</p>
+</li>
+<li><p>熵度量<br>$$<br>Ent_{cc}=\frac{1}{m}\sum_{k=1}^m \sum_{y\in \{-1, 1\}} -P(y|x_k)log P(y|x_k)<br>$$</p>
+<p>$$<br>P(y|x_k)=\frac{1}{T}\sum_{i=1}^T \prod (h_i(x_k)=y_k)<br>$$</p>
+</li>
+</ul>
+<h2 id="Feature-Engineering"><a href="#Feature-Engineering" class="headerlink" title="Feature Engineering"></a>Feature Engineering</h2><p>当获取到一批数据后，可以先做<strong>探索性数据分析</strong>，即可视化/统计分析基础统计量，来探索数据内部的规律。</p>
+<p>对那些目标变量为输入特征的光滑函数模型，例如Linear Regression/Logistic Regression，其对输入特征的大小很敏感，因此需要做归一化。而那些Tree-based model，如Random Forest/GBDT等，其对输入特征的大小不敏感，因此不需要归一化。</p>
+<p>对于<strong>数值</strong>特征，通常有如下处理方法：</p>
+<ul>
+<li>截断</li>
+<li>二值化</li>
+<li>bin</li>
+<li>scale</li>
+<li>缺失值处理<ul>
+<li>对于缺失值，填充mean</li>
+<li>对于异常值，填充median</li>
+<li>XGBoost可以自动处理缺失feature</li>
+</ul>
+</li>
+<li>特征交叉：即让特征直接进行四则运算来获取新的特征(例如$area=width\times height$)，<strong>特征交叉可以在linear model中引入非线性性质，从而提升模型的表达能力</strong></li>
+<li>非线性编码：t-SNE，局部线性embedding，谱embedding</li>
+<li>行统计量：mean/median/mode/maximum/minimum/偏度/峰度</li>
+</ul>
+<p>对于<strong>类别</strong>特征，通常有如下处理方法：</p>
+<ul>
+<li>自然数编码</li>
+<li>one-hot encoding</li>
+<li>分层编码</li>
+<li>散列编码</li>
+<li>计数编码：将类别特征用其对应的计数来代替</li>
+<li>计数排名编码</li>
+</ul>
+<h3 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h3><ul>
+<li>Coverage：计算每个特征的coverage(特征在training set中出现的比例)，若feature的coverage很小，则此coverage对模型的预测作用不大，可以剔除。</li>
+<li><p>Pearson Correlation：计算两个变量$X$和$Y$直接的相关性：<br>  $$<br>  \rho_{X,Y}=\frac{cov(X,Y)}{\alpha_X \alpha_Y}=\frac{E[(X-\mu_X)(Y-\mu_Y)]}{\alpha_X \alpha_Y}<br>  $$</p>
+<p>  $$<br>  r=\frac{\sum_{i=1}^n (X_i-\bar{X})(Y_i-\bar{Y})}{\sqrt{\sum_{i=1}^n (X_i-\bar{X})^2} \sqrt{\sum_{i=1}^n (Y_i-\bar{Y})^2}}<br>  $$</p>
+</li>
+<li>Fisher score：对于分类问题，好的feature应该是在同一个category中的取值比较类似，而在不同category之间的取值差异比较大。<br>  $$<br>  S_i=\frac{\sum_{j=1}^K n_j(\mu_{ij}-\mu_i)^2}{\sum_{j=1}^K n_j \rho_{ij}^2}<br>  $$<br>  其中，$\mu_{ij}$和$\rho_{ij}$分别为特征$i$在类别$j$中的mean和variance。Fisher score越高，特征在不同类别直接的差异性越大，在同一类别中的差异性越小，则该特征越重要。</li>
+<li>假设检验：$\chi^2$统计量越大，特征相关性越高。</li>
+<li>Mutual Information：MI越大表明两个变量相关性越高。<br>  $$<br>  MI(X,Y)=\sum_{y\in Y}\sum_{x\in X}p(x,y)log(\frac{p(x,y)}{p(x)p(y)})=D_{KL}(p(x,y)||p(x)p(y))<br>  $$</li>
+<li>最小冗余最大相关性(mRMR)：由于单变量filter方法只考虑了单特征变量和目标变量之间的相关性，因此选择的特征子集可能过于冗余。mRMR在进行feature selection时考虑了feature之间的冗余性，对跟已选择feature的相关性较高的冗余feature进行惩罚。</li>
+<li>相关特征选择(CFS)：好的feature set包含跟目标变量非常相关的feature，但这些feature之间彼此不相关，对于包含$k$个feature的集合，CFS定义如下：<br>  $$<br>  CFS=\mathop{max} \limits_{S_k}[\frac{r_{cf_1} + r_{cf_2} + \cdots + r_{cf_k}}{\sqrt{k + 2(r_{f_1f_2} + \cdots + r_{f_if_j} + \cdots + r_{f_kf_l})}}]<br>  $$</li>
+</ul>
+<h3 id="Bagging"><a href="#Bagging" class="headerlink" title="Bagging"></a>Bagging</h3><p>Bagging直接使用ML算法评估特征子集的效果，它可以检测出两个或多个feature之间的交互关系，而且选择的特征子集让模型的效果达到最优。Bagging是特征子集搜索 + 评估指标 相结合的方法，前者提供候选的新特征子集，后者则基于新特征子集训练一个模型，并用validation set进行评估，为每一组特征子集进行打分，然后选择最优的特征子集。</p>
+<ul>
+<li>完全搜索</li>
+<li>启发式搜索(greed search)：feedforwad search/backward search/feedforwad + backward search</li>
+<li>随机搜索</li>
+</ul>
+<h3 id="Embedding"><a href="#Embedding" class="headerlink" title="Embedding"></a>Embedding</h3><p>即与具体的ML算法结合。</p>
+<ul>
+<li>LASSO：L1 Regularization可一定程度上做feature selection</li>
+<li>Decision Tree</li>
+<li>SVM</li>
+<li>Random Forest</li>
+<li>GBDT</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/12/04/book-ml-practice-at-meituan/" target="_blank" title="[Book] ML Practice At MeiTuan">https://lucasxlu.github.io/blog/2018/12/04/book-ml-practice-at-meituan/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/12/22/dl-rnn/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [DL] RNN
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/11/20/dl-bn/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DL] Batch Normalization</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题建模"><span class="nav-number">2.</span> <span class="nav-text">问题建模</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#评估指标"><span class="nav-number">2.1.</span> <span class="nav-text">评估指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分类指标"><span class="nav-number">2.1.1.</span> <span class="nav-text">分类指标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回归指标"><span class="nav-number">2.1.2.</span> <span class="nav-text">回归指标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#排序指标"><span class="nav-number">2.1.3.</span> <span class="nav-text">排序指标</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Model-Ensemble"><span class="nav-number">3.</span> <span class="nav-text">Model Ensemble</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#理论分析"><span class="nav-number">3.1.</span> <span class="nav-text">理论分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模型多样性度量"><span class="nav-number">3.1.1.</span> <span class="nav-text">模型多样性度量</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Feature-Engineering"><span class="nav-number">4.</span> <span class="nav-text">Feature Engineering</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Filter"><span class="nav-number">4.1.</span> <span class="nav-text">Filter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bagging"><span class="nav-number">4.2.</span> <span class="nav-text">Bagging</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Embedding"><span class="nav-number">4.3.</span> <span class="nav-text">Embedding</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

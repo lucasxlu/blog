@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[ml] svm | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningData Science" />
+  
+  
+  
+  
+  <meta name="description" content="介绍SVM是一种非常经典的分类算法，也是很多机器学习面试中必问的算法。它的基本模型是定义在特征空间上的间隔最大的线性分类器。SVM的学习策略就是间隔最大化，等价于 正则化的Hinge Loss最小化问题。 当训练数据线性可分时，通过硬间隔最大化学习一个线性的分类器；当训练数据近似线性可分时，通过软间隔最大化学习一个线性的分类器；当训练数据线性不可分时，通过Kernel Tricks和软间隔最大化学">
+<meta name="keywords" content="Machine Learning,Data Science">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[ML] SVM">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/07/22/ml-svm/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="介绍SVM是一种非常经典的分类算法，也是很多机器学习面试中必问的算法。它的基本模型是定义在特征空间上的间隔最大的线性分类器。SVM的学习策略就是间隔最大化，等价于 正则化的Hinge Loss最小化问题。 当训练数据线性可分时，通过硬间隔最大化学习一个线性的分类器；当训练数据近似线性可分时，通过软间隔最大化学习一个线性的分类器；当训练数据线性不可分时，通过Kernel Tricks和软间隔最大化学">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.888Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[ML] SVM">
+<meta name="twitter:description" content="介绍SVM是一种非常经典的分类算法，也是很多机器学习面试中必问的算法。它的基本模型是定义在特征空间上的间隔最大的线性分类器。SVM的学习策略就是间隔最大化，等价于 正则化的Hinge Loss最小化问题。 当训练数据线性可分时，通过硬间隔最大化学习一个线性的分类器；当训练数据近似线性可分时，通过软间隔最大化学习一个线性的分类器；当训练数据线性不可分时，通过Kernel Tricks和软间隔最大化学">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-ml-svm" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [ML] SVM
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/07/22/ml-svm/" class="article-date">
+	  <time datetime="2018-07-22T04:42:39.000Z" itemprop="datePublished">2018-07-22</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>SVM是一种非常经典的分类算法，也是很多机器学习面试中必问的算法。它的基本模型是定义在特征空间上的间隔最大的线性分类器。SVM的学习策略就是间隔最大化，等价于 <strong>正则化的Hinge Loss最小化问题</strong>。</p>
+<p>当训练数据线性可分时，通过硬间隔最大化学习一个线性的分类器；<br>当训练数据近似线性可分时，通过软间隔最大化学习一个线性的分类器；<br>当训练数据线性不可分时，通过Kernel Tricks和软间隔最大化学习一个非线性的分类器；</p>
+<p>当输入空间为欧式空间或离散集合、特征空间为希尔伯特空间时，核函数表示 <strong>将输入从输入空间映射到特征空间得到的特征向量之间的内积，通过使用核函数可以学习非线性支持的SVM，等价于隐式地在高维的特征空间中学习线性SVM</strong>。</p>
+<p>一般的，当training set线性可分时，存在无穷个分离超平面可将两类数据正确分开。MLP利用 <strong>误分类最小策略</strong>，求得分离超平面，不过这时的解有无穷多个。线性可分SVM利用 <strong>间隔最大化</strong>求得分离超平面，这时解是唯一的。</p>
+<h2 id="线性可分SVM与硬间隔最大化"><a href="#线性可分SVM与硬间隔最大化" class="headerlink" title="线性可分SVM与硬间隔最大化"></a>线性可分SVM与硬间隔最大化</h2><p>一般来说，一个点距离分离超平面的远近可以表示分类预测的确信程度。在超平面$w\cdot x+b=0$确定的情况下，$|w\cdot x+b|$能够相对地表示点$x$距离超平面的远近。而$w\cdot x+b$的符号与类标记$y$的符号是否一致能够表示分类是否正确。所以可以用量$y(w\cdot x+b)$来表示分类的正确性及确信程度，此为 <strong>“函数间隔”</strong>。</p>
+<ul>
+<li><p>函数间隔：对于给定的训练集T和超平面$(w,b)$，定义超平面$(w,b)$关于样本点$(x_i,y_i)$的函数间隔为:<br>$\hat{\gamma}_i=y_i(w\cdot x_i + b)$</p>
+<p>定义超平面$(w,b)$关于训练集T的函数间隔为超平面$(w,b)$关于T中所有样本点$(x_i,y_i)$的函数间隔的最小值，即：<br>$\hat{\gamma}=\mathop{min} \limits_{i=1,\cdots,N}\hat{\gamma}_i$</p>
+<p>函数间隔可以表示分类预测的正确度及确信度，但是选择分离超平面时，只有函数间隔还不够，因为只要成比例地改变$w$和$b$，超平面没有变，但是函数间隔却变为原来的2倍。这一事实启示我们，可以对分离超平面的法向量$w$加某些约束，如归一化$||w||=1$，使得间隔是确定的。这时函数间隔成为 <strong>几何间隔</strong>。</p>
+</li>
+<li><p>几何间隔：对于给定的训练集T和超平面$(w,b)$，定义超平面$(w,b)$关于样本点$(x_i,y_i)$的几何间隔为：<br>$\gamma_i=y_i(\frac{w}{||w||}\cdot x_i+\frac{b}{||w||})$</p>
+<p>定义超平面$(w,b)$关于训练集T的函数间隔为超平面$(w,b)$关于T中所有样本点$(x_i,y_i)$的函数间隔的最小值，即：<br>$\hat{\gamma}=\mathop{min} \limits_{i=1,\cdots,N}\hat{\gamma}_i$</p>
+<p>超平面$(w,b)$关于样本点$(x_i,y_i)$的几何间隔一般是实例点到超平面的带符号的距离。</p>
+<p>函数间隔和几何间隔有如下关系：<br>$\gamma_i=\frac{\hat{\gamma}_i}{||w||}$</p>
+<p>$\gamma=\frac{\hat{\gamma}}{||w||}$</p>
+<p><strong>如果$||w||=1，那么函数间隔和几何间隔相等$</strong>。如果超平面参数$w$和$b$成比例地改变(超平面未变)，则函数间隔也按此比例改变，但是几何间隔不变。</p>
+</li>
+</ul>
+<p>最大间隔分离超平面  可以表示为下面的约束最优化问题：<br>$$\mathop{max} \limits_{w,b} \gamma s.t.\quad y_i(\frac{w}{||w||}\cdot x_i+\frac{b}{||w||})\geq \gamma,\quad i=1,\cdots,N$$</p>
+<p>即我们希望最大化超平面$(w,b)$关于training set的几何间隔$\gamma$，约束条件表示的是超平面$(w,b)$关于每个training sample的几何间隔至少是$\gamma$。</p>
+<p>考虑几何间隔和函数间隔的关系，该问题等价于：<br>$$\mathop{max} \limits_{w,b}\frac{\hat{\gamma}}{||w||} \\<br>s.t.\quad y_i(w\cdot x_i+b)\geq \hat{\gamma}, \quad i=1,2,\cdots,N$$</p>
+<p>最大化$\frac{1}{||w||}$和最小化$\frac{1}{2}||w||^2$是等价的，于是就得到下面的线性可分SVM的最优化问题：<br>$$\mathop{min} \limits_{w,b}\frac{1}{2}||w||^2 \\<br>s.t.\quad y_i(w\cdot x_i+b)-1\geq 0, \quad i=1,\cdots,N$$</p>
+<ul>
+<li>最大间隔分离超平面的存在唯一性：若训练数据集T线性可分，则可将训练集中的样本点完全正确分开的最大间隔分离超平面存在且唯一。</li>
+</ul>
+<p>在线性可分情况下，training set的样本点中与分离超平面距离最近的样本点的实例称为支持向量。支持向量是使约束条件等号成立的点，即：<br>$y_i(w\cdot x_i+b)-1=0$</p>
+<p>对$y_i=+1$的正例点，支持向量在超平面 $H_1:w\cdot x+b=1$上，对$y_i=-1$的负例点，支持向量在超平面 $H_2:w\cdot x+b=-1$上。在决定分离超平面时只有支持向量起作用，而其他实例点并不起作用。由于支持向量在确定分离超平面中起着决定性的作用，所以将这种分类模型称为”支持向量机”。</p>
+<h3 id="学习的对偶算法"><a href="#学习的对偶算法" class="headerlink" title="学习的对偶算法"></a>学习的对偶算法</h3><p>为了求解线性可分SVM的最优化问题，将它作为原始最优化问题，应用拉格朗日对偶性，通过求解对偶问题得到原始问题的最优解，这就是线性可分SVM的对偶算法。这样做一来对偶问题更容易求解，二来自然引入Kernel Function，可以扩展到非线性分类问题。</p>
+<p>引入拉格朗日乘子$\alpha_i \geq 0, i=1,2,\cdots,N$，定义拉格朗日函数：<br>$L(w,b,\alpha)=\frac{1}{2}||w||^2-\sum_{i=1}^N \alpha_i y_i(w\cdot x_i + b) + \sum_{i=1}^N \alpha_i$，其中，$\alpha=(\alpha_1,\alpha_2,\cdots,\alpha_N)^T$为拉格朗日乘子向量。</p>
+<p>根据拉格朗日对偶性，原始问题的对偶问题是极大极小值问题：<br>$\mathop{max} \limits_{\alpha} \mathop{min} \limits_{w,b} L(w,b,\alpha)$，所以为了得到对偶问题的解，需要先求$L(w,b,\alpha)$对$w,b$的极小，再求对$\alpha$的极大。</p>
+<ol>
+<li><p>求$\mathop{min} \limits_{w,b} L(w,b,\alpha)$：<br>将拉格朗日函数$L(w,b,\alpha)$分别对$w,b$求偏导，并令其等于0。<br>$\bigtriangledown_wL(w,b,\alpha)=w-\sum_{i=1}^N \alpha_i y_i x_i=0$</p>
+<p>$\bigtriangledown_bL(w,b,\alpha)=\sum_{i=1}^N \alpha_i y_i=0$<br>得:<br>$w=\sum_{i=1}^N\alpha_i y_i x_i$<br>$\sum_{i=1}^N\alpha_i y_i=0$<br>可得:<br>$\mathop{min} \limits_{w,b}L(w,b,\alpha)=-\frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i\cdot x_j) + \sum_{i=1}^N \alpha_i$</p>
+</li>
+<li><p>求解$\mathop{min} \limits_{w,b} L(w,b,\alpha)$对$\alpha$的极大，即是对偶问题<br>$$\mathop{max} \limits_{\alpha}-\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j) + \sum_{i=1}^N \alpha_i,\quad s.t. \sum_{i=1}^N \alpha_i y_i=0 \quad \alpha_i \geq 0, i=1,2,\cdots,N $$  </p>
+<p>可转换成下面等价的求极小值的对偶问题：<br>$$\mathop{min} \limits_{\alpha}\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j) - \sum_{i=1}^N \alpha_i,\quad s.t. \sum_{i=1}^N \alpha_i y_i=0 \quad \alpha_i \geq 0, i=1,2,\cdots,N $$  </p>
+</li>
+</ol>
+<h4 id="线性可分SVM的学习算法"><a href="#线性可分SVM的学习算法" class="headerlink" title="线性可分SVM的学习算法"></a>线性可分SVM的学习算法</h4><ol>
+<li><p>构造并求解约束最优化问题:<br>$\mathop{min} \limits_{\alpha} \frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N\alpha_i \alpha_j y_i y_j (x_i\cdot x_j)-\sum_{i=1}^N \alpha_i, \quad s.t. \sum_{i=1}^N \alpha_i y_i=0, \alpha_i\geq 0$<br>得到最优解$\alpha^{\star}=(\alpha_1^{\star},\alpha_2^{\star},\cdots,\alpha_N^{\star})^T$。</p>
+</li>
+<li><p>计算 $w^{\star}=\sum_{i=1}^N\alpha_i^{\star} y_ix_i$ ，并选择 $\alpha^{\star}$ 的一个正分量 $\alpha_j^{\star}&gt;0$，计算:<br>$b^{\star}=y_j-\sum_{i=1}^N\alpha_i^{\star} y_i(x_i\cdot x_j)$</p>
+</li>
+<li><p>求得分离超平面 $w^{\star}\cdot x+b^{\star}=0$，分类决策函数 $f(x)=sign(w^{\star}\cdot x+b^{\star})$。</p>
+</li>
+</ol>
+<h2 id="线性SVM与软间隔最大化"><a href="#线性SVM与软间隔最大化" class="headerlink" title="线性SVM与软间隔最大化"></a>线性SVM与软间隔最大化</h2><p>线性不可分意味着某些样本点$(x_i,y_i)$不能满足函数间隔大于等于1的约束条件，为了解决这个问题，可以对每个样本点$(x_i, y_i)$引入一个松弛变量$\xi_i \geq0$，使得函数间隔加上松弛变量大于等于1。这样，约束条件变为:<br>$y_i(w\cdot x_i+b)\geq 1-\xi_i$</p>
+<p>同时，对每个松弛变量，支付一个代价$\xi_i$，目标函数由原来的$\frac{1}{2}||w||^2$变成 $\frac{1}{2}||w||^2+C\sum_{i=1}^N\xi_i$。这里$C&gt;0$称为惩罚参数，一般由问题决定。$C$值大时对误分类的惩罚加大，$C$值小时对误分类的惩罚变小。最小化Loss有两层含义：使$\frac{1}{2}||w||^2$尽量小即间隔尽量大，同时使得误分类点的个数尽量小，$C$是两者的调和系数。</p>
+<p>线性不可分的SVM学习问题变成如下凸二次规划问题：<br>$\mathop{min} \limits_{w,b,\xi} \frac{1}{2}||w||^2 + C\sum_{i=1}^N \xi_i \quad s.t. \quad y_i(w\cdot x_i + b)\geq 1-\xi_i, i=1,2,\cdots,N \quad \xi_i \geq0$</p>
+<h3 id="学习的对偶算法-1"><a href="#学习的对偶算法-1" class="headerlink" title="学习的对偶算法"></a>学习的对偶算法</h3><p>原始问题的对偶问题是:<br>$$\mathop{min} \limits_{\alpha} \frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j)-\sum_{i=1}^N \alpha_i$$<br>$$s.t. \quad \sum_{i=1}^N \alpha_i y_i=0 \qquad 0\leq\alpha_i \leq C$$</p>
+<h4 id="线性可分SVM的学习算法-1"><a href="#线性可分SVM的学习算法-1" class="headerlink" title="线性可分SVM的学习算法"></a>线性可分SVM的学习算法</h4><ol>
+<li><p>选择惩罚参数$C&gt;0$，构造并求解凸二次规划问题：<br>$\mathop{min} \limits_{\alpha} \frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i\cdot x_j)-\sum_{i=1}^N\alpha_i$<br>$s.t. \sum_{i=1}^N\alpha_i y_i=0, \quad 0\leq \alpha_i \leq C$<br>求得最优解$\alpha^{\star}=(\alpha_1^{\star},\alpha_2^{\star},\cdots,\alpha_N^{\star})^T$</p>
+</li>
+<li><p>计算$w^{\star}=\sum_{i=1}^N\alpha_1^{\star} y_ix_i$<br>选择$\alpha^{\star}$的一个分量$\alpha_j^{\star}$适合条件$0&lt;\alpha_j^{\star}&lt;C$ (通常取所有符合条件的样本点上的均值)，计算<br>$b^{\star}=y_j-\sum_{i=1}^Ny_i \alpha_i^{\star}(x_i\cdot x_j)$</p>
+</li>
+<li><p>求得分离超平面 $w^{\star}\cdot x+b^{\star}=0$，<br>分类决策函数$f(x)=sign(w^{\star}\cdot x+b^{\star})$</p>
+</li>
+</ol>
+<h4 id="支持向量"><a href="#支持向量" class="headerlink" title="支持向量"></a>支持向量</h4><p>软间隔的支持向量$x_i$或者在间隔边界上，或者在降额边界与分离超平面之间，或者在分离超平面误分一侧。  </p>
+<p>若$\alpha_i^{\star}&lt;C$，则$\xi_i=0$，支持向量$x_i$恰好落在间隔边界上；<br>若$\alpha_i^{\star}=C, 0&lt;\xi_i&lt;1$，则分类正确，$x_i$将在间隔边界与超平面之间；<br>若$\alpha_i^{\star}=C, \xi_i=1$，则$x_i$在分离超平面上；<br>若$\alpha_i^{\star}=C, \xi_i&gt;1$，则$x_i$位于分离超平面误分一侧。</p>
+<h4 id="Hinge-Loss"><a href="#Hinge-Loss" class="headerlink" title="Hinge Loss"></a>Hinge Loss</h4><p>SVM还有另一种解释，即最小化以下Loss Function：<br>$\sum_{i=1}^N [1-y_i(w\cdot x_i+b)]_{+} + \lambda ||w||^2$</p>
+<p>$L(y(w\cdot x+b))=[1-y(w\cdot x+b)]_{+}$称为 Hinge Loss。这就是说，当样本点$(x_i,y_i)$被正确分类且函数间隔 $y_i(w\cdot x_i+b)$大于1时，损失为0，否则损失是 $1-y_i(w\cdot x_i+b)$。</p>
+<p>线性SVM原始最优化问题:<br>$\mathop{min} \limits_{w,b,\xi} \frac{1}{2}||w||^2+C\sum_{i=1}^N \xi_i$</p>
+<p>$s.t.\quad y_i(w\cdot x_i+b)\geq 1-\xi_i$</p>
+<p>$\xi_i\geq 0$</p>
+<p>等价于最优化问题：</p>
+<p>$\mathop{min} \limits_{w,b} \sum_{i=1}^N [1-y_i(w\cdot x_i+b)]_{+} + \lambda||w||^2$</p>
+<h2 id="非线性SVM与Kernel-Function"><a href="#非线性SVM与Kernel-Function" class="headerlink" title="非线性SVM与Kernel Function"></a>非线性SVM与Kernel Function</h2><p>设原空间为$\chi \subset R^2, x=(x^{(1)},x^{(2)})^T\in \chi$，新空间为$\mathcal{Z} \subset R^2, z=(z^{(1)},z^{(2)})^T\in \mathcal{Z}$，定义从原空间到新空间的变换(映射)：<br>$z=\phi(x)=((x^{(1)})^2,(x^{(2)})^2)^T$<br>经过变换$z=\phi(x)$，原空间$\chi \subset R^2$变换为新空间$\mathcal{Z}\subset R^2$，原空间中的点变为新空间中的点。从而原空间线性不可分的情形变为新空间里的线性可分问题。</p>
+<h3 id="Kernel-Function"><a href="#Kernel-Function" class="headerlink" title="Kernel Function"></a>Kernel Function</h3><p>设$\chi$是输入空间(欧式空间$R^n$或离散集合)，又设$\mathcal{H}$为特征空间(希尔伯特空间)，若存在一个从$\chi$到$\mathcal{H}$的映射:<br>$\phi(x):\chi \to \mathcal{H}$<br>使得对所有$x,z\in \chi$，函数$K(x,z)$都满足：<br>$K(x,z)=\phi(x)\cdot \phi(z)$<br>则称$K(x,z)$为核函数，$\phi(x)$为映射函数，式子中$\phi(x)\cdot \phi(z)$为$\phi(x)$和$\phi(z)$内积。</p>
+<p>Kernel Tricks的想法是，在学习与预测中只定义核函数$K(x,z)$，而不显示地定义映射函数$\phi$，直接计算$K(x,z)$比较容易，而通过$\phi(x)$和$\phi(z)$计算$K(x,z)$并不容易。</p>
+<p>Kernel-based SVM等价于经过映射函数$\phi$将原来的输入空间变换到一个新的特征空间，将输入空间中的内积$x_i\cdot x_j$变换为特征空间中的内积$\phi(x_i)\cdot \phi(x_j)$，在新的特征空间里从训练样本中学习线性SVM。当映射函数是非线性函数时，学习到的含有核函数的SVM是非线性分类模型。</p>
+<p>Kernel Tricks：学习是隐式地在特征空间进行的，不需要显示地定义特征空间和映射函数，这样的技巧称为Kernel Tricks。</p>
+<h3 id="常用Kernel-Function"><a href="#常用Kernel-Function" class="headerlink" title="常用Kernel Function"></a>常用Kernel Function</h3><ol>
+<li><p>多项式核函数：<br>$K(x,z)=(x\cdot z+1)^p$<br>对应的SVM是一个$p$次多项式分类器，在此情形下，分类决策函数成为:<br>$f(x)=sign(\sum_{i=1}^{N_s}a_i^{\star}y_i(x_i\cdot x+1)^p+b^{\star})$</p>
+</li>
+<li><p>高斯核函数：<br>$K(x,z)=exp(-\frac{||x-z||^2}{2\sigma^2})$<br>对应的SVM是RBF分类器，在此情形下，分类决策函数成为:<br>$f(x)=sign(\sum_{i=1}^{N_s}a_i^{\star}y_i exp(-\frac{||x-z||^2}{2\sigma^2})+b^{\star})$</p>
+</li>
+</ol>
+<h3 id="非线性SVM"><a href="#非线性SVM" class="headerlink" title="非线性SVM"></a>非线性SVM</h3><p>从非线性分类数据集，通过Kernel Tricks与软间隔最大化，或凸二次规划，学习到的分类决策函数：<br>$f(x)=sign(\sum_{i=1}^N\alpha_i^{\star}y_i K(x,x_i)+b^{\star})$<br>称为非线性支持向量，$K(x,z)$是正定核函数。</p>
+<h4 id="非线性SVM学习算法"><a href="#非线性SVM学习算法" class="headerlink" title="非线性SVM学习算法"></a>非线性SVM学习算法</h4><ol>
+<li><p>选取适当的核函数$K(x,z)$和适当的参数$C$，构造并求解最优化问题：<br>$\mathop{min} \limits_{\alpha} \frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j K(x_i,x_j)-\sum_{i=1}^N \alpha_i$</p>
+<p>$s.t. \sum_{i=1}^N \alpha_i y_i=0 \qquad 0\leq \alpha_i \leq C$<br>求得最优解$\alpha^{\star}=(\alpha_1^{\star},\alpha_2^{\star},\cdots,\alpha_N^{\star})^T$。</p>
+</li>
+<li><p>选择$\alpha^{\star}$的一个正分量$0&lt;\alpha_i^{\star}&lt;C$，计算 $b^{\star}=y_j-\sum_{i=1}^N\alpha_i^{\star}y_iK(x_i,x_j)$</p>
+</li>
+<li><p>构造决策函数：<br>$f(x)=sign(\sum_{i=1}^N\alpha_i^{\star}y_iK(x\cdot x_i)+b^{\star})$</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/07/22/ml-svm/" target="_blank" title="[ML] SVM">https://lucasxlu.github.io/blog/2018/07/22/ml-svm/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/07/23/ml-lr-me/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [ML] Logistic Regression and Maximum Entropy Model
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/07/20/dl-optimization/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DL] Optimization Algorithm in Deep Learning</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线性可分SVM与硬间隔最大化"><span class="nav-number">2.</span> <span class="nav-text">线性可分SVM与硬间隔最大化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#学习的对偶算法"><span class="nav-number">2.1.</span> <span class="nav-text">学习的对偶算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#线性可分SVM的学习算法"><span class="nav-number">2.1.1.</span> <span class="nav-text">线性可分SVM的学习算法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线性SVM与软间隔最大化"><span class="nav-number">3.</span> <span class="nav-text">线性SVM与软间隔最大化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#学习的对偶算法-1"><span class="nav-number">3.1.</span> <span class="nav-text">学习的对偶算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#线性可分SVM的学习算法-1"><span class="nav-number">3.1.1.</span> <span class="nav-text">线性可分SVM的学习算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#支持向量"><span class="nav-number">3.1.2.</span> <span class="nav-text">支持向量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hinge-Loss"><span class="nav-number">3.1.3.</span> <span class="nav-text">Hinge Loss</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非线性SVM与Kernel-Function"><span class="nav-number">4.</span> <span class="nav-text">非线性SVM与Kernel Function</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kernel-Function"><span class="nav-number">4.1.</span> <span class="nav-text">Kernel Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用Kernel-Function"><span class="nav-number">4.2.</span> <span class="nav-text">常用Kernel Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非线性SVM"><span class="nav-number">4.3.</span> <span class="nav-text">非线性SVM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#非线性SVM学习算法"><span class="nav-number">4.3.1.</span> <span class="nav-text">非线性SVM学习算法</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

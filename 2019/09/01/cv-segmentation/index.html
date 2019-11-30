@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[cv] segmentation | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningComputer VisionSemantic SegmentationInstance Segmentation" />
+  
+  
+  
+  
+  <meta name="description" content="Introductionsegmentation也是Computer Vision领域一个非常重要的研究方向，和Classification，Detection一起是high-level vision里最重要的方向。我不是主要做Segmentation的，但由于Segmentation的广泛的应用方向(例如自动驾驶的场景感知)和研究热点，本文旨在梳理近些年CV顶会上一些非常有代表性的work。">
+<meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision,Semantic Segmentation,Instance Segmentation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[CV] Segmentation">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2019/09/01/cv-segmentation/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Introductionsegmentation也是Computer Vision领域一个非常重要的研究方向，和Classification，Detection一起是high-level vision里最重要的方向。我不是主要做Segmentation的，但由于Segmentation的广泛的应用方向(例如自动驾驶的场景感知)和研究热点，本文旨在梳理近些年CV顶会上一些非常有代表性的work。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/convert_to_fcn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/dag_nets_fcn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/mask_rcnn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/fc_densenet.jpg">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.773Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[CV] Segmentation">
+<meta name="twitter:description" content="Introductionsegmentation也是Computer Vision领域一个非常重要的研究方向，和Classification，Detection一起是high-level vision里最重要的方向。我不是主要做Segmentation的，但由于Segmentation的广泛的应用方向(例如自动驾驶的场景感知)和研究热点，本文旨在梳理近些年CV顶会上一些非常有代表性的work。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/convert_to_fcn.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-cv-segmentation" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [CV] Segmentation
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2019/09/01/cv-segmentation/" class="article-date">
+	  <time datetime="2019-09-01T05:38:05.000Z" itemprop="datePublished">2019-09-01</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>segmentation也是Computer Vision领域一个非常重要的研究方向，和Classification，Detection一起是high-level vision里最重要的方向。我不是主要做Segmentation的，但由于Segmentation的广泛的应用方向(例如自动驾驶的场景感知)和研究热点，本文旨在梳理近些年CV顶会上一些非常有代表性的work。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：本文长期更新。</p>
+</blockquote>
+<h2 id="Fully-Convolutional-Networks-for-Semantic-Segmentation"><a href="#Fully-Convolutional-Networks-for-Semantic-Segmentation" class="headerlink" title="Fully Convolutional Networks for Semantic Segmentation"></a>Fully Convolutional Networks for Semantic Segmentation</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2015/papers/Long_Fully_Convolutional_Networks_2015_CVPR_paper.pdf" target="_blank" rel="noopener">Fully Convolutional Networks for Semantic Segmentation</a></p>
+</blockquote>
+<p>本文针对semantic segmentation问题提出了一个Fully Convolutional Network (FCN)，它可以接受任意size的image作为input，然后给出分割后的预测输出。</p>
+<blockquote>
+<p>注：若读者不清楚为啥fully convolutional network能处理arbitrary size input，不妨回想一下经典的detection algorithm <strong>SPPNet</strong>，因为CNN必须接受fixed size作为input的原因就是后面接了几层fully connected layers，如果整个网络都是全卷积的，那自然就不需要了。</p>
+</blockquote>
+<p>此外，因DCNN提取的hierarchical feature，low-level包含更多细节信息，high-level包含更多semantic meaning。Global information解决了”what”，即input image的semantic meaning，而local information解决了”where”，即包含更多的spatial localization information。而根据DCNN提取feature的层次性特点，因此作者在文中很自然引入了skip architecture，把不同level的feature结合起来以提升segmentation performance。</p>
+<p>作者使用的Deep Model依然来自于Classification Model (AlexNet/VGG/GoogLeNet)，只是将后面的fully connected layers改成了fully convolutional layers + de-conv来适应segmentation任务。采用反卷积层对最后一个卷积层的feature map进行上采样, 使它恢复到输入图像相同的尺寸，从而可以对每个像素都产生了一个预测, 同时保留了原始输入图像中的空间信息, 最后在上采样的特征图上进行逐像素分类。</p>
+<h3 id="Fully-convolutional-networks"><a href="#Fully-convolutional-networks" class="headerlink" title="Fully convolutional networks"></a>Fully convolutional networks</h3><p>若FCN的loss为最后一层spatial dimension的求和，$l(x;\theta)=\sum_{ij}l^{‘}(x_{ij};\theta)$，那么梯度就可以被计算为每个spatial component的求和。因此<strong>将最后一层的receptive fields作为mini-batch的话，在整张图上SGD优化$l$与spatial component上SGD优化$l^{‘}是等效的$</strong>。当这些receptive fileds有大量重叠时，layer-by-layer的feedforward computation/BP 比patch-by-patch的计算要高效。</p>
+<h4 id="Adapting-classifiers-for-dense-prediction"><a href="#Adapting-classifiers-for-dense-prediction" class="headerlink" title="Adapting classifiers for dense prediction"></a>Adapting classifiers for dense prediction</h4><p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/convert_to_fcn.jpg" alt="Convert to FCN"></p>
+<h4 id="Shift-and-stitch-is-filter-rarefaction"><a href="#Shift-and-stitch-is-filter-rarefaction" class="headerlink" title="Shift-and-stitch is filter rarefaction"></a>Shift-and-stitch is filter rarefaction</h4><blockquote>
+<p>Dense predictions can be obtained from coarse outputs<br>by stitching together output from shifted versions of the input. If the output is downsampled by a factor of $f$, shift the input $x$ pixels to the right and $y$ pixels down, once for every $(x, y)$ s.t. $0\leq x, y \leq f$. Process each of these $f^2$ inputs, and interlace the outputs so that the predictions correspond to the pixels at the centers of their receptive fields.</p>
+</blockquote>
+<blockquote>
+<p>Consider a layer (convolution or pooling) with input stride $s$, and a subsequent convolution layer with filter weights $f_{ij}$ (eliding the irrelevant feature dimensions). Setting the lower layer’s input stride to 1 upsamples its output by a factor of $s$. However, convolving the original filter with the upsampled output does not produce the same result as shift-and-stitch, because the original filter only sees a reduced portion of its (now upsampled) input. To reproduce the trick, rarefy the filter by enlarging it as:<br>$$<br>f_{ij}^{‘}=\begin{cases}<br>    f_{i/s,j/s} &amp; \text{if $s$ divides both $i$ and $j$}\\<br>    0 &amp; \text{otherwise}<br>\end{cases}<br>$$<br>(with $i$ and $j$ zero-based). Reproducing the full net output of the trick involves repeating this filter enlargement layer-by-layer until all subsampling is removed. (In practice, this can be done efficiently by processing subsampled versions of the upsampled input.)</p>
+</blockquote>
+<h4 id="Upsampling-is-backwards-strided-convolution"><a href="#Upsampling-is-backwards-strided-convolution" class="headerlink" title="Upsampling is backwards strided convolution"></a>Upsampling is backwards strided convolution</h4><blockquote>
+<p>Another way to connect coarse outputs to dense pixels is interpolation. For instance, simple bilinear interpolation computes each output $y_{ij}$ from the nearest four inputs by a linear map that depends only on the relative positions of the input and output cells.</p>
+</blockquote>
+<blockquote>
+<p>In a sense, upsampling with factor $f$ is convolution with a fractional input stride of $1/f$. So long as $f$ is integral,a natural way to upsample is therefore backwards convolution (sometimes called deconvolution) with an output stride of $f$. Such an operation is trivial to implement, since it simply reverses the forward and backward passes of convolution. Thus upsampling is performed in-network for end-to-end learning by backpropagation from the pixelwise loss.</p>
+</blockquote>
+<h4 id="Patchwise-training-is-loss-sampling"><a href="#Patchwise-training-is-loss-sampling" class="headerlink" title="Patchwise training is loss sampling"></a>Patchwise training is loss sampling</h4><blockquote>
+<p>In stochastic optimization, gradient computation is driven by the training distribution. Both patchwise training and fully convolutional training can be made to produce any distribution, although their relative computational efficiency depends on overlap and minibatch size. Whole image fully convolutional training is identical to patchwise training where each batch consists of all the receptive fields of the units below the loss for an image (or collection of images). While this is more efficient than uniform sampling of patches, it reduces the number of possible batches. However, random selection of patches within an image may be recovered simply. Restricting the loss to a randomly sampled subset of its spatial terms (or, equivalently applying a DropConnect mask [36] between the output and the loss) excludes patches from the gradient computation.</p>
+</blockquote>
+<blockquote>
+<p><strong>Sampling in patchwise training can correct class imbalance [27, 7, 2] and mitigate the spatial correlation of dense patches [28, 15]</strong>. In fully convolutional training, class balance can also be achieved by weighting the loss, and loss sampling can be used to address spatial correlation.</p>
+</blockquote>
+<h3 id="Segmentation-Architecture"><a href="#Segmentation-Architecture" class="headerlink" title="Segmentation Architecture"></a>Segmentation Architecture</h3><p>Base network是由AlexNet/VGG/GoogLeNet改动而来，Loss采用per-pixel multinominal logistic loss。整体architecture如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/dag_nets_fcn.jpg" alt="DAG Nets in FCN"></p>
+<h4 id="Combining-what-and-where"><a href="#Combining-what-and-where" class="headerlink" title="Combining what and where"></a>Combining what and where</h4><blockquote>
+<p>We address this by adding skips [1] that combine the final prediction layer with lower layers with finer strides. This turns a line topology into a DAG, with edges that skip ahead from lower layers to higher ones (Figure 3). <strong>As they see fewer pixels, the finer scale predictions should need fewer layers, so it makes sense to make them from shallower net outputs. Combining fine layers and coarse layers lets the model make local predictions that respect global structure</strong>.</p>
+</blockquote>
+<blockquote>
+<p>We first divide the output stride in half by predicting from a 16 pixel stride layer. We add a $1\times 1$ convolution layer on top of pool-4 to produce additional class predictions. We fuse this output with the predictions computed on top of conv7 (convolutionalized fc7) at stride 32 by adding a $2\times$ upsampling layer and summing both predictions (see Figure 3). We initialize the $2\times$ upsampling to bilinear interpolation, but allow the parameters to be learned as described in Section 3.3. Finally, the stride 16 predictions are upsampled back to the image. We call this net FCN-16s. FCN-16s is learned end-to-end, initialized with the parameters of the last,coarser net, which we now call FCN-32s. The new parameters acting on pool4 are zeroinitialized so that the net starts with unmodified predictions. The learning rate is decreased by a factor of 100.</p>
+</blockquote>
+<h2 id="Mask-RCNN"><a href="#Mask-RCNN" class="headerlink" title="Mask RCNN"></a>Mask RCNN</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/He_Mask_R-CNN_ICCV_2017_paper.pdf" target="_blank" rel="noopener">Mask r-cnn</a></p>
+</blockquote>
+<p>Mask RCNN是Kaiming He发表在<a href="http://openaccess.thecvf.com/ICCV2017.py" target="_blank" rel="noopener">ICCV 2017</a>上的Paper，在Segmentation和Detection任务上均取得了state-of-the-art的成绩。本文就来对Mask RCNN进行一下细致的讲解。</p>
+<h3 id="What-is-Mask-RCNN"><a href="#What-is-Mask-RCNN" class="headerlink" title="What is Mask RCNN?"></a>What is Mask RCNN?</h3><p>Mask RCNN可以看作是<code>Faster RCNN + Mask branch for Segmentation</code>。Mask branch是应用在每一个RoI上的small FCN，用来预测segmentation mask。Faster RCNN是一种非常优秀的object detection framework，但是却并不适合pixel-to-pixel alignment，原因就在于Faster RCNN中的<code>RoI Pooling Layer perform coarse spatial quantization for feature extraction</code>。为了修复misalignment问题，作者在Mask RCNN中引入了<code>RoIAlign</code>来保留exact spatial locations。此外，作者还发现RoIAlign对mask和classification prediction的解耦非常重要。</p>
+<blockquote>
+<p>We predict a binary mask for each class independently, without competition among classes, and rely on the network’s RoI classification branch to predict the category. In contrast, FCNs usually perform per-pixel multi-class categorization, which couples segmentation and classification, and based on our experiments works poorly for instance segmentation.</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/mask_rcnn.jpg" alt="Mask RCNN"></p>
+<h3 id="Delve-into-Mask-RCNN"><a href="#Delve-into-Mask-RCNN" class="headerlink" title="Delve into Mask RCNN"></a>Delve into Mask RCNN</h3><p>熟悉Faster RCNN的同学都应该知道，Faster RCNN=RPN + Fast RCNN，即RPN通过sliding window的方式在feature map上生成region proposal，然后同时做bbox offset regression + classification。之前的segmentation算法会将object classification和segmentation同时处理(类似于Fast RCNN中的bbox regression和object classification做Multi-task training那样同时处理)。Mask RCNN也采取了two-stage的方法：即在第一个stage运行RPN，第二个stage做bbox offset regression + object classification。同时Mask Branch也针对每一个RoI输出binary mask。</p>
+<p>所以，整体的Loss Function定义为：<br>$$<br>L=L_{cls} + L_{box} + L_{mask}<br>$$<br>其中，$L_{cls}$和$L_{box}$分别是Softmax Loss和Smooth L1 Loss。对于每个RoI，Mask branch产生$Km^2$-dimensional outputs，也就是说对$m\times m$ resolution encode $K$个 binary mask，分别对应$K$个classes。$L_{mask}$处理方式如下：</p>
+<blockquote>
+<p>We apply a per-pixel sigmoid, and define $L_{mask}$ as the average binary cross-entropy loss. For an RoI associated with ground-truth class k, Lmask is only defined on the k-th mask (other mask outputs do not contribute to the loss).</p>
+</blockquote>
+<blockquote>
+<p><strong>Our definition of $L_{mask}$ allows the network to generate masks for every class without competition among classes</strong>. We rely on the dedicated classification branch to predict the class label used to select the output mask. This decouples mask and class prediction. This is different from common practice when applying FCNs [24] to semantic segmentation, which typically uses a per-pixel softmax and a multinomial cross-entropy loss. In that case, masks across classes compete; in our case, with a per-pixel sigmoid and a binary loss, they do not. We show by experiments that this formulation is key for good instance segmentation results.</p>
+</blockquote>
+<h4 id="Mask-Representation"><a href="#Mask-Representation" class="headerlink" title="Mask Representation"></a>Mask Representation</h4><blockquote>
+<p>A mask encodes an input object’s spatial layout. Thus, <strong>unlike class labels or box offsets that are inevitably collapsed into short output vectors by fully-connected (fc) layers, extracting the spatial structure of masks can be addressed naturally by the pixel-to-pixel correspondence provided by convolutions</strong>.</p>
+</blockquote>
+<blockquote>
+<p>Specifically, we predict an $m\times m$ mask from each RoI using an FCN [24]. <strong>This allows each layer in the mask branch to maintain the explicit $m\times m$ object spatial layout without collapsing it into a vector representation that lacks spatial dimensions</strong>. Unlike previous methods that resort to fc layers for mask prediction [27, 28, 7], our fully convolutional representation requires fewer parameters, and is more accurate as demonstrated by experiments.</p>
+</blockquote>
+<blockquote>
+<p>This pixel-to-pixel behavior requires our RoI features, which themselves are small feature maps, to be well aligned to faithfully preserve the explicit per-pixel spatial correspondence. This motivated us to develop the following RoIAlign layer that plays a key role in mask prediction.</p>
+</blockquote>
+<h4 id="RoIAlign"><a href="#RoIAlign" class="headerlink" title="RoIAlign"></a>RoIAlign</h4><blockquote>
+<p>RoIPool [9] is a standard operation for extracting a small feature map (e.g., $7\times 7$) from each RoI. RoIPool first quantizes a floating-number RoI to the discrete granularity of the feature map, this quantized RoI is then subdivided into spatial bins which are themselves quantized, and finally feature values covered by each bin are aggregated (usually by max pooling). Quantization is performed, e.g., on a continuous coordinate x by computing $[x/16]$, where 16 is a feature map stride and $[\cdot]$ is rounding; likewise, quantization is performed when dividing into bins (e.g., $7\times 7$). <strong>These quantizations introduce misalignments between the RoI and the extracted features. While this may not impact classification, which is robust to small translations, it has a large negative effect on predicting pixel-accurate masks</strong>.</p>
+</blockquote>
+<blockquote>
+<p>To address this, <strong>we propose an RoIAlign layer that removes the harsh quantization of RoIPool, properly aligning the extracted features with the input</strong>. Our proposed change is simple: <strong>we avoid any quantization of the RoI boundaries or bins (i.e., we use $x/16$ instead of $[x/16]$). We use bilinear interpolation [18] to compute the exact values of the input features at four regularly sampled locations in each RoI bin, and aggregate the result (using max or average)</strong>.</p>
+</blockquote>
+<h3 id="Ablation-Study"><a href="#Ablation-Study" class="headerlink" title="Ablation Study"></a>Ablation Study</h3><h4 id="Multinomial-vs-Independent-Masks"><a href="#Multinomial-vs-Independent-Masks" class="headerlink" title="Multinomial vs. Independent Masks"></a>Multinomial vs. Independent Masks</h4><p>Mask R-CNN decouples mask and class prediction: as the existing box branch predicts the class label, we generate a mask for each class without competition among classes (by a per-pixel sigmoid and a binary loss). In Table 2b, we compare this to using a per-pixel softmax and a multinomial loss (as commonly used in FCN [24]). This alternative couples the tasks of mask and class prediction, and results in a severe loss in mask AP (5.5 points). <strong>This suggests that once the instance has been classified as a whole (by the box branch), it is sufficient to predict a binary mask without concern for the categories, which makes the model easier to train</strong>.</p>
+<h4 id="Class-Specific-vs-Class-Agnostic-Masks"><a href="#Class-Specific-vs-Class-Agnostic-Masks" class="headerlink" title="Class-Specific vs. Class-Agnostic Masks"></a>Class-Specific vs. Class-Agnostic Masks</h4><p>Our default instantiation predicts class-specific masks, i.e., one $m\times m$ mask per class. Interestingly, Mask R-CNN with classagnostic masks (i.e., predicting a single m×m output regardless of class) is nearly as effective: it has 29.7 mask AP vs. 30.3 for the class-specific counterpart on ResNet-50-C4. This further highlights the division of labor in our approach which largely decouples classification and segmentation.</p>
+<h4 id="Mask-Branch"><a href="#Mask-Branch" class="headerlink" title="Mask Branch"></a>Mask Branch</h4><p>Segmentation is a pixel-to-pixel task and we exploit the spatial layout of masks by using an FCN. In Table 2e, we compare multi-layer perceptrons (MLP) and FCNs, using a ResNet-50-FPN backbone. Using FCNs gives a 2.1 mask AP gain over MLPs. We note that we choose this backbone so that the conv layers of the FCN head are not pre-trained, for a fair comparison with MLP.</p>
+<h2 id="FC-DenseNet"><a href="#FC-DenseNet" class="headerlink" title="FC_DenseNet"></a>FC_DenseNet</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2017_workshops/w13/papers/Jegou_The_One_Hundred_CVPR_2017_paper.pdf" target="_blank" rel="noopener">The one hundred layers tiramisu: Fully convolutional densenets for semantic segmentation</a><br>Code: <a href="https://github.com/SimJeg/FC-DenseNet.git" target="_blank" rel="noopener">Github</a></p>
+</blockquote>
+<p>本篇介绍一下CVPR Workshop 2017 上面的一篇paper，idea非常简单，就是单纯地将DenseNet扩展为FCN架构，然后取得了很不错的效果。笔者认为，该算法能work很大程度上取决于优秀的backbone——DenseNet，以及在segmentation非常work的工作——FCN。本文novelty很一般，但鉴于工程中实际上并不需要太复杂的方法，所以还是讲解一下吧。</p>
+<p>先回顾一下<a href="http://openaccess.thecvf.com/content_cvpr_2015/papers/Long_Fully_Convolutional_Networks_2015_CVPR_paper.pdf" target="_blank" rel="noopener">FCN-based segmentation methods</a>：<br>(1) downsampling layers用来提取coarse semantic features<br>(2) upsampling layers恢复到和input image相同size的output；因low-level features包含很多细节信息，所以常常会再网络中加入skip connection结构<br>(3) CRF(Conditional Random Field)用于提纯上一步较coarse的prediction</p>
+<p>本文，作者对DenseNet进行了改进：首先将其改为FCN结构，但只在相邻dense block采用upsampling operation，对于相同dimension的feature map利用skip connection连接起来，来获取multi-scale的information。整体网络也借鉴了<a href="https://arxiv.org/pdf/1505.04597.pdf" target="_blank" rel="noopener">UNet</a>的结构：</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-segmentation/fc_densenet.jpg" alt="FC-DenseNet"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Long J, Shelhamer E, Darrell T. <a href="http://openaccess.thecvf.com/content_cvpr_2015/papers/Long_Fully_Convolutional_Networks_2015_CVPR_paper.pdf" target="_blank" rel="noopener">Fully convolutional networks for semantic segmentation</a>[C]//Proceedings of the IEEE conference on computer vision and pattern recognition. 2015: 3431-3440.</li>
+<li>He, Kaiming, et al. <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/He_Mask_R-CNN_ICCV_2017_paper.pdf" target="_blank" rel="noopener">“Mask r-cnn.”</a> Computer Vision (ICCV), 2017 IEEE International Conference on. IEEE, 2017.</li>
+<li>Jégou S, Drozdzal M, Vazquez D, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2017_workshops/w13/papers/Jegou_The_One_Hundred_CVPR_2017_paper.pdf" target="_blank" rel="noopener">The one hundred layers tiramisu: Fully convolutional densenets for semantic segmentation</a>[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops. 2017: 11-19.</li>
+<li>Ronneberger O, Fischer P, Brox T. <a href="https://arxiv.org/pdf/1505.04597.pdf" target="_blank" rel="noopener">U-net: Convolutional networks for biomedical image segmentation</a>[C]//International Conference on Medical image computing and computer-assisted intervention. Springer, Cham, 2015: 234-241.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2019/09/01/cv-segmentation/" target="_blank" title="[CV] Segmentation">https://lucasxlu.github.io/blog/2019/09/01/cv-segmentation/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2019/10/20/dl-architecture/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [DL] Architecture
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2019/07/20/cv-detection/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[CV] Detection</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fully-Convolutional-Networks-for-Semantic-Segmentation"><span class="nav-number">2.</span> <span class="nav-text">Fully Convolutional Networks for Semantic Segmentation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Fully-convolutional-networks"><span class="nav-number">2.1.</span> <span class="nav-text">Fully convolutional networks</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Adapting-classifiers-for-dense-prediction"><span class="nav-number">2.1.1.</span> <span class="nav-text">Adapting classifiers for dense prediction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shift-and-stitch-is-filter-rarefaction"><span class="nav-number">2.1.2.</span> <span class="nav-text">Shift-and-stitch is filter rarefaction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Upsampling-is-backwards-strided-convolution"><span class="nav-number">2.1.3.</span> <span class="nav-text">Upsampling is backwards strided convolution</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Patchwise-training-is-loss-sampling"><span class="nav-number">2.1.4.</span> <span class="nav-text">Patchwise training is loss sampling</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Segmentation-Architecture"><span class="nav-number">2.2.</span> <span class="nav-text">Segmentation Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Combining-what-and-where"><span class="nav-number">2.2.1.</span> <span class="nav-text">Combining what and where</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mask-RCNN"><span class="nav-number">3.</span> <span class="nav-text">Mask RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-Mask-RCNN"><span class="nav-number">3.1.</span> <span class="nav-text">What is Mask RCNN?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Delve-into-Mask-RCNN"><span class="nav-number">3.2.</span> <span class="nav-text">Delve into Mask RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Mask-Representation"><span class="nav-number">3.2.1.</span> <span class="nav-text">Mask Representation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RoIAlign"><span class="nav-number">3.2.2.</span> <span class="nav-text">RoIAlign</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ablation-Study"><span class="nav-number">3.3.</span> <span class="nav-text">Ablation Study</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Multinomial-vs-Independent-Masks"><span class="nav-number">3.3.1.</span> <span class="nav-text">Multinomial vs. Independent Masks</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Class-Specific-vs-Class-Agnostic-Masks"><span class="nav-number">3.3.2.</span> <span class="nav-text">Class-Specific vs. Class-Agnostic Masks</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mask-Branch"><span class="nav-number">3.3.3.</span> <span class="nav-text">Mask Branch</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FC-DenseNet"><span class="nav-number">4.</span> <span class="nav-text">FC_DenseNet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

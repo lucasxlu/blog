@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[dl] batch normalization | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep Learning" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionBatch Normalization是现如今主流深度学习模型必备组件。笔者认为，这是一个和ResNet里提出的skip connection一样对深度学习发展十分insightful的idea。本文旨在对BatchNorm进行一下系统的梳理与讲解。  Paper: Batch Normalization: Accelerating Deep Network Trainin">
+<meta name="keywords" content="Machine Learning,Deep Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[DL] Batch Normalization">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/11/20/dl-bn/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionBatch Normalization是现如今主流深度学习模型必备组件。笔者认为，这是一个和ResNet里提出的skip connection一样对深度学习发展十分insightful的idea。本文旨在对BatchNorm进行一下系统的梳理与讲解。  Paper: Batch Normalization: Accelerating Deep Network Trainin">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-bn/BN_transform.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-bn/BN_update.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-bn/BN_training.jpg">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.828Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[DL] Batch Normalization">
+<meta name="twitter:description" content="IntroductionBatch Normalization是现如今主流深度学习模型必备组件。笔者认为，这是一个和ResNet里提出的skip connection一样对深度学习发展十分insightful的idea。本文旨在对BatchNorm进行一下系统的梳理与讲解。  Paper: Batch Normalization: Accelerating Deep Network Trainin">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-bn/BN_transform.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-dl-bn" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [DL] Batch Normalization
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/11/20/dl-bn/" class="article-date">
+	  <time datetime="2018-11-20T15:18:25.000Z" itemprop="datePublished">2018-11-20</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p><a href="http://proceedings.mlr.press/v37/ioffe15.pdf" target="_blank" rel="noopener">Batch Normalization</a>是现如今主流深度学习模型必备组件。笔者认为，这是一个和ResNet里提出的skip connection一样对深度学习发展十分insightful的idea。本文旨在对BatchNorm进行一下系统的梳理与讲解。</p>
+<blockquote>
+<p>Paper: <a href="http://proceedings.mlr.press/v37/ioffe15.pdf" target="_blank" rel="noopener">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a></p>
+</blockquote>
+<p>训练Deep Models通常是比较麻烦的，以feedforward network为例，每一层输入distribution的改动都会影响其后继的层，若使用了Sigmoid这样的non-linearity transformation，则还会存在saturation的问题(sigmoid两端)。</p>
+<p>BatchNorm通过对每一个mini-batch samples做normalization，可以极大地减小这种internal covariate shift，从而让整个网络使用更大的learning rate，取消因防止overfitting对Dropout的依赖，不需要可以关注param initialization等。</p>
+<p>假设DNN的optimization object如下：<br>$$<br>\Theta=\mathop{argmin} \limits_{\Theta} \frac{1}{N} \sum_{i=1}^N l(x_i, \Theta)<br>$$</p>
+<p>使用SGD优化算法的话，会随机sample一个mini-batch，使用mini-batch而非one-by-one的好处在于：</p>
+<ul>
+<li>一个batch的gradient是对整个training set中的estimation，若batch size越大显然就会得到更准确的estimation</li>
+<li>计算一个mini-batch的gradient显然比one-by-one sample更为高效</li>
+</ul>
+<p>SGD虽然有效，但是在feedforward network的训练中会存在一些问题，例如某一层的input会受到其前驱层的影响，所以在DNN中一个小的扰动都会对整个网络的训练带来很大的影响。</p>
+<p>若一个learning system的input发生了变化，我们就称该system经历了<strong>covariate shift</strong>。</p>
+<p>BatchNorm通过对input进行normalization来减小这种internal covariate shift，此外，BatchNorm通过减少gradient对参数初始化和网络模型参数量的依赖，也会利于gradient flow，在DNN中加入BN层后，允许我们使用更大的learning rate，以及sigmoid activation function (不用担心两端的saturation问题)。此外<strong>BatchNorm还有正则化的作用</strong>(引入了加性和乘性噪声)，从而减少了防止overfitting背景下对Dropout的依赖。</p>
+<h2 id="Normalization-via-Mini-Batch-Statistics"><a href="#Normalization-via-Mini-Batch-Statistics" class="headerlink" title="Normalization via Mini-Batch Statistics"></a>Normalization via Mini-Batch Statistics</h2><p>对于每一层的input：$\hat{x}^{(k)}=\frac{x^{(k)}-E[x^{(k)}]}{\sqrt{Var[x^{(k)}]}}$<br>其中，$E[x^{(k)}]$和$Var[x^{(k)}]$从整个training set上计算而来。</p>
+<p>但是单纯只做normalization会改变layer的表示能力，因此还需要<strong>scale and shift the normalized value</strong>，也就是这样的：<br>$$<br>y^{(k)}=\gamma^{(k)}\hat{x}^{(k)} + \beta^{(k)}<br>$$<br>其中，$\gamma^{(k)}=\sqrt{Var(x^{(k)})}$，$\beta^{(k)}=E[x^{(k)}]$。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-bn/BN_transform.jpg" alt="BatchNorm Transform"></p>
+<p>每个normalized activation $\hat{x}^{(k)}$可以视为线性变换$y^{(k)}=\gamma^{(k)}\hat{x}^{(k)} + \beta^{(k)}$后子网络的输入。</p>
+<p>BN层的参数更新过程如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-bn/BN_update.jpg" alt="Update of BN Layer"></p>
+<p>BN层的训练过程如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-bn/BN_training.jpg" alt="Training of BN Layer"></p>
+<h3 id="BatchNorm-in-CNN"><a href="#BatchNorm-in-CNN" class="headerlink" title="BatchNorm in CNN"></a>BatchNorm in CNN</h3><p>BN在CNN中和MLP中有一些差别，CNN中，BatchNorm Transform独立地应用到每一维的channel$x=Wu$上，每一个channel对应的学习参数$\gamma^{(k)}$和$\beta^{(k)}$。</p>
+<h3 id="Batch-Normalization-enables-higher-learning-rates"><a href="#Batch-Normalization-enables-higher-learning-rates" class="headerlink" title="Batch Normalization enables higher learning rates"></a>Batch Normalization enables higher learning rates</h3><p>通过对activations进行归一化，可以避免在DNN中小的数据扰动对整个网络的影响。此外，BN也使得训练过程对parameters scale更加适应，当learning rate过高，在DNN的BP中，很容易出现gradient explosion和divergence。但是，添加了BN层后，BP就不受parameters scale的影响了。<br>例如：<br>$$<br>BN(Wu)=BN((aW)u)<br>$$<br>BP时：$\frac{\partial BN((aW)u)}{\partial u}=\frac{\partial BN(Wu)}{\partial u}$。此外，$\frac{\partial BN((aW)u)}{\partial aW}=\frac{1}{a}\cdot \frac{\partial BN(Wu)}{\partial W}$，所以larger weights会导致smaller gradients。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Ioffe S, Szegedy C. <a href="http://proceedings.mlr.press/v37/ioffe15.pdf" target="_blank" rel="noopener">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a>[C]//International Conference on Machine Learning. 2015: 448-456.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/11/20/dl-bn/" target="_blank" title="[DL] Batch Normalization">https://lucasxlu.github.io/blog/2018/11/20/dl-bn/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/12/04/book-ml-practice-at-meituan/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [Book] ML Practice At MeiTuan
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/11/04/cv-iqa/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[CV] Image Quality Assessment</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Normalization-via-Mini-Batch-Statistics"><span class="nav-number">2.</span> <span class="nav-text">Normalization via Mini-Batch Statistics</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BatchNorm-in-CNN"><span class="nav-number">2.1.</span> <span class="nav-text">BatchNorm in CNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Batch-Normalization-enables-higher-learning-rates"><span class="nav-number">2.2.</span> <span class="nav-text">Batch Normalization enables higher learning rates</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

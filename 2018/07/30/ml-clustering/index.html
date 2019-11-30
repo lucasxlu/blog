@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[ml] clustering | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningData Science" />
+  
+  
+  
+  
+  <meta name="description" content="Performance Metric聚类的性能度量大致有两类。一类是将聚类结果与某个“参考模型”进行比较，称为“外部指标”；另一类是直接考查聚类结果而不利用任何参考模型，称为“内部指标”。 对数据集$D=\{x_1,x_2,\cdots,x_m\}$，假定通过聚类给出的簇划分为$\mathcal{C}=\{C_1,C_2,\cdots,C_k\}$，参考模型给出的簇划分为$\mathcal{C}^">
+<meta name="keywords" content="Machine Learning,Data Science">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[ML] Clustering">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/07/30/ml-clustering/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Performance Metric聚类的性能度量大致有两类。一类是将聚类结果与某个“参考模型”进行比较，称为“外部指标”；另一类是直接考查聚类结果而不利用任何参考模型，称为“内部指标”。 对数据集$D=\{x_1,x_2,\cdots,x_m\}$，假定通过聚类给出的簇划分为$\mathcal{C}=\{C_1,C_2,\cdots,C_k\}$，参考模型给出的簇划分为$\mathcal{C}^">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[ML] Clustering">
+<meta name="twitter:description" content="Performance Metric聚类的性能度量大致有两类。一类是将聚类结果与某个“参考模型”进行比较，称为“外部指标”；另一类是直接考查聚类结果而不利用任何参考模型，称为“内部指标”。 对数据集$D=\{x_1,x_2,\cdots,x_m\}$，假定通过聚类给出的簇划分为$\mathcal{C}=\{C_1,C_2,\cdots,C_k\}$，参考模型给出的簇划分为$\mathcal{C}^">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-ml-clustering" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [ML] Clustering
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/07/30/ml-clustering/" class="article-date">
+	  <time datetime="2018-07-30T14:01:45.000Z" itemprop="datePublished">2018-07-30</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Performance-Metric"><a href="#Performance-Metric" class="headerlink" title="Performance Metric"></a>Performance Metric</h2><p>聚类的性能度量大致有两类。一类是将聚类结果与某个“参考模型”进行比较，称为“外部指标”；另一类是直接考查聚类结果而不利用任何参考模型，称为“内部指标”。</p>
+<p>对数据集$D=\{x_1,x_2,\cdots,x_m\}$，假定通过聚类给出的簇划分为$\mathcal{C}=\{C_1,C_2,\cdots,C_k\}$，参考模型给出的簇划分为$\mathcal{C}^{\star}=\{C^{\star}_1,C^{\star}_2,\cdots,C^{\star}_s\}$，相应的，另$\lambda$与$\lambda^{\star}$分别表示$\mathcal{C}$与$\mathcal{C}^{\star}$对应的簇标记向量，我们将样本两两配对考虑，定义：<br>$$<br>a=|SS|, SS=\{(x_i,x_j)|\lambda_i=\lambda_j,\lambda_i^{\star}=\lambda_j^{\star},i&lt;j\} \\<br>b=|SD|, SD=\{(x_i,x_j)|\lambda_i=\lambda_j,\lambda_i^{\star}\neq\lambda_j^{\star},i&lt;j\} \\<br>c=|DS|, DS=\{(x_i,x_j)|\lambda_i\neq\lambda_j,\lambda_i^{\star}=\lambda_j^{\star},i&lt;j\} \\<br>d=|DD|, DD=\{(x_i,x_j)|\lambda_i\neq\lambda_j,\lambda_i^{\star}\neq\lambda_j^{\star},i&lt;j\}<br>$$<br>其中集合$SS$包含了在$\mathcal{C}$中隶属于相同簇且在$\mathcal{C}^{\star}$中也隶属于相同簇的样本对，集合$SD$包含了在$\mathcal{C}$中隶属于相同簇但在$\mathcal{C}^{\star}$中隶属于不同簇的样本对。易得：<br>$$<br>a+b+c+d=\frac{m(m-1)}{2}<br>$$</p>
+<p>基于上式可得以下外部指标：</p>
+<ul>
+<li>Jaccard Coefficient: $JC=\frac{a}{a+b+c}$</li>
+<li>FM Index: $FM=\sqrt{\frac{a}{a+b}\cdot \frac{a}{a+c}}$</li>
+<li>Rand Index: $RI=\frac{2(a+d)}{m(m-1)}$</li>
+</ul>
+<p>考虑聚类结果的簇划分$\mathcal{C}=\{C_1,C_2,\cdots,C_k\}$，定义：</p>
+<ul>
+<li>$AVG(C)=\frac{2}{|C|(|C|-1)\sum_{1\leq i&lt;j \leq |C|}} dist(x_i,x_j)$</li>
+<li>$diam(C)=\mathop{max} \limits_{1\leq i &lt; j \leq |C|} dist(x_i,x_j)$</li>
+<li>$d_{min}(C_i,C_j)=\mathop{min} \limits_{x_i\in C_i,x_j\in C_j} dist(x_i,x_j)$</li>
+<li>$d_{cen}(C_i,C_j)=dist(\mu_i,\mu_j)$</li>
+</ul>
+<p>基于上式可以推导聚类的内部指标：</p>
+<ul>
+<li>DB Index: $DBI=\frac{1}{k}\sum_{i=1}^k \mathop{max} \limits_{j\neq i} \frac{avg(C_i)+avg(C_j)}{d_{cen}(\mu_i,\mu_j)}$</li>
+<li>Dunn Index: $DI=\mathop{min} \limits_{1\leq i \leq k} \{\mathop{min} \limits_{j\neq i} (\frac{d_{min}(C_i,C_j)}{\mathop{max} \limits_{1\leq l \leq k}diam(C_l)})\}$</li>
+</ul>
+<h2 id="Distance-Metric"><a href="#Distance-Metric" class="headerlink" title="Distance Metric"></a>Distance Metric</h2><p>对于无序属性可采用VDM(Value Difference Metric)，令$m_{u,a}$表示在属性$u$上取值为$a$的样本数，$m_{u,a,i}$表示第$i$个样本在属性$u$上取值为$a$的样本数，$k$为样本数，则属性$u$上两个离散值$a$和$b$之间的VDM为：<br>$$<br>VDM_p(a,b)=\sum_{i=1}^k |\frac{m_{u,a,i}}{m_{u,a}}-\frac{m_{u,b,i}}{m_{u,b}}|^p<br>$$</p>
+<p>于是，将$L_P$ Distance和VDM结合可以处理混合属性。假定有$n_c$个有序属性、$n-n_c$个无序属性，则：<br>$$<br>MinkovDM_p(x_i,x_j)=\big(\sum_{u=1}^{u_c}|x_{iu}-x_{ju}|^p + \sum_{u=n_c+1}^n VDM_p(x_{iu},x_{ju})\big)^{\frac{1}{p}}<br>$$<br>当样本空间中不同属性的重要性不同时，可使用“加权距离”：<br>$$<br>dist_{wmk}(x_i,x_j)=\big(w_1\cdot|x_{i1}-x_{j1}|^p + \cdots + w_n\cdot|x_{in}-x_{jn}|^p \big)^{\frac{1}{p}}<br>$$</p>
+<h2 id="Prototype-based-Clustering"><a href="#Prototype-based-Clustering" class="headerlink" title="Prototype-based Clustering"></a>Prototype-based Clustering</h2><h3 id="KMeans"><a href="#KMeans" class="headerlink" title="KMeans"></a>KMeans</h3><p>KMeans通过最小MSE Loss来进行学习，<br>$$<br>E=\sum_{i=1}^k \sum_{x\in C_i}||x-\mu_i||_2^2<br>$$<br>其中$\mu_i=\frac{1}{|C_i|}\sum_{x\in C_i}x$是簇$C_i$的均值向量。</p>
+<h3 id="Learning-Vector-Quantization"><a href="#Learning-Vector-Quantization" class="headerlink" title="Learning Vector Quantization"></a>Learning Vector Quantization</h3><p>LVQ假设数据样本带有类别标记，学习过程中利用样本的这些监督信息来辅助聚类。在学得一组原型向量$\{p_1,p_2,\cdots,p_q\}$后，即可实现对样本$\chi$的簇划分，对任意样本$x$，它将被划入与其距离最近的原型向量所代表的簇中；换言之，每个原型向量$p_i$定义了与之相关的一个区域$R_i$，该区域中每个样本与$p_i$的距离不大于它与其他原型向量$p_{i^{‘}}(i^{‘}\neq i)$的距离，即：<br>$$<br>R_i=\{x\in \chi| ||x-p_i||_2\leq ||x-p_{i^{‘}}||_2,i\neq i^{‘}\}<br>$$</p>
+<h3 id="Mixture-of-Gaussian"><a href="#Mixture-of-Gaussian" class="headerlink" title="Mixture of Gaussian"></a>Mixture of Gaussian</h3><p>与KMeans、LVQ采用原型向量来刻画聚类结构不同，Mixture-of-Gaussian采用概率模型来表达聚类原型。</p>
+<p>对$n$维样本空间$\chi$中的随机向量$x$，若$x$服从高斯分布，其概率密度函数为：<br>$$<br>p(x)=\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}e^{-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)}<br>$$<br>$\mu$是$n$维均值向量，$\Sigma$是$n\times n$的协方差矩阵。由上式可知，高斯分布完全由均值向量$\mu$和协方差矩阵$\Sigma$确定。我们将概率密度函数记为$p(x|\mu,\Sigma)$。</p>
+<p>我们可定义高斯混合分布：<br>$$<br>p_{\mathcal{M}}(x)=\sum_{i=1}^k \alpha_i\cdot p(x|\mu_i,\Sigma_i)<br>$$<br>该分布共由$k$个混合分布组成，每个混合成分对应一个高斯分布。其中$\mu_i$与$\Sigma_i$是第$i$个高斯混合成分的参数，而$\alpha_i&gt;0$为相应的混合系数，$\sum_{i=1}^k \alpha_i=1$。</p>
+<p>假设样本的生成过程由高斯混合分布给出：首先，根据$\alpha_1,\alpha_2,\cdots,\alpha_k$定义的先验分布选择高斯混合成分，其中$\alpha_i$为选择的第$i$个混合成分的概率；然后根据被选择的混合成分的概率密度函数进行采样，从而生成相应的样本。</p>
+<p>若training set $D=\{x_1,x_2,\cdots,x_m\}$由上述过程生成，另随机变量$z_j\in \{1,2,\cdots,k\}$表示生成样本$x_j$的高斯混合成分。根据Bayesian Theorem，$z_j$的后验分布对应于：<br>$$<br>p_{\mathcal{M}}(z_j=i|x_j)=\frac{P(z_j=i)\cdot p_{\mathcal{M}}(x_j|z_j=i)}{p_{\mathcal{M}}(x_j)}=\frac{\alpha_i \cdot p(x_j|\mu_i,\Sigma_i)}{\sum_{l=1}^k \alpha_l \cdot p(x_j|\mu_l,\Sigma_l)}<br>$$<br>$p_{\mathcal{M}}(z_j=i|x_j)$给出了样本$x_j$由第$i$个高斯混合成分生成的后验概率，我们将其记作$\gamma_{ji}$。</p>
+<p>当高斯混合分布已知，高斯混合聚类将把样本$D$划分为$k$个簇$\mathcal{C}=\{C_1,C_2,\cdots,C_k\}$，每个样本$x_j$的簇标记如下确定：<br>$$<br>\lambda_j=\mathop{argmax} \limits_{i\in \{1,2,\cdots,k\}} \gamma_{ji}<br>$$</p>
+<h2 id="Density-based-Clustering"><a href="#Density-based-Clustering" class="headerlink" title="Density-based Clustering"></a>Density-based Clustering</h2><p>基于密度的聚类假设聚类结构能通过样本分布的紧密程度确定。DBSCAN是一种著名的密度聚类算法，它基于一组“领域”参数$(\epsilon, MinPts)$来刻画样本分布的紧密程度。给定数据集$D=\{x_1,x_2,\cdots,x_m\}$，定义下面几个概念：</p>
+<ul>
+<li>$\epsilon-$邻域：对$x_j\in D$，其$\epsilon-$邻域包含样本集$D$中与$x_j$的距离不大于$\epsilon$的样本，即$N_{\epsilon}(x_j)=\{x_i\in D|dist(x_i,x_j)\leq \epsilon\}$；</li>
+<li>核心对象：若$x_j$的$\epsilon-$邻域至少包含$MinPts$个样本，即$|N_{\epsilon}(x_j)|\geq MinPts$，则$x_j$是一个核心对象；</li>
+<li>密度直达：若$x_j$位于$x_i$的$\epsilon-$邻域内，且$x_i$是核心对象，则称$x_j$由$x_i$密度直达；</li>
+<li>密度可达：对$x_i$与$x_j$，若存在样本序列$p_1,p_2,\cdots,p_n$，其中$p_1=x_i,p_2=x_j$，且$p_{i+1}$由$p_i$密度直达，则称$x_j$由$x_i$密度可达；</li>
+<li>密度相连：对$x_i$与$x_j$，若存在$x_k$使得$x_i$与$x_j$均由$x_k$密度可达，则称$x_i$与$x_j$密度相连。</li>
+</ul>
+<p>基于以上概念，DBSCAN将“簇”定义为：由密度可达关系导出的最大的密度相连样本集合。形式化的说，给定邻域参数$(\epsilon,MinPts)$，簇$C\subseteq D$是满足以下性质的非空样本子集：</p>
+<ul>
+<li>连接性：$x_i\in C,x_j \in C, \implies x_i$与$x_j$密度相连</li>
+<li>最大性：$x_i\in C, x_j$由$x_i$密度可达$\implies$ $x_j \in C$</li>
+</ul>
+<h2 id="Hierarchical-Clustering"><a href="#Hierarchical-Clustering" class="headerlink" title="Hierarchical Clustering"></a>Hierarchical Clustering</h2><p>它先将数据集中的每个样本看作一个初始聚类簇，然后在算法运行的每一步中找出距离最近的两个聚类簇进行合并，该过程不断重复，直到达到预设的聚类簇个数。</p>
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><p>聚类簇数$k$通常需由用户提供，可运行不同的$k$值后选取最佳的结果。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/07/30/ml-clustering/" target="_blank" title="[ML] Clustering">https://lucasxlu.github.io/blog/2018/07/30/ml-clustering/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/08/02/algo-sort/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [Algorithm] Sort
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/07/25/dl-bp/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DL] BackPropogation</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Performance-Metric"><span class="nav-number">1.</span> <span class="nav-text">Performance Metric</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Distance-Metric"><span class="nav-number">2.</span> <span class="nav-text">Distance Metric</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Prototype-based-Clustering"><span class="nav-number">3.</span> <span class="nav-text">Prototype-based Clustering</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#KMeans"><span class="nav-number">3.1.</span> <span class="nav-text">KMeans</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Learning-Vector-Quantization"><span class="nav-number">3.2.</span> <span class="nav-text">Learning Vector Quantization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mixture-of-Gaussian"><span class="nav-number">3.3.</span> <span class="nav-text">Mixture of Gaussian</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Density-based-Clustering"><span class="nav-number">4.</span> <span class="nav-text">Density-based Clustering</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hierarchical-Clustering"><span class="nav-number">5.</span> <span class="nav-text">Hierarchical Clustering</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tips"><span class="nav-number">6.</span> <span class="nav-text">Tips</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

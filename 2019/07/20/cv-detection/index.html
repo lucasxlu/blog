@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[cv] detection | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningComputer VisionObject Detection" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasX注：">
+<meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision,Object Detection">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[CV] Detection">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2019/07/20/cv-detection/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasX注：">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rcnn.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/cw_vs_spp.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/spp_layer.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/pooling.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/fastrcnn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/SSD.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/SSD_YOLO.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/light_head_rcnn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/yolo_v1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/yolo_v1_error_analysis.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/yolov2_bbox_prediction.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/mtcnn_pipeline.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/idea_rfcn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/roi_viz.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rfcn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/construct_pyramid.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/feature_pyramid.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/fpn_block.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/backbones_in_fpn.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/detnet.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/cascade_rcnn.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/probability_of_ground_truth_class.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/repulsion_loss.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/imbalance_libra_rcnn.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/iou_balanced_sampling.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/balanced_feature_pyramid.png">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.748Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[CV] Detection">
+<meta name="twitter:description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasX注：">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rcnn.png">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-cv-detection" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [CV] Detection
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2019/07/20/cv-detection/" class="article-date">
+	  <time datetime="2019-07-20T15:31:05.000Z" itemprop="datePublished">2019-07-20</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Detection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：本文长期更新。</p>
+</blockquote>
+<h2 id="RCNN-Region-based-CNN"><a href="#RCNN-Region-based-CNN" class="headerlink" title="RCNN (Region-based CNN)"></a>RCNN (Region-based CNN)</h2><blockquote>
+<p>Paper: <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf" target="_blank" rel="noopener">Rich feature hierarchies for accurate object detection and semantic segmentation</a></p>
+</blockquote>
+<h3 id="What-is-RCNN"><a href="#What-is-RCNN" class="headerlink" title="What is RCNN?"></a>What is RCNN?</h3><p>这篇Paper可以看做是Deep Learning在Object Detection大获成功的开端，对Machine Learning/Pattern Recognition熟悉的读者应该都知道，<strong>Feature Matters in approximately every task!</strong> 而RCNN性能提升最大的因素之一便是很好地利用了CNN提取的Feature，而不是像先前的detector那样使用手工设计的feature(例如SIFT/LBP/HOG等)。</p>
+<p>RCNN可以认为是Regions with CNN features，即(1)先利用<a href="https://staff.fnwi.uva.nl/th.gevers/pub/GeversIJCV2013.pdf" target="_blank" rel="noopener">Selective Search算法</a>生成大约2000个Region Proposal，(2)Pretrained CNN从这些Region Proposal中提取deep feature(from pool5)，(3)然后再利用linear SVM进行one-VS-rest分类。从而将Object Detection问题转化为一个Classification问题，对于Selective Search框选不准的bbox，后面使用<font color="orange">Bounding Box Regression</font>(下面会详细介绍)进行校准。这便是RCNN的主要idea。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rcnn.png" alt="RCNN"></p>
+<h3 id="Details-of-RCNN"><a href="#Details-of-RCNN" class="headerlink" title="Details of RCNN"></a>Details of RCNN</h3><h4 id="Pretraining-and-Fine-tuning"><a href="#Pretraining-and-Fine-tuning" class="headerlink" title="Pretraining and Fine-tuning"></a>Pretraining and Fine-tuning</h4><p>RCNN先将Base Network在ImageNet上train一个1000 class的classifier，然后将output neuron设置为21(20个Foreground + 1个Background)在target datasets上fine-tune。其中，将由Selective Search生成的Region Proposal与groundtruth Bbox的$IOU\geq 0.5$的定义为positive sample，其他的定义为negative sample。</p>
+<p>作者在实验中发现，pool5 features learned from ImageNet足够general，并且在domain-specific datasets上学习non-linear classifier可以获得非常大的性能提升。</p>
+<h4 id="Bounding-Box-Regression"><a href="#Bounding-Box-Regression" class="headerlink" title="Bounding Box Regression"></a>Bounding Box Regression</h4><p>输入是$N$个training pairs，$\{(P^i,G^i)\}_{i=1,2,\cdots,N}, P^i=(P_x^i,P_y^i,P_w^i,P_h^i)$代表$P^i$像素点的$(x,y)$坐标点、width和height。$G=(G_x,G_y,G_w,G_h)$代表groundtruth bbox。BBox Regression的目的就是为了学习一种mapping使得proposed box $P$ 映射到 groundtruth box $G$。</p>
+<p>将$x,y$的transformation设为$d_x(P),d_y(P)$，属于<font color="red">scale-invariant translation。$w,h$是log-space translation</font>。学习完成后，可将input proposal转换为predicted groundtruth box $\hat{G}$:<br>$$<br>\hat{G}_x=P_w d_x(P)+P_x<br>$$</p>
+<p>$$<br>\hat{G}_y=P_h d_x(P)+P_y<br>$$</p>
+<p>$$<br>\hat{G}_w=P_w exp(d_w(P))<br>$$</p>
+<p>$$<br>\hat{G}_h=P_h exp(d_h(P))<br>$$</p>
+<p>每个$d_{\star}(P)$都用一个线性函数来进行建模，使用$pool_5$ feature，权重的学习则使用OLS优化即可：<br>$$<br>w_{\star}=\mathop{argmin} \limits_{\hat{w}_{\star}} \sum_i^N (t_{\star}^i-\hat{w}_{\star}^T \phi_5 (P^i))^2 + \lambda||\hat{w}_{\star}||^2<br>$$</p>
+<p>The regression targets $t_{\star}$ for the training pair $(P, G)$ are defined as:<br>$$<br>t_x=\frac{G_x-P_x}{P_w}<br>$$</p>
+<p>$$<br>t_y=\frac{G_y-P_y}{P_h}<br>$$</p>
+<p>$$<br>t_w=log(\frac{G_w}{P_w})<br>$$</p>
+<p>$$<br>t_h=log(\frac{G_h}{P_h})<br>$$</p>
+<p>在选取Proposed Bbox的时候，我们只选取离Groundtruth Bbox比较近的($IOU\geq 0.6$)来做Bounding Box Regression。</p>
+<p>以上就是Deep Learning在Object Detection领域一个开创性的工作–RCNN。若有疑问，欢迎给我留言！</p>
+<h2 id="SPPNet"><a href="#SPPNet" class="headerlink" title="SPPNet"></a>SPPNet</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1406.4729v4.pdf" target="_blank" rel="noopener">Spatial pyramid pooling in deep convolutional networks for visual recognition.</a></p>
+</blockquote>
+<h3 id="What-is-SPPNet"><a href="#What-is-SPPNet" class="headerlink" title="What is SPPNet?"></a>What is SPPNet?</h3><p>SPPNet(Spatial Pyramid Pooling)是基于RCNN进行改进的一个Object Detection算法。介绍SPPNet之前，我们不妨先来看一下RCNN有什么问题？RCNN，即Region-based CNN，它需要CNN作为base network去做特征提取，而传统CNN需要固定的squared input，而为了满足这个条件，就需要手工地对原图进行裁剪、变形等操作，而这样势必会丢失信息。作者意识到这种现象的原因不在于卷积层，而在于FC Layers需要固定的输入尺寸，因此通过在feature map的SSPlayer可以满足对多尺度的feature map裁剪，从而concatenate得到固定尺寸的特征输入。取得了很好的效果，在detection任务上，region proposal直接在feature map上生成，而不是在原图上生成，因此可以仅仅通过一次特征提取，而不需要像RCNN那样提取2000次(2000个 Region Proposal)，这大大加速了检测效率。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：现如今的Deep Architecture比较多采用Fully Convolutional Architecture(全卷积结构)，而不含Fully Connected Layers，在最后做分类或回归任务时，采用Global Average Pooling即可。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/cw_vs_spp.jpg" alt="Crop/Warp VS SPP"></p>
+<h3 id="Why-SPPNet"><a href="#Why-SPPNet" class="headerlink" title="Why SPPNet?"></a>Why SPPNet?</h3><p>SPPNet究竟有什么过人之处得到了Kaiming He大神的赏识呢？</p>
+<ol>
+<li>SPP可以在不顾input size的情况下获取fixed size output，这是sliding window做不到的。</li>
+<li>SPP uses multi-level spatial bins，而sliding window仅仅使用single window size。<font color="red">multi-level pooling对object deformation则十分地robust</font>。</li>
+<li>SPP can pool features extracted at variable scales thanks to the flexibility of input scales.</li>
+<li>Training with variable-size images increases scale-invariance and reduces over-fitting.</li>
+</ol>
+<h3 id="Details-of-SPPNet"><a href="#Details-of-SPPNet" class="headerlink" title="Details of SPPNet"></a>Details of SPPNet</h3><h4 id="SPP-Layer"><a href="#SPP-Layer" class="headerlink" title="SPP Layer"></a>SPP Layer</h4><p>SPP Layer can maintain spatial information by pooling in local spatial bins. <font color="red">These spatial bins have sizes proportional to the image size, so the number of bins is fixed regardless of the image size.</font> This is in contrast to the sliding window pooling of the previous deep networks,where the number of sliding windows depends on the input size.</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/spp_layer.jpg" alt="SPP Layer"></p>
+<p>这样，通过不同spatial bin pooling得到的k个 M-dimensional feature concatenation，我们就可以得到fixed length的feature vector了，接下来是不是就可以愉快地用FC Layers/SVM等ML算法train了？</p>
+<h4 id="SPP-for-Detection"><a href="#SPP-for-Detection" class="headerlink" title="SPP for Detection"></a>SPP for Detection</h4><p>RCNN需要从2K个Region Proposal中feedforwad Pretrained CNN去提取特征，这显然是非常低效的。SPPNet直接将整张image(possible multi-scale))作为输入，这样就可以只feedforwad一次CNN。然后在<font color="red">feature map层面</font>获取candidate window，SPP Layer pool到fixed-length feature representation of the window。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/pooling.jpg" alt="Pooling"></p>
+<p>Region Proposal生成阶段和RCNN比较相似，依然是<a href="https://staff.fnwi.uva.nl/th.gevers/pub/GeversIJCV2013.pdf" target="_blank" rel="noopener">Selective Search</a>生成2000个bbox candidate，然后将原始image resize使得$min(w, h)=s$，文中采用 4-level spatial pyramid ($1\times 1, 2\times 2, 3\times 3,6\times 6$, totally 50 bins) to pool the features。对于每个window，该Pooling操作得到一个12800-Dimensional (256×50) 的向量。这个向量作为FC Layers的输入，然后和RCNN一样训练linear SVM去做分类。</p>
+<p>训练SPP Detector时，正负样本的采样是基于groundtruth bbox为基准，$IOU\geq 0.3$为positive sample，反之为negative sample。</p>
+<h2 id="Fast-RCNN"><a href="#Fast-RCNN" class="headerlink" title="Fast RCNN"></a>Fast RCNN</h2><blockquote>
+<p>Paper: <a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf" target="_blank" rel="noopener">Fast RCNN</a></p>
+</blockquote>
+<p>Fast RCNN是Object Detection领域一个非常经典的算法。它的novelty在于引入了两个branch来做multi-task learning(category classification和bbox regression)。</p>
+<h3 id="Why-Fast-RCNN"><a href="#Why-Fast-RCNN" class="headerlink" title="Why Fast RCNN?"></a>Why Fast RCNN?</h3><p>按照惯例，我们不妨先来看一看之前的算法(RCNN/SPPNet)有什么缺点？</p>
+<ol>
+<li>它们(RCNN/SPP)的训练都属于multi-stage pipeline，即先要利用Selective Search生成2K个Region Proposal，然后用log loss去fine-tune一个deep CNN，用Deep CNN抽取的feature去拟合linear SVM，最后再去做Bounding Box Regression。</li>
+<li>训练很费时，CNN需要从每一个Region Proposal抽取deep feature来拟合linear SVM。</li>
+<li>testing的时候慢啊，还是太慢了。因为需要将Deep CNN抽取的feature先缓存到磁盘，再读取feature来拟合linear SVM，你说麻烦不麻烦。</li>
+</ol>
+<p>那我们再来看看Fast RCNN为什么优秀？</p>
+<ol>
+<li>设计了一个multi-task loss，来同时优化object classification和bounding box regression。</li>
+<li>Training is single stage.</li>
+<li>Higher performance than RCNN and SPPNet.</li>
+</ol>
+<h3 id="Details-of-Fast-RCNN"><a href="#Details-of-Fast-RCNN" class="headerlink" title="Details of Fast RCNN"></a>Details of Fast RCNN</h3><p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/fastrcnn.jpg" alt="Fast RCNN"></p>
+<p>Fast RCNN pipeline如上图所示：它将whole image with several object proposals作为输入，CNN抽取feature，对于每一个object proposal，<font color="red">region of interest (RoI) pooling layer extracts a fixed-length feature vector from the feature map</font>，然后将走过RoI Pooling Layer的feature vector输送到随后的multi-branch，一同做classification和bbox regression。</p>
+<p>可以看到，Fast RCNN模型里面一个非常重要的组件叫做<font color="red">RoI Pooling</font>，那么接下来我们就来细细分析一下RoI Pooling究竟是何方神圣。</p>
+<h4 id="The-RoI-pooling-layer"><a href="#The-RoI-pooling-layer" class="headerlink" title="The RoI pooling layer"></a>The RoI pooling layer</h4><p>Fast RCNN原文里是这样说的：</p>
+<blockquote>
+<p>RoI pooling layer uses max pooling to convert the features inside any valid region of interest into a small feature map with a fixed spatial extent of $H\times W$ (e.g., $7\times 7$), where $H$ and $W$ are layer hyper-parameters that are independent of any particular RoI.</p>
+<p>In this paper, an RoI is a rectangular window into a conv feature map. Each RoI is defined by a four-tuple $(r, c, h, w)$ that specifies its top-left corner $(r, c)$ and its height and width $(h, w)$.</p>
+<p>RoI max pooling works by dividing the $h\times w$ RoI window into an $H\times W$ grid of sub-windows of approximate size $h/H \times w/W$ and then max-pooling the values in each sub-window into the corresponding output grid cell. Pooling is applied independently to each feature map channel, as in standard max pooling. The RoI layer is simply the special-case of the spatial pyramid pooling layer used in SPPnets [11] in which there is only one pyramid level. We use the pooling sub-window calculation given in [11].</p>
+</blockquote>
+<p>什么意思呢？就是在任何valid region proposal里面，把某层的feature map划分成多个小方块，每个小方块做max pooling，这样就得到了尺寸更小的feature map。</p>
+<h4 id="Fine-tuning-for-detection"><a href="#Fine-tuning-for-detection" class="headerlink" title="Fine-tuning for detection"></a>Fine-tuning for detection</h4><h5 id="Multi-Task-Loss"><a href="#Multi-Task-Loss" class="headerlink" title="Multi-Task Loss"></a>Multi-Task Loss</h5><p>之前也说过，Fast RCNN同时做了$K+1$ (K个object class + 1个background) 类的classification($p=(p_0,p_1,\cdots,p_K)$)和bbox regression($t^k = (t^k_x, t^k_y, t^k_w, t^k_h)$)。</p>
+<p>We use the parameterization for $t^k$ given in [9], in which <font color="red">$t^k$ specifies a scale-invariant translation and log-space height/width shift relative to an object proposal</font>(对linear regression熟悉的读者不妨思考一下为什么要对width和height做log). Each training RoI is labeled with a ground-truth class $u$ and a ground-truth bounding-box regression target $v$. We use a multi-task loss $L$ on each labeled RoI to jointly train for classification and bounding-box regression:<br>$$<br>L(p,u,t^u,v)=L_{cls}(p,u)+\lambda [u\geq1]L_{loc}(t^u,v)<br>$$<br>$L_{cls}(p,u)=-logp_u$ is log loss for true class $u$.</p>
+<p>我们再来看看Loss Function的第二部分(即regression loss)，$[u\geq 1]$代表只有满足$u\geq 1$时这个式子才为1，否则为0。在我们的setting中，background的$[u\geq 1]$自然而然就设为0啦。我们接着分析regression loss，既然是regression，惯常的手法是使用MSE Loss对不对？但是MSE Loss属于Cost-sensitive Loss啊，对outliers非常的敏感，因此Ross大神使用了更加柔和的$Smooth L_1 Loss$。<br>$$<br>L_{loc}(t^u,v)\sum_{i\in \{x,y,w,h\}} smooth_{L_1}(t_i^u-v_i)<br>$$</p>
+<p>Smooth L1 Loss写得详细一点呢，就是这样的：<br>$$<br>smooth_{L_1}(x)=<br>\begin{cases}<br>0.5x^2 &amp; if |x|&lt;1\\<br>|x|-0.5 &amp; otherwise<br>\end{cases}<br>$$</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：想详细了解Machine Learning中的Loss，请参考我的<a href="https://lucasxlu.github.io/blog/2018/07/24/ml-loss/">另一篇文章</a>。</p>
+</blockquote>
+<h5 id="Mini-batch-sampling"><a href="#Mini-batch-sampling" class="headerlink" title="Mini-batch sampling"></a>Mini-batch sampling</h5><p>在Fine-tuning阶段，每个mini-batch随机采样自$N=2$类image，每一类都是64个sample，与groundtruth bbox $IOU\geq 0.5$的设为foreground samples[$u=1$]，反之为background samples[$u=0$]。</p>
+<h3 id="Fast-R-CNN-detection"><a href="#Fast-R-CNN-detection" class="headerlink" title="Fast R-CNN detection"></a>Fast R-CNN detection</h3><p>因为Fully Connected Layers的计算太费时，而FC Layers的计算显然就是大矩阵相乘，因此很容易联想到用truncated SVD来进行加速。</p>
+<p>In this technique, a layer parameterized by the $u\times v$ weight matrix $W$ is approximately factorized as:<br>$$<br>W\approx U\Sigma_t V^T<br>$$<br>$U$是由$W$前$t$个left-singular vectors组成的$u\times t$矩阵，$\Sigma_t$是包含$W$矩阵前$t$个singular value的$t\times t$对角矩阵，$V$是由$W$前$t$个right-singular vectors组成的$v\times t$矩阵。Truncated SVD可以将参数从$uv$降到$t(u+v)$。</p>
+<p>这里值得一提的有两点：</p>
+<ol>
+<li>$conv_1$ layers feature map通常都足够地general，并且task-independent。因此可以直接用来抽feature就行。</li>
+<li>Region Proposal的数量对Detection的性能并没有什么太大影响 (关键还是看feature啊！以及sampling mini-batch的时候正负样本的不均衡问题，详情请参阅kaiming He大神的<a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf" target="_blank" rel="noopener">Focal Loss</a>)。</li>
+</ol>
+<h2 id="Faster-RCNN"><a href="#Faster-RCNN" class="headerlink" title="Faster RCNN"></a>Faster RCNN</h2><blockquote>
+<p>Paper: <a href="http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf" target="_blank" rel="noopener">Faster r-cnn: Towards real-time object detection with region proposal networks</a></p>
+</blockquote>
+<p>Faster RCNN也是Object Detection领域里一个非常具有代表性的工作，一个最大的改进就是Region Proposal Network(RPN)，RPN究竟神奇在什么地方呢？我们先来回顾一下RCNN–SPP–Fast RCNN，这些都属于two-stage detector，什么意思呢？就是先利用Selective Search生成2000个Region Proposal，然后再将其转化为一个机器学习中的分类问题。而Selective Search实际上是非常低效的，RPN则很好地完善了这一点，即直接从整个Network Architecture里生成Region Proposal。RPN是一种全卷积网络，它可以同时预测object bounds，以及objectness score。因为RPN的Feature是和Detection Network共享的，所以整个Region Proposal的生成几乎是cost-free的。所以，这也就是Faster RCNN中<strong>Faster</strong>一词的由来。</p>
+<h3 id="What-is-Faster-RCNN"><a href="#What-is-Faster-RCNN" class="headerlink" title="What is Faster RCNN?"></a>What is Faster RCNN?</h3><p>$$<br>Faster RCNN = Fast RCNN + RPN<br>$$<br>按照惯例，一个算法的提出显然是为了解决之前算法的不足。那之前的算法都有什么问题呢？<br>如果对之前的detector熟悉的话，shared features between proposals已经被解决，但是Region Proposal的生成变成了最大的计算瓶颈。这便是RPN产生的缘由。</p>
+<p>作者注意到，conv feature maps used by region-based detectors也可以被用于生成region proposals。在这些conv features顶端，<strong>通过添加两个额外的卷积层来构造RPN：一个conv layer用于encode每个conv feature map position到一个低维向量(256-d)；另一个conv layer在每一个conv feature map position中输出k个region proposal with various scales and aspect ratios的objectness score和regression bounds。</strong>下面重点介绍一下RPN。</p>
+<h3 id="Region-Proposal-Network"><a href="#Region-Proposal-Network" class="headerlink" title="Region Proposal Network"></a>Region Proposal Network</h3><p>RPN是一个全卷积网络，可以接受任意尺寸的image作为输入，并且输出一系列object proposals以及其对应的objectness score。那么RPN是如何生成region proposals的呢？</p>
+<p>首先，在最后一个shared conv feature map上slide一个小网络，这个小网络全连接到input conv feature map上$n\times n$的spatial window。而每一个sliding window映射到一个256-d的feature vector，这个feature vector输入到两个fully connected layers–一个做box regression，另一个做box classification。值得注意的是，因为这个小网络是以sliding window的方式操作的，所以fully-connected layers在所有的spatial locations都是共享的。该结构由一个$n\times n$ conv layer followed by two sibling $1\times 1$ conv layers组成。</p>
+<h4 id="Translation-Invariant-Anchors"><a href="#Translation-Invariant-Anchors" class="headerlink" title="Translation-Invariant Anchors"></a>Translation-Invariant Anchors</h4><p>对于每个sliding window location，同时预测$k$个region proposals，所以regression layer有$4k$个encoding了$k$个bbox坐标的outputs。classification layer有$2k$个scores(每个region proposal估计object/non-object的概率)。</p>
+<blockquote>
+<p>The $k$ proposals are parameterized relative to $k$ reference boxes, called anchors. Each anchor is centered at the sliding window in question, and is associated with a scale and aspect ratio.</p>
+</blockquote>
+<p>文章中采用3个scales和3个aspect ratios，所以每个sliding position一共得到$k=9$个anchors。所以对于每个$W\times H$的conv feature map一共产生$WHk$个anchor。这种方法一个很重要的性质就是<strong>它是translation invariant</strong>。</p>
+<h4 id="A-Loss-Function-for-Learning-Region-Proposals"><a href="#A-Loss-Function-for-Learning-Region-Proposals" class="headerlink" title="A Loss Function for Learning Region Proposals"></a>A Loss Function for Learning Region Proposals</h4><p>训练RPN时，我们为每一个anchor分配binary class(即是不是一个object)。我们为以下这两类anchors分配positive label:</p>
+<ol>
+<li>与groundtruth bbox有最高IoU的anchor</li>
+<li>与任意groundtruth bbox $IoU\geq 0.7$的anchor</li>
+</ol>
+<p>同时，可能出现一个groundtruth bbox分配到多个anchor的情况，我们将与所有groundtruth bbox $IoU\leq 0.3$的anchor设为negative anchor。而那些既不是positive又不是negative的anchor则对training过程没有用处。然后，Faster RCNN的Loss Function就变成：<br>$$<br>L(\{p_i\},\{t_i\})=\frac{1}{N_{cls}} \sum_i L_{cls}(p_i,p_i^{\star}) + \lambda \frac{1}{N_{reg}} \sum_i p_i^{\star} L_{reg}(t_i,t_i^{\star})<br>$$<br>$p_i$是anchor $i$ 被预测为是一个object的概率，若anchor为positive，则groundtruth label $p_i^{\star}$为1；若anchor为negative则为0；$t_i$是包含4个预测bbox坐标点的向量，$t_i^{\star}$是groundtruth positive anchor坐标点的向量。$L_{cls}$是二分类的Log Loss(object VS non-object)。对于regression loss，文章使用$L_{reg}(t_i,t_i^{\star})=R(t_i-t_i^{\star})$，其中$R$是Smooth L1 Loss(和Fast RCNN中一样)。$p_i^{\star} L_{reg}$表示仅仅在positive anchor ($p_i^{\star}=1$)时才被激活，否则($p_i^{\star}=0$)不激活。</p>
+<p>Bounding Box Regression依旧是采用之前的pipeline：<br>$$<br>t_x=\frac{x-x_a}{w_a},t_y=\frac{y-y_a}{h_a},t_w=log(\frac{w}{w_a}),t_h=log(\frac{h}{h_a})<br>$$</p>
+<p>$$<br>t_x^{\star}=\frac{x^{\star}-x_a}{w_a},t_y^{\star}=\frac{y^{\star}-y_a}{h_a},t_w^{\star}=log(\frac{w^{\star}}{w_a}),t_h^{\star}=log(\frac{h^{\star}}{h_a})<br>$$</p>
+<blockquote>
+<p>In our formulation, the features used for regression are of the same spatial size $(n\times n)$ on the feature maps. <strong>To account for varying sizes, a set of $k$ bounding-box regressors are learned. Each regressor is responsible for one scale and one aspect ratio, and the $k$ regressors do not share weights</strong>. As such, it is still possible to predict boxes of various sizes even though the features are of a fixed size/scale.</p>
+</blockquote>
+<h4 id="Sharing-Convolutional-Features-for-Region-Proposal-and-Object-Detection"><a href="#Sharing-Convolutional-Features-for-Region-Proposal-and-Object-Detection" class="headerlink" title="Sharing Convolutional Features for Region Proposal and Object Detection"></a>Sharing Convolutional Features for Region Proposal and Object Detection</h4><ol>
+<li>Fine-tune在ImageNet上Pretrain的RPN来完成region proposal task。</li>
+<li>利用RPN生成的region proposal来train Fast RCNN。注意在这一步骤中RPN和Faster RCNN没有共享卷积层。</li>
+<li>利用detector network来初始化RPN训练，但是我们fix shared conv layers，仅仅fine-tune单独属于RPN的层。注意在这一步骤中RPN和Fast RCNN共享了卷积层。</li>
+<li>Fix所有shared conv layers，fine-tune Fast RCNN的fc layers。至此，RPN和Fast RCNN共享卷积层，并且形成了一个unified network。</li>
+</ol>
+<h2 id="SSD"><a href="#SSD" class="headerlink" title="SSD"></a>SSD</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1512.02325v5.pdf" target="_blank" rel="noopener">SSD: Single Shot MultiBox Detector</a></p>
+</blockquote>
+<p>SSD是one-stage detector里一个非常著名的算法，那什么叫做one-stage和two-stage呢？回想一下，从DL Detector发展到现在，我们之前介绍的RCNN/SSP/Fast RCNN/Faster RCNN等，都是属于two-stage detectors，意思就是说<strong>第一步需要生成region proposals，第二步再将整个detection转化为对这些region proposals的classification问题来做</strong>。那所谓的one-stage detection就自然是不需要生成region proposals了，而是直接输出bbox了。Faster RCNN里面作者已经分析了，two-stage detection为啥慢？很大原因就是因为region proposal generation太慢了(例如Selective Search算法)，所以提出了RPN来辅助生成region proposals。</p>
+<h3 id="What-is-SSD"><a href="#What-is-SSD" class="headerlink" title="What is SSD?"></a>What is SSD?</h3><p>SSD最主要的改进就是<strong>使用了一个小的Convolution Filter来预测object category和bbox offset</strong>。那如何处理多尺度问题呢？SSD采取的策略是将这些conv filter应用到多个feature map上，来使得整个模型对Scale Invariant。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/SSD.png" alt="SSD Framework"></p>
+<h3 id="Details-of-SSD"><a href="#Details-of-SSD" class="headerlink" title="Details of SSD"></a>Details of SSD</h3><p>SSD主要部件如下：一个DCNN用来提取feature，产生fixed-size的bbox以及这些bbox中每个类的presence score，然后NMS用来输出最后的检测结果。Feature Extraction部分和普通的分类DCNN没啥太大的区别，作者在后面新添加了新的结构：</p>
+<ol>
+<li><strong>Multi-scale feature maps for detection</strong>: 在base feature extraction network之后额外添加新的conv layers(所以得到了multi-scale的feature maps)，来使得模型可以处理multi-scale的detection。</li>
+<li><strong>Convolutional predictors for detection</strong>: 每一个新添加的feature layer可以基于<code>small conv filters</code>产生fixed-size detection predictions。</li>
+<li><strong>Default boxes and aspect ratios</strong>: 对于每个feature map cell，算法给出cell中default box的relative offset，以及class-score(表示在每个box中一个class instance出现的概率)。具体的，对于每个given location的$k$个box，产生4个bbox offset和$c$个class score，这样就对每个<code>feature map location</code>上产生了$(c+4)k$个filters，那么对于一个$m\times n$的<code>feature map</code>，则产生$(c+4)kmn$个output。这个做法和Faster RCNN中的anchor box有点类似，但是<strong>SSD中将它用到了多个不同resolution的feature map上，因此多个feature map的不同default box shape使得我们可以很高效地给出output box shape</strong>。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/SSD_YOLO.png" alt="SSD and YOLO"></p>
+<h4 id="Training-of-SSD"><a href="#Training-of-SSD" class="headerlink" title="Training of SSD"></a>Training of SSD</h4><p>前面已经提到了，SSD会在default box周围生成一系列varied location/ratio/scale的boxes，那么到底哪一个box才是和groundtruth真正匹配的呢？作者采用了这样的一个Matching Strategy: 对于每一个groundtruth box，我们从default boxes中选择不同location/ratio/scale的boxes，然后计算它们和任意一个groundtruth box的Jaccard Overlap，并挑选出超过阈值的boxes。那么SSD最终的Loss就可以写成：<br>$$<br>L(x,c,l,g)=\frac{1}{N}(L_{conf}(x,c) + \alpha L_{loc}(x,l,g))<br>$$<br>其中$N$代表matched default boxes的数量，Localisation Loss和Faster RCNN一样也选择了Smooth L1。$x_{ij}^p=\{0,1\}$为第$i$个default box是否和第$j$个groundtruth box匹配的indicator。<br>$$<br>L_{loc}(x,l,g)=\sum_{i\in Pos} \sum_{m\in \{cx,cy,w,h\}}x_{ij}^k smoothL_1(l_i^m-\hat{g}_j^m)<br>$$</p>
+<p>$$<br>\hat{g}_j^{cx}=(g_j^{cx}-d_i^{cx})/d_i^w<br>$$</p>
+<p>$$<br>\hat{g}_j^{cy}=(g_j^{cy}-d_i^{cy})/d_i^h<br>$$</p>
+<p>$$<br>\hat{g}_j^w=log(\frac{g_j^w}{d_i^w})<br>$$</p>
+<p>$$<br>\hat{g}_j^h=log(\frac{g_j^h}{d_i^h})<br>$$</p>
+<p>Confidence Loss采用Softmax Loss:<br>$$<br>L_{conf}(x, c)=-\sum_{i\in Pos}^N x_{ij}^p log(\hat{c}_i^0)-\sum_{\in Neg}log(\hat{c}_i^0)<br>$$<br>其中，$\hat{c}_i^p=\frac{exp(c_i^p)}{\sum_p exp(c_i^p)}$</p>
+<p>SSD在检测large object时效果很好，但是在检测small object时则效果比较差，这是因为在higher layers，feature map包含的small object信息太少，可通过将input size由$300\times 300$改为$512\times 512$，<strong>Zoom Data Augmentation</strong>(即采用zoom in来生成large objects, zoom out来生成small objects)来进行一定程度的缓解。</p>
+<h2 id="Light-head-RCNN"><a href="#Light-head-RCNN" class="headerlink" title="Light-head RCNN"></a>Light-head RCNN</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1711.07264v2.pdf" target="_blank" rel="noopener">Light-Head R-CNN: In Defense of Two-Stage Object Detector</a></p>
+</blockquote>
+<h3 id="Introduction-1"><a href="#Introduction-1" class="headerlink" title="Introduction"></a>Introduction</h3><p>在介绍Light-head RCNN之前，我们先来回顾一下常见的two-stage detector为什么是heavy-head？作者发现two-stage detector之所以慢，就是因为two-stage detector在RoI Warp前/后 会进行非常密集的计算，例如Faster RCNN包含2个fully connected layers做nRoI Recognition，RFCN会生成很大的score maps。所以无论你的backbone network使用了多么精巧的小网络结构，但是总体速度还是提升不上去。所以针对这个问题，作者在本文提出了<code>light-head</code> RCNN。所谓的<code>light-head</code>，其实说白了就是<code>使用thin feature map + cheap RCNN subnet (pooling和单层fully connected layer)</code>。</p>
+<p>大家都知道，two-stage detector，其实是将detection问题转化为一个classification问题来完成的。也就是说，在第一个stage，模型会生成很多region proposal (此为<code>body</code>)，然后在第二个stage对这些region proposal进行分类 (此为<code>head</code>)。通常，two-stage detector的accuracy要比one-stage detector高的，所以为了accuracy，head往往会设计得非常heavy。Light-head RCNN是这么做的：</p>
+<blockquote>
+<p>In this paper, we propose a light-head design to build an efficient yet accurate two-stage detector. Specifically, we apply a large-kernel separable convolution to produce “thin” feature maps with small channel number ($\alpha \times p\times p$ is used in our experiments and $\alpha\leq 10$). This design greatly reduces the computation of following RoI-wise subnetwork and makes the detection system memory-friendly. A cheap single fully-connected layer is attached to the pooling layer, which well exploits the feature representation for classification and regression.</p>
+</blockquote>
+<h3 id="Delve-Into-Light-Head-RCNN"><a href="#Delve-Into-Light-Head-RCNN" class="headerlink" title="Delve Into Light-Head RCNN"></a>Delve Into Light-Head RCNN</h3><h4 id="RCNN-Subnet"><a href="#RCNN-Subnet" class="headerlink" title="RCNN Subnet"></a>RCNN Subnet</h4><blockquote>
+<p>Faster R-CNN adopts a powerful R-CNN which utilizes two large fully connected layers or whole Resnet stage 5 [28, 29] as a second stage classifier, which is beneficial to the detection performance. Therefore Faster R-CNN and its extensions perform leading accuracy in the most challenging benchmarks like COCO. However, the computation could be intensive especially when the number of object proposals is large. To speed up RoI-wise subnet, <strong>R-FCN first produces a set of score maps for each region, whose channel number will be $classes_num\times p \times p$ ($p$ is the followed pooling size), and then pool along each RoI and average vote the final prediction. Using a computation-free R-CNN subnet, R-FCN gets comparable results by involving more computation on RoI shared score maps generation</strong>.</p>
+</blockquote>
+<p>Faster RCNN虽然在RoI Classification上表现得很好，但是它需要global average pooling来减小第一个fully connected layer的计算量，<code>而GAP会影响spatial localization</code>。此外，Faster RCNN对每一个RoI都要feedforward一遍RCNN subnet，所以在当proposal的数量很大时，效率就非常低了。</p>
+<h4 id="Thin-Feature-Maps-for-RoI-Warping"><a href="#Thin-Feature-Maps-for-RoI-Warping" class="headerlink" title="Thin Feature Maps for RoI Warping"></a>Thin Feature Maps for RoI Warping</h4><p>在feed region proposal到RCNN subnet之前，用RoI warping来得到fixed shape的feature maps。本文提出的light-head产生了一系列<code>thin feature maps</code>，然后再接RoI Pooling层。在实验中，作者发现<code>RoI warping on thin feature maps</code>不仅仅提高了精度，而且节省了training和inference的时间。而且，如果直接应用RoI pooling到thin feature maps上，一方面模型可以减少计算量，另一方面可以去掉GAP来保留spatial information。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/light_head_rcnn.jpg" alt="Light Head RCNN"></p>
+<h3 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h3><p>作者在实验中发现，regression loss比classification loss要小很多，所以<code>将regression loss的权重进行double来balance multi-task training</code>。</p>
+<h2 id="YOLO-v1"><a href="#YOLO-v1" class="headerlink" title="YOLO v1"></a>YOLO v1</h2><blockquote>
+<p>Paper: <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf" target="_blank" rel="noopener">You Only Look Once: Unified, Real-Time Object Detection</a></p>
+</blockquote>
+<p>YOLO是One-stage Detection领域里一个非常著名的算法，本文对其V1版本做一个简介。<br>和基于Slide Window/Region Proposal based two-stage detection不同的是，YOLO可以将整张图作为输入（相比之下，two-stage detector需要在第一步先基于selective search等算法生成region proposal，再基于这些region proposal去做classification），<strong>因此YOLO可以获取context information</strong>，而Fast RCNN则很容易将background patch误识为object，原因就在于基于region proposal的detector不能获知larger context information。而YOLO则可以很好地解决该问题。</p>
+<h3 id="What-is-YOLO"><a href="#What-is-YOLO" class="headerlink" title="What is YOLO?"></a>What is YOLO?</h3><p>YOLO将input image先划分为$S\times S$个grid，<strong>若某个object的中心落在了一个grid cell，那么该grid cell就“负责”检测该物体</strong>。每个grid cell预测$B$个bbox以及相对应的confidence score，我们将confidence定义为：<br>$$<br>Pr(Object)\star IOU_{pred}^{truth}<br>$$<br>若该grid cell没有object，则confidence score自然就为0了，<strong>confidence score为prediction bbox与gt bbox的IOU</strong>。</p>
+<p>此外，每个grid cell也预测$C$个conditional class probabilities $Pr(Class_i|Object)$，在测试阶段，我们将conditional class probability和bbox confidence score相乘：<br>$$<br>Pr(Class_i|Object)\times Pr(Object)\times IOU_{pred}^{truth}=Pr(Class_i)\times IOU_{pred}^{truth}<br>$$<br>这样就得到了对每个box的class-specific confidence score，即同时encode了object在该box中的probability和bbox prediction的精度。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/yolo_v1.jpg" alt="YOLO V1 Model"></p>
+<h4 id="Training-of-YOLO"><a href="#Training-of-YOLO" class="headerlink" title="Training of YOLO"></a>Training of YOLO</h4><p>因detection需要非常细粒度的feature，所以作者将input resolution由$224\times 224$提升至$448\times 448$来使得网络可以更好地捕捉到细节特征。同时将bbox width/height除以image width/height来进行归一化到$[0, 1]$区间。</p>
+<blockquote>
+<p>We optimize for sum-squared error in the output of our model. We use sum-squared error because it is easy to optimize <strong>however it does not perfectly align with our goal of maximizing average precision. It weights localization error equally with classification error which may not be ideal. Also, in every image many grid cells do not contain any object. This pushes the confidence scores of those cells towards zero, often overpowering the gradient from cells that do contain objects. This can lead to model instability, causing training to diverge early on</strong>.</p>
+</blockquote>
+<p>针对上述问题，作者使用了两个hyper-param $\lambda_{coord}=5$和$\lambda_{noobj}=0.5$来控制bbox no-object prediction loss和confidence loss。</p>
+<blockquote>
+<p>Sum-squared error also equally weights errors in large boxes and small boxes. Our error metric should reflect that small deviations in large boxes matter less than in small boxes. To partially address this we predict the square root of the bounding box width and height instead of the width and height directly.</p>
+</blockquote>
+<p>YOLO的Loss如下：<br>$$<br>\lambda_{coord}\sum_{i=0}^{S^2} \sum_{j=0}^{B}\mathbb{I} _{ij}^{obj}[(x_i-\hat{x}_i)^2+(y_i-\hat{y}_i)^2]<br>$$</p>
+<p>$$<br>+\lambda_{coord}\sum_{i=0}^{S^2} \sum_{j=0}^{B}\mathbb{I} _{ij}^{obj}[(\sqrt{w_i}-\sqrt{\hat{w}_i})^2+ (\sqrt{h_i}-\sqrt{\hat{h}_i})^2]<br>$$</p>
+<p>$$<br>+\sum_{i=0}^{S^2} \sum_{j=0}^{B}\mathbb{I}_{ij}^{obj}(C_i-\hat{C}_i)^2 + \lambda_{noobj}\sum_{i=0}^{S^2} \sum_{j=0}^{B}\mathbb{I}_{ij}^{noobj}(C_i-\hat{C}_i)^2<br>$$</p>
+<p>$$<br>+\sum_{i=0}^{S^2}\mathbb{I}_{i}^{obj}\sum_{c\in classes} (p_i(c)-\hat{p}_i(c))^2<br>$$</p>
+<p>where $\mathbb{I}_{i}^{obj}$ denotes if object appears in cell $i$ and denotes that the $j$-th bounding box predictor in cell $i$ is responsible for that prediction.</p>
+<blockquote>
+<p>Note that the loss function only penalizes classification error if an object is present in that grid cell (hence the conditional class probability discussed earlier). It also only penalizes bounding box coordinate error if that predictor is responsible for the ground truth box (i.e. has the highest IOU of any predictor in that grid cell). <strong>However, some large objects or objects near the border of multiple cells can be well localized by multiple cells. Non-maximal suppression can be used to fix these multiple detections</strong>.</p>
+</blockquote>
+<h4 id="Limitations-of-YOLO"><a href="#Limitations-of-YOLO" class="headerlink" title="Limitations of YOLO"></a>Limitations of YOLO</h4><blockquote>
+<p>Our model also uses relatively coarse features for predicting bounding boxes since our architecture has multiple downsampling layers from the input image. Finally, while we train on a loss function that approximates detection performance, <strong>our loss function treats errors the same in small bounding boxes versus large bounding boxes. A small error in a large box is generally benign but a small error in a small box has a much greater effect on IOU. Our main source of error is incorrect localizations</strong>.</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/yolo_v1_error_analysis.jpg" alt="Error Analysis"></p>
+<h2 id="YOLO-V2"><a href="#YOLO-V2" class="headerlink" title="YOLO V2"></a>YOLO V2</h2><blockquote>
+<p><a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf" target="_blank" rel="noopener">YOLO9000: Better, Faster, Stronger.</a></p>
+</blockquote>
+<p>前面我们已经介绍过YOLO V1，本篇来介绍一下它的改进版本——YOLO V2。<code>YOLO V2</code>也叫<code>YOLO 9000</code>，意思就是说它可以检测9000种object。我们知道，detection的benchmark和classification的benchmark相比，标注成本要更为昂贵(因为画框框远比打标签要麻烦)，而<code>YOLO 9000</code>使用了一种<code>joint training</code>的方法，可以从其他数据集中学习object classification label。此外，和<code>SSD</code>一样，<code>YOLO 9000</code>也使用了<code>multi-scale training</code>来使得它对<code>scale variance</code>更加鲁棒。</p>
+<h3 id="Better"><a href="#Better" class="headerlink" title="Better"></a>Better</h3><p>如果大家对<code>YOLO V1</code>还有印象，就会知道作者在对比了<code>YOLO V1</code>和<code>Fast RCNN</code>的error analysis之后，发现<code>YOLO V1</code>的localisation error比较高，并且和基于region-proposal的two-stage detector(例如RCNN系列)相比，recall比较低。所以YOLO V2就主要来解决这两个问题了。</p>
+<p>YOLO V2用到了一下几个tricks：</p>
+<ul>
+<li><strong>Batch Normalization</strong>: 这个就不多解释了，基本已经成为deep learning models的必备组件。</li>
+<li><strong>High Resolution Classifier</strong>: YOLO V2首先在ImageNet上用$448\times 448$ input pretrain 10 epochs，来使得网络的filter对high resolution input更好。</li>
+<li><strong>Convolutional With Anchor Boxes</strong>: 这一点idea来源于<code>Faster RCNN</code>，YOLO直接通过FC layer回归bbox coordinates。而Faster RCNN中，RPN可以直接预测anchor boxes的offsets和confidences，因RPN是一个小型的conv net，所以可以在feature map的每一个location<code>预测offsets</code>，而非<code>coordinates</code>。而<code>预测offsets要比coordinates更加方便，同时模型也更容易学习</code>。因此，YOLO V2直接去除了FC layers，并且使用anchor boxes来预测bbox。首先去除了一个Pooling层，来得到高分辨率的输出。其次，输入也由$448\times 448$ 改为$416\times 416$，<code>使用416分辨率的输入是为了保证从得到奇数个的locations，从而保证只有一个center cell</code>。对于large objects而言，很容易占据满image的中间，所以更好的方式是用一个single center location来预测objects，而非其相邻的4个位置。YOLO的卷积层会对input image进行32倍的downsampling，所以使用$416\times 416$的input，我们最终会得到$13\times 13$的feature map。和YOLO V1一样，objectness prediction依然是预测groundtruth和proposed box的IOU，class prediction预测当该bbox为object时，该object所属类别的条件概率。</li>
+<li><strong>Dimension Cluster</strong>: YOLO V2在training set bbox上使用KMeans来自动寻找good prior。</li>
+<li><p><strong>Direct location prediction</strong>: 在YOLO中使用anchor box时，我们会碰到model instability问题，尤其是在前几轮的迭代中。这些instability大多来自预测box的位置$(x,y)$。在RPN中，预测值$t_x$、$t_y$、$(x,y)$center coordinate计算方式如下：<br>  $$<br>  x=(t_x\times w_a)-x_a<br>  $$</p>
+<p>  $$<br>  y=(t_y\times h_a)-y_a<br>  $$</p>
+<blockquote>
+<p>For example, a prediction of $t_x = 1$ would shift the box to the right by the width of the anchor box, a prediction of $t_x = −1$ would shift it to the left by the same amount.</p>
+</blockquote>
+<p>  YOLO V2采取了V1的做法，预测相对于grid cell的location coordinate值，这样可以将groundtruth限制在0~1之间，作者使用Logistic activation来达到这种效果。</p>
+<p>  在output feature map的每个cell中，网络预测出了5个bounding boxes，对于每个bounding box有5个coordinates: $t_x, t_y, t_w, t_h, t_o$。</p>
+<blockquote>
+<p>If the cell is offset from the top left corner of the image by $(c_x, c_y)$ and the bounding box prior has width and height $p_w, p_h$, then the predictions correspond to:</p>
+</blockquote>
+<p>  $$<br>  b_x=\sigma(t_x)+c_x<br>  $$</p>
+<p>  $$<br>  b_y=\sigma(t_y)+c_y<br>  $$</p>
+<p>  $$<br>  b_w=p_we^{t_w}<br>  $$</p>
+<p>  $$<br>  b_h=p_he^{t_h}<br>  $$</p>
+<p>  $$<br>  Pr(object)\times IOU(b, object)=\sigma(t_o)<br>  $$<br>  因限制了location prediction，所以参数更容易学习了，模型也更稳定了。</p>
+<p>  <img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/yolov2_bbox_prediction.jpg" alt="BBox Prediction in YOLO V2"></p>
+</li>
+<li><p><strong>Fine-grained Features</strong>: YOLO V2从$13\times 13$的feature map中预测detection，这对于large objects而言是足够的，对于small objects detection，可以从finer grained features中获益。Faster RCNN和SSD都在不同尺度的feature maps上滑窗proposal networks，来获取不同resolution的region proposal。YOLO V2采用了不同的方法来达到这种效果，即仅仅通过新增一个passthrough layer来获取earlier layer的resolution ($26\times 26$)。</p>
+<blockquote>
+<p>The passthrough layer concatenates the higher resolution features with the low resolution features by stacking adjacent features into different channels instead of spatial locations, similar to the identity mappings in ResNet. This turns the $26\times 26\times 512$ feature map into a $13\times 13\times 2048$ feature map, which can be concatenated with the original features. Our detector runs on top of this expanded feature map so that it  has access to fine grained features. This gives a modest 1% performance increase.</p>
+</blockquote>
+</li>
+<li><p><strong>Multi-Scale Training</strong>: Instead of fixing the input image size we change the network every few iterations. Every 10 batches our network randomly chooses new image dimensions. Since our model downsamples by a factor of 32, we pull from the following multiples of $32: {320, 352, …, 608}$. Thus the smallest option is $320\times 320$ and the largest is 608×608. We resize the network to that dimension and continue training. This regime forces the network to learn to predict well across a variety of input dimensions. This means the same network can predict detections at different resolutions.</p>
+</li>
+</ul>
+<h3 id="Faster"><a href="#Faster" class="headerlink" title="Faster"></a>Faster</h3><p>大多数detector使用了VGG作为feature extraction backbone，尽管VGG很强大，但是FLOPs太高。YOLO使用了GoogLeNet作为backbone，在YOLO V2中，作者使用了Darknet-19作为backbone。</p>
+<h3 id="Stronger"><a href="#Stronger" class="headerlink" title="Stronger"></a>Stronger</h3><p>YOLO V2使用了一种joint training方法来训练classification和detection dataset，简而言之呢，就是说当遇到classification data时，只BP classification-specific part；当遇到detection data时，BP full architecture.</p>
+<blockquote>
+<p>We propose a mechanism for jointly training on classification and detection data. Our method uses images labelled for detection to learn detection-specific information like bounding box coordinate prediction and objectness as well as how to classify common objects. It uses images with only class labels to expand the number of categories it can detect. During training we mix images from both detection and classification datasets. When our network sees an image labelled for detection we can backpropagate based on the full YOLOv2 loss function. When it sees a classification image we only backpropagate loss from the classificationspecific parts of the architecture.</p>
+</blockquote>
+<ul>
+<li><strong>Hierarchical classification</strong>: 因ImageNet是Hierarchy的结构，所以为了让detector获取识别9000-category的识别能力，YOLO V2使用了一种Hierarchical classification方法。这个就不细说了，详情请参考<a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf" target="_blank" rel="noopener">Paper原文</a>吧。</li>
+</ul>
+<h2 id="YOLO-v3"><a href="#YOLO-v3" class="headerlink" title="YOLO v3"></a>YOLO v3</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1804.02767.pdf" target="_blank" rel="noopener">Yolov3: An incremental improvement</a></p>
+</blockquote>
+<p>YOLO v3在one-stage detector里面性能非常强大，与v1和v2相比，idea的novelty并没有什么太大的创新，更多的是借鉴了当前一些CV/DL领域的idea做了改进，本小节就来简要介绍一下YOLO v3。<br>主要改进如下：</p>
+<ol>
+<li>Loss回传方面：若bbox prior没有被分配到groundtruth object，则不会引入coordinate loss和class prediction loss，而只有objectness。</li>
+<li>Class prediction方面：将softmax替换为independent logistic classifier，使得其更适合multi-label classification场景。</li>
+<li>多尺度预测：在每个scale预测3个bbox，因此可以得到$N\times N\times [3\times (4+1+80)]$的tensor，来满足4个bbox offsets、1个objectness prediction，以及80个category。</li>
+<li>借鉴FPN获取更rich的feature representation：将earlier layer的feature与upsample之后的high-level features进行concatenate，来获取高层semantic meaning更强的信息，以及低层更fine-grained的信息。然后添加额外的conv layers进行进一步提纯。</li>
+<li>与YOLO v2一样，同样使用KMeans进行bbox prior的选取，一共有9个clusters：$(10\times 13), (16\times 30), (33\times 23), (30\times 61), (62\times 45), (59\times 119), (116\times 90), (156\times 198), (373\times 326)$。</li>
+<li>DarkNet53 as backbone：常规套路，引入了shortcut结构。</li>
+</ol>
+<h2 id="MTCNN"><a href="#MTCNN" class="headerlink" title="MTCNN"></a>MTCNN</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf" target="_blank" rel="noopener">Joint face detection and alignment using multitask cascaded convolutional networks</a></p>
+</blockquote>
+<p>这里介绍一下人脸检测领域一个非常著名的算法——MTCNN，和通用物体检测相比，人脸检测相对来讲会容易一些。因为熟悉two-stage detection的同学应该知道，face detection可以视为一个face/non-face binary classification问题，所以binary classification的decision boundary要比multi-class classification的decision boundary更容易学得。</p>
+<p>在MTCNN中，作者提出了一个deep cascade multi-task framework，来用一种coarse-to-fine的方法同时处理face detection和face alignment任务，此外，本文也介绍了一种online hard sample mining strategy来进一步提升性能。</p>
+<p>MTCNN主要包括3个子网络：</p>
+<ul>
+<li>在第一阶段，通过一个shallow CNN <code>PNet</code>快速生成candidate windows。</li>
+<li>在第二阶段，通过一个稍微复杂的CNN <code>RNet</code>来reject大量non-facial candidate windows。</li>
+<li>在第三阶段，通过一个更加复杂CNN <code>ONet</code>来进一步提纯结果，并输出5个facial landmarks。</li>
+</ul>
+<p>MTCNN的pipeline如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/mtcnn_pipeline.jpg" alt="Pipeline of MTCNN"></p>
+<h3 id="Details-of-MTCNN"><a href="#Details-of-MTCNN" class="headerlink" title="Details of MTCNN"></a>Details of MTCNN</h3><p>输入图像首先被resize成不同的scale来形成image pyramid，来使得网络具备scale-invariance。然后作为下面3阶段网络的输入：</p>
+<ul>
+<li><strong>Stage 1</strong>: 在第一阶段，<code>PNet</code>来得到candidate facial windows以及对应的bbox regression vectors，bbox regression对estimated bbox进行校准。然后，non-max suppression来merge highly overlapped candidates。</li>
+<li><strong>Stage 2</strong>: 在Stage 1产生的candidate regions被输入到另外一个CNN——<code>RNet</code>，来进一步reject non-facial candidates。同时也应用bbox regression进行box校准，以及non-max suppression来merge highly overlapped candidates。</li>
+<li><strong>Stage 3</strong>: 在第三阶段，<code>ONet</code>会输出5个facial landmarks。</li>
+</ul>
+<h3 id="Training-of-MTCNN"><a href="#Training-of-MTCNN" class="headerlink" title="Training of MTCNN"></a>Training of MTCNN</h3><ol>
+<li>Face classification:<br> $$<br> L_i^{det}=-(y_i^{det}log(p_i) + (1-y_i^{det})(1 - log(p_i)))<br> $$</li>
+<li>Bounding box regression: 对于每一个candidate window，我们预测该candidate和与其最近的groundtruth box之间的offset，优化L2 Loss：<br> $$<br> L_i^{box}=||\hat{y}_i^{box}-y_i^{box}||_2^2<br> $$</li>
+<li>Facial landmark location:<br> $$<br> L_i^{landmark}=||\hat{y}_i^{landmark}-y_i^{landmark}||_2^2<br> $$</li>
+<li>Multi-source training: 因为是multi-task learning，且每个stage学习的data source都不一样(例如PNet需要face/non-face region)，所以MTCNN的整个优化目标如下：<br> $$<br> \mathop{min} \sum_{i=1}^N \sum_{j\in \{det, box, landmark\}}\alpha_j \beta_i^j L_i^j<br> $$</li>
+<li>Online hard sample mining: 在每个mini-batch里，我们对feedforwad propagation的samples按照loss进行排序，然后选择Top 70%作为hard samples，在BP的时候就只计算这些hard samples的gradients。这就意味着<code>太容易区分的样本就直接被舍弃了</code>。</li>
+</ol>
+<h2 id="R-FCN"><a href="#R-FCN" class="headerlink" title="R-FCN"></a>R-FCN</h2><blockquote>
+<p>Paper: <a href="https://papers.nips.cc/paper/6465-r-fcn-object-detection-via-region-based-fully-convolutional-networks.pdf" target="_blank" rel="noopener">R-FCN: Object Detection via Region-based Fully Convolutional Networks</a></p>
+</blockquote>
+<p>这篇文章主要提出了一个Region-based Fully Convolutional Network来处理detection问题，和之前的region-based detector (例如Fast/Faster RCNN)不同，R-FCN能够做到在整张图上共享计算量，而Fast/Faster RCNN需要应用一个per-region RoI subnetwork多次，这种方式计算量就太大了。</p>
+<p>我们知道，近些年来的一些网络结构(例如GoogLeNet/ResNet等)都是全卷积结构的，那么是否可以直接将全卷积网络直接用作detection的backbone呢？然而，这种方式在实验中发现检测精度非常低。因此，Kaiming在ResNet Paper中做detection的实验时，将RoI Pooling Layer插在两段conv layers之间，来产生deeper RoI-wise subnetwork以提高精度，但由于RoI Pooling Layer没有共享计算，所以速度上依然比较慢。</p>
+<p>作者认为，这种不合理设计(将RoI Pooling Layer插在两段conv layers之间，来产生deeper RoI-wise subnetwork)的根源在于：<strong>image classification需要translation invariance (意思就是说无论你图像怎么平移、怎么变换，依然不会对label semantic meaning造成影响)，而object detection则需要translation variance (因为检测不仅需要object recognition，还需要bbox localisation)</strong>。</p>
+<p>我们设想在一个图像分类网络的deeper conv layer对translation是很不敏感的，为了处理这个问题，<strong>ResNet Paper中在conv layer中插入了RoI pooling layer，这种region-specific operation破坏了原来分类网络中的translation invariance，因此post-RoI conv layer在across different region evaluation时就不再是translation-invariant了</strong>。但是因为引入了一些region-wise layers，所以速度上肯定就自然慢了一些。</p>
+<p>本文提出了R-FCN，来将translation variance引入到网络中来。通过一系列特殊的conv layer来构造position-sensitive score maps来作为FCN的输出。每个score map都encode了relative spatial position information (例如某个object的左边)。在FCN的顶层，作者额外添加了position-sensitive RoI pooling layer来从这些score maps中得到spatial information，并且没有引入任何额外的weight conv/fc layers。所有learnable layers都是conv layers，并且在整张图上共享，因此encode了detection所需的spatial information。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/idea_rfcn.jpg" alt="Key idea of RFCN"></p>
+<h3 id="Delve-into-RFCN"><a href="#Delve-into-RFCN" class="headerlink" title="Delve into RFCN"></a>Delve into RFCN</h3><h3 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h3><p>先来看一下RFCN的大致流程：给定一系列region proposals (RoIs)，RFCN来将这些region proposals进行分类。FRCN中所有layers都是conv layer，并且是在entire image上进行计算的。最后一个conv layer对每一个category都产生一系列$k^2$个position-sensitive score maps。因此就得到了$k^2(C+1)$-channel的输出，其中$C+1$代表$C$个categories + $1$个background。$k^2$个score maps对应的$k\times k$的spatial grid描述了relative positions。</p>
+<blockquote>
+<p>For example, with $k\times k = 3\times 3,$ the 9 score maps encode the cases of <code>{top-left, top-center, top-right, ..., bottom-right}</code> of an object category.</p>
+</blockquote>
+<p>RFCN以positive-sensitive RoI pooling layer结尾，该pooling layer将最后一个conv layer的输出进行综合，并对每个RoI输出scores。</p>
+<p>Note：<strong>our position-sensitive RoI layer conducts selective pooling, and each of the $k\times k$ bin aggregates responses from only one score map out of the bank of $k\times k$ score maps. With end-to-end training, this RoI layer shepherds the last convolutional layer to learn specialized position-sensitive score maps.</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/roi_viz.jpg" alt="Visualization of RoI"></p>
+<h3 id="Position-sensitive-score-maps-amp-Position-sensitive-RoI-pooling"><a href="#Position-sensitive-score-maps-amp-Position-sensitive-RoI-pooling" class="headerlink" title="Position-sensitive score maps &amp; Position-sensitive RoI pooling"></a>Position-sensitive score maps &amp; Position-sensitive RoI pooling</h3><p>为了将position information encode到RoI，我们将每个RoI rectangle划分到$k\times k$个bin (对于size为$w\times h$的RoI，每个bin的size是$\frac{w}{k}\times \frac{h}{k}$)。在RFCN中，最后一个conv layer用来对每个category产生$k^2$个score maps。在第$(i,j)$-th 个bin中，我们定义position-sensitive RoI pooling 来仅仅在第$(i,j)$-th 个score map上进行pool操作。<br>$$<br>r_c(i,j|\Theta)=\sum_{(x,y)\in bin(i,j)}z_{i,j,c} (x + x_0, y + y_0|\Theta)/n<br>$$</p>
+<p>$r_c(i,j)$是对应第$c$个category、第$(i,j)$个bin的pooled response，$z_{i,j,c}$是$k^2(C+1)$之外的score map，$(x_0, y_0)$代表RoI中top-left corner (因为我们之前提到过这是relative spatial information)，$n$代表bin中的像素点。第$(i,j)$个bin横跨$\lfloor i \frac{w}{k}\rfloor \leq x &lt; \lceil (i+1)\frac{w}{k}\rceil$、$\lfloor j \frac{h}{k}\rfloor \leq y &lt; \lceil (j+1)\frac{h}{k}\rceil$。</p>
+<p>接下来，$k^2$个position-sensitive score在RoI上进行voting，本文简单粗暴地使用averaging来voting，然后对于每个RoI产生$(C+1)$-d的vector：$r_c(\Theta)=\sum_{i,j} r_c(i,j|\Theta)$，然后就是进softmax layer分类。</p>
+<blockquote>
+<p>The concept of position-sensitive score maps is partially inspired by [3] that develops FCNs for instance-level semantic segmentation. We further introduce the position-sensitive RoI pooling layer that shepherds learning of the score maps for object detection. There is no learnable layer after the RoI layer, enabling nearly cost-free region-wise computation and speeding up both training and inference.</p>
+</blockquote>
+<h3 id="Training"><a href="#Training" class="headerlink" title="Training"></a>Training</h3><p>训练过程和Fast/Faster RCNN类似：</p>
+<blockquote>
+<p>With pre-computed region proposals, it is easy to end-to-end train the R-FCN architecture.<br>Following [7], our loss function defined on each RoI is the summation of the cross-entropy loss and the box regression loss: $L(s, t_{x,y,w,h})=L_{cls}(s_{c^{\star}}) + \lambda [c^{\star} &gt; 0]L_{reg}(t,t^{\star})$. Here $c^{\star}$ is the RoI’s ground-truth label ($c^{\star}=0$ means background). $L_{cls}(s_{c^{\star}})=-log(s_{c^{\star}})$ is the cross-entropy loss for classification, $L_{reg}$ is the bounding box regression loss as defined in [7], and $t^{\star}$ represents the ground truth box. $[c^{\star} &gt; 0]$ is an indicator which equals to 1 if the argument is true and 0 otherwise. We set the balance weight $\lambda = 1$ as in [7]. We define positive examples as the RoIs that have intersection-over-union (IoU) overlap with a ground-truth box of at least 0.5, and negative otherwise.</p>
+</blockquote>
+<blockquote>
+<p>It is easy for our method to adopt online hard example mining (OHEM) [23] during training. Our negligible per-RoI computation enables nearly cost-free example mining. Assuming $N$ proposals per image, in the forward pass, we evaluate the loss of all $N$ proposals. Then we sort all RoIs (positive and negative) by loss and select B RoIs that have the highest loss. Backpropagation [12] is performed based on the selected examples. Because our per-RoI computation is negligible, the forward time is nearly not affected by $N$, in contrast to OHEM Fast R-CNN in [23] that may double training time.</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rfcn.jpg" alt="R-FCN"></p>
+<h2 id="FPN"><a href="#FPN" class="headerlink" title="FPN"></a>FPN</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf" target="_blank" rel="noopener">Feature Pyramid Networks for Object Detection</a></p>
+</blockquote>
+<p>最近在写硕士毕业论文，魔改了一个网络叫作Cascaded Feature Pyramid Network (CFPNet)，提到feature pyramid，那就不得不提<a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf" target="_blank" rel="noopener">FPN</a>了。熟悉detection的同学都知道，detection领域一个导致bbox框不准的原因就是scale variance。而解决multi-scale的方法常见的有Image Pyramid和Feature Pyramid，其中，Image Pyramid在MTCNN中用到过；Feature Pyramid在之前非deep的传统方法也是很常用的(其实SSD也一定程度上用到了multi-scale training)。这样虽然会提升精度，但是计算量也大大增加了，聪明的读者一点立马就想到了：既然CNN本身的feature map就是from coarse to fine + hierarchical multi-scale的结构，那可不可以直接取CNN的feature map来构造feature pyramid呢？没错！这就是FPN的main idea！</p>
+<p>构造Pyramid大致有一下几种常见的方法：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/construct_pyramid.png" alt="Pyramid Construction"></p>
+<blockquote>
+<p>The principle advantage of featurizing each level of an image pyramid is that it produces a multi-scale feature representation in which all levels are semantically strong, including the high-resolution levels.</p>
+</blockquote>
+<p>本文提出的feature pyramid构造方式如下：up是只在finest level上做prediction，bottom是在每个level上都做prediction。<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/feature_pyramid.png" alt="Feature Pyramid"></p>
+<h3 id="Feature-Pyramid-Networks"><a href="#Feature-Pyramid-Networks" class="headerlink" title="Feature Pyramid Networks"></a>Feature Pyramid Networks</h3><p>FPN可以接受任意尺寸的single-scale image作为输入，然后以全卷积的方式输出对应成比例multi-scale的feature map。该步骤与具体的backbone network无关。FPN用到了<strong>bottom-up pathway</strong>，<strong>top-down pathway</strong>和<strong>lateral connection</strong>3种结构来构造feature pyramid。<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/fpn_block.png" alt="FPN Block"></p>
+<h4 id="Bottom-up-pathway"><a href="#Bottom-up-pathway" class="headerlink" title="Bottom-up pathway"></a>Bottom-up pathway</h4><p>所谓bottom-up pathway，即从底层到高层，就是在网络中走了一遍feedforwad，然后产生了一系列multi-scale feature map hierarchy (scaling step=2 in ResNet)。熟悉ResNet的同学们都知道，ResNet中引入了skip connection来辅助信息流通，ResNet中的shortcut实际上就是<code>Element-wise addition</code>，也就是说每个<code>residual block的output feature map size都是相同的</code>。因此在FPN中作者定义这样的layer为stage，并且在每个stage中都定义一个pyramid level。作者选择每个stage最后一层的output来作为<code>reference set</code>，用来构造pyramid (因为每个stage中deepest layer有着strongest feature)。</p>
+<blockquote>
+<p>Specifically, for ResNets [16] we use the feature activations output by each stage’s last residual block. We denote the output of these last residual blocks as {C2, C3, C4, C5} for conv2, conv3, conv4, and conv5 outputs, and note that they have strides of {4, 8, 16, 32} pixels with respect to the input image. We do not include conv1 into the pyramid due to its large memory footprint.</p>
+</blockquote>
+<h4 id="Top-down-pathway-and-lateral-connections"><a href="#Top-down-pathway-and-lateral-connections" class="headerlink" title="Top-down pathway and lateral connections"></a>Top-down pathway and lateral connections</h4><p>所谓top-down pathway，即从高层到底层，了解CNN的同学都知道，high layer包含更丰富的semantic meaning，而low layer包含更多的fine-grained details。但是high layer经过了多次的pooling，所以size自然变得更小了，所以我们就需要首先对其进行upsampling操作。然后通过lateral connection和bottom-up pathway一起enhance得到更强的representation。通过lateral connection连接的feature map size都是一致的，bottom-up的feature包含的semantic meaning比较少，但是细节信息比较多，所以非常适合localisation任务(因为没有经历那么多pooling layer丢失spatial information)。</p>
+<blockquote>
+<p>With a coarser-resolution feature map, we upsample the spatial resolution by a factor of 2 (using nearest neighbor upsampling for simplicity). The upsampling pled map is then merged with the corresponding bottom-up map (which undergoes a 1×1 convolutional layer to reduce channel dimensions) by element-wise addition. This process is iterated until the finest resolution map is generated.</p>
+</blockquote>
+<blockquote>
+<p>To start the iteration, we simply attach a 1×1 convolutional layer on C5 to produce the coarsest resolution map. Finally, we append a 3×3 convolution on each merged map to generate the final feature map, which is to reduce the aliasing effect of upsampling. This final set of feature maps is called {P2, P3, P4, P5}, corresponding to {C2, C3, C4, C5} that are respectively of the same spatial sizes.</p>
+</blockquote>
+<p>因为这些pyramids的所有level用的都是shared classifier/regressor，所以我们将feature dimension固定($d=256$)。</p>
+<h4 id="Feature-Pyramid-Networks-for-RPN"><a href="#Feature-Pyramid-Networks-for-RPN" class="headerlink" title="Feature Pyramid Networks for RPN"></a>Feature Pyramid Networks for RPN</h4><p>熟悉Faster RCNN的同学自然对RPN不会陌生了，RPN实际上就是个小的fully convolutional network，以sliding window的方式在feature map上滑动来产生region proposals。在最初的RPN设计中，用了一个小型的subnetwork来在dense $3\times 3$ sliding windows上做object classification和bbox regression。</p>
+<p>既然RPN是个fixed window size的sliding window detector，所以再scanning pyramid level的feature map之后，能够提升其对scale variance的鲁棒性。</p>
+<p>This is realized by a $3\times 3$ conv layer followed by two sibling $1\times 1$ conv for classification and regression.</p>
+<p>这里我们称之为<code>network head</code>，object/non-object和bbox regression target的定义取决于一系列reference boxes(我们称之为<code>anchors</code>)。这些anchors包含了pre-defined scales and aspect ratios来cover各种size和scale的object，以保证high recall。</p>
+<p>作者将RPN中的single-scale feature map替换为FPN，原来的结构保持不变，即依然是一个$3\times 3$ conv layer再接2个sibling $1\times 1$ conv 做object classification和bbox regression。只不过这个head接在了feature pyramid上。(换言之，输送到multi-task loss的feature是feature pyramid而非原来的single scale)。</p>
+<blockquote>
+<p>Because the head slides densely over all locations in all pyramid levels, it is not necessary to have multi-scale anchors on a specific level. Instead, we assign anchors of a single scale to each level. Formally, we define the anchors to have areas of {322, 642, 1282, 2562, 5122} pixels on {P2, P3, P4, P5, P6} respectively.1 As in [29] we also use anchors of multiple aspect ratios {1:2, 1:1, 2:1} at each level. So in total there are 15 anchors over the pyramid.</p>
+</blockquote>
+<p>作者注意到，<strong>head中的参数在所有feature pyramid levels都是共享的</strong>，同时对比了不共享的实验，发现不共享的accuracy也是一样的。</p>
+<blockquote>
+<p>The good performance of sharing parameters indicates that all levels of our pyramid share similar semantic levels. This advantage is analogous to that of using a featurized image pyramid, where a common head classifier can be applied to features computed at any image scale.</p>
+</blockquote>
+<h4 id="Feature-Pyramid-Networks-for-Fast-RCNN"><a href="#Feature-Pyramid-Networks-for-Fast-RCNN" class="headerlink" title="Feature Pyramid Networks for Fast RCNN"></a>Feature Pyramid Networks for Fast RCNN</h4><p>Fast RCNN通常运行在single-scale feature map上，为了将FPN用在Fast RCNN中，我们需要分配不同scale的RoI对应的pyramid levels。</p>
+<blockquote>
+<p>We view our feature pyramid as if it were produced from an image pyramid. Thus we can adapt the assignment strategy of region-based detectors in the case when they are run on image pyramids. Formally, we assign an RoI of width $w$ and height $h$ (on the input image to the network) to the level $P_k$ of our feature pyramid by:<br>$$<br>k=\lfloor k_0 + log_2(\sqrt{wh}/224)\rfloor<br>$$</p>
+</blockquote>
+<p>224是ImageNet pretraining size，$k_0$是RoI($w\times h=224^2$)应该被映射到的target level，实验中设置$k_0=4$。</p>
+<p>Intuitively, Eqn. (1) means that if the RoI’s scale becomes smaller (say,1/2 of 224), it should be mapped into a finer-resolution level (say, $k=3$).</p>
+<h2 id="DetNet"><a href="#DetNet" class="headerlink" title="DetNet"></a>DetNet</h2><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1804.06215v2.pdf" target="_blank" rel="noopener">DetNet: A Backbone network for Object Detection</a></p>
+</blockquote>
+<p>Deep Learning在Detection取得了越来越多的成果，但是我们通常将分类网络直接拿过来作为detection的backbone，这样的好处是可以直接利用ImageNet pretrained weights。但是毕竟Classification和Detection是不一样的，detection除了要做object recognition之外，还需要给出<strong>bbox location</strong>。直接使用classification network作为detection的backbone有以下问题：</p>
+<ul>
+<li>需要额外的stage来处理multi-scale的object (例如FPN)</li>
+<li>deep classification network中包含了许多的pooling layer，随着网络层数的加深，receptive fields是变大了，但是spatial information越来越少了。所以用于classification的网络结构未必是detection中最优的。</li>
+</ul>
+<p>在DetNet中，作者专门设计了additional stage来处理variant scales，但和分类网络不同的是：尽管新增了additional stage，feature map的spatial resolution依然保持不变。此外，为了保证efficiency，DetNet使用了dilated bottleneck structure，这样既可以保证high resolution的feature map，又可以保证large receptive fields。</p>
+<h3 id="DetNet-A-Backbone-network-for-Object-Detection"><a href="#DetNet-A-Backbone-network-for-Object-Detection" class="headerlink" title="DetNet: A Backbone network for Object Detection"></a>DetNet: A Backbone network for Object Detection</h3><p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/backbones_in_fpn.jpg" alt="Backbones in FPN"></p>
+<h4 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h4><ul>
+<li><strong>The number of network stages is different</strong>. 典型的classification network包含5个stage (如上图B所示)，每个stage经历$2\times$ pooling或stride=2的conv，因此spatial size被下采样了$2^5=32\times$ 次。和classification network不同，FPN通常采用了更多的stage。</li>
+<li><strong>Weak visibility of large objects</strong>. 包含rich semantic information的feature map相对于input image进行了$32\times$ donw-sampling，这样会得到large receptive fields，有利于classification。但是过多的down-sampling带来了spatial information lose，这样会降低detection的性能。</li>
+<li><strong>Invisibility of small objects</strong>. 随着context information被encode进来、feature map的spatial resolution越来越低，small object就越来越难被检测到。FPN采取的方法是在shallower layer中预测小物体。但是shallow layer包含的semantic meaning太少了，所以很难预测该object的类别。因此detector必须encode high-level representation来加强其分类能力。</li>
+</ul>
+<p>和传统detection backbone相比，DetNet有如下优点：</p>
+<ul>
+<li>DetNet和其他backbone network有几乎一样数量的stage，因此extra stage可以直接在ImageNet上pretrain。</li>
+<li>受益于最后一个stage的high resolution feature map，DetNet在检测小物体方面更有优势。</li>
+</ul>
+<p>The detail design of our DetNet59 is illustrated as follows:</p>
+<ul>
+<li>We introduce the extra stages, e.g., P6, in the backbone which will be later utilized for object detection as in FPN. Meanwhile, we fix the spatial resolution as $16\times$ downsampling even after stage 4.</li>
+<li>Since the spatial size is xed after stage 4, in order to introduce a new stage, we employ a dilated [29,30,31] bottleneck with $1\times 1$ convolution projection (Fig. 2B) in the begining of the each stage. We nd the model in Fig. 2B is important for multi-stage detectors like FPN. </li>
+<li>We apply bottleneck with dilation as a basic network block to efficiently enlarge the receptive led. Since dilated convolution is still time consuming, our stage 5 and stage 6 keep the same channels as stage 4 (256 input channels for bottleneck block). This is dierent from traditional backbone design, which will double channels in a later stage.</li>
+</ul>
+<p>网络结构示意图如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/detnet.jpg" alt="DetNet"></p>
+<h2 id="Cascade-RCNN"><a href="#Cascade-RCNN" class="headerlink" title="Cascade RCNN"></a>Cascade RCNN</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Cai_Cascade_R-CNN_Delving_CVPR_2018_paper.pdf" target="_blank" rel="noopener">Cascade R-CNN: Delving into High Quality Object Detection</a></p>
+</blockquote>
+<p>熟悉detection的同学都应该知道，现如今主流的two-stage detection framework是基于<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf" target="_blank" rel="noopener">RCNN</a>改进而来的，即将detection问题转化为classification问题。而在classification的时候，我们通常会根据IOU的阈值来设定positive samples与negative samples。那么问题来了，若IOU卡得越严，positive samples的数量就会大幅度降低，而negative samples的数量则会大幅增加。因此会引发overfitting问题，并且DNN本身也无法得到最优解。通常情况下我们设定IOU threshold为0.5，但该阈值毕竟比较宽松，带来的缺陷就是很容易产生过多的FP(False Positive)。</p>
+<p>Cascade RCNN就是为了解决这些问题，cascade一词，意思为在训练过程中，通过逐渐增加IOU threshold的值来对FP识别得更好，以及通过resampling来保证sample size平衡。此外，与MTCNN中cascade一词类似，Cascade RCNN也是trained stage-by-stage，并且假定前一个stage中detector的输出能为下一个stage detector的training set提供很好的distribution，因此也是类似的“逐步提纯”的idea。</p>
+<p>在Cascade RCNN中，作者将一个hypotheses的<code>quality</code>定义为<code>其与groundtruth bbox的IOU</code>，并且将<code>quality of detector</code>定义为<code>用来训练模型的IOU阈值u</code>。每个threshold下的detector只负责自己学到当前最佳，也就是说在某个IOU threshold下最佳的detector并不一定能保证在其他IOU threshold下的最佳。</p>
+<h3 id="Fundamentation-of-Object-Detection"><a href="#Fundamentation-of-Object-Detection" class="headerlink" title="Fundamentation of Object Detection"></a>Fundamentation of Object Detection</h3><p>Cascade RCNN延续了Faster RCNN的设计风格，即head $H_0$生成region proposal(即preliminary detection hypotheses)；head $H_1$同时进行object classification + bbox regression。</p>
+<p><strong>为了使得regression对scale/location更加invariant，$L_{loc}$通常在distance vector $\Delta=(\delta_x, \delta_y, \delta_w, \delta_h)$上进行操作</strong>。<br>$$<br>\delta_x = (g_x-b_x)/b_w<br>$$</p>
+<p>$$<br>\delta_y = (g_y-b_y)/b_h<br>$$</p>
+<p>$$<br>\delta_w = log(g_w/b_w)<br>$$</p>
+<p>$$<br>\delta_h = log(g_h/b_h)<br>$$<br>其中$g$代表groundtruth bbox，$b$代表candidate bbox。</p>
+<p>大多数情况下，bbox都是画得比较准的，也就是说bbox regression只会对candidate bbox $b$做细微的调整，因此regression loss会比classification loss小很多。为了提升multi-task learning的有效性，$\Delta$通常被mean和variance归一化，即$\delta_x$被替换为：<br>$$<br>\delta_x^{‘}=(\delta_x-\mu_x)/\sigma_x<br>$$</p>
+<p>近期的一些research work认为单个bbox regression无法实现对localization的精准定位，因此，这些工作将多个regressor串联起来作为post-processing step:<br>$$<br>f^{‘}(x,b)=f\circ f\circ \cdots \circ f(x, b)<br>$$<br>这种方法称为<strong>Interative BBox Regression</strong>。</p>
+<p>前面提到过，在将bbox patch进行classification时，通常根据IOU threshold $u$ 来划分positive/negative samples，若 $u$ 太大，则positive samples数量比较少；若 $u$ 太小，positive samples的diversity和richness比较丰富，但detector却无法reject close FP samples。</p>
+<h3 id="Delve-into-Cascade-RCNN"><a href="#Delve-into-Cascade-RCNN" class="headerlink" title="Delve into Cascade RCNN"></a>Delve into Cascade RCNN</h3><h4 id="Cascaded-BBox-Regression"><a href="#Cascaded-BBox-Regression" class="headerlink" title="Cascaded BBox Regression"></a>Cascaded BBox Regression</h4><p>前面已经提到过，用一个regresso试图为每一个level提供良好的bbox regression result是非常困难的事情。在Cascade RCNN中被建模为cascade regression problem:<br>$$<br>f(x,b)=f_T\circ f_{T-1}\circ \cdots \circ f_1(x,b)<br>$$<br>其中，第 $t$ 个stage 的 regressor $f_t$ 是在上一个stage 输出的 $\{b^t\}$ 上进行优化，而非初始集合 $\{b^1\}$，即为<code>Cascade</code>一词的含义。</p>
+<p>和Iterative BBox Regression相比，Cascade BBox Regression主要有如下几点不同：</p>
+<ol>
+<li>Iterative BBox Regression是一个post-processing procedure，主要用来提升BBox；而Cascade BBox Regression是一个resampling procedure，主要为了改变不同stage下的hypotheses distribution。</li>
+<li>Cascade BBox Regression在training和inference阶段都使用。</li>
+<li>$\{f_T,f_{T-1},\cdots,f_1\}$在不同stage的resampled distribution下优化，而不是对最初的distribution $\{b^1\}$优化。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/cascade_rcnn.png" alt="Cascade RCNN"></p>
+<h4 id="Cascaded-Detection"><a href="#Cascaded-Detection" class="headerlink" title="Cascaded Detection"></a>Cascaded Detection</h4><p>在原文的实现中，将后续stage的positive samples设定为一个恒定的值，来保证当IOU threshold增加时，training set依然有足够的positive samples。</p>
+<p>在第 $t$ 个stage、IOU threshold为 $u^t$ 的情况下，loss定义为：<br>$$<br>L(x^t,g)=L_{cls}(h_t(x^t), y^t) + \lambda [y^t\geq 1]L_{loc}(f_t(x^t, b^t), g)<br>$$<br>其中$b^t=f_{t-1}(x^{t-1},b^{t-1})$。</p>
+<h2 id="Focal-Loss"><a href="#Focal-Loss" class="headerlink" title="Focal Loss"></a>Focal Loss</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf" target="_blank" rel="noopener">Focal Loss for Dense Object Detection</a></p>
+</blockquote>
+<p>Focal Loss是Kaiming He团队发表在ICCV’17上的工作，这篇paper主要contribution如下：</p>
+<ol>
+<li>分析了one-stage在精度上不如two-stage detector的原因在于<strong>严重的正负样本(background VS objects)不均衡</strong>，Focal Loss通过down-weight easy examples的gradient来使模型在学习中更加地关注hard examples。</li>
+<li>借助Focal Loss，设计了一个非常强大的one-stage detector——RetinaNet。</li>
+</ol>
+<p>下面来进行详细讲解，数据不平衡问题是Machine Learning领域一个非常常见且非常头疼的问题(有空我会将Leanring from Imbalanced Data写成一个专题，此处就先大致介绍一下paper中的related work吧)，imbalanced dataset会让模型更偏向数量多的类别，从而overwhelm整体性能。</p>
+<p>Imbalanced dataset learning主要有如下两点问题：</p>
+<ol>
+<li>Training是非常inefficient的，因为大多数都是easy negative samples，模型学不到什么真正有用的signal和精确的decision boundary。</li>
+<li>模型会更偏向数量多的类，如前面我们提到的。</li>
+</ol>
+<p>值得一提的是，Focal Loss和Huber Loss之间的区别：</p>
+<ul>
+<li>Huber Loss通过down-weight hard samples的loss来减少outliers的contribution。</li>
+<li>而Focal Loss则恰恰相反，它通过down-weight easy samples的loss来处理数据不平衡问题，即尽管easy samples的数量很多，但是它们对total loss的contribution就被抑制了。</li>
+</ul>
+<p>总而言之，Focal Loss的主体思路和Huber Loss恰好相反，它更多地关注a sparse set of hard examples。</p>
+<h3 id="Delve-into-Focal-Loss"><a href="#Delve-into-Focal-Loss" class="headerlink" title="Delve into Focal Loss"></a>Delve into Focal Loss</h3><p>在介绍Foal Loss之前，先来分析CrossEntropy Loss(CE)：<br>$$<br>CE(p,y)=<br>\begin{cases}<br>    -log(p) &amp; \text{if}\quad y=1\\<br>    -log(1-p) &amp; otherwise<br>\end{cases}<br>$$<br>令：<br>$$<br>p_t=<br>\begin{cases}<br>    p &amp; \text{if}\quad y=1\\<br>    1-p &amp; otherwise<br>\end{cases}<br>$$<br>可得：<br>$$<br>CE(p,y)=CE(p_t)=-log(p_t)<br>$$<br>但是CE有什么问题呢？通过可视化gt labels的probability可以发现：<strong>即便是对于非常容易分类的easy examples，依然会引入不小的loss(如下图所示)</strong>，而这些samples会影响数量较少对应类的学习。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/probability_of_ground_truth_class.png" alt="Probability of Ground Truth Class"></p>
+<p>常见的处理方法是<code>weighted cross entropy</code>，即引入一个权重系数$\alpha\in [0,1]$，对positive/negative分别分配$\alpha$与$1-\alpha$。在实践中，$\alpha$通常设置为对应类别frequency的倒数，或通过cross validation进行选取，$\alpha$-weighted CE可表示为：<br>$$<br>CE(p_t)=-\alpha_t log(p_t)<br>$$</p>
+<p>Focal Loss定义如下：<br>$$<br>FL(p_t)=-(1-p_t)^{\gamma}log(p_t)<br>$$<br>Focal Loss有如下性质：</p>
+<ol>
+<li>当一个sample被错误分类并且$p_t$很小时，调整系数$(1-p_t)^{\gamma}$接近1，因此loss几乎不受影响；而当$p_t$很大时，调整系数接近0，因此easy-classified samples的loss就被抑制了。</li>
+<li>$\gamma$可以平滑地调整easy samples被down-weighted的节奏。$\gamma=0$时，$FL=CE$；$\gamma$递增，调整系数的作用也递增，促使模型更多地关注hard samples、远离easy samples。实验中通常设置$\gamma=2$。</li>
+</ol>
+<p>$\alpha$-weighted Focal Loss即为：<br>$$<br>FL(p_t)=-\alpha_t (1-p_t)^{\gamma}log (p_t)<br>$$</p>
+<p><strong>与Online Hard Example Mining的关系</strong>：OHEM通过使用<strong>high-loss examples来构造minibatch</strong>，和Focal Loss类似，OHEM也是更关注misclassified examples；但与Focal Loss不同的是，OEHM完全丢弃了easy samples。</p>
+<h2 id="Repulsion-Loss"><a href="#Repulsion-Loss" class="headerlink" title="Repulsion Loss"></a>Repulsion Loss</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Repulsion_Loss_Detecting_CVPR_2018_paper.pdf" target="_blank" rel="noopener">Repulsion loss: Detecting pedestrians in a crowd</a></p>
+</blockquote>
+<p>熟悉detection的同学应该都知道，detection场景有一个非常棘手的问题就是密集、目标之间重叠严重的检测。Repulsion Loss就是为了一定程度上解决以上问题，Repulsion Loss是发表在CVPR’18上的paper，在行人检测和常规目标检测都取得了非常好的效果。Repulsion Loss是针对bbox regression步骤中的loss改进，主要idea就是<strong>让predicted bbox与gt bbox尽可能接近，同时和其他object尽可能远离</strong>。</p>
+<p>Detection中的occlusion可分为两种：</p>
+<ol>
+<li>inter-class occlusion: 不同category目标之间的遮挡</li>
+<li>intra-class occlusion: 被相同category目标相互之间的遮挡，也称为<code>crowd occlusion</code>，更多时候，intra-class occlusion是更棘手的，因为大多数场景下，相同类别的samples appearance总是比不同类别的samples appearance更相似</li>
+</ol>
+<p>传统的bbox regression loss(例如$L_2$ Loss, Smooth $L_1$ Loss)只会push让predicted bbox和target gt bbox更接近；而Repulsion Loss不仅可以让proposal bbox与gt bbox更接近，还能让该proposal bbox与其他gt bbox更远离，以及与其他非该类的proposal bbox也更远离。</p>
+<p>本文提出了两种Repulsion Loss：RepGT Loss与RepBox Loss。</p>
+<ul>
+<li>RepGT Loss对shift到其他gt bbox的predicted bbox进行惩罚；<strong>RepGT Loss对于减少FP非常有用</strong></li>
+<li>RepBox Loss则需要每个predicted bbox都与其他不同target对应predicted bbox尽可能远离，这样可以使得detection results对NMS更加不敏感。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/repulsion_loss.png" alt="Repulsion Loss"></p>
+<h3 id="Delve-into-Repulsion-Loss"><a href="#Delve-into-Repulsion-Loss" class="headerlink" title="Delve into Repulsion Loss"></a>Delve into Repulsion Loss</h3><p>Repulsion Loss主要由以下3部分组成：<br>$$<br>L=L_{Attr} + \alpha\times L_{RepGT} + \beta\times L_{RepBox}<br>$$<br>其中，$L_{Attr}$代表attraction term，作用是让predicted bbox尽可能接近gt bbox；$L_{RepGT}$作用是让某个predicted bbox与它周围的gt bbox远离；$L_{RepBox}$作用是某个predicted bbox与其他predicted bbox远离。</p>
+<p>定义$P=\{l_P,t_P,w_P,h_P\}$代表proposal bbox，$G=\{l_G,t_G,w_G,h_G\}$代表gt bbox。$\mathcal{P}_{+}=\{P\}$代表所有positive proposals ($IOU\geq 0.5$) 的集合，$\mathcal{G}=\{G\}$代表一张图中所有的gt bbox。</p>
+<ul>
+<li><p>Attraction Term可以定义为：<br>$$<br>L_{Attr}=\frac{\sum_{P\in \mathcal{P}_{+}} Smooth_{L1}(B^P,G_{Attr}^P)}{|\mathcal{P}_{+}|}<br>$$</p>
+</li>
+<li><p>RepGT Loss的作用是让proposal bbox与其周围其他的 (非本proposal对应的gt) gt bbox远离。故RepGT objects可定义为：<br>$$<br>G_{Rep}^P=\mathop{argmax} \limits_{G\in \mathcal{G}\smallsetminus\{G_{Attr}^P\}} IoU(G, P)<br>$$</p>
+</li>
+</ul>
+<p>RepGT Loss为对$B^P$与$G_{Rep}^P$之间overlap的惩罚，其中overlap为$B^P$与$G_{Rep}^P$之间之间的IoG (Intersection over Groundtruth)：<br>$$<br>IoG(B,G)\triangleq \frac{area(B\bigcap G)}{area(G)}\in [0,1]<br>$$</p>
+<p>因此，RepGT Loss为：<br>$$<br>L_{RepGT}=\frac{\sum_{P\in \mathcal{P}_{+}}Smooth_{ln}(IoG(B^P,G_{Rep}^P))}{|\mathcal{P}_{+}|}<br>$$</p>
+<p>其中，<br>$$<br>Smooth_{ln}=\begin{cases}<br>    -ln(1-x) &amp; x\leq \sigma\\<br>    \frac{x-\sigma}{1-\sigma}-ln(1-\sigma) &amp; x&gt; \sigma<br>\end{cases}<br>$$<br>$\sigma$越小，loss对outliers越不敏感。</p>
+<ul>
+<li>RepBox Loss作用是让proposal bbox与其他不同target的proposal bbox更远离。将proposal set $\mathcal{P}_{+}$划分为多个不相交的子集: $\mathcal{P}_{+}=\mathcal{P}_{1}\bigcap \mathcal{P}_{2}\bigcap \cdots \bigcap \mathcal{P}_{|\mathcal{G}|}$。因此对于任意两个randomly sampled proposal $P_i\in \mathcal{P}_i$与$P_j\in \mathcal{P}_j$，我们希望predicted bbox $B^{P_i}$与$B^{P_j}$之间的overlap尽可能小。因此，RepBox Loss可定义为：<br>$$<br>L_{RepBox}=\frac{\sum_{i\neq j}Smooth_{ln}(IoU(B^{P_i},B^{P_j}))}{\sum_{i\neq j}\mathbb{1}[IoU(B^{P_i},B^{P_j})&gt;0] + \epsilon}<br>$$</li>
+</ul>
+<p>在Repulsion Term中选择IoU或IoG，而非Smooth $L_1$作为distance metric的原因在于：IoU/IoG在$[0,1]$区间内，而Smooth $L_1$是boundless的。若在RepGT Loss中使用Smooth $L_1$，则会使得predicted bbox与repulsion gt bbox尽可能地远离。而IoG只会让predicted bbox与repulsion gt bbox之间的overlap最小化。</p>
+<p>此外，在RepGT Loss中采用IoG而非IoU的原因在于：若使用IoU-based loss，则bbox regressor会通过简单扩大bbox size来增大分母$area(B^P\bigcup G_{Rep}^P)$，从而达到最小化IoU loss的目的。而IoG的分母是一个常数，因此可以让bbox regressor直接最小化$area(B^P\bigcap G_{Rep}^P)$。</p>
+<h2 id="Libra-RCNN"><a href="#Libra-RCNN" class="headerlink" title="Libra RCNN"></a>Libra RCNN</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Pang_Libra_R-CNN_Towards_Balanced_Learning_for_Object_Detection_CVPR_2019_paper.pdf" target="_blank" rel="noopener">Libra R-CNN: Towards Balanced Learning for Object Detection</a></p>
+</blockquote>
+<p>Libra RCNN是发表在<a href="http://openaccess.thecvf.com/CVPR2019.py" target="_blank" rel="noopener">CVPR’19</a>上的文章，我在商品检测项目中也用到了这个算法，效果的确是非常nice，而且idea也非常简单易懂。本小节就来对这个工作进行介绍。</p>
+<p>从paper title也可以知道，Libra RCNN是属于RCNN系列的two-stage detector，并且着重点在于<strong>balanced learning</strong>，该算法主要从以下3点来解决imbalanced learning问题：</p>
+<ul>
+<li>Sample level: 提出了IoU-balanced sampling</li>
+<li>Feature level: 提出了balanced feature pyramid</li>
+<li>Loss level: 提出了balanced L1 loss</li>
+</ul>
+<p>过去几年见证了Deep Learning在Object Detection领域的飞速发展，从最初的RCNN到本文的Libra RCNN，其关键性因素主要有如下3点：</p>
+<ol>
+<li>whether the selected region samples are representative</li>
+<li>whether the extracted visual features are fully utilized</li>
+<li>whether the designed objective function is optimal</li>
+</ol>
+<p>作者发现，在上述3点均存在着imbalance问题，而这些imbalance problem会影响模型的performance。既然发现问题是为了解决问题，而这3点分别对应了sample level、feature level以及loss level的imbalance problem。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/imbalance_libra_rcnn.png" alt="Imbalance"></p>
+<h3 id="Methodology"><a href="#Methodology" class="headerlink" title="Methodology"></a>Methodology</h3><h4 id="IoU-balanced-Sampling"><a href="#IoU-balanced-Sampling" class="headerlink" title="IoU-balanced Sampling"></a>IoU-balanced Sampling</h4><p>为了解决<strong>sample level</strong>的imbalance问题，作者提出了一种新的hard mining method——<strong>IoU-balanced Sampling</strong>:<br>若要从$M$个candidate中选出$N$个 negative samples，那么random sampling的概率为$p=\frac{N}{M}$。为了提高negative samples被select的概率，首先根据IOU将sampling interval平均划分成$K$个bin，在每个bin内部negative samples都是evenly distributed。所以在IOU-balanced sampling下，selected probability为：<br>$$<br>p_k = \frac{N}{K}\times \frac{1}{M_k} k\in [0, K)<br>$$<br>where $M_k$ is the number of sampling candidates in the corresponding interval denoted by $k$. $K$ is set to 3 by default in our experiments.</p>
+<p>下图显示，采用了IOU-balanced sampling的方法，比randomly sampling选取的negative samples更接近真实的distribution。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/iou_balanced_sampling.png" alt="IOU Balanced Sampling"></p>
+<h4 id="Balanced-Feature-Pyramid"><a href="#Balanced-Feature-Pyramid" class="headerlink" title="Balanced Feature Pyramid"></a>Balanced Feature Pyramid</h4><p>与FPN等通过lateral path来融合multi-level feature不同，Libra RCNN是通过使用same deeply integrated balanced semantic features来增强multi-level features。该步骤主要包含rescaling, integrating, refining and strengthening 4个步骤(如下图所示)。因为步骤非常简单，也很好理解，这里就直接引用一下原文吧，不做讲解了。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/balanced_feature_pyramid.png" alt="Balanced Feature Pyramid"></p>
+<ul>
+<li><p><strong>Obtaining balanced semantic features</strong>  </p>
+<blockquote>
+<p>Features at resolution level $l$ are denoted as $C_l$. The number of multi-level features is denoted as $L$. The indexes of involved lowest and highest levels are denoted as $l_{min}$ and $l_{max}$. In Figure 4, $C_2$ has the highest resolution. To integrate multi-level features and preserve their semantic hierarchy at the same time, we first resize the multi-level features $\{C_2, C_3, C_4, C_5\}$ to an intermediate size, i.e., the same size as $C_4$, with interpolation and max-pooling respectively. Once the features are rescaled, the balanced semantic features are obtained by simple averaging as:<br>  $$<br>  C=\frac{1}{L}\sum_{l=l_{min}}^{l_{max}}C_l<br>  $$</p>
+</blockquote>
+<blockquote>
+<p>The obtained features are then rescaled using the same but reverse procedure to strengthen the original features. Each resolution obtains equal information from others in this procedure. Note that this procedure does not contain any pa- rameter. We observe improvement with this nonparametric method, proving the effectiveness of the information flow.</p>
+</blockquote>
+</li>
+<li><p><strong>Refining balanced semantic features</strong>  </p>
+<blockquote>
+<p>作者采用了Gaussian non-local attention来enhance balanced semantic feature。</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="Balanced-L1-Loss-Classification"><a href="#Balanced-L1-Loss-Classification" class="headerlink" title="Balanced L1 Loss Classification"></a>Balanced L1 Loss Classification</h4><p>现在的two-stage detector几乎都是在RCNN/Faster RCNN的改进，Faster RCNN的Loss如下：<br>$$<br>L_{p,u,t^u,v}=L_{cls}(p,u) + \lambda[u\geq 1]L_{loc}(t^u,v)<br>$$</p>
+<p>$L_{p,u,t^u,v}$是个典型的multi-task loss，因此调整$\lambda$是个很头疼的问题。而由于regression loss unbound的特性，直接提高regression loss的权重会使得模型对outliers十分敏感。针对这个问题，作者提出了Balanced $L_1$ Loss。</p>
+<blockquote>
+<p>These outliers, which can be regarded as hard samples, will produce excessively large gradients that are harmful to the training process. The inliers, which can be regarded as the easy samples, contribute little gradient to the overall gradients compared with the outliers.</p>
+</blockquote>
+<p>Balanced $L_1$ loss is derived from the conventional smooth $L_1$ loss, in which an inflection point is set to separate inliers from outliners, and clip the large gradients produced by outliers with a maximum value of 1.0.</p>
+<p>Balanced $L_1$ Loss的目的就是为了提升crucial regression gradients(例如inliers，即accurate samples)，从而让regression loss与classification loss更加balance。<br>$$<br>L_{loc}=\sum_{i\in \{x,y,w,h\}} L_b (t_i^u-v_i)<br>$$<br>其对应的gradients满足:<br>$$<br>\frac{\partial L_{loc}}{\partial w}\propto \frac{\partial L_b}{\partial t_i^u}\propto \frac{\partial L_b}{\partial x}<br>$$<br>Gradient formulation如下：<br>$$<br>\frac{\partial L_b}{\partial x}=\begin{cases}<br>    \alpha ln(b|x|+1) &amp; if |x|&lt;1\\<br>    \gamma &amp; otherwise<br>\end{cases}<br>$$<br>$\alpha$越小，inliers的gradient越大，但outliers的gradient未受影响。此外，$\gamma$也可用来调整regression error的upper bound，从而使得object function更好地balance classification/regression task。</p>
+<p>Balanced $L_1$ Loss定义如下：<br>$$<br>L_b(x)\begin{cases}<br>    \frac{\alpha}{b}(b|x|+1)ln(b|x|+1)-\alpha |x| &amp; if |x|&lt;1\\<br>    \gamma |x| + C &amp; otherwise<br>\end{cases}<br>$$<br>其中，$\gamma$, $\alpha$, $b$满足：<br>$$<br>\alpha ln(b+1)=\gamma<br>$$</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Girshick, Ross, et al. <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf" target="_blank" rel="noopener">“Rich feature hierarchies for accurate object detection and semantic segmentation.”</a> Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.</li>
+<li>He, Kaiming, et al. <a href="https://arxiv.org/pdf/1406.4729v4.pdf" target="_blank" rel="noopener">“Spatial pyramid pooling in deep convolutional networks for visual recognition.”</a> European conference on computer vision. Springer, Cham, 2014.</li>
+<li>Girshick, Ross. <a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf" target="_blank" rel="noopener">“Fast r-cnn.”</a> Proceedings of the IEEE international conference on computer vision. 2015.</li>
+<li>Ren, Shaoqing, et al. <a href="http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf" target="_blank" rel="noopener">“Faster r-cnn: Towards real-time object detection with region proposal networks.”</a> Advances in neural information processing systems. 2015.</li>
+<li>Liu, W., Anguelov, D., Erhan, D., Szegedy, C., Reed, S., Fu, C. Y., &amp; Berg, A. C. (2016, October). <a href="https://arxiv.org/pdf/1512.02325v5.pdf" target="_blank" rel="noopener">Ssd: Single shot multibox detector</a>. In European conference on computer vision (pp. 21-37). Springer, Cham.</li>
+<li>Redmon, Joseph, et al. <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf" target="_blank" rel="noopener">“You only look once: Unified, real-time object detection.”</a> Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.</li>
+<li>Li Z, Peng C, Yu G, et al. <a href="https://arxiv.org/pdf/1711.07264v2.pdf" target="_blank" rel="noopener">Light-head r-cnn: In defense of two-stage object detector</a>[J]. arXiv preprint arXiv:1711.07264, 2017.</li>
+<li>Lin, Tsung-Yi, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf" target="_blank" rel="noopener">“Feature Pyramid Networks for Object Detection.”</a> CVPR. Vol. 1. No. 2. 2017.</li>
+<li>Redmon, Joseph, and Ali Farhadi. <a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Redmon_YOLO9000_Better_Faster_CVPR_2017_paper.pdf" target="_blank" rel="noopener">“YOLO9000: Better, Faster, Stronger.” </a>2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR). IEEE, 2017.</li>
+<li>Redmon, Joseph, and Ali Farhadi. <a href="https://arxiv.org/pdf/1804.02767.pdf" target="_blank" rel="noopener">“Yolov3: An incremental improvement.”</a> arXiv preprint arXiv:1804.02767 (2018).</li>
+<li>Zhang, Kaipeng, et al. <a href="https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf" target="_blank" rel="noopener">“Joint face detection and alignment using multitask cascaded convolutional networks.”</a> IEEE Signal Processing Letters 23.10 (2016): 1499-1503.</li>
+<li>Li, Zeming, et al. <a href="https://arxiv.org/pdf/1804.06215v2.pdf" target="_blank" rel="noopener">“DetNet: A Backbone network for Object Detection.”</a> arXiv preprint arXiv:1804.06215 (2018).</li>
+<li>Dai, Jifeng, et al. <a href="https://papers.nips.cc/paper/6465-r-fcn-object-detection-via-region-based-fully-convolutional-networks.pdf" target="_blank" rel="noopener">“R-fcn: Object detection via region-based fully convolutional networks.”</a> Advances in neural information processing systems. 2016.</li>
+<li>Cai, Zhaowei, and Nuno Vasconcelos. <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Cai_Cascade_R-CNN_Delving_CVPR_2018_paper.pdf" target="_blank" rel="noopener">“Cascade r-cnn: Delving into high quality object detection.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.</li>
+<li>Lin, Tsung-Yi, et al. <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Lin_Focal_Loss_for_ICCV_2017_paper.pdf" target="_blank" rel="noopener">“Focal loss for dense object detection.”</a> Proceedings of the IEEE international conference on computer vision. 2017.</li>
+<li>Wang, Xinlong, et al. <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Repulsion_Loss_Detecting_CVPR_2018_paper.pdf" target="_blank" rel="noopener">“Repulsion loss: Detecting pedestrians in a crowd.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018.</li>
+<li>Pang, Jiangmiao, et al. <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Pang_Libra_R-CNN_Towards_Balanced_Learning_for_Object_Detection_CVPR_2019_paper.pdf" target="_blank" rel="noopener">“Libra r-cnn: Towards balanced learning for object detection.”</a> Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2019.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2019/07/20/cv-detection/" target="_blank" title="[CV] Detection">https://lucasxlu.github.io/blog/2019/07/20/cv-detection/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2019/09/01/cv-segmentation/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [CV] Segmentation
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2019/07/08/cv-landmark-pose/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[CV] Facial Landmarks and Pose Estimation</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RCNN-Region-based-CNN"><span class="nav-number">2.</span> <span class="nav-text">RCNN (Region-based CNN)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-RCNN"><span class="nav-number">2.1.</span> <span class="nav-text">What is RCNN?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Details-of-RCNN"><span class="nav-number">2.2.</span> <span class="nav-text">Details of RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Pretraining-and-Fine-tuning"><span class="nav-number">2.2.1.</span> <span class="nav-text">Pretraining and Fine-tuning</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bounding-Box-Regression"><span class="nav-number">2.2.2.</span> <span class="nav-text">Bounding Box Regression</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SPPNet"><span class="nav-number">3.</span> <span class="nav-text">SPPNet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-SPPNet"><span class="nav-number">3.1.</span> <span class="nav-text">What is SPPNet?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-SPPNet"><span class="nav-number">3.2.</span> <span class="nav-text">Why SPPNet?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Details-of-SPPNet"><span class="nav-number">3.3.</span> <span class="nav-text">Details of SPPNet</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SPP-Layer"><span class="nav-number">3.3.1.</span> <span class="nav-text">SPP Layer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SPP-for-Detection"><span class="nav-number">3.3.2.</span> <span class="nav-text">SPP for Detection</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fast-RCNN"><span class="nav-number">4.</span> <span class="nav-text">Fast RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-Fast-RCNN"><span class="nav-number">4.1.</span> <span class="nav-text">Why Fast RCNN?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Details-of-Fast-RCNN"><span class="nav-number">4.2.</span> <span class="nav-text">Details of Fast RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#The-RoI-pooling-layer"><span class="nav-number">4.2.1.</span> <span class="nav-text">The RoI pooling layer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Fine-tuning-for-detection"><span class="nav-number">4.2.2.</span> <span class="nav-text">Fine-tuning for detection</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Multi-Task-Loss"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">Multi-Task Loss</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Mini-batch-sampling"><span class="nav-number">4.2.2.2.</span> <span class="nav-text">Mini-batch sampling</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fast-R-CNN-detection"><span class="nav-number">4.3.</span> <span class="nav-text">Fast R-CNN detection</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Faster-RCNN"><span class="nav-number">5.</span> <span class="nav-text">Faster RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-Faster-RCNN"><span class="nav-number">5.1.</span> <span class="nav-text">What is Faster RCNN?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Region-Proposal-Network"><span class="nav-number">5.2.</span> <span class="nav-text">Region Proposal Network</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Translation-Invariant-Anchors"><span class="nav-number">5.2.1.</span> <span class="nav-text">Translation-Invariant Anchors</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#A-Loss-Function-for-Learning-Region-Proposals"><span class="nav-number">5.2.2.</span> <span class="nav-text">A Loss Function for Learning Region Proposals</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sharing-Convolutional-Features-for-Region-Proposal-and-Object-Detection"><span class="nav-number">5.2.3.</span> <span class="nav-text">Sharing Convolutional Features for Region Proposal and Object Detection</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSD"><span class="nav-number">6.</span> <span class="nav-text">SSD</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-SSD"><span class="nav-number">6.1.</span> <span class="nav-text">What is SSD?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Details-of-SSD"><span class="nav-number">6.2.</span> <span class="nav-text">Details of SSD</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Training-of-SSD"><span class="nav-number">6.2.1.</span> <span class="nav-text">Training of SSD</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Light-head-RCNN"><span class="nav-number">7.</span> <span class="nav-text">Light-head RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Introduction-1"><span class="nav-number">7.1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Delve-Into-Light-Head-RCNN"><span class="nav-number">7.2.</span> <span class="nav-text">Delve Into Light-Head RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RCNN-Subnet"><span class="nav-number">7.2.1.</span> <span class="nav-text">RCNN Subnet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Thin-Feature-Maps-for-RoI-Warping"><span class="nav-number">7.2.2.</span> <span class="nav-text">Thin Feature Maps for RoI Warping</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Experiments"><span class="nav-number">7.3.</span> <span class="nav-text">Experiments</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YOLO-v1"><span class="nav-number">8.</span> <span class="nav-text">YOLO v1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-YOLO"><span class="nav-number">8.1.</span> <span class="nav-text">What is YOLO?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Training-of-YOLO"><span class="nav-number">8.1.1.</span> <span class="nav-text">Training of YOLO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Limitations-of-YOLO"><span class="nav-number">8.1.2.</span> <span class="nav-text">Limitations of YOLO</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YOLO-V2"><span class="nav-number">9.</span> <span class="nav-text">YOLO V2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Better"><span class="nav-number">9.1.</span> <span class="nav-text">Better</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Faster"><span class="nav-number">9.2.</span> <span class="nav-text">Faster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stronger"><span class="nav-number">9.3.</span> <span class="nav-text">Stronger</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YOLO-v3"><span class="nav-number">10.</span> <span class="nav-text">YOLO v3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MTCNN"><span class="nav-number">11.</span> <span class="nav-text">MTCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Details-of-MTCNN"><span class="nav-number">11.1.</span> <span class="nav-text">Details of MTCNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Training-of-MTCNN"><span class="nav-number">11.2.</span> <span class="nav-text">Training of MTCNN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#R-FCN"><span class="nav-number">12.</span> <span class="nav-text">R-FCN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Delve-into-RFCN"><span class="nav-number">12.1.</span> <span class="nav-text">Delve into RFCN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Overview"><span class="nav-number">12.2.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Position-sensitive-score-maps-amp-Position-sensitive-RoI-pooling"><span class="nav-number">12.3.</span> <span class="nav-text">Position-sensitive score maps &amp; Position-sensitive RoI pooling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Training"><span class="nav-number">12.4.</span> <span class="nav-text">Training</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FPN"><span class="nav-number">13.</span> <span class="nav-text">FPN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Feature-Pyramid-Networks"><span class="nav-number">13.1.</span> <span class="nav-text">Feature Pyramid Networks</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Bottom-up-pathway"><span class="nav-number">13.1.1.</span> <span class="nav-text">Bottom-up pathway</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Top-down-pathway-and-lateral-connections"><span class="nav-number">13.1.2.</span> <span class="nav-text">Top-down pathway and lateral connections</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Feature-Pyramid-Networks-for-RPN"><span class="nav-number">13.1.3.</span> <span class="nav-text">Feature Pyramid Networks for RPN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Feature-Pyramid-Networks-for-Fast-RCNN"><span class="nav-number">13.1.4.</span> <span class="nav-text">Feature Pyramid Networks for Fast RCNN</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DetNet"><span class="nav-number">14.</span> <span class="nav-text">DetNet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DetNet-A-Backbone-network-for-Object-Detection"><span class="nav-number">14.1.</span> <span class="nav-text">DetNet: A Backbone network for Object Detection</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Motivation"><span class="nav-number">14.1.1.</span> <span class="nav-text">Motivation</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cascade-RCNN"><span class="nav-number">15.</span> <span class="nav-text">Cascade RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Fundamentation-of-Object-Detection"><span class="nav-number">15.1.</span> <span class="nav-text">Fundamentation of Object Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Delve-into-Cascade-RCNN"><span class="nav-number">15.2.</span> <span class="nav-text">Delve into Cascade RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cascaded-BBox-Regression"><span class="nav-number">15.2.1.</span> <span class="nav-text">Cascaded BBox Regression</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cascaded-Detection"><span class="nav-number">15.2.2.</span> <span class="nav-text">Cascaded Detection</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Focal-Loss"><span class="nav-number">16.</span> <span class="nav-text">Focal Loss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Delve-into-Focal-Loss"><span class="nav-number">16.1.</span> <span class="nav-text">Delve into Focal Loss</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Repulsion-Loss"><span class="nav-number">17.</span> <span class="nav-text">Repulsion Loss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Delve-into-Repulsion-Loss"><span class="nav-number">17.1.</span> <span class="nav-text">Delve into Repulsion Loss</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Libra-RCNN"><span class="nav-number">18.</span> <span class="nav-text">Libra RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Methodology"><span class="nav-number">18.1.</span> <span class="nav-text">Methodology</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IoU-balanced-Sampling"><span class="nav-number">18.1.1.</span> <span class="nav-text">IoU-balanced Sampling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Balanced-Feature-Pyramid"><span class="nav-number">18.1.2.</span> <span class="nav-text">Balanced Feature Pyramid</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Balanced-L1-Loss-Classification"><span class="nav-number">18.1.3.</span> <span class="nav-text">Balanced L1 Loss Classification</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">19.</span> <span class="nav-text">Reference</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

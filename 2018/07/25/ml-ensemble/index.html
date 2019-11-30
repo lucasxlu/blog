@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[ml] ensemble learning | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningData Science" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionEnsemble Learning是ML中一个非常热门的领域，也是很多比赛Top方案的必选。本文对常见的Ensemble Learning做一个简要介绍。 根据Base Learner的生成方式，目前的Ensemble Learning方法大致可以分为两大类：即base learner之间存在强依赖关系、必须串行生成的序列化方法，以及base learner间不存在强依赖关">
+<meta name="keywords" content="Machine Learning,Data Science">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[ML] Ensemble Learning">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/07/25/ml-ensemble/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionEnsemble Learning是ML中一个非常热门的领域，也是很多比赛Top方案的必选。本文对常见的Ensemble Learning做一个简要介绍。 根据Base Learner的生成方式，目前的Ensemble Learning方法大致可以分为两大类：即base learner之间存在强依赖关系、必须串行生成的序列化方法，以及base learner间不存在强依赖关">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.881Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[ML] Ensemble Learning">
+<meta name="twitter:description" content="IntroductionEnsemble Learning是ML中一个非常热门的领域，也是很多比赛Top方案的必选。本文对常见的Ensemble Learning做一个简要介绍。 根据Base Learner的生成方式，目前的Ensemble Learning方法大致可以分为两大类：即base learner之间存在强依赖关系、必须串行生成的序列化方法，以及base learner间不存在强依赖关">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-ml-ensemble" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [ML] Ensemble Learning
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/07/25/ml-ensemble/" class="article-date">
+	  <time datetime="2018-07-25T02:59:08.000Z" itemprop="datePublished">2018-07-25</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Ensemble Learning是ML中一个非常热门的领域，也是很多比赛Top方案的必选。本文对常见的Ensemble Learning做一个简要介绍。</p>
+<p>根据Base Learner的生成方式，目前的Ensemble Learning方法大致可以分为两大类：即base learner之间存在强依赖关系、必须串行生成的序列化方法，以及base learner间不存在强依赖关系、可同时生成的并行化方法；前者的代表是Boosting，后者的代表是Bagging和Random Forests。</p>
+<p>Boosting主要关注降低bias，因此Boosting能基于泛化性能相当弱的weak learner构建出很强的集成。而bagging主要降低variance，因此它在不剪枝决策树、NN等易受样本扰动的learner上效用更为明显。</p>
+<h2 id="Ensemble-Learning-Algorithm"><a href="#Ensemble-Learning-Algorithm" class="headerlink" title="Ensemble Learning Algorithm"></a>Ensemble Learning Algorithm</h2><h3 id="Boosting"><a href="#Boosting" class="headerlink" title="Boosting"></a>Boosting</h3><p>Boosting是一种常用的统计学习方法，应用广泛且有效，在分类问题中，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行线性组合，提高分类性能。</p>
+<p>Boosting方法就是从weak learner出发，反复学习，得到一系列weak learner(base learner)，然后组合这些weak learner，构成一个强分类器。大多数的提升方法都是改变training set的概率分布，针对不同的training set分布调用weak learner algorithm学习一系列weak learner。</p>
+<p>AdaBoost的做法是，先从初始training set中训练一个base learner，再根据base learner的表现对训练样本分布进行调整，使得先前base learner做错的样本在后续受到更多的关注，然后基于调整后的样本分布来训练下一个base learner；如此重复进行，直至base learner数目达到事先指定的值$T$，最终将这$T$个base learner进行加权结合。AdaBoost采用weighted majority voting的做法，具体的，加大分类误差率较小的weak learner的权重，使其在表决中起较大作用，减小分类误差大的weak learner的权重，使其在表决中起较小的作用。</p>
+<h4 id="AdaBoost"><a href="#AdaBoost" class="headerlink" title="AdaBoost"></a>AdaBoost</h4><ol>
+<li>初始化training set的权值分布<br>$D_1=(w_{11},\cdots,w_{1i},\cdots,w_{1N}),w_{1i}=\frac{1}{N}$</li>
+<li>对$m=1,2,\cdots,M$<ul>
+<li>使用具有权值分布$D_m$的training set学习，得到base learner：<br>$G_m(x):\chi \to \{-1,+1\}$</li>
+<li>计算$G_m(x)$在training set上的分类误差率：<br>$e_m=P(G_m(x_i)\neq y_i)=\sum_{i=1}^N w_{mi}I(G_m(x_i)\neq y_i)$<br>$w_{mi}$是第$m$轮中第$i$个实例的权值。</li>
+<li>计算$G_m(x)$的系数：<br>$\alpha_m=\frac{1}{2}log \frac{1-e_m}{e_m}$</li>
+<li>更新training set的权值分布：<br>$D_{m+1}=(w_{m+1,1},\cdots,w_{m+1,i},\cdots,w_{m+1,N})$<br>$w_{m+1,i}=\frac{w_{mi}}{Z_m}exp(-\alpha_m y_i G_m(x_i))$<br>这里，$Z_m$是规范化因子：<br>$Z_m=\sum_{i=1}^Nw_{mi}exp(-\alpha_m y_i G_m(x_i))$<br>它使得$D_{mi}$成为一个概率分布。</li>
+<li>构建base learner的线性组合：<br>$f(x)=\sum_{m=1}^M \alpha_m G_m(x)$<br>得到最终分类器：<br>$f(x)=sign(f(x))=sign\big(\sum_{m=1}^M \alpha_m G_m(x)\big)$<br>注：$\alpha_m$之和并不为1。</li>
+</ul>
+</li>
+</ol>
+<h4 id="AdaBoost算法的解释"><a href="#AdaBoost算法的解释" class="headerlink" title="AdaBoost算法的解释"></a>AdaBoost算法的解释</h4><p>AdaBoost还可以认为是模型为加法模型、Loss Function为指数函数、学习算法为前向分步算法时的二分类学习方法。</p>
+<h5 id="前向分步算法"><a href="#前向分步算法" class="headerlink" title="前向分步算法"></a>前向分步算法</h5><p>考虑加法模型：<br>$f(x)=\sum_{m=1}^M \beta_m b(x;\gamma_m)$<br>其中，$b(x;\gamma_m)$为基函数的参数，$\beta_m$为基函数的系数。</p>
+<p>在给定training set及Loss Function $L(y,f(x))$的条件下，学习加法模型$f(x)$成为经验风险极小化即Loss Function极小化问题：<br>$\mathop{min} \limits_{\beta_m, \gamma_m} \sum_{i=1}^N L\big(y_i,\sum_{m=1}^M \beta_m b(x_i;\gamma_m)\big)$</p>
+<p>前向分步算法求解复杂优化问题的思想是：因为学习的是加法模型，如果能够从前往后，每一步只学习一个基函数及其系数，逐步逼近优化目标函数式，那么就可以简化优化的复杂度。具体的，每一步只需要优化以下Loss Function：<br>$\mathop{min} \limits_{\beta, \gamma}\sum_{i=1}^N L(y_i,\beta b(x_i;\gamma))$</p>
+<ol>
+<li>初始化$f_0(x)=0$</li>
+<li><p>对$m=1,2,\cdots,M$</p>
+<ul>
+<li><p>极小化Loss：<br>$(\beta_m, \gamma_m)=\mathop{argmin} \limits_{\beta, \gamma} \sum_{i=1}^N L\big(y_i,f_{m-1}(x_i)+\beta b(x_i;\gamma)\big)$<br>得到参数$\beta_m, \gamma_m$</p>
+</li>
+<li><p>更新<br>$f_m(x)=f_{m-1}(x)+\beta_m b(x;\gamma_m)$</p>
+</li>
+</ul>
+</li>
+<li>得到加法模型<br>$f(x)=f_M(x)=\sum_{m=1}^M \beta_m b(x;\gamma_m)$</li>
+</ol>
+<h4 id="Boosting-Tree"><a href="#Boosting-Tree" class="headerlink" title="Boosting Tree"></a>Boosting Tree</h4><p>Boosting方法实际采用加法模型(即基函数的线性组合)与前向分步算法，以决策树为基函数的Boosting方法称为Boosting Tree。Boosting Tree模型可以表示为决策树的加法模型：<br>$f_M(x)=\sum_{m=1}^M T(x;\Theta_m)$<br>其中$T(x;\Theta_m)$表示决策树，$\Theta_m$表示决策树参数，$T$为树的个数。</p>
+<p>Boosting Tree采用前向分步算法，首先确定初始提升树$f_0(x)=0$，第$m$步的模型是：<br>$f_m(x)=f_{m-1}(x)+T(x;\Theta_m)$</p>
+<p>其中，$f_{m-1}(x)$为当前模型，通过经验风险最小化确定下一棵决策树的参数$\Theta$，<br>$\hat{\Theta}_m=\mathop{argmin} \limits_{\Theta_m} \sum_{i=1}^N L(y_i,f_{m-1}(x_i) + T(x_i;\Theta_m))$</p>
+<p>若将输入空间$\chi$划分为$J$个互不相交的区域$R_1,R_2,\cdots,R_J$，并且在每个区域上确定输出的常量$c_j$，那么树可以表示为：<br>$T(x;\Theta)=\sum_{j=1}^Jc_j I(x\in R_j)$<br>其中，参数$\Theta=\{(R_1,c_1), (R_2,c_2), \cdots, (R_J,c_J)\}$表示树的区域划分和各区域上的常数，$J$是回归树的复杂度即叶结点个数。</p>
+<p>回归问题Boosting Tree使用以下前向分步算法：<br>$$<br>f_0(x)=0  \\<br>f_m(x)=f_{m-1}(x)+T(x;\Theta_m) \\<br>f_M(x)=\sum_{m=1}^M T(x;\Theta_m)<br>$$</p>
+<p>在前向分步算法的第$m$步，给定当前模型$f_{m-1}(x)$，需求解：<br>$\hat{\Theta}_m=\mathop{argmin} \limits_{\Theta_m} \sum_{i=1}^N L(y_i,f_{m-1}(x_i) + T(x_i;\Theta_m))$<br>得到$\hat{\Theta}_m$，即第$m$棵树的参数。</p>
+<p>采用MSE Loss时，<br>$L(y,f(x))=(y-f(x))^2$</p>
+<p>其损失变为：<br>$L(y,f_{m-1}(x) + T(x;\Theta_m))=[y-f_{m-1}(x)-T(x;\Theta_m)]^2=[r-T(x;\Theta_m)]^2$</p>
+<p>这里，$r=y-f_{m-1}(x)$是模型拟合数据的残差。所以， <strong>对回归问题的Boosting Tree来说，只需简单地拟合当前模型的残差</strong>。</p>
+<h5 id="Boosting-Tree-for-Regression"><a href="#Boosting-Tree-for-Regression" class="headerlink" title="Boosting Tree for Regression"></a>Boosting Tree for Regression</h5><ol>
+<li>初始化$f_0(x)=0$</li>
+<li>对$m=1,2,\cdots,M$<ul>
+<li>计算残差：$r_{mi}=y_i-f_{m-1}(x_i)$</li>
+<li>拟合残差学习一个回归树，得到$T(x;\Theta_m)$</li>
+<li>更新$f_m(x)=f_{m-1}(x)+T(x;\Theta_m)$</li>
+</ul>
+</li>
+<li>得到回归问题Boosting Tree：<br>$f_M(x)=\sum_{m=1}^M T(x;\Theta_m)$</li>
+</ol>
+<h4 id="Gradient-Boosting-GBDT"><a href="#Gradient-Boosting-GBDT" class="headerlink" title="Gradient Boosting (GBDT)"></a>Gradient Boosting (GBDT)</h4><p>Boosting Tree利用加法模型与前向分步算法实现学习的优化过程，当Loss Function是MSE和指数Loss时，每一步的优化是很简单的。但对于一般的Loss Function而言，往往每一步优化并不容易，这一问题可以利用Gradient Boosting解决。这是利用Gradient Descend的近似方法，其关键是利用Loss Function的负梯度在当前模型的值：<br>$$-[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} ]_{f(x)=f_{m-1}(x)}$$<br>作为回归问题提升树算法中的残差近似值，拟合一个回归树。</p>
+<ol>
+<li>初始化$f_0(x)=\mathop{argmin} \limits_{c} \sum_{i=1}^N L(y_i,c)$</li>
+<li>对$m=1,2,\cdots,M$<ul>
+<li>对$i=1,2,\cdots,N$，计算：<br>$r_{mi}=-[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} ]_{f(x)=f_{m-1}(x)}$</li>
+<li>对$r_{mi}$拟合一个回归树，得到第$m$棵树的叶结点区域$R_{mj},\quad j=1,2, \cdots,J$</li>
+<li>对$j=1,2,\cdots,J$计算：<br>$c_{mj}=\mathop{argmin} \limits_{c} \sum_{x_i\in R_{mj}} L(y_i,f_{m-1}(x_i)+c)$</li>
+<li>更新$f_m(x)=f_{m-1}(x)+\sum_{j=1}^J c_{mj}I(x\in R_{mj})$</li>
+</ul>
+</li>
+<li>得到回归树：<br>$$\hat{f}(x)=f_M(x)=\sum_{m=1}^M \sum_{j=1}^J c_{mj} I(x\in R_{mj})$$</li>
+</ol>
+<h3 id="Bagging-and-Random-Forests"><a href="#Bagging-and-Random-Forests" class="headerlink" title="Bagging and Random Forests"></a>Bagging and Random Forests</h3><h4 id="Bagging"><a href="#Bagging" class="headerlink" title="Bagging"></a>Bagging</h4><p>Bagging是并行式集成学习方法最著名的代表。它基于bootstrap sampling，给定包含$m$个样本的数据集，我们先随机取出一个样本放入采样集中，再把该样本放回初始数据集，使得下次采样时该样本仍有可能被选中，这样，经过$m$次随机采样，我们得到含有$m$个样本的采样集，初始训练集中有的样本在采样集里多次出现，有的则从未出现。</p>
+<p>这样，我们可采样出$T$个含有$m$个训练样本的采样集，然后基于每个采样集训练出一个base learner，再将这些base learner进行集成。在对预测输出进行结合时，Bagging通常对分类任务使用majority voting，对回归任务使用averaging。</p>
+<p>与AdaBoost只适用于binary classification不同，Bagging能不经修改地用于多分类、回归等任务。<br>Bootstrap sampling还给Bagging带来了另一个优点：由于每个base learner只使用了初始训练集中约63.2%的样本，剩下约36.8%的样本可用于validation set来对泛化性能进行out-of-bag estimate。Bagging主要关注降低variance，因此它在不剪枝决策树、NN等易受样本扰动的学习器上效用更为明显。</p>
+<h4 id="Random-Forests"><a href="#Random-Forests" class="headerlink" title="Random Forests"></a>Random Forests</h4><p>Random Forests是Bagging的一个变体，RF在以Decision Tree为base learner构建Bagging集成的基础上，进一步在Decision Tree的训练过程中引入了 <strong>随机属性选择</strong>。传统Decision Tree在选择划分属性时是在当前结点的属性集合（假定有$d$个属性）中选择一个最优属性；而在Random Forests中，对base decision tree的每个结点，先从该结点的属性集合中随机选择一个包含$k$个属性的子集，然后再从这个子集中选择一个最优属性进行划分。这里参数$k$控制了随机性的引入程度；若$k=d$，则base learner的构建与传统decision tree相同；若$k=1$，则是随机选择一个属性用于划分。一般推荐$k=log_2d$。</p>
+<p>与Bagging中base learner的“多样性”仅通过样本扰动不同，<strong>Random Forests中base learner不仅来自样本扰动，还来自属性扰动，这就使得最终集成的泛化性能可通过base learner之间差异度的增加而进一步提升</strong>。</p>
+<p>Random Forests的训练效率通常优于Bagging，因为在base decision tree的构建过程中，Bagging使用的是“确定型”decision tree，在选择划分属性时要对结点的所有属性进行考察，而Random Forests使用的“随机型”decision tree则只需考察一个属性子集。</p>
+<h3 id="结合策略"><a href="#结合策略" class="headerlink" title="结合策略"></a>结合策略</h3><p>Learner的结合会从3方面带来好处：</p>
+<ol>
+<li>从统计方面看，由于学习任务的假设空间往往很大，可能有多个假设在training set上达到同等性能，此时若使用单学习器可能因误选导致泛化性能不佳，结合多个learner则会减小这一风险。</li>
+<li>从计算方面来看，learning algorithm往往会陷入局部极小，有的局部极小点所对应的泛化性能可能很糟糕，而通过多次运行之后进行结合，可降低陷入局部极小点的风险。</li>
+<li>从表示的方面来看，某些学习任务的真实假设可能不在当前学习算法所考虑的假设空间中，此时若使用单学习器则肯定无效，而通过结合多个learner，由于相应的假设空间有所扩大，有可能学得到更好的近似。</li>
+</ol>
+<ul>
+<li><p>Averaging<br>$H(x)=\frac{1}{T}\sum_{i=1}^T h_i(x)$</p>
+</li>
+<li><p>Weighted Averaging<br>$H(x)=\sum_{i=1}^Tw_i h_i(x)$<br>其中$w_i$一般从training set中学习而得。在base learner性能相差较大时宜采用Weighted Averaging，而在base learner性能相差不大时宜采用Averaging。</p>
+</li>
+<li><p>Voting</p>
+<ul>
+<li><p>Majority Voting<br>$$<br>H(x)=\begin{cases}<br>c_j,\quad if \sum_{i=1}^Th_i^j(x)&gt;\frac{1}{2}\sum_{k=1}^N\sum_{i=1}^T h_i^k(x), \\<br>reject, \quad otherwise<br>\end{cases}<br>$$</p>
+</li>
+<li><p>Plurality Voting<br>$H(x)=c_{\mathop{argmax} \limits_{j} \sum_{i=1}^T h_i^j(x)}$<br>即预测为得票数最多的标记，若同时有多个标记获最高票，则从中随机选取一个。</p>
+</li>
+<li><p>Weighted Voting<br>$H(x)=c_{\mathop{argmax} \limits_{j} \sum_{i=1}^T w_ih_i^j(x)}$</p>
+</li>
+</ul>
+</li>
+<li><p>Stacking<br>Stacking先从初始training set中训练出初级 learner，然后“生成”一个新数据集用于训练次级learner。在这个新数据集中，初级learner的输出被当作样例输入特征，而初始样本的标记仍被当作样例标记。</p>
+</li>
+</ul>
+<h3 id="多样性"><a href="#多样性" class="headerlink" title="多样性"></a>多样性</h3><h4 id="多样性增强"><a href="#多样性增强" class="headerlink" title="多样性增强"></a>多样性增强</h4><ul>
+<li><p>数据样本扰动<br>给定初始数据集，可从中产生出不同的数据子集，再利用不同的数据子集训练出不同的个体学习器，数据样本扰动通常是基于采样法。数据样本扰动法对“不稳定学习器”（例如NN、Decision Tree等）很有效。但是对“稳定学习器”（例如SVM、KNN、Naive Bayes）等，需要使用 <strong>输入属性扰动</strong>。</p>
+</li>
+<li><p>输入属性扰动<br>从初始属性集中抽取出若干个属性子集，再基于每个属性子集训练一个base learner。对包含大量冗余属性的数据，子空间中训练base learner不仅能产生多样性大的个体，还会因属性数的减少而大幅节省时间开销。同时，由于冗余属性多，减少一些属性后训练出的base learner也不至于太差。</p>
+</li>
+<li><p>输入表示扰动<br>对输出表示进行操纵以增强多样性。可对training sample类标记稍作变动，如Flipping Out。</p>
+</li>
+<li><p>算法参数扰动<br>使用单一learner时通常需要cross validation来确定参数值，这事实上已经使用了不同参数训练出多个learner，只不过最终仅选择其中一个learner进行使用，而Ensemble Learning则相当于把这些learner都利用起来；由此可见，Ensemble Learning实际计算开销并不比使用单一learner大很多。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/07/25/ml-ensemble/" target="_blank" title="[ML] Ensemble Learning">https://lucasxlu.github.io/blog/2018/07/25/ml-ensemble/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/07/25/dl-bp/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [DL] BackPropogation
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/07/24/ml-loss/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[ML] Loss Function in ML</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ensemble-Learning-Algorithm"><span class="nav-number">2.</span> <span class="nav-text">Ensemble Learning Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Boosting"><span class="nav-number">2.1.</span> <span class="nav-text">Boosting</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AdaBoost"><span class="nav-number">2.1.1.</span> <span class="nav-text">AdaBoost</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AdaBoost算法的解释"><span class="nav-number">2.1.2.</span> <span class="nav-text">AdaBoost算法的解释</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#前向分步算法"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">前向分步算法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Boosting-Tree"><span class="nav-number">2.1.3.</span> <span class="nav-text">Boosting Tree</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Boosting-Tree-for-Regression"><span class="nav-number">2.1.3.1.</span> <span class="nav-text">Boosting Tree for Regression</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gradient-Boosting-GBDT"><span class="nav-number">2.1.4.</span> <span class="nav-text">Gradient Boosting (GBDT)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bagging-and-Random-Forests"><span class="nav-number">2.2.</span> <span class="nav-text">Bagging and Random Forests</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Bagging"><span class="nav-number">2.2.1.</span> <span class="nav-text">Bagging</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Random-Forests"><span class="nav-number">2.2.2.</span> <span class="nav-text">Random Forests</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结合策略"><span class="nav-number">2.3.</span> <span class="nav-text">结合策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多样性"><span class="nav-number">2.4.</span> <span class="nav-text">多样性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#多样性增强"><span class="nav-number">2.4.1.</span> <span class="nav-text">多样性增强</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[ml] decision tree | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningData Science" />
+  
+  
+  
+  
+  <meta name="description" content="Introduction决策树也是机器学习中一种非常经典的分类和回归算法，在工业界有着非常广泛的应用，并且有着非常好的可解释性。 决策树学习决策树学习的Loss Function通常是正则化的极大似然函数，决策树学习的策略是以Loss Function最小化为目标函数的最小化。 决策树的生成对应于模型的局部选择，决策树的剪枝对应模型的全局选择。决策树的生成只考虑局部最优，决策树的剪枝则考虑全局最优">
+<meta name="keywords" content="Machine Learning,Data Science">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[ML] Decision Tree">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/07/24/ml-dt/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Introduction决策树也是机器学习中一种非常经典的分类和回归算法，在工业界有着非常广泛的应用，并且有着非常好的可解释性。 决策树学习决策树学习的Loss Function通常是正则化的极大似然函数，决策树学习的策略是以Loss Function最小化为目标函数的最小化。 决策树的生成对应于模型的局部选择，决策树的剪枝对应模型的全局选择。决策树的生成只考虑局部最优，决策树的剪枝则考虑全局最优">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-01T15:48:27.881Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[ML] Decision Tree">
+<meta name="twitter:description" content="Introduction决策树也是机器学习中一种非常经典的分类和回归算法，在工业界有着非常广泛的应用，并且有着非常好的可解释性。 决策树学习决策树学习的Loss Function通常是正则化的极大似然函数，决策树学习的策略是以Loss Function最小化为目标函数的最小化。 决策树的生成对应于模型的局部选择，决策树的剪枝对应模型的全局选择。决策树的生成只考虑局部最优，决策树的剪枝则考虑全局最优">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-ml-dt" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [ML] Decision Tree
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/07/24/ml-dt/" class="article-date">
+	  <time datetime="2018-07-24T02:02:19.000Z" itemprop="datePublished">2018-07-24</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>决策树也是机器学习中一种非常经典的分类和回归算法，在工业界有着非常广泛的应用，并且有着非常好的可解释性。</p>
+<h2 id="决策树学习"><a href="#决策树学习" class="headerlink" title="决策树学习"></a>决策树学习</h2><p><strong>决策树学习的Loss Function通常是正则化的极大似然函数</strong>，决策树学习的策略是以Loss Function最小化为目标函数的最小化。</p>
+<p>决策树的生成对应于模型的局部选择，决策树的剪枝对应模型的全局选择。决策树的生成只考虑局部最优，决策树的剪枝则考虑全局最优。</p>
+<h3 id="特征选择"><a href="#特征选择" class="headerlink" title="特征选择"></a>特征选择</h3><ul>
+<li><p>Entropy是表示随机变量不确定性的度量，设$X$是一个取有限个值的离散随机变量，其概率分布为：<br>$P(X=x_i)=p_i$</p>
+<p>则随机变量$X$的Entropy定义为：<br>$H(X)=-\sum_{i=1}^n p_ilogp_i$</p>
+<p>由定义可知Entropy只依赖于$X$的分布，而与$X$的取值无关，所以也可将$X$的Entropy记作$H(p)$：<br>$H(p)=-\sum_{i=1}^n p_ilogp_i$</p>
+<p>Entropy越大，随机变量的不确定性就越大，$0\leq H(p)\leq logn$</p>
+<p>当随机变量只取两个值，即$X$的分布为：<br>$P(X=1)=p, P(X=0)=1-p$<br>Entropy为：<br>$H(p)=-plog_2p-(1-p)log_2(1-p)$</p>
+</li>
+<li><p>条件熵$H(Y|X)$表示在已知随机变量$X$的条件下随机变量$Y$的不确定性，随机变量$X$给定的条件下随机变量$Y$的条件熵，定义为$X$给定条件下$Y$的条件概率分布的熵对$X$的数学期望：<br>$H(Y|X)=\sum_{i=1}^np_iH(Y|X=x_i), \quad p_i=P(X=x_i)$</p>
+</li>
+<li><p>信息增益表示 <strong>得知特征$X$的信息而使得类$Y$的信息的不确定性减少的程度</strong>：<br>定义：特征$A$对dataset $D$的信息增益$g(D,A)$，定义为集合$D$的经验熵$H(D)$与特征$A$给定条件下$D$的经验条件熵$H(D|A)$之差，即：<br>$g(D,A)=H(D)-H(D|A)$  </p>
+<p>一般地，熵$H(Y)$与条件熵$H(Y|X)$之差称为“互信息”，<strong>决策树学习中的信息增益等价于dataset中类与特征的互信息</strong>。</p>
+</li>
+</ul>
+<p>决策树学习应用 <strong>信息增益</strong> 准则选择特征，给定dataset $D$和特征$A$，经验熵$H(D)$表示对数据集$D$进行分类的不确定性，而经验条件熵$H(D|A)$表示在特征$A$给定的条件下对数据集$D$进行分类的不确定性，那么他们的差，即信息增益，就表示由于特征$A$而使得对数据集$D$的分类的不确定性减少的程度。信息增益大的特征具有更强的分类能力。</p>
+<p>根据信息增益准则的特征选择方法是：对training set $D$，计算其每个特征的信息增益，并比较它们的大小，选择信息增益最大的特征。</p>
+<h4 id="信息增益算法"><a href="#信息增益算法" class="headerlink" title="信息增益算法"></a>信息增益算法</h4><p>设training set为$D$，$|D|$表示其样本容量，即样本个数，设有$K$个类$C_k,k=1,2,\cdots,K$，$|C_k|$为属于类$C_k$的样本个数，$\sum_{k=1}^K|C_k|=|D|$。设特征$A$有$n$个不同的取值$\{a_1,a_2,\cdots,a_n\}$，根据特征$A$的取值将$D$划分为$n$个子集$D_1,D_2,\cdots,D_n$，$|D_i|$为$D_i$的样本个数，$\sum_{i=1}^n|D_i|=|D|$。记子集$D_i$中属于类$C_k$的样本集合为$D_{ik}$，即$D_{ik}=D_i\cap C_k$，$|D_{ik}|$为$D_{ik}$的样本个数。于是信息增益算法如下：</p>
+<ol>
+<li><p>计算数据集$D$的经验熵$H(D)$：<br>$H(D)=-\sum_{k=1}^K \frac{|C_k|}{|D|}log_2\frac{|C_k|}{|D|}$</p>
+</li>
+<li><p>计算特征$A$对数据集$D$的经验条件熵$H(D|A)$：<br>$H(D|A)=\sum_{i=1}^n \frac{|D_i|}{|D|}H(D_i)=-\sum_{i=1}^n \frac{|D_i|}{|D|}\sum_{k=1}^K \frac{|D_{ik}|}{|D_i|}log_2 \frac{|D_{ik}|}{|D_i|}$</p>
+</li>
+<li><p>计算信息增益：<br>$g(D,A)=H(D)-H(D|A)$</p>
+</li>
+</ol>
+<p>以信息增益作为划分训练数据集的特征，存在 <strong>偏向于选择取值较多的特征的问题</strong>。使用信息增益比可以对这一问题进行校正。</p>
+<ul>
+<li>信息增益比：特征$A$对training set $D$的信息增益比$g_R(D,A)$定义为其信息增益$g(D,A)$与训练数据集$D$关于特征$A$的值的熵$H_A(D)$之比：<br>$g_R(D,A)=\frac{g(D,A)}{H_A(D)}$<br>其中，$H_A(D)=-\sum_{i=1}^n\frac{|D_i|}{|D|}log_2\frac{|D_i|}{|D|}$，$n$是特征$A$取值的个数。</li>
+</ul>
+<h2 id="决策树的生成"><a href="#决策树的生成" class="headerlink" title="决策树的生成"></a>决策树的生成</h2><h3 id="ID3算法"><a href="#ID3算法" class="headerlink" title="ID3算法"></a>ID3算法</h3><p>ID3算法的核心是在决策树各个结点上应用 <strong>信息增益</strong> 准则进行特征选择，递归地构建决策树。具体做法是：从根节点开始对结点计算所有可能的特征的信息增益，选择信息增益最大的特征作为结点的特征，由该特征的不同取值建立子节点；再对子节点递归地调用以上方法，构建决策树；直到所有特征的信息增益均很小或没有特征可以选择为止。<strong>ID3相当于用极大似然法进行概率模型的选择</strong>。</p>
+<ol>
+<li>若$D$中所有实例属于同一类$C_k$，则$T$为单结点树，并将$C_k$作为该结点的类标记，返回决策树$T$；</li>
+<li>若特征集$A=\varnothing$，则$T$为单结点树，并将$D$中实例数最大的的类$C_k$作为该结点的类标记，返回$T$；</li>
+<li>否则，计算$A$中各个特征对$D$的信息增益，选择 <strong>信息增益</strong> 最大的特征$A_g$；</li>
+<li>若$A_g$的信息增益小于阈值$\epsilon$，则置$T$为单结点树，并将$D$中实例数最大的类$C_k$作为该结点的类标记，返回$T$；</li>
+<li>否则，对$A_g$的每一个可能值$a_i$，依$A_g=a_i$将$D$分割为若干非空子集$D_i$，将$D_i$中实例数最大的类作为标记，构建子结点，由结点及其子结点构成树$T$，返回$T$；</li>
+<li>对第$i$个子结点，以$D_i$为训练集，以$A-\{A_g\}$为特征集，递归调用 1~5 步，得到子树$T_i$，返回$T_i$。</li>
+</ol>
+<p>ID3算法只有树的生成，所以该算法生成的树容易过拟合。</p>
+<h3 id="C4-5"><a href="#C4-5" class="headerlink" title="C4.5"></a>C4.5</h3><p>C4.5算法在生成的过程中，用 <strong>信息增益比</strong> 来选择特征。</p>
+<ol>
+<li>若$D$中所有实例属于同一类$C_k$，则$T$为单结点树，并将$C_k$作为该结点的类标记，返回决策树$T$；</li>
+<li>若特征集$A=\varnothing$，则$T$为单结点树，并将$D$中实例数最大的的类$C_k$作为该结点的类标记，返回$T$；</li>
+<li>否则，计算$A$中各个特征对$D$的 <strong>信息增益比</strong>，选择 <strong>信息增益比</strong> 最大的特征$A_g$；</li>
+<li>若$A_g$的信息增益比小于阈值$\epsilon$，则置$T$为单结点树，并将$D$中实例数最大的类$C_k$作为该结点的类标记，返回$T$；</li>
+<li>否则，对$A_g$的每一个可能值$a_i$，依$A_g=a_i$将$D$分割为若干非空子集$D_i$，将$D_i$中实例数最大的类作为标记，构建子结点，由结点及其子结点构成树$T$，返回$T$；</li>
+<li>对第$i$个子结点，以$D_i$为训练集，以$A-\{A_g\}$为特征集，递归调用 1~5 步，得到子树$T_i$，返回$T_i$。</li>
+</ol>
+<h2 id="决策树的剪枝"><a href="#决策树的剪枝" class="headerlink" title="决策树的剪枝"></a>决策树的剪枝</h2><p>决策树的剪枝往往通过极小化决策树整体的Loss Function来实现，设树$T$的叶节点个数为$|T|$，$t$是树$T$的叶节点，该叶节点有$N_t$个样本点，其中$k$类的样本点有$N_{tk}$个，$k=1,2,\cdots,K$，$H_t(T)$为叶节点$t$上的经验熵，$\alpha\geq 0$为参数，则决策树学习的Loss Function可以定义为：<br>$C_{\alpha}(T)=\sum_{i=1}^{|T|}N_t H_t(T) + \alpha |T|$<br>其中经验熵为：<br>$H_t(T)=-\sum_k \frac{N_{tk}}{N_t}log\frac{N_{tk}}{N_t}$<br>在Loss Function中，将式子右端的第一项记作：<br>$C(T)=\sum_{i=1}^{|T|}N_t H_t(T)=-\sum_{i=1}^{|T|}\sum_{k=1}^K N_{tk}log \frac{N_{tk}}{N_t}$<br>这时有：<br>$C_{\alpha}(T)=C(T)+\alpha|T|$</p>
+<p>$C(T)$表示模型对训练数据的预测误差，即模型对训练数据的拟合程度；$|T|$表示模型复杂度，参数$\alpha\geq 0$控制两者之间的影响。较大的$\alpha$促使选择较简单的模型，较小的$\alpha$促使选择较复杂的模型。</p>
+<p>可以看出，决策树生成只考虑了通过提高信息增益(或信息增益比)对训练数据进行更好的拟合，而决策树剪枝通过优化Loss Function还考虑了减小模型复杂度。决策树生成学习局部模型，决策树剪枝学习整体模型。</p>
+<p>Loss Function的极小化等价于正则化的极大似然估计，所以，利用Loss Function最小原则进行剪枝就是用正则化的极大似然估计进行模型选择。</p>
+<h3 id="剪枝算法"><a href="#剪枝算法" class="headerlink" title="剪枝算法"></a>剪枝算法</h3><ol>
+<li>计算每个节点的经验熵</li>
+<li>递归地从树的叶节点向上回缩：<br>设一组叶节点回缩到其父节点之前与之后的整体树分别为$T_B$与$T_A$，其对应的Loss Function值分别是$C_{\alpha}(T_B)$与$C_{\alpha}(T_A)$，如果 $C_{\alpha}(T_A)\leq C_{\alpha}(T_B)$，则进行剪枝，即将父节点变为新的叶节点。</li>
+<li>返回2，直到不能继续为止，得到Loss Function最小的子树$T_{\alpha}$。</li>
+</ol>
+<h2 id="CART算法"><a href="#CART算法" class="headerlink" title="CART算法"></a>CART算法</h2><p>CART是在给定输入随机变量$X$条件下输出随机变量$Y$的条件概率分布的学习方法。CART假设决策树是二叉树，内部结点特征的取值为“是”和“否”，左分支是取值为“是”的分支，右分支是取值为“否”的分支。这样的决策树等价于递归地二分每个特征，将输入空间即特征空间划分为有限个单元，并在这些单元上确定预测的概率分布，也就是在输入给定条件下输出的条件概率分布。</p>
+<p>CART算法由以下两步组成：  </p>
+<ol>
+<li>决策树生成：基于training set生成决策树，生成的决策树要尽量大；</li>
+<li>决策树剪枝：用validation set对已生成的树进行剪枝并选择最优子树，这时用损失函数最小作为剪枝的标准</li>
+</ol>
+<h3 id="CART生成"><a href="#CART生成" class="headerlink" title="CART生成"></a>CART生成</h3><p>决策树的生成就是递归地构建二叉决策树的过程，<strong>对回归树用MSE最小化准则，对分类树用Gini Index最小化</strong> 准则，进行特征选择，生成二叉树。</p>
+<h4 id="回归树的生成"><a href="#回归树的生成" class="headerlink" title="回归树的生成"></a>回归树的生成</h4><p>假设已将输入空间划分为$M$个单元$R_1,R_2,\cdots,R_M$，并且在每个单元$R_m$上有一个固定的输出值$c_m$，于是回归树模型可以表示为：<br>$f(x)=\sum_{m=1}^M c_mI(x\in R_m)$</p>
+<p>当输入空间的划分确定时，可以用MSE来表示回归树对于training set的预测误差，用MSE Loss最小化准则求解每个单元上的最优输出值。易知，单元$R_m$上的$c_m$的最优值$\hat{c}_m$是$R_m$上所有输入实例$x_i$对应的输出$y_i$的均值，即：<br>$\hat{c}_m=AVG(y_i|x_i\in R_m)$</p>
+<p>可以采用启发式的方法对输入空间进行划分：选择第$j$个变量$x^{(j)}$和它的取值$s$，作为切分变量和切分点，并定义两个区域：<br>$R_1(j,s)=\{x|x^{(j)}\leq s\}$ 和 $R_2(j,s)=\{x|x^{(j)}&gt; s\}$<br>然后寻找最优切分变量$j$和切分点$s$，具体的，求解：<br>$\mathop{min} \limits_{j,s}[\mathop{min} \limits_{c_1} \sum_{x_i\in R_1(j,s)}(y_i-c_1)^2 + \mathop{min} \limits_{c_2} \sum_{x_i\in R_2(j,s)}(y_i-c_2)^2]$</p>
+<p>对固定输入变量$j$可以找到最优切分点$s$：<br>$\hat{c}_1=AVG(y_i|x_i\in R_1(j,s))$ 和 $\hat{c}_2=AVG(y_i|x_i\in R_2(j,s))$</p>
+<p>遍历所有输入变量，找到最优的切分变量$j$，构成一个对$(j,s)$，依此将输入空间划分为两个区域。接着，对每个区域重复上述划分过程，直到满足停止条件为止。这样就生成一棵回归树，成为最小二乘回归树。</p>
+<h5 id="最小二乘回归树生成算法"><a href="#最小二乘回归树生成算法" class="headerlink" title="最小二乘回归树生成算法"></a>最小二乘回归树生成算法</h5><ol>
+<li><p>选择最优切分变量$j$和切分点$s$，求解：<br>$\mathop{min} \limits_{j,s}[\mathop{min} \limits_{c_1} \sum_{x_i\in R_1(j,s)}(y_i-c_1)^2 + \mathop{min} \limits_{c_2} \sum_{x_i\in R_2(j,s)}(y_i-c_2)^2]$</p>
+<p>遍历$j$，对固定的切分变量$j$扫描切分点$s$，选择使得上式达到最小值的对$(j,s)$。</p>
+</li>
+<li><p>用选定的对$(j,s)$划分区域并决定相应的输出值：<br>$R_1(j,s)=\{x|x^{(j)}\leq s\}$， $R_2(j,s)=\{x|x^{(j)}&gt; s\}$</p>
+<p>$\hat{c}_m=\frac{1}{N_m}\sum_{x_i\in R_m(j,s)}y_i, \quad m=1,2$</p>
+</li>
+<li><p>继续对两个子区域调用步骤1和2，直至满足停止条件。</p>
+</li>
+<li><p>将输入空间划分为$M$个区域$R_1,R_2,\cdots,R_M$，生成决策树：<br>$f(x)=\sum_{m=1}^M\hat{c}_m I(x\in R_m)$</p>
+</li>
+</ol>
+<h4 id="分类树的生成"><a href="#分类树的生成" class="headerlink" title="分类树的生成"></a>分类树的生成</h4><p>分类树用Gini Index选择最优特征，同时决定该特征的最优二值切分点。</p>
+<ul>
+<li><p>Gini Index: 分类问题中，假设有$K$个类，样本点属于第$k$类的概率是$p_k$，则概率分布的Gini Index定义为：<br>$Gini(p)=\sum_{k=1}^Kp_k(1-p_k)=1-\sum_{k=1}^Kp_k^2$</p>
+<p>对于二分类问题，若样本点属于第1类的概率是$p$，则概率分布的Gini Index为：<br>$Gini(p)=2p(1-p)$</p>
+<p>对于给定的样本集合$D$，其Gini Index为：<br>$Gini(D)=1-\sum_{k=1}^K(\frac{|C_k|}{|D|})^2$</p>
+<p>这里，$C_k$是$D$中属于第$k$类的样本子集，$K$是类的个数。</p>
+<p>如果样本集合$D$根据$A$是否取某一可能值$a$被分成$D_1$和$D_2$两部分，即：<br>$D_1=\{(x,y)\in D|A(x)=a\}, \quad D_2=D-D_1$</p>
+<p>则在特征$A$的条件下，集合$D$的Gini Index定义为：<br>$Gini(D,A)=\frac{|D_1|}{|D|}Gini(D_1)+\frac{|D_2|}{|D|}Gini(D_2)$</p>
+<p>Gini Index表示集合$D$的不确定性，Gini Index $G(D,A)$表示经$A=a$分割后集合$D$的不确定性，Gini Index越大，样本集合的不确定性也就越大，这一点与Entropy相似。</p>
+</li>
+</ul>
+<h5 id="CART生成算法"><a href="#CART生成算法" class="headerlink" title="CART生成算法"></a>CART生成算法</h5><ol>
+<li>设结点的training set为$D$，计算现有特征对该数据集的Gini Index，此时，对每一个特征$A$，对其可能取的每个值$a$，根据样本点对$A=a$的测试为“是”或者“否”将$D$分割成$D_1$和$D_2$两部分，并计算$A=a$时的Gini Index。</li>
+<li>在所有可能的特征$A$及它们所有可能的切分点$a$中，选择Gini Index最小的特征及其对应的切分点作为最优特征与最优切分点。从该结点生成两个子结点，将training set依特征分配到两个子结点中去。</li>
+<li>对两个子结点递归调用1和2，直至满足停止条件。</li>
+<li>生成CART决策树。</li>
+</ol>
+<p>算法停止的条件是结点中的样本个数小于指定阈值，或样本集的Gini Index小于阈值(样本基本属于同一类)，或者没有更多特征。</p>
+<h4 id="CART剪枝"><a href="#CART剪枝" class="headerlink" title="CART剪枝"></a>CART剪枝</h4><p>CART剪枝算法由两步组成：首先从生成算法产生的决策树$T_0$底端开始不断剪枝，直到$T_0$的根结点，形成一个子树序列$\{T_0,T_1,\cdots,T_n\}$然后通过交叉验证在validation set上进行测试，从中选择最优子树。</p>
+<ol>
+<li><p>剪枝，形成一个子树序列：<br>在剪枝过程中，计算子树的Loss Function：<br>$C_{\alpha}(T)=C(T)+\alpha |T|$<br>其中，$T$为任意子树，$C(T)$为对training set的预测误差(如Gini Index)，$|T|$为子树的叶结点个数，$\alpha \geq 0$为参数。</p>
+<p>可以用递归的方法对树进行剪枝，将$\alpha$从小增大，$0=\alpha_0 &lt; \alpha_1 &lt; \alpha_2 &lt; \cdots &lt; \alpha_n &lt; +\infty$，产生一系列的区间$[\alpha_i,\alpha_{i+1}),\quad i=0,1,\cdots,n$；剪枝得到的子树序列对应着区间$\alpha \in [\alpha_i, \alpha_{i+1}), \quad i=0,1,\cdots,n$的最优子树序列$\{T_0,T_1,\cdots,T_n\}$，序列中的子树是嵌套的。</p>
+<p>具体的，从整体树$T_0$开始剪枝，对$T_0$的任意内部结点$t$，以$t$为单结点树的Loss Function是：<br>$C_{\alpha}=C(t)+\alpha$</p>
+<p>以$t$为根结点的子树$T_t$的Loss Function是：<br>$C_{\alpha}(T_t)=C(T_t)+\alpha |T_t|$</p>
+<p>当$\alpha=0$及$\alpha$充分小时，有不等式：<br>$C_{\alpha}(T_t)&lt;C_{\alpha}(t)$</p>
+<p>当$\alpha$增大时，在某一$\alpha$有：<br>$C_{\alpha}(T_t)=C_{\alpha}(t)$</p>
+<p>当$\alpha$再增大时，不等式反向，只要$\alpha=\frac{C(t)-C(T_t)}{|T_t|-1}$，$T_t$与$t$有相同的Loss Function值，而$t$的结点少，因此$t$比$T_t$更可取，对$T_t$进行剪枝。</p>
+<p>为此，对$T_0$中每一内部结点$t$，计算：<br>$g(t)=\frac{C(t)-C(T_t)}{|T_t|-1}$<br>它表示剪枝后整体Loss减少的程度，在$T_0$中剪去$g(t)$最小的$T_t$，将得到的子树作为$T_1$，同时将最小的$g(t)$设为$\alpha_1$，$T_1$为区间$[\alpha_1,\alpha_2)$的最优子树。如此剪枝下去，直至得到根结点。在这一过程中，不断增加$\alpha$的值，产生新的区间。</p>
+</li>
+<li><p>在剪枝得到的子树序列$T_0,T_1,\cdots,T_n$中通过交叉验证选取最优子树$T_{\alpha}$<br>利用validation set测试子树序列$T_1,\cdots,T_n$中各棵子树的MSE或Gini Index，值最小的为最优决策树。每棵子树$T_1,\cdots,T_n$都对应于一个参数$\alpha_1,\cdots,\alpha_n$。所以当最优子树$T_k$确定时，对应的$\alpha_k$也确定了，即得到最优决策树了。</p>
+</li>
+</ol>
+<h5 id="CART剪枝算法"><a href="#CART剪枝算法" class="headerlink" title="CART剪枝算法"></a>CART剪枝算法</h5><ol>
+<li>设$k=0,T=T_0$</li>
+<li>设$\alpha=+\infty$</li>
+<li>自下而上地对各内部结点$t$计算$C(T_t)$，$|T_t|$以及<br>$g(t)=\frac{C(t)-C(T_t)}{|T_t|-1} \qquad \alpha=min(\alpha,g(t))$<br>$T_t$表示以$t$为根结点的子树，$C(T_t)$是对training set的预测误差，$|T_t|$是$T_t$的叶结点个数</li>
+<li>自上而下地访问内部结点$t$，若有$g(t)=\alpha$，进行剪枝，并对叶结点$t$以多数表决法决定类别，得到树$T$。</li>
+<li>设$k=k+1,\alpha_k=\alpha,T_k=T$</li>
+<li>若$T$不是由根结点单独构成的树，则返回到步骤4</li>
+<li>采用cross validation在子树序列中选取最优子树</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2018/07/24/ml-dt/" target="_blank" title="[ML] Decision Tree">https://lucasxlu.github.io/blog/2018/07/24/ml-dt/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2018/07/24/ml-loss/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [ML] Loss Function in ML
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2018/07/23/ml-lr-me/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[ML] Logistic Regression and Maximum Entropy Model</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#决策树学习"><span class="nav-number">2.</span> <span class="nav-text">决策树学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特征选择"><span class="nav-number">2.1.</span> <span class="nav-text">特征选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#信息增益算法"><span class="nav-number">2.1.1.</span> <span class="nav-text">信息增益算法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#决策树的生成"><span class="nav-number">3.</span> <span class="nav-text">决策树的生成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ID3算法"><span class="nav-number">3.1.</span> <span class="nav-text">ID3算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C4-5"><span class="nav-number">3.2.</span> <span class="nav-text">C4.5</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#决策树的剪枝"><span class="nav-number">4.</span> <span class="nav-text">决策树的剪枝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#剪枝算法"><span class="nav-number">4.1.</span> <span class="nav-text">剪枝算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CART算法"><span class="nav-number">5.</span> <span class="nav-text">CART算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CART生成"><span class="nav-number">5.1.</span> <span class="nav-text">CART生成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#回归树的生成"><span class="nav-number">5.1.1.</span> <span class="nav-text">回归树的生成</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#最小二乘回归树生成算法"><span class="nav-number">5.1.1.1.</span> <span class="nav-text">最小二乘回归树生成算法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分类树的生成"><span class="nav-number">5.1.2.</span> <span class="nav-text">分类树的生成</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CART生成算法"><span class="nav-number">5.1.2.1.</span> <span class="nav-text">CART生成算法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CART剪枝"><span class="nav-number">5.1.3.</span> <span class="nav-text">CART剪枝</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CART剪枝算法"><span class="nav-number">5.1.3.1.</span> <span class="nav-text">CART剪枝算法</span></a></li></ol></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2019 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>
