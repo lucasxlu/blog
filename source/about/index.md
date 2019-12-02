@@ -35,30 +35,30 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 Vision Algorithm Engineer  
 Store Intelligent Decision-making Department
 
-  * Kanto Cooking (Discard) detection with 0.963 AP, and fine-grained recognition with 95.66% accuracy  
-	* Daily fresh food recognition with 0.920 AP and 99.09% accuracy
-	* Products Re-identification with 99.43% rank-1 accuracy
-	* Model deployment with RESTful API (Django + TensorRT + Nginx)
+  - Kanto Cooking (Discard) detection with 0.963 AP, and fine-grained recognition with 95.66% accuracy  
+  - Daily fresh food recognition with 0.920 AP and 99.09% accuracy
+  - Products Re-identification with 99.43% rank-1 accuracy
+  - Model deployment with RESTful API (Django + TensorRT + Nginx)
 
 
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
 Algorithm Intern  
 Security Product & Technology
 
-  * License image quality recognition (reflection/blur) with 93.15% Precision and 98.35% Recall
-  * Facial beauty prediction with 0.89 Pearson Correlation
-  * License type recognition with 99.77% Precision and 99.76% Recall
-  * Scene recognition (in car/out of car) with 99.89% Precision 99.90% Recall
-  * License completeness recognition with 99.67% Precision and 99.68% Recall
-  * Complete the writing of 21 patents related to safety products
+  - License image quality recognition (reflection/blur) with 93.15% Precision and 98.35% Recall
+  - Facial beauty prediction with 0.89 Pearson Correlation
+  - License type recognition with 99.77% Precision and 99.76% Recall
+  - Scene recognition (in car/out of car) with 99.89% Precision 99.90% Recall
+  - License completeness recognition with 99.67% Precision and 99.68% Recall
+  - Complete the writing of 21 patents related to safety products
 
 
 * [Beijing Jiewen Technology Co.,Ltd.](http://www.aisino.com/), Huazhong Developing Center. &emsp; 2015.06 – 2016.06  
 Java/Web Spider Developer
 Financial Information System & Multi-thread Web Crawling System
-  * Develop and maintain web information system based on Java SSM framework and MySQL database.
-  * Develop web crawlers to collect data from O2O websites (e.g. [Ctrip](http://www.ctrip.com/), [Dazhong Dianping](http://www.dianping.com/), [AMap](https://www.amap.com/)) based on Python/Java and MySQL/MongoDB.
-  * Data statistics, analysis and visualization. It provides important data support for company offline product location
+  - Develop and maintain web information system based on Java SSM framework and MySQL database
+  - Develop web crawlers to collect data from O2O websites (e.g. [Ctrip](http://www.ctrip.com/), [Dazhong Dianping](http://www.dianping.com/), [AMap](https://www.amap.com/)) based on Python/Java and MySQL/MongoDB
+  - Data statistics, analysis and visualization. It provides important data support for company offline product location
 
 
 ## Skills
