@@ -35,7 +35,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 Vision Algorithm Engineer  
 Store Intelligent Decision-making Department
 
-  * Kanto Cooking (Discard) detection with 0.963 AP, and fine-grained recognition with 95.66% accuracy
+  * Kanto Cooking (Discard) detection with 0.963 AP, and fine-grained recognition with 95.66% accuracy  
 	* Daily fresh food recognition with 0.920 AP and 99.09% accuracy
 	* Products Re-identification with 99.43% rank-1 accuracy
 	* Model deployment with RESTful API (Django + TensorRT + Nginx)
