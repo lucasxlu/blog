@@ -20,7 +20,6 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * **Xu, Lu**, Jinhai Xiang, and Xiaohui Yuan. "Learning Beauty by Transferring Rich Deep Features." [Concurrency and Computation: Practice and Experience](https://onlinelibrary.wiley.com/journal/15320634). (Accepted) [[arXiv](https://arxiv.org/abs/1803.07253)] [[Code](https://github.com/lucasxlu/TransFBP.git)] [[Slides](./Presentation_TransFBP.pdf)]
 * **Xu, Lu**, et al. "Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform." [2019 International Conference on Machine Learning and Cybernetics (ICMLC)](http://www.icmlc.com/). IEEE, 2019. [[arXiv](https://arxiv.org/abs/1903.00384)] [[Code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
 * **Xu, Lu**, et al. "XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service." Technical Report, 2019. [[PDF](XCloud.pdf)] [[Code](https://github.com/lucasxlu/XCloud.git)]
-* Research on Online Skin Disease Diagnosis and Recognition based on Deep Learning. (in Chinese) [MS Thesis]
 * Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Undergraduate Thesis](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) of Hubei Province in 2015. in Chinese) [[Code](https://github.com/xuludev/System.git)]  
 
 
