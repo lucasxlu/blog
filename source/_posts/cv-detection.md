@@ -691,7 +691,7 @@ $$
 
 ### Delve into Cascade RCNN
 #### Cascaded BBox Regression
-前面已经提到过，用一个regresso试图为每一个level提供良好的bbox regression result是非常困难的事情。在Cascade RCNN中被建模为cascade regression problem:
+前面已经提到过，用一个regressor试图为每一个level提供良好的bbox regression result是非常困难的事情。在Cascade RCNN中被建模为cascade regression problem:
 $$
 f(x,b)=f_T\circ f_{T-1}\circ \cdots \circ f_1(x,b)
 $$
