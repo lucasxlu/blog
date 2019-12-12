@@ -45,7 +45,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/imbalance_libra_rcnn.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/iou_balanced_sampling.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/balanced_feature_pyramid.png">
-<meta property="og:updated_time" content="2019-11-01T15:48:27.748Z">
+<meta property="og:updated_time" content="2019-12-12T15:27:37.331Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[CV] Detection">
 <meta name="twitter:description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasX注：">
@@ -593,7 +593,7 @@
 <p>大多数情况下，bbox都是画得比较准的，也就是说bbox regression只会对candidate bbox $b$做细微的调整，因此regression loss会比classification loss小很多。为了提升multi-task learning的有效性，$\Delta$通常被mean和variance归一化，即$\delta_x$被替换为：<br>$$<br>\delta_x^{‘}=(\delta_x-\mu_x)/\sigma_x<br>$$</p>
 <p>近期的一些research work认为单个bbox regression无法实现对localization的精准定位，因此，这些工作将多个regressor串联起来作为post-processing step:<br>$$<br>f^{‘}(x,b)=f\circ f\circ \cdots \circ f(x, b)<br>$$<br>这种方法称为<strong>Interative BBox Regression</strong>。</p>
 <p>前面提到过，在将bbox patch进行classification时，通常根据IOU threshold $u$ 来划分positive/negative samples，若 $u$ 太大，则positive samples数量比较少；若 $u$ 太小，positive samples的diversity和richness比较丰富，但detector却无法reject close FP samples。</p>
-<h3 id="Delve-into-Cascade-RCNN"><a href="#Delve-into-Cascade-RCNN" class="headerlink" title="Delve into Cascade RCNN"></a>Delve into Cascade RCNN</h3><h4 id="Cascaded-BBox-Regression"><a href="#Cascaded-BBox-Regression" class="headerlink" title="Cascaded BBox Regression"></a>Cascaded BBox Regression</h4><p>前面已经提到过，用一个regresso试图为每一个level提供良好的bbox regression result是非常困难的事情。在Cascade RCNN中被建模为cascade regression problem:<br>$$<br>f(x,b)=f_T\circ f_{T-1}\circ \cdots \circ f_1(x,b)<br>$$<br>其中，第 $t$ 个stage 的 regressor $f_t$ 是在上一个stage 输出的 $\{b^t\}$ 上进行优化，而非初始集合 $\{b^1\}$，即为<code>Cascade</code>一词的含义。</p>
+<h3 id="Delve-into-Cascade-RCNN"><a href="#Delve-into-Cascade-RCNN" class="headerlink" title="Delve into Cascade RCNN"></a>Delve into Cascade RCNN</h3><h4 id="Cascaded-BBox-Regression"><a href="#Cascaded-BBox-Regression" class="headerlink" title="Cascaded BBox Regression"></a>Cascaded BBox Regression</h4><p>前面已经提到过，用一个regressor试图为每一个level提供良好的bbox regression result是非常困难的事情。在Cascade RCNN中被建模为cascade regression problem:<br>$$<br>f(x,b)=f_T\circ f_{T-1}\circ \cdots \circ f_1(x,b)<br>$$<br>其中，第 $t$ 个stage 的 regressor $f_t$ 是在上一个stage 输出的 $\{b^t\}$ 上进行优化，而非初始集合 $\{b^1\}$，即为<code>Cascade</code>一词的含义。</p>
 <p>和Iterative BBox Regression相比，Cascade BBox Regression主要有如下几点不同：</p>
 <ol>
 <li>Iterative BBox Regression是一个post-processing procedure，主要用来提升BBox；而Cascade BBox Regression是一个resampling procedure，主要为了改变不同stage下的hypotheses distribution。</li>
