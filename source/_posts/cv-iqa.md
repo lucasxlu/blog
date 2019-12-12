@@ -21,9 +21,17 @@ IQA主要分为3种：(1) 将distorted image和original image进行质量比较�
 IQA主要的Metric是*MSE*, *PSNR (Peak Signal-to-Noise Ratio)*、*SROCC(Spearman Rank Order Correlation Coefficien)*、*LCC(Linear Correlation Coefficien)* 和 *SSMI (structural similarity)*。
 
 - MSE measures pixel-wise error of two images
-- SROCC measures how well one quantity can be described as a monotonic function of another quantity
-- LCC measures the linear dependence between two quantities
 
+- SROCC measures how well one quantity can be described as a monotonic function of another quantity.
+$$
+SROCC=\frac{1-6\sum_{i=1}^n d_i^2}{(n-1)n(n+1)}
+$$
+
+- PLCC measures the linear dependence between two quantities, -1 is the standard measure for regression where +1 denotes perfect positive correlation and −1 perfect negative correlation. Values near zero de- note poor correlation. In image quality assessment PLCC is used to measure the linear correlation between the true subjective and method predicted scores.
+$$
+PLCC=\frac{\sum_{i=1}^n (s_i-\bar{s})(q_i-\bar{q})}{\sqrt{\sum_{i=1}^n (s_i-\bar{s})^2} \sqrt{\sum_{i=1}^n (q_i-\bar{q})^2}}
+$$
+where $d_i$ is the rank-order difference between the i-th image indeces in the sorted lists of the subjective ground truth and predicted scores.
 
 > [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
@@ -87,9 +95,25 @@ $$
 > Our models effectively predict the distribution of quality ratings, rather than just the mean scores. This leads to a more accurate quality prediction with higher correlation to the ground truth ratings.
 
 
+## BLINDER
+> Paper: [Blind image quality prediction by exploiting multi-level deep representations](https://www.sciencedirect.com/science/article/pii/S003132031830150X)
+
+这也是一篇非常简单的paper，核心idea如下：
+1. 利用ImageNet pretrained VGG提取**multi-level feature**
+2. 对每个不同level的feature map做MinPool和MaxPool，然后再concatenate
+3. 回归多个SVR，average score ensemble
+
+![BLINDER](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-iqa/blinder.png)
+
+方法虽然简单，但是效果貌似还很不错。作者在实验部分还发现了以下现象：
+1. relu/mpool层的效果比它前面的conv/fc层的效果差，原因可能是relu的非负性丢失了部分信息（所以这就是IQA领域喜欢结合MinPool和MaxPool一起用的原因？）
+2. 接近softmax层的效果correlation比较高，说明**object recognition信息能够和image quality信息互补**
+
 
 ## Reference
 1. Z. Wang, A. C. Bovik, H. R. Sheikh and E. P. Simoncelli, ["Image quality assessment: From error visibility to structural similarity,"](http://www.cns.nyu.edu/pub/eero/wang03-reprint.pdf) IEEE Transactions on Image Processing, vol. 13, no. 4, pp. 600-612, Apr. 2004.
 2. Talebi, Hossein, and Peyman Milanfar. ["Nima: Neural image assessment."](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8352823) IEEE Transactions on Image Processing 27.8 (2018): 3998-4011.
 3. Kang, Le, et al. ["Convolutional neural networks for no-reference image quality assessment."](http://openaccess.thecvf.com/content_cvpr_2014/papers/Kang_Convolutional_Neural_Networks_2014_CVPR_paper.pdf) Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.
 4. Kang, Le, et al. ["Simultaneous estimation of image quality and distortion via multi-task convolutional neural networks."](https://ieeexplore.ieee.org/abstract/document/7351311/) 2015 IEEE international conference on image processing (ICIP). IEEE, 2015.
+5. Gao F, Yu J, Zhu S, et al. [Blind image quality prediction by exploiting multi-level deep representations](https://www.sciencedirect.com/science/article/pii/S003132031830150X)[J]. Pattern Recognition, 2018, 81: 432-442.
+6. Bianco S, Celona L, Napoletano P, et al. [On the use of deep learning for blind image quality assessment](https://arxiv.org/pdf/1602.05531.pdf)[J]. Signal, Image and Video Processing, 2018, 12(2): 355-362.
