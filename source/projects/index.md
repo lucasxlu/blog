@@ -3,7 +3,7 @@ layout: "projects"
 title: "Projects"
 header-img: "img/header_img/archive-bg.png"
 comments: false
-date: 2019-01-19 11:28:56
+date: 2019-12-14 21:10:56
 description: "Projects for ML/CV/AI/Data Science."
 ---
 # Personal Projects List
@@ -11,12 +11,8 @@ description: "Projects for ML/CV/AI/Data Science."
 
 ## Computer Vision & Deep Learning
 
-* XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[Slides](../about/Presentation.pdf)]
+* XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[Slides](../about/XCloud.pdf)]
 > An AI Cloud Platform with RESTful APIs. We provide common AI & data services such as *facial attributes analysis*, *data scrapping* etc. based on [Java](https://github.com/lucasxlu/CVLH.git) and [Python](https://github.com/lucasxlu/XCloud.git).
-
-* XiaoLu AI [[Article-Face Beauty Recognition](https://zhuanlan.zhihu.com/p/29399781)] [[Article-Mate Face Recognition](https://zhuanlan.zhihu.com/p/35135539)] [[Code](https://github.com/lucasxlu/XiaoLuAI.git)]
-> A repository in computer vision and NLP.
-> **Note**: This repo has been ~~deprecated~~, since majority of the source code have been moved to other repositories.
 
 * Image Censorship System [[Article](https://zhuanlan.zhihu.com/p/29016317)] [[Code](https://github.com/lucasxlu/XCloud/tree/master/research/imgcensor)] [[Document](./ImageCensor_Document_V0.1.pdf)] [[Survey](./SIGAI_PornImageRec_Survey.pdf)]
 > A repository for pornography image recognition based on deep learning, random forests with hand-crafted features, and skin model for fast recognition without GPU.
@@ -40,16 +36,10 @@ description: "Projects for ML/CV/AI/Data Science."
 > A repository for web data crawling, analysis and mining.
 
 * Ctrip Web Crawler [[Code](https://github.com/lucasxlu/CtripPro.git)]
-> A repository for multi-thread web crawler of Ctrip based on Java.
+> A repository for multi-thread web crawler system of Ctrip based on Java with GUI.
 
 * MateFace (WeChat Mini Program) [[Code](https://github.com/lucasxlu/mateface.git)]
 > A WeChat Mini Program for mate face comparision.
 
 * Industry Analysis [[Code](https://github.com/lucasxlu/DataHouse.git)] [[Slides](./IndustryReport.pdf)]
 > A repository for industry analysis and report.
-
-* AI Career Analysis [[Code](https://github.com/lucasxlu/DataHouse.git)] [[Slides](./MLJob.pdf)]
-> A repository and report for career analysis in AI/ML.
-
-* Government Report [[Slides](./GovReport.pdf)]
-> A repository for government report analysis and report.
