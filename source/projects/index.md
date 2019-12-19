@@ -6,12 +6,12 @@ comments: false
 date: 2019-12-14 21:10:56
 description: "Projects for ML/CV/AI/Data Science."
 ---
-# Personal Projects List
+# Projects List
 **For more information about my projects, please follow my [github](https://github.com/lucasxlu).**
 
 ## Computer Vision & Deep Learning
 
-* XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[Slides](../about/XCloud.pdf)]
+* XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[PDF](../about/XCloud.pdf)]
 > An AI Cloud Platform with RESTful APIs. We provide common AI & data services such as *facial attributes analysis*, *data scrapping* etc. based on [Java](https://github.com/lucasxlu/CVLH.git) and [Python](https://github.com/lucasxlu/XCloud.git).
 
 * Image Censorship System [[Article](https://zhuanlan.zhihu.com/p/29016317)] [[Code](https://github.com/lucasxlu/XCloud/tree/master/research/imgcensor)] [[Document](./ImageCensor_Document_V0.1.pdf)] [[Survey](./SIGAI_PornImageRec_Survey.pdf)]
@@ -29,17 +29,8 @@ description: "Projects for ML/CV/AI/Data Science."
 * Zhihu Live Analysis [[Article-1](https://zhuanlan.zhihu.com/p/30514792)] [[Article-2](https://zhuanlan.zhihu.com/p/31651544)] [[Code](https://github.com/lucasxlu/ZhihuDataDriven.git)]
 > A repository for data crawling, data analysis, data mining and data visualization.
 
-* Douban Sentiment Analysis [[Code](https://github.com/lucasxlu/XiaoLuAI/tree/master/nlp)]
-> A repository for sentiment analysis in douban comments based on TF-IDF weighted word2vec, deep AutoEncoder and SVM.
-
-* Data Mining for House Price/Job/Douban [[Article](https://zhuanlan.zhihu.com/p/28954770)] [[Code](https://github.com/lucasxlu/DataHouse.git)]
-> A repository for web data crawling, analysis and mining.
-
 * Ctrip Web Crawler [[Code](https://github.com/lucasxlu/CtripPro.git)]
 > A repository for multi-thread web crawler system of Ctrip based on Java with GUI.
-
-* MateFace (WeChat Mini Program) [[Code](https://github.com/lucasxlu/mateface.git)]
-> A WeChat Mini Program for mate face comparision.
 
 * Industry Analysis [[Code](https://github.com/lucasxlu/DataHouse.git)] [[Slides](./IndustryReport.pdf)]
 > A repository for industry analysis and report.

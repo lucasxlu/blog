@@ -24,7 +24,7 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 
 ## Projects
-* XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)]
+* XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[PDF](./XCloud.pdf)]
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
   A repository for job data crawling and data analysis based on Python3. This repo has received over **230 stars** and **120+ forks**. Technical details can be read [here](https://www.zhihu.com/question/36132174/answer/94392659).
 
@@ -37,7 +37,7 @@ Store Intelligent Decision-making Department
   - Kanto Cooking (Discard) detection with 0.963 AP, and fine-grained recognition with 95.66% accuracy  
   - Daily fresh food recognition with 0.920 AP and 99.09% accuracy
   - Products Re-identification with 99.43% rank-1 accuracy
-  - Model deployment with RESTful API (Django + TensorRT + Nginx)
+  - Model deployment with RESTful API (Django + PyTorch + TensorRT + Nginx)
 
 
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  

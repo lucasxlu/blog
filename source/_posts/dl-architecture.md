@@ -29,10 +29,10 @@ AlexNet整体结构其实非常非常简单，5层conv + 3层FC + Softmax。Alex
 ## VGG
 > Paper: [Very deep convolutional networks for large-scale image recognition](https://arxiv.org/pdf/1409.1556v6.pdf)
 
-VGG也是一篇非常经典的工作，并且在今天的很多任务上依旧可以看到VGG的影子。不同于AlexNet，VGG使用了非常小的Filter($3\times 3$)，以及类似于<font color="red">basic block</font>的结构(读者不妨回想一下GoogLeNet、ResNet、ResNeXt、DenseNet是不是也是由一系列block堆积而成的)。
+VGG也是一篇非常经典的工作，并且在今天的很多任务上依旧可以看到VGG的影子。不同于AlexNet，VGG使用了非常小的Filter($3\times 3$)，以及类似于basic block结构(读者不妨回想一下GoogLeNet、ResNet、ResNeXt、DenseNet是不是也是由一系列block堆积而成的)。
 
 不妨思考一下为啥要用$3\times 3$的卷积核呢？
-1. 两个堆叠的$3\times 3$卷积核对应$5\times 5$的receptive field。而三个$3\times 3$卷积核对应$7\times 7$的receptive field。那为啥不直接用$7\times 7$卷积呢？原因就在于通过堆叠的3个$3\times 3$卷积核，<font color="red">我们引入了更多的non-linearity transformation，这有助于我们的网络学习更加discriminative的特征表达</font>。
+1. 两个堆叠的$3\times 3$卷积核对应$5\times 5$的receptive field。而三个$3\times 3$卷积核对应$7\times 7$的receptive field。那为啥不直接用$7\times 7$卷积呢？原因就在于通过堆叠的3个$3\times 3$卷积核，我们引入了更多的non-linearity transformation，这有助于我们的网络学习更加discriminative的特征表达。
 2. 减少了参数：3个channel为$C$的$3\times 3$卷积的参数为: $3(3^2C^2)=27C^2$。而一个channel为$C$的$7\times 7$卷积的参数为: $7^2C^2=49C^2$。
     > This can be seen as imposing a regularisation on the $7\times 7$ conv. filters, forcing them to have a decomposition through the $3\times 3$ filters (with non-linearity injected in between)
 
@@ -79,10 +79,10 @@ GoogLeNet就是通过一系列的Inception Module堆叠而成(读者不妨再仔
 > Paper: [Deep Residual Learning for Image Recognition](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf)
 
 笔者认为，ResNet可以称得上是自AlexNet以来，Deep Learning发展最insightful的idea，ResNet的主角shortcut至今也被广泛应用于Deep Architecture的设计中(如DenseNet, CliqueNet, Deep Layer Aggregation等)。
-此前的网络设计趋势是“越来越深”，但神经网络的设计真的就如同段子所言“一层一层往上堆叠就好了吗？”显然不是的，ResNet作者Kaiming He大神在Paper中做了一些实验，验证了当Network越来越深时，Accuracy就饱和了，然后迅速下降，值得一提的是<font color="red">这种性能下降并不是由于参数过多随之而来的overfitting造成的</font>。
+此前的网络设计趋势是“越来越深”，但神经网络的设计真的就如同段子所言“一层一层往上堆叠就好了吗？”显然不是的，ResNet作者Kaiming He大神在Paper中做了一些实验，验证了当Network越来越深时，Accuracy就饱和了，然后迅速下降，值得一提的是这种性能下降并不是由于参数过多随之而来的overfitting造成的。
 
 ### What is Residual Network?
-设想DNN的目的是为了学习某种function $\mathcal{H}(x)$，作者并没有直接设计DNN Architecture去学习这种function，而是先学习另一种function $\mathcal{F}(x):=\mathcal{H}(x) - x$，那么原来的$\mathcal{H}(x)$是不是就可以表示成<font color="red">$\mathcal{F}(x)+x$</font>。作者假设这种结构比原先的$\mathcal{H}(x)$更容易优化。
+设想DNN的目的是为了学习某种function $\mathcal{H}(x)$，作者并没有直接设计DNN Architecture去学习这种function，而是先学习另一种function $\mathcal{F}(x):=\mathcal{H}(x) - x$，那么原来的$\mathcal{H}(x)$是不是就可以表示成$\mathcal{F}(x)+x$。作者假设这种结构比原先的$\mathcal{H}(x)$更容易优化。
 > 例如，若某种identity mapping是最优的，那么，将残差push到0要比通过一系列non-linearity transformation来学习identity mapping更为高效。
  
 Shortcut可以表示成如下结构：
@@ -190,14 +190,13 @@ DCNN的架构大致是这样的：Conv + ReLU + (Pool) + (FC) + Softmax。DNN之
 1. 若Manifold of Interest在ReLU之后非零，那么它就相当于是一个线性变换。
 2. ReLU能够保存input manifold完整的信息，**但是当且仅当input manifold位于input space的低维子空间中时**。
 
-所以，也就不难理解为什么MobileNet V2要先将high-dimensional hidden representations先做一次low-dimensional embedding，然后再变换回到high-dimensional了。
 
 ![Evolution of Separable Conv](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/evolution-of-separable-conv.png)
 
 #### Inverted residuals
 > The bottleneck blocks appear similar to residual block where each block contains an input followed by several bottlenecks then followed by expansion [8]. However, inspired by the intuition that the bottlenecks actually contain all the necessary information, while an expansion layer acts merely as an implementation detail that accompanies a non-linear transformation of the tensor, we use shortcuts directly between the bottlenecks.
 
-回想一下，[MobileNet V1](https://arxiv.org/pdf/1704.04861v1.pdf)的结构就是一个普通的feedforwad network，而shortcut在[ResNet](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf)里已经被证明是非常effective的了，所以MobileNet V2自然而然地引入了skip connection了。
+回想一下，[MobileNet V1](https://arxiv.org/pdf/1704.04861v1.pdf)的结构就是一个普通的feedforwad network，而shortcut在[ResNet](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf)里已经被证明是非常effective的了，所以MobileNet V2自然而然地引入了skip connection了。并且，因为ResNet采用的是vanilla conv，为了降低整个网络的计算量，所以设计成了bottleneck的结构（即两头宽中间窄）；而在MobileNet V2中，因为采用的是depth-wise separable conv，使得计算量大大降低，故采用了**inverted residual**的结构（即两头窄中间宽）。
 
 #### MobileNet V2 Architecture
 > We use ReLU6 as the non-linearity because of its robustness when used with low-precision computation [27]. We always use kernel size $3\times 3$ as is standard for modern networks, and utilize dropout and batch normalization during training.
