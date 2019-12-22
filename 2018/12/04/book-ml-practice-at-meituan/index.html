@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="LucasX">
 <meta property="og:description" content="Introduction本文主要记录一下最近在看的一本书《美团机器学习实践》，这本书和我们所熟知的PRML/MLAPP/DL Book等不同的是，它非常偏实践，而非理论，所以可作为参考书使用。一千个读者会产生一千个哈姆雷特，对这本书的评价也看读者自己吧，个人给3.5/5 $\star$，模型层面上可能没有太大的新意，但是结合了美团的具体业务场景，所以还是推荐阅读。 问题建模评估指标分类指标$$Pr">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-11-01T15:48:27.736Z">
+<meta property="og:updated_time" content="2019-12-22T12:43:30.957Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[Book] ML Practice At MeiTuan">
 <meta name="twitter:description" content="Introduction本文主要记录一下最近在看的一本书《美团机器学习实践》，这本书和我们所熟知的PRML/MLAPP/DL Book等不同的是，它非常偏实践，而非理论，所以可作为参考书使用。一千个读者会产生一千个哈姆雷特，对这本书的评价也看读者自己吧，个人给3.5/5 $\star$，模型层面上可能没有太大的新意，但是结合了美团的具体业务场景，所以还是推荐阅读。 问题建模评估指标分类指标$$Pr">
@@ -227,7 +227,7 @@
 <p>$$<br>NDCG@K=\frac{DCG@K}{IDCG_K}<br>$$<br>其中，$NDCG@K$ 表示计算前$K$ 个结果的NDCG，$rel_k$ 表示第$k$ 个位置的相关性得分，$IDCG@K$ 是前$K$ 个排序返回结果能得到的最佳排序结果，用于归一化$DCG@K$，$|REL|$为结果集按相关性排序后的相关性得分列表。</p>
 </li>
 </ul>
-<h2 id="Model-Ensemble"><a href="#Model-Ensemble" class="headerlink" title="Model Ensemble"></a>Model Ensemble</h2><h3 id="理论分析"><a href="#理论分析" class="headerlink" title="理论分析"></a>理论分析</h3><h4 id="模型多样性度量"><a href="#模型多样性度量" class="headerlink" title="模型多样性度量"></a>模型多样性度量</h4><p>假设binary classification分类结果如下：<br>|  | $h_i=1$ | $h_i=0$ |<br>| :—: | :—: | :—: |<br>| $h_j=1$ | a | c |<br>| $h_j=0$ | b | d |</p>
+<h2 id="Model-Ensemble"><a href="#Model-Ensemble" class="headerlink" title="Model Ensemble"></a>Model Ensemble</h2><h3 id="理论分析"><a href="#理论分析" class="headerlink" title="理论分析"></a>理论分析</h3><h4 id="模型多样性度量"><a href="#模型多样性度量" class="headerlink" title="模型多样性度量"></a>模型多样性度量</h4><p>假设binary classification分类结果如下：<br>| $h_i=1$ | $h_i=0$ |<br>| :—: | :—: | :—: |<br>| $h_j=1$ | a | c |<br>| $h_j=0$ | b | d |</p>
 <ul>
 <li><p>不一致度量<br>$$<br>dis_{i,j}=\frac{b+c}{m}<br>$$</p>
 </li>
