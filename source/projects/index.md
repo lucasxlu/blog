@@ -3,7 +3,7 @@ layout: "projects"
 title: "Projects"
 header-img: "img/header_img/archive-bg.png"
 comments: false
-date: 2019-12-14 21:10:56
+date: 2019-12-28 20:00:00
 description: "Projects for ML/CV/AI/Data Science."
 ---
 # Projects List
@@ -11,7 +11,7 @@ description: "Projects for ML/CV/AI/Data Science."
 
 ## Computer Vision & Deep Learning
 
-* XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[PDF](../about/XCloud.pdf)]
+* XCloud [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[PDF](https://arxiv.org/pdf/1912.10344.pdf)]
 > An AI Cloud Platform with RESTful APIs. We provide common AI & data services such as *facial attributes analysis*, *data scrapping* etc. based on [Java](https://github.com/lucasxlu/CVLH.git) and [Python](https://github.com/lucasxlu/XCloud.git).
 
 * Image Censorship System [[Article](https://zhuanlan.zhihu.com/p/29016317)] [[Code](https://github.com/lucasxlu/XCloud/tree/master/research/imgcensor)] [[Document](./ImageCensor_Document_V0.1.pdf)] [[Survey](./SIGAI_PornImageRec_Survey.pdf)]

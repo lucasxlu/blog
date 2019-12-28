@@ -1,7 +1,7 @@
 ---
 layout: "about"
 title: "About Me"
-date: 2019-09-06 10:00:00
+date: 2019-12-28 20:00:00
 description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
@@ -19,12 +19,12 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * **Xu L**, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//[Pacific Rim Conference on Multimedia](http://www.pcm2018.org/). Springer, Cham, 2018: 661-671. [[Paper](https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61)] [[Code](https://github.com/lucasxlu/CRNet.git)]
 * **Xu L**, Xiang J, Yuan X. Transferring rich deep features for facial beauty prediction[J]. arXiv preprint arXiv:1803.07253, 2018. [[arXiv](https://arxiv.org/abs/1803.07253)] [[Code](https://github.com/lucasxlu/TransFBP.git)] [[Slides](./Presentation_TransFBP.pdf)]
 * **Xu, Lu**, et al. "Data-driven Approach for Quality Evaluation on Knowledge Sharing Platform." [2019 International Conference on Machine Learning and Cybernetics (ICMLC)](http://www.icmlc.com/). IEEE, 2019. [[arXiv](https://arxiv.org/abs/1903.00384)] [[Code](https://github.com/lucasxlu/ZhihuDataDriven.git)]    
-* **Xu, Lu**, et al. "XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service." Technical Report, 2019. [[PDF](XCloud.pdf)] [[Code](https://github.com/lucasxlu/XCloud.git)]
+* **Xu L**, Wang Y. XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service[J]. arXiv preprint arXiv:1912.10344, 2019. [[arXiv](https://arxiv.org/abs/1912.10344)] [[Code](https://github.com/lucasxlu/XCloud.git)]
 * Research on Hot Topic Detection and Tracking based on Incremental Clustering (Awarded as [Excellent Undergraduate Thesis](http://www.hbe.gov.cn/content.php?id=12717) (ID: [2024](http://hbxw.e21.edu.cn/e21sqlimg//file/201512/fff20151224164931_675715070.xls)) of Hubei Province in 2015. in Chinese) [[Code](https://github.com/xuludev/System.git)]  
 
 
 ## Projects
-* XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[PDF](./XCloud.pdf)]
+* XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Java](https://github.com/lucasxlu/CVLH.git)] [[Python](https://github.com/lucasxlu/XCloud.git)] [[PDF](https://arxiv.org/pdf/1912.10344.pdf)]
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
   A repository for job data crawling and data analysis based on Python3. This repo has received over **230 stars** and **120+ forks**. Technical details can be read [here](https://www.zhihu.com/question/36132174/answer/94392659).
 
