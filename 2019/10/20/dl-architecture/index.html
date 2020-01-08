@@ -46,7 +46,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/snn_training.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/mix-conv.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/sknet.jpg">
-<meta property="og:updated_time" content="2019-12-19T14:37:28.169Z">
+<meta property="og:updated_time" content="2020-01-08T15:48:09.099Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[DL] Architecture">
 <meta name="twitter:description" content="IntroductionDeep Learning有三宝：Network Architecture，Loss Function and Optimization。对于大多数人而言，Optimization门槛还是很高的（需要非常深厚的数学功底），所以绝大多数的Paper偏向还是设计更好的Network Architecture或者堆更加精巧的Loss Function。Ian Goodfellow">
@@ -291,7 +291,7 @@
 <li>若feature map size减半，则filter的数量则翻倍，来维持每一层的time complexity</li>
 </ol>
 <p>对于feature map dimension相同的情况，则只需要element-wise addition即可；若feature map dimension double了，可以采取zero padding来增加dimension，或者采用$1\times 1$ conv来进行升维。</p>
-<p>ResNet到这里基本就介绍完了，实验部分当然是在classification/detection/segmentation task上吊打了当前所有的state-of-the-art。ResNet很简单的idea对不对？不得不佩服一下Kaiming大神，他的东西总是简单而有效！</p>
+<p>ResNet到这里基本就介绍完了，实验部分当然是在classification/detection/segmentation task上吊打了当前所有的state-of-the-art。ResNet很简单的idea对不对？不得不佩服一下Kaiming，他的东西总是简单而有效！</p>
 <h2 id="ShuffleNet"><a href="#ShuffleNet" class="headerlink" title="ShuffleNet"></a>ShuffleNet</h2><p>在Computer Vision领域，除了像AlexNet、VGG、GoogLeNet、ResNet、DenseNet、CliqueNet等一系列比较“重量级”的网络结构之外，也有一些非常轻量级的模型，而轻量级模型对于移动设备而言无疑是非常重要的。这里就介绍一下轻量级模型的代表作之一：<a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf" target="_blank" rel="noopener">ShuffleNet</a>。</p>
 <blockquote>
 <p>Paper: <a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ShuffleNet_An_Extremely_CVPR_2018_paper.pdf" target="_blank" rel="noopener">ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices</a></p>
@@ -748,7 +748,7 @@ var a = new Donate({
   <div class="container">
       	<div class="row">
 	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
-	      <p id="copyRightEn">Copyright &copy; 2018 - 2019 LucasX All Rights Reserved.</p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2020 LucasX All Rights Reserved.</p>
 	      
 	      
     		<p class="busuanzi_uv">
@@ -904,7 +904,7 @@ var a = new Donate({
             LucasX
           </div>
           <div class="panel-body">
-            Copyright © 2019 LucasX All Rights Reserved.
+            Copyright © 2020 LucasX All Rights Reserved.
           </div>
         </div>
       </div>
