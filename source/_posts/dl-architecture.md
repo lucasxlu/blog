@@ -97,7 +97,7 @@ $\mathcal{F}(x, \{W_i\})$可以表示多个conv layers，两个feature map通过
 
 对于feature map dimension相同的情况，则只需要element-wise addition即可；若feature map dimension double了，可以采取zero padding来增加dimension，或者采用$1\times 1$ conv来进行升维。
 
-ResNet到这里基本就介绍完了，实验部分当然是在classification/detection/segmentation task上吊打了当前所有的state-of-the-art。ResNet很简单的idea对不对？不得不佩服一下Kaiming大神，他的东西总是简单而有效！
+ResNet到这里基本就介绍完了，实验部分当然是在classification/detection/segmentation task上吊打了当前所有的state-of-the-art。ResNet很简单的idea对不对？不得不佩服一下Kaiming，他的东西总是简单而有效！
 
 
 ## ShuffleNet
