@@ -43,6 +43,13 @@ Dilation conv允许我们在不损失resolution的情况下将multi-scale的info
 ![Dilation Conv](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-cnn/dilation_conv.png)
 
 
+## Neural Network. Wide & Shallow VS Deep & Thin?
+在[DeepLearning Book](https://www.deeplearningbook.org/contents/convnets.html)这本书的Chapter 6.4中，作者通过实验发现，**浅层模型在参数数量达到2000万时就过拟合，而深层模型在参数数量超过6000万时仍然表现良好。这表明，使用深层模型表达出了对模型可以学习的函数空间的有用偏好。具体来说，它表达了这样一种认知，即该函数应该由许多更简单的函数复合在一起而得到。这可能导致学习由更简单的表示所组成的表示（例如，由边所定义的角）或者学习具有顺序依赖步骤的程序（例如，首先定位一组对象，然后分割它们，之后识别它们）**。
+
+但是，有研究者设计了[Wide Residual Networks](https://arxiv.org/pdf/1605.07146.pdf)这种结构，与vanilla ResNet相比，WRN就属于wide & deep，但是却取得了比counterpart ResNet更好的精度、更快的训练时间。所以到底是要deep还是要wide，也不能一概而论（参考Machine Leaning中的No-free-launch）。
+
+
 ## Reference
 1. Goodfellow, Ian, et al. [Deep learning](https://www.deeplearningbook.org/contents/convnets.html). Vol. 1. Cambridge: MIT press, 2016.
 2. Yu, Fisher, and Vladlen Koltun. ["Multi-scale context aggregation by dilated convolutions."](https://arxiv.org/pdf/1511.07122v3.pdf)//ICLR 2016.
+3. Zagoruyko S, Komodakis N. [Wide residual networks](https://arxiv.org/pdf/1605.07146.pdf)[J]. BMVC, 2017.
