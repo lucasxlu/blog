@@ -20,7 +20,7 @@
 <meta property="og:description" content="Introduction做Vision的同学们对Convolutional Neural Networks (CNN)一定不会陌生，可以毫不夸张的说，现如今绝大多数的视觉问题，都是由CNN驱动的。从LeNet到如今的ResNet、DenseNet、CliqueNet，CNN的结构发生了很大的变化。本文旨在记录CNN的基础构件。 Basic of CNNConvolution VALID：无论怎样都">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-cnn/dilation_conv.png">
-<meta property="og:updated_time" content="2019-11-01T15:48:27.850Z">
+<meta property="og:updated_time" content="2020-01-27T12:13:17.235Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[DL] CNN">
 <meta name="twitter:description" content="Introduction做Vision的同学们对Convolutional Neural Networks (CNN)一定不会陌生，可以毫不夸张的说，现如今绝大多数的视觉问题，都是由CNN驱动的。从LeNet到如今的ResNet、DenseNet、CliqueNet，CNN的结构发生了很大的变化。本文旨在记录CNN的基础构件。 Basic of CNNConvolution VALID：无论怎样都">
@@ -220,9 +220,12 @@
 <p>Define the receptive field of an element $p$ in $F_{i+1}$ as the set of elements in F0 that modify the value of $F_{i+1}(p)$. Let the size of the receptive field of $p$ in $F_{i+1}$ be the number of these elements. It is easy to see that the size of the receptive field of each element in $F_{i+1}$ is $(2^{i+2}-1)\times (2^{i+2}-1)$. The receptive field is a square of exponentially increasing size.</p>
 </blockquote>
 <p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-cnn/dilation_conv.png" alt="Dilation Conv"></p>
+<h2 id="Neural-Network-Wide-amp-Shallow-VS-Deep-amp-Thin"><a href="#Neural-Network-Wide-amp-Shallow-VS-Deep-amp-Thin" class="headerlink" title="Neural Network. Wide &amp; Shallow VS Deep &amp; Thin?"></a>Neural Network. Wide &amp; Shallow VS Deep &amp; Thin?</h2><p>在<a href="https://www.deeplearningbook.org/contents/convnets.html" target="_blank" rel="noopener">DeepLearning Book</a>这本书的Chapter 6.4中，作者通过实验发现，<strong>浅层模型在参数数量达到2000万时就过拟合，而深层模型在参数数量超过6000万时仍然表现良好。这表明，使用深层模型表达出了对模型可以学习的函数空间的有用偏好。具体来说，它表达了这样一种认知，即该函数应该由许多更简单的函数复合在一起而得到。这可能导致学习由更简单的表示所组成的表示（例如，由边所定义的角）或者学习具有顺序依赖步骤的程序（例如，首先定位一组对象，然后分割它们，之后识别它们）</strong>。</p>
+<p>但是，有研究者设计了<a href="https://arxiv.org/pdf/1605.07146.pdf" target="_blank" rel="noopener">Wide Residual Networks</a>这种结构，与vanilla ResNet相比，WRN就属于wide &amp; deep，但是却取得了比counterpart ResNet更好的精度、更快的训练时间。所以到底是要deep还是要wide，也不能一概而论（参考Machine Leaning中的No-free-launch）。</p>
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
 <li>Goodfellow, Ian, et al. <a href="https://www.deeplearningbook.org/contents/convnets.html" target="_blank" rel="noopener">Deep learning</a>. Vol. 1. Cambridge: MIT press, 2016.</li>
 <li>Yu, Fisher, and Vladlen Koltun. <a href="https://arxiv.org/pdf/1511.07122v3.pdf" target="_blank" rel="noopener">“Multi-scale context aggregation by dilated convolutions.”</a>//ICLR 2016.</li>
+<li>Zagoruyko S, Komodakis N. <a href="https://arxiv.org/pdf/1605.07146.pdf" target="_blank" rel="noopener">Wide residual networks</a>[J]. BMVC, 2017.</li>
 </ol>
 
       
@@ -322,7 +325,7 @@ var a = new Donate({
     <div id="toc" class="toc-article">
     <strong class="toc-title">Contents</strong>
     
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-of-CNN"><span class="nav-number">2.</span> <span class="nav-text">Basic of CNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Convolution"><span class="nav-number">2.1.</span> <span class="nav-text">Convolution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pooling"><span class="nav-number">2.2.</span> <span class="nav-text">Pooling</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Variants-of-Convolution"><span class="nav-number">3.</span> <span class="nav-text">Variants of Convolution</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Dilation-Convolution"><span class="nav-number">3.1.</span> <span class="nav-text">Dilation Convolution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-of-CNN"><span class="nav-number">2.</span> <span class="nav-text">Basic of CNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Convolution"><span class="nav-number">2.1.</span> <span class="nav-text">Convolution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pooling"><span class="nav-number">2.2.</span> <span class="nav-text">Pooling</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Variants-of-Convolution"><span class="nav-number">3.</span> <span class="nav-text">Variants of Convolution</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Dilation-Convolution"><span class="nav-number">3.1.</span> <span class="nav-text">Dilation Convolution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Neural-Network-Wide-amp-Shallow-VS-Deep-amp-Thin"><span class="nav-number">4.</span> <span class="nav-text">Neural Network. Wide &amp; Shallow VS Deep &amp; Thin?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol>
     
     </div>
   </aside>
