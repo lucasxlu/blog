@@ -1,7 +1,7 @@
 ---
 layout: "about"
 title: "About Me"
-date: 2019-12-28 20:00:00
+date: 2020-02-27 21:00:00
 description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
@@ -28,12 +28,13 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Python](https://github.com/lucasxlu/XCloud.git)] [[Java](https://github.com/lucasxlu/CVLH.git)] [[PDF](https://arxiv.org/pdf/1912.10344.pdf)]
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
   A repository for job data crawling and data analysis based on Python3. This repo has received over **230 stars** and **120+ forks**. Technical details can be read [here](https://www.zhihu.com/question/36132174/answer/94392659).
+* Software Copyright: Hot Topic Detection & Tracking System (2015SR165186) [[Code](https://github.com/xuludev/System.git)]
 
-
+<!-- 
 ## Experience
 * [Blibee](https://www.bianlifeng.com/) &emsp; 2019.02 – Present  
+Store Intelligent Decision-making Department  
 Vision Algorithm Engineer  
-Store Intelligent Decision-making Department
 
   - Kanto Cooking (Discard) detection with 0.963 AP, and fine-grained recognition with 95.66% accuracy  
   - Daily fresh food recognition with 0.920 AP and 99.09% accuracy
@@ -42,8 +43,8 @@ Store Intelligent Decision-making Department
 
 
 * [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
-Algorithm Intern  
-Security Product & Technology
+Security Product & Technology  
+Deep Learning  
 
   - License image quality recognition (reflection/blur) with 93.15% Precision and 98.35% Recall
   - Facial beauty prediction with 0.89 Pearson Correlation
@@ -53,12 +54,13 @@ Security Product & Technology
   - Complete the writing of 21 patents related to safety products
 
 
-* [Beijing Jiewen Technology Co.,Ltd.](http://www.aisino.com/), Huazhong Developing Center. &emsp; 2015.06 – 2016.06  
+* [Beijing Jiewen Technology Co.,Ltd.](http://www.aisino.com/) &emsp; 2015.06 – 2016.06  
+Huazhong R&D Center  
 Java/Web Spider Developer
-Financial Information System & Multi-thread Web Crawling System
+
   - Develop and maintain web information system based on Java SSM framework and MySQL database
   - Develop web crawlers to collect data from O2O websites (e.g. [Ctrip](http://www.ctrip.com/), [Dazhong Dianping](http://www.dianping.com/), [AMap](https://www.amap.com/)) based on Python/Java and MySQL/MongoDB
-  - Data statistics, analysis and visualization. It provides important data support for company offline product location
+  - Data statistics, analysis and visualization. It provides important data support for company offline product location -->
 
 
 ## Skills
@@ -68,12 +70,6 @@ Financial Information System & Multi-thread Web Crawling System
 * Framework: PyTorch/TensorFlow/Scikit-Learn/OpenCV  
 * Database: MongoDB/MySQL/Oracle  
 * Others: Web Crawler/Web Development/PPT/$\LaTeX$
-
-
-## Award
-* 1st Scholar Prize [[Slides](./Research_Overview.pdf)]
-* 2nd Scholar Prize  
-* 3rd Prize in NECCS (national level)  
 
 
 ## Professional Activities
