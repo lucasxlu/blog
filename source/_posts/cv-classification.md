@@ -14,7 +14,7 @@ catagories:
 - Visual Classification
 ---
 ## Introduction
-Visual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅[DL-Architecture](https://lucasxlu.github.io/blog/2019/10/20/dl-architecture/#more)），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅[ML-Loss Function]()）。尽管已经发展很成熟，但在实际应用场景中，依然会碰到许多非常challenging的问题，例如low-resolution image classification，频繁新增类别的visual classification等等。本文旨在介绍Visual Classification领域一些我认为比较insightful的paper，以及笔者在实际工作中积累的一些思考。
+Visual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅[DL-Architecture](https://lucasxlu.github.io/blog/2019/10/20/dl-architecture/)），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅[ML-Loss Function](https://lucasxlu.github.io/blog/2018/07/24/ml-loss/)）。尽管已经发展很成熟，但在实际应用场景中，依然会碰到许多非常challenging的问题，例如low-resolution image classification，频繁新增类别的visual classification等等。本文旨在介绍Visual Classification领域一些我认为比较insightful的paper，以及笔者在实际工作中积累的一些思考。
 
 
 ## [Unsupervised deep feature transfer for low resolution image classification](http://openaccess.thecvf.com/content_ICCVW_2019/papers/RLQ/Wu_Unsupervised_Deep_Feature_Transfer_for_Low_Resolution_Image_Classification_ICCVW_2019_paper.pdf)

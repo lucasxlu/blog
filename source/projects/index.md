@@ -32,5 +32,5 @@ description: "Projects for ML/CV/AI/Data Science."
 * Ctrip Web Crawler [[Code](https://github.com/lucasxlu/CtripPro.git)]
 > A repository for multi-thread web crawler system of Ctrip based on Java with GUI.
 
-* Industry Analysis [[Code](https://github.com/lucasxlu/DataHouse.git)] [[Slides](./IndustryReport.pdf)]
-> A repository for industry analysis and report.
+* Hot Topic Detection System [[Code](https://github.com/xuludev/System.git)]
+> An Internet Hot Topic Detection System based on Java Web with SinglePass clustering algorithm and HTML5-based visualization.
