@@ -20,7 +20,7 @@
 <meta property="og:description" content="IntroductionVisual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅DL-Architecture），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅ML">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-classification/udft.png">
-<meta property="og:updated_time" content="2020-02-29T07:17:55.455Z">
+<meta property="og:updated_time" content="2020-02-29T07:26:30.081Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[CV] Classification">
 <meta name="twitter:description" content="IntroductionVisual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅DL-Architecture），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅ML">
@@ -197,7 +197,7 @@
     </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Visual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅<a href="https://lucasxlu.github.io/blog/2019/10/20/dl-architecture/#more">DL-Architecture</a>），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅<a href="">ML-Loss Function</a>）。尽管已经发展很成熟，但在实际应用场景中，依然会碰到许多非常challenging的问题，例如low-resolution image classification，频繁新增类别的visual classification等等。本文旨在介绍Visual Classification领域一些我认为比较insightful的paper，以及笔者在实际工作中积累的一些思考。</p>
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Visual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅<a href="https://lucasxlu.github.io/blog/2019/10/20/dl-architecture/">DL-Architecture</a>），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅<a href="https://lucasxlu.github.io/blog/2018/07/24/ml-loss/">ML-Loss Function</a>）。尽管已经发展很成熟，但在实际应用场景中，依然会碰到许多非常challenging的问题，例如low-resolution image classification，频繁新增类别的visual classification等等。本文旨在介绍Visual Classification领域一些我认为比较insightful的paper，以及笔者在实际工作中积累的一些思考。</p>
 <h2 id="Unsupervised-deep-feature-transfer-for-low-resolution-image-classification"><a href="#Unsupervised-deep-feature-transfer-for-low-resolution-image-classification" class="headerlink" title="Unsupervised deep feature transfer for low resolution image classification"></a><a href="http://openaccess.thecvf.com/content_ICCVW_2019/papers/RLQ/Wu_Unsupervised_Deep_Feature_Transfer_for_Low_Resolution_Image_Classification_ICCVW_2019_paper.pdf" target="_blank" rel="noopener">Unsupervised deep feature transfer for low resolution image classification</a></h2><p>本文idea非常简单，作者先用t-SNE算法对high-resolution categories和low-resolution categories的feature进行可视化后发现，那些在HR非常separable的samples，在LR缺难以分开，因此效果非常差。为了解决LR image classification问题，作者提出了这样一个方法来利用HR images信息来辅助LR visual classification。算法详情如下：</p>
 <ol>
 <li>用pretrained CNN作为feature extractor，同时提取LR和HR的特征；其中HR label已知，LR label未知</li>
