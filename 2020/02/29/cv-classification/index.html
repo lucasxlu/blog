@@ -3,28 +3,28 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>[ml] loss function in ml | LucasX</title>
+  <title>[cv] classification | LucasX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="keywords" content="Machine LearningData Science" />
+  <meta name="keywords" content="Machine LearningDeep LearningComputer VisionVisual Classification" />
   
   
   
   
-  <meta name="description" content="IntroductionLoss Function是ML/DL领域一个非常关键的因素，很多时候，我们如果能确定一个问题的Loss Function，那么这个问题就几乎已经被解决。常见的Loss可以归为以下几种：  Classification: Log Loss; Focal Loss; KL Divergence; Exponential Loss; Hinge Loss Regression:">
-<meta name="keywords" content="Machine Learning,Data Science">
+  <meta name="description" content="IntroductionVisual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅DL-Architecture），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅ML">
+<meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision,Visual Classification">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[ML] Loss Function in ML">
-<meta property="og:url" content="https://lucasxlu.github.io/blog/2018/07/24/ml-loss/index.html">
+<meta property="og:title" content="[CV] Classification">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/02/29/cv-classification/index.html">
 <meta property="og:site_name" content="LucasX">
-<meta property="og:description" content="IntroductionLoss Function是ML/DL领域一个非常关键的因素，很多时候，我们如果能确定一个问题的Loss Function，那么这个问题就几乎已经被解决。常见的Loss可以归为以下几种：  Classification: Log Loss; Focal Loss; KL Divergence; Exponential Loss; Hinge Loss Regression:">
+<meta property="og:description" content="IntroductionVisual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅DL-Architecture），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅ML">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ml-loss/log-cosh.png">
-<meta property="og:updated_time" content="2019-11-01T15:48:27.887Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-classification/udft.png">
+<meta property="og:updated_time" content="2020-02-29T07:17:55.455Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[ML] Loss Function in ML">
-<meta name="twitter:description" content="IntroductionLoss Function是ML/DL领域一个非常关键的因素，很多时候，我们如果能确定一个问题的Loss Function，那么这个问题就几乎已经被解决。常见的Loss可以归为以下几种：  Classification: Log Loss; Focal Loss; KL Divergence; Exponential Loss; Hinge Loss Regression:">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ml-loss/log-cosh.png">
+<meta name="twitter:title" content="[CV] Classification">
+<meta name="twitter:description" content="IntroductionVisual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅DL-Architecture），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅ML">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-classification/udft.png">
   
     <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
   
@@ -166,7 +166,7 @@
             
       <div id="content" class="outer">
         
-          <section id="main" style="float:none;"><article id="post-ml-loss" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+          <section id="main" style="float:none;"><article id="post-cv-classification" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="article-inner">
     
     
@@ -174,7 +174,7 @@
         
   
     <h1 class="thumb" class="article-title" itemprop="name">
-      [ML] Loss Function in ML
+      [CV] Classification
     </h1>
   
 
@@ -182,8 +182,8 @@
     
     <div class="article-meta">
       
-	<a href="/blog/2018/07/24/ml-loss/" class="article-date">
-	  <time datetime="2018-07-24T05:47:56.000Z" itemprop="datePublished">2018-07-24</time>
+	<a href="/blog/2020/02/29/cv-classification/" class="article-date">
+	  <time datetime="2020-02-29T07:17:05.000Z" itemprop="datePublished">2020-02-29</time>
 	</a>
 
       
@@ -197,34 +197,20 @@
     </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Loss Function是ML/DL领域一个非常关键的因素，很多时候，我们如果能确定一个问题的Loss Function，那么这个问题就几乎已经被解决。常见的Loss可以归为以下几种：</p>
-<ul>
-<li>Classification: Log Loss; Focal Loss; KL Divergence; Exponential Loss; Hinge Loss</li>
-<li>Regression: MSE; MAE; Huber Loss; Log Cosh Loss; Quantile Loss</li>
-</ul>
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Visual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅<a href="https://lucasxlu.github.io/blog/2019/10/20/dl-architecture/#more">DL-Architecture</a>），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅<a href="">ML-Loss Function</a>）。尽管已经发展很成熟，但在实际应用场景中，依然会碰到许多非常challenging的问题，例如low-resolution image classification，频繁新增类别的visual classification等等。本文旨在介绍Visual Classification领域一些我认为比较insightful的paper，以及笔者在实际工作中积累的一些思考。</p>
+<h2 id="Unsupervised-deep-feature-transfer-for-low-resolution-image-classification"><a href="#Unsupervised-deep-feature-transfer-for-low-resolution-image-classification" class="headerlink" title="Unsupervised deep feature transfer for low resolution image classification"></a><a href="http://openaccess.thecvf.com/content_ICCVW_2019/papers/RLQ/Wu_Unsupervised_Deep_Feature_Transfer_for_Low_Resolution_Image_Classification_ICCVW_2019_paper.pdf" target="_blank" rel="noopener">Unsupervised deep feature transfer for low resolution image classification</a></h2><p>本文idea非常简单，作者先用t-SNE算法对high-resolution categories和low-resolution categories的feature进行可视化后发现，那些在HR非常separable的samples，在LR缺难以分开，因此效果非常差。为了解决LR image classification问题，作者提出了这样一个方法来利用HR images信息来辅助LR visual classification。算法详情如下：</p>
 <ol>
-<li><p><strong>MAE and MSE Loss</strong><br>MAE loss is useful if the training data is corrupted with outliers (i.e. we erroneously   receive unrealistically huge negative/positive values in our training environment, but not our testing environment). L1 loss is more robust to outliers, but its derivatives are not continuous,making it inefficient to find the solution. L2 loss is sensitive to outliers, but gives a more stable and closed form solution (by setting its derivative to 0).</p>
-<p>For MAE and MSE in regression, we can think about it like this: if we only had to give one prediction for all the observations that try to minimize MSE, then that prediction should be the mean of all target values. But if we try to minimize MAE, that prediction would be <strong>median</strong> of all observations. We know that median is more robust to outliers than MSE, which consequently makes MAE more robust to outliers than MSE.</p>
-<p>One big problem in using MAE Loss (for DNN especially) is that its gradient is the same throughout, which means that the gradient will be large even for small loss values. To fix this, we can use dynamic learning rate which decreases as we are more closer to the minima. MSE behaves nicely in this case and will converge even with a fixed learning rate. The gradient of MSE loss is high for larger loss values and decreases as loss approaches 0, making it more precise at the end of training.</p>
-</li>
-<li><p><strong>Huber Loss, Smooth Mean Absolute Error</strong><br>Huber loss is less sensitive to outliers in data than the squared error loss. It’s also differentiable at 0. It’s basically absolute error, which becomes quadratic when error is small. How small that error has to be to make it quadratic depends on a hyperparameter, $\delta$ (delta), which can be tuned. Huber loss approaches MAE when $\delta\sim 0$ and MSE when $\delta \sim \infty$ (large numbers.)</p>
-<p>$$<br>L_{\delta}(y,f(x))=<br>\begin{cases}<br>\frac{1}{2}(y-f(x))^2 &amp; for |y-f(x)|\leq \delta \\<br>\delta|y-f(x)|-\frac{1}{2}\delta^2 &amp; otherwise<br>\end{cases}<br>$$</p>
-<p>The choice of delta is critical because it determines what you’re willing to consider as an outlier. Residuals larger than delta are minimized with $L_1$ (which is less sensitive to large outliers), while residuals smaller than delta are minimized “appropriately” with $L_2$.</p>
-<p><strong>Why use Huber Loss?</strong><br>One big problem with using MAE for training of neural nets is its constantly large gradient, which can lead to missing minima at the end of training using gradient descent. For MSE, gradient decreases as the loss gets close to its minima, making it more precise.</p>
-<p>Huber loss can be really helpful in such cases, as it curves around the minima which decreases the gradient. And it’s more robust to outliers than MSE. Therefore, it combines good properties from both MSE and MAE. However, the problem with Huber loss is that we might need to train hyperparameter delta which is an iterative process.</p>
-</li>
-<li><p><strong>Log-Cosh Loss</strong><br>Log-cosh is another function used in regression tasks that’s smoother than L2. Log-cosh is the logarithm of the hyperbolic cosine of the prediction error.<br>$L(y,y^p)=\sum_{i=1}^n log(cosh(y_i^p-y_i))$ </p>
-<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ml-loss/log-cosh.png" alt="Log-Cosh"></p>
-<p><strong>Advantage</strong>: $log(cosh(x))$ is approximately equal to $(x\star \star2)/2$ for small $x$ and to $abs(x)-log(2)$ for large $x$. This means that ‘logcosh’ works mostly like the mean squared error, but will not be so strongly affected by the occasional wildly incorrect prediction. It has all the advantages of Huber loss, and it’s twice differentiable everywhere,unlike Huber loss.</p>
-<p><strong>Why do we need a 2nd derivative?</strong><br>Many ML model implementations like XGBoost use Newton’s method to find the optimum, which is why the second derivative (Hessian) is needed. For ML frameworks like XGBoost, twice differentiable functions are more favorable.</p>
-<p>But Log-cosh loss isn’t perfect. It still suffers from the problem of gradient and hessian for very large off-target predictions being constant, therefore resulting in the absence of splits for XGBoost.</p>
-</li>
-<li><p>Quantile Loss<br>Quantile loss functions turns out to be useful when we are interested in predicting an interval instead of only point predictions. Prediction interval from least square regression is based on an assumption that residuals ($y—\hat{y}$) have constant variance across values of independent variables. We can not trust linear regression models which violate this assumption. We can not also just throw away the idea of fitting linear regression model as baseline by saying that such situations would always be better modeled using non-linear functions or tree based models. This is where quantile loss and quantile regression come to rescue as regression based on quantile loss provides sensible prediction intervals even for residuals with non-constant variance or non-normal distribution.</p>
-<p><strong>Understanding the quantile loss function</strong><br>The idea is to choose the quantile value based on whether we want to give more value to positive errors or negative errors. Loss function tries to give different penalties to overestimation and underestimation based on the value of chosen quantile ($\gamma$). For example, a quantile loss function of $\gamma=0.25$ gives more penalty to overestimation and tries to keep prediction values a little below median</p>
-<p>$L_{\gamma}(y,y^p)=\sum_{i=y_i&lt;y^p_i}(\gamma-1)\cdot |y_i-y_i^p|+\sum_{i=y_i\geq y_i^p}(\gamma)\cdot|y_i-y_i^p|$</p>
-</li>
-<li><p>Exponential Loss<br>$L(y,f(x))=exp(-yf(x))$</p>
-</li>
+<li>用pretrained CNN作为feature extractor，同时提取LR和HR的特征；其中HR label已知，LR label未知</li>
+<li>对HR做KMeans聚类，这样就得到了$k$个pseudo label，然后通过比对LR sample与$k$个HR centroid的距离来为LR sample分配pseudo label</li>
+<li>对HR的pseudo label与groundtruth，用Feature Transfer Network来优化classification loss</li>
+<li>提取LR image feature，过Feature Transfer Network，然后SVM训练之</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-classification/udft.png" alt="UDFT"></p>
+<p>Idea很简单，记录一下看过的一些LR Visual Classification领域常用的从HR生成LR images的方法：将原图resize到$224\times 224$ by bicubic interpolation，然后下采样到$32\times 32$，再resize到$224\times 224$。</p>
+<p>作者在VOC2007做了实验，发现本文提出的方法比LR-baseline提升了2%的分类mAP，但相比HR-baseline差距还是很大，这启示我们<strong>高质量数据才是关键，用各种tricky的算法只是尽可能地接近这个上限</strong>。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>He T, Zhang Z, Zhang H, et al. <a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/He_Bag_of_Tricks_for_Image_Classification_with_Convolutional_Neural_Networks_CVPR_2019_paper.pdf" target="_blank" rel="noopener">Bag of tricks for image classification with convolutional neural networks</a>[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2019: 558-567.</li>
+<li>Wu Y, Zhang Z, Wang G. <a href="http://openaccess.thecvf.com/content_ICCVW_2019/papers/RLQ/Wu_Unsupervised_Deep_Feature_Transfer_for_Low_Resolution_Image_Classification_ICCVW_2019_paper.pdf" target="_blank" rel="noopener">Unsupervised deep feature transfer for low resolution image classification</a>[C]//Proceedings of the IEEE International Conference on Computer Vision Workshops. 2019: 0-0.</li>
 </ol>
 
       
@@ -252,7 +238,7 @@ var a = new Donate({
           </li>
           <li class="post-copyright-link">
           <strong>Post link:  </strong>
-          <a href="/blog/2018/07/24/ml-loss/" target="_blank" title="[ML] Loss Function in ML">https://lucasxlu.github.io/blog/2018/07/24/ml-loss/</a>
+          <a href="/blog/2020/02/29/cv-classification/" target="_blank" title="[CV] Classification">https://lucasxlu.github.io/blog/2020/02/29/cv-classification/</a>
           </li>
           <li class="post-copyright-license">
             <strong>Copyright Notice:   </strong>
@@ -298,19 +284,10 @@ var a = new Donate({
     
 <nav id="article-nav">
   
-    <a href="/blog/2018/07/25/ml-ensemble/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          [ML] Ensemble Learning
-        
-      </div>
-    </a>
   
-  
-    <a href="/blog/2018/07/24/ml-dt/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/blog/2019/12/07/cv-iqa/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">[ML] Decision Tree</div>
+      <div class="article-nav-title">[CV] Image Quality Assessment</div>
     </a>
   
 </nav>
@@ -324,7 +301,7 @@ var a = new Donate({
     <div id="toc" class="toc-article">
     <strong class="toc-title">Contents</strong>
     
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsupervised-deep-feature-transfer-for-low-resolution-image-classification"><span class="nav-number">2.</span> <span class="nav-text">Unsupervised deep feature transfer for low resolution image classification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol>
     
     </div>
   </aside>
