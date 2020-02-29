@@ -31,4 +31,3 @@ Face Anti-spoofing，即人脸活体检测，随着iPhoneX FaceID的应用，人
 
 ## Reference
 1. Patel K, Han H, Jain A K. [Secure face unlock: Spoof detection on smartphones](http://www.jdl.ac.cn/doc/2011/201711222512198092_hanhu-journal.pdf)[J]. IEEE transactions on information forensics and security, 2016, 11(10): 2268-2283.
-2. 
