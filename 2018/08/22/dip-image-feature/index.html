@@ -19,10 +19,12 @@
 <meta property="og:site_name" content="LucasX">
 <meta property="og:description" content="IntroductionComputer Vision已进入Deep Learning时代，但传统图像特征提取方法依然在很多方向有着不少的应用。毕竟DNN计算复杂度太高，且过于依赖Large Scale Labeled Dataset，所以Deep Learning也并非万能的。本文就传统图像特征提取算子做一下简单的归纳。  本文内容主要来源于TPAMI的一篇文章《TPAMI-A_performa">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-03-08T06:02:09.422Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-image-feature/lbp.gif">
+<meta property="og:updated_time" content="2020-03-08T06:29:15.856Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[DIP] Image Feature">
 <meta name="twitter:description" content="IntroductionComputer Vision已进入Deep Learning时代，但传统图像特征提取方法依然在很多方向有着不少的应用。毕竟DNN计算复杂度太高，且过于依赖Large Scale Labeled Dataset，所以Deep Learning也并非万能的。本文就传统图像特征提取算子做一下简单的归纳。  本文内容主要来源于TPAMI的一篇文章《TPAMI-A_performa">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-image-feature/lbp.gif">
   
     <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
   
@@ -220,9 +222,11 @@
 <h2 id="Appendix"><a href="#Appendix" class="headerlink" title="Appendix"></a>Appendix</h2><h3 id="颜色直方图"><a href="#颜色直方图" class="headerlink" title="颜色直方图"></a>颜色直方图</h3><p>颜色直方图是在许多图像检索系统中被广泛采用的颜色特征。颜色直方图所描述的是不同色彩在整幅图像中所占的比例，而并不关心每种色彩所处的空间位置，即无法描述图像中的对象或物体。颜色直方图特别适于描述那些难以进行自动分割的图像。计算颜色直方图需要将颜色空间划分成若干个小的颜色区间，每个小区间成为直方图的一个 Bin。这个过程称为颜色量化（Color Quantization）。然后，通过计算颜色落在每个小区间内的像素数量可以得到颜色直方图。颜色量化有许多方法，例如向量量化、聚类方法或者神经网络方法。最为常用的做法是将颜色空间的各个分量（维度）均匀地进行划分。选择合适的颜色小区间（即直方图的 Bin）数目和颜色量化方法与具体应用的性能和效率要求有关。一般来说，颜色小区间的数目越多，直方图对颜色的分辨能力就越强。然而，Bin 的数目很大的颜色直方图不但会增加计算负担，也不利于在大型图像库中建立索引。而且对于某些应用来说，使用非常精细的颜色空间划分方法不一定能够提高检索效果，特别是对于不能容忍对相关图像错漏的那些应用。另一种有效减少直方图 Bin 的数目的办法是只选用那些数值最大（即像素数目最多）的 Bin 来构造图像特征，因为这些表示主要颜色的 Bin 能够表达图像中大部分像素的颜色。实验证明这种方法并不会降低颜色直方图的检索效果。事实上，由于忽略了那些数值较小的 Bin，颜色直方图对噪声的敏感程度降低了，检索效果也更好。</p>
 <h3 id="灰度直方图"><a href="#灰度直方图" class="headerlink" title="灰度直方图"></a>灰度直方图</h3><p>灰度直方图是灰度级的函数，它表示图像中具有每种灰度级的象素的个数，反映图像中每种灰度出现的频率。由于灰度直方图维数最多只能有 256 维，描述能力有限，所以利用灰度直方图表示图像特征的研究比较少。灰度直方图的横坐标是灰度级，纵坐标是该灰度级出现的频率，是图像的最基本的统计特征。</p>
 <h3 id="LBP"><a href="#LBP" class="headerlink" title="LBP"></a>LBP</h3><p><strong>LBP(Local  Binary  Pattern，缩写为 LBP)是一种用来描述图像局部纹理特征的算子</strong>；显然，它的作用是进行特征提取，而且，提取的特征是图像的纹理特征，并且，是局部的纹理特征。LBP 算子定义为 <strong>在 $3\times 3$ 的窗口内，以窗口中心像素为阈值，将相邻的 8 个像素的灰度值与其进行比较，若周围像素值大于中心像素值，则该像素点的位置被标记为 1，否则为 0。这样，3*3 邻域内的 8 个点可产生 8 bit 的无符号数，即得到该窗口的 LBP值，并用这个值来反映该区域的纹理信息</strong>。<br>虽然 LBP 直方图和灰度直方图一样，只有 256 维，但由于灰度直方图是对图像的整体统计，而 LBP 是对图像的局部的特征描述，因此比灰度直方图有更好的特征表达能力。</p>
+<p>LBP在纹理分类问题上是一个非常强大的特征；如果局部二值模式特征与方向梯度直方图结合，则可以在一些集合上十分有效的提升检测效果。LBP是一个简单但非常有效的纹理运算符。它将各个像素与其附近的像素进行比较，并把结果保存为二进制数。由于其辨别力强大和计算简单，局部二值模式纹理算子已经在不同的场景下得到应用。LBP最重要的属性是对诸如光照变化等造成的灰度变化的强健性。它的另外一个重要特性是它的计算简单，这使得它可以对图像进行实时分析。</p>
+<p>原始的LBP算子定义为在$3\times 3$的窗口内，以窗口中心像素为阈值，将相邻的8个像素的灰度值与其进行比较，若周围像素值大于中心像素值，则该像素点的位置被标记为1，否则为0。这样，$3\times 3$领域内的8个点可产生8bit的无符号数，即得到该窗口的LBP值，并用这个值来反映该区域的纹理信息。如下图所示:<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-image-feature/lbp.gif" alt="LBP"></p>
 <h3 id="SIFT-2"><a href="#SIFT-2" class="headerlink" title="SIFT"></a>SIFT</h3><p>SIFT 是一种提取局部特征的算法，在尺度空间寻找极值点，提取位置，尺度，旋转不变量。SIFT 特征是图像的局部特征，其对旋转、尺度缩放、亮度变化保持不变性，对视角变化、仿射变换、噪声也保持一定程度的稳定性。 SIFT 算法步骤：检测尺度空间极值点，精确定位极值点，为每个关键点指定方向参数，关键点描述子的生成。</p>
 <p><strong>SIFT检测到的每个关键点有三个信息：位置、所处尺度、方向</strong>。</p>
-<h3 id="HOG"><a href="#HOG" class="headerlink" title="HOG"></a>HOG</h3><p>梯度方向直方图（Histogram of Oriented Gradients，简称 HOG） 描述子是应用在计算机视觉和图像处理领域，用于目标检测的特征描述器。这项技术是用来计算局部图像梯度的方向信息的统计值。</p>
+<h3 id="HOG"><a href="#HOG" class="headerlink" title="HOG"></a>HOG</h3><p>梯度方向直方图（Histogram of Oriented Gradients，简称 <a href="https://zh.wikipedia.org/wiki/%E6%96%B9%E5%90%91%E6%A2%AF%E5%BA%A6%E7%9B%B4%E6%96%B9%E5%9B%BE" target="_blank" rel="noopener">HOG</a>） 描述子是应用在计算机视觉和图像处理领域，用于目标检测的特征描述器。这项技术是用来计算局部图像梯度的方向信息的统计值。</p>
 <p>HOG 描述器最重要的思想是：在一副图像中，局部目标的表象和形状（Appearance and Shape）能够被梯度或边缘的方向密度分布很好地描述。具体的实现方法是：首先将图像分成小的连通区域，我们把它叫细胞单元。然后采集细胞单元中各像素点的梯度的或边缘的方向直方图。最后把这些直方图组合起来就可以构成特征描述器。为了提高性能，我们还可以把这些局部直方图在图像的更大的范围内（我们把它叫区间或 Block）进行对比度归一化（Contrast-Normalized），所采用的方法是：先计算各直方图在这个区间（Block）中的密度，然后根据这个密度对区间中的各个细胞单元做归一化。通过这个归一化后，能对光照变化和阴影获得更好的效果。与其他的特征描述方法相比，HOG 描述器后很多优点: <strong>由于 HOG 方法是在图像的局部细胞单元上操作，所以它对图像几何的（Geometric）和光学的（Photometric）形变都能保持很好的不变性</strong>。</p>
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
 <li>Joost van de Weijer, Cordelia Schmid, Jakob Verbeek, Diane Larlus. <a href="https://hal.inria.fr/inria-00439284v2/document" target="_blank" rel="noopener">Learning Color Names for Real-World Applications</a>. IEEE Transactions on Image Processing, Institute of Electrical and Electronics Engineers, 2009, 18 (7), pp.1512-1523. 10.1109/TIP.2009.2019809. inria-00439284v2</li>
