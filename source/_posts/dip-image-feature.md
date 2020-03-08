@@ -12,7 +12,8 @@ catagories:
 ## Introduction
 Computer Vision已进入Deep Learning时代，但传统图像特征提取方法依然在很多方向有着不少的应用。毕竟DNN计算复杂度太高，且过于依赖Large Scale Labeled Dataset，所以Deep Learning也并非万能的。本文就传统图像特征提取算子做一下简单的归纳。
 
-> 本文内容主要来源于TPAMI的一篇文章《[A Performance Evaluation of Local Descriptors](https://github.com/lucasxlu/blog/raw/master/source/_posts/dip-image-feature/TPAMI-A%20performance%20evaluation%20of%20local%20descriptors.pdf)》，详情请阅读原文！
+> 本文内容主要来源于TPAMI的一篇文章《[TPAMI-A_performance_evaluation_of_local_descriptors](./dip-image-feature/TPAMI-A_performance_evaluation_of_local_descriptors.pdf)》，详情请阅读原文！
+
 
 ## Image Descriptors
 ### Image Pixels
@@ -23,6 +24,7 @@ A simple descriptor is the distribution of the pixel intensities represented by 
 
 #### SIFT
 The descriptor is represented by a 3D histogram of gradient locations and orientations; see Fig. 1 for an illustration. The contribution to the locationand orientation bins is weighted by the gradient magnitude. **The quantization of gradient locations and orientations makes the descriptor robust to small geometric distortions and small errors in the region detection**. Geometric histogram [1] and shape context [3] implement the same idea and are very similar to the SIFT descriptor. Both methods **compute a histogram describing the edge distribution in a region**. These descriptors were successfully used, for example, for shape recognition of drawings for which edges are reliable features.
+
 
 ## EXPERIMENTAL SETUP
 ### Support Regions
@@ -62,8 +64,10 @@ Spin image is a histogram of quantized pixel locations and intensity values. The
 #### Cross correlation
 Cross correlation. To obtain this descriptor, the region is smoothed and uniformly sampled. To limit the descriptor dimension, we sample at $9\times 9$ pixel locations. The similarity between two descriptors is measured with cross-correlation.
 
+
 ## DISCUSSION AND CONCLUSIONS
 In most of the tests, GLOH obtains the best results, closely followed by SIFT. This shows the robustness and the distinctive character of the region-based SIFT descriptor. Shape context also shows a high performance. However, for textured scenes or when edges are not reliable, its score is lower. The best low-dimensional descriptors are gradientmoments and steerable filters. They can be considered as an alternative when the high dimensionality of the histogram-based descriptors is an issue. Differential invariants give significantly worse results than steerable filters, which is surprising as they are based on the same basic components (Gaussian derivatives). The multiplication of derivatives necessary to obtain rotation invariance increases the instability. Cross correlation gives unstable results. The performance depends on the accuracy of interest point and region detection, which decreases for significant geometric transformations. Cross correlation is more sensitive to these errors than other high dimensional descriptors. Regions detected by Hessian-Laplace and Hessian-Affine are mainly blob-like structures. There are no significant signal changes in the center of the blob therefore descriptors perform better on larger neighborhoods. The results are slightly but systematically better on Hessian regions than on Harris regions due to their higher accuracy. The ranking of the descriptors is similar for different matching strategies. We can observe that SIFT gives relatively better results if nearest neighbor distance ratio is used for thresholding. Note that the precision is higher for nearest neighbor based matching than for threshold based matching.
+
 
 ## Appendix
 ### 颜色直方图
@@ -73,7 +77,7 @@ In most of the tests, GLOH obtains the best results, closely followed by SIFT. T
 灰度直方图是灰度级的函数，它表示图像中具有每种灰度级的象素的个数，反映图像中每种灰度出现的频率。由于灰度直方图维数最多只能有 256 维，描述能力有限，所以利用灰度直方图表示图像特征的研究比较少。灰度直方图的横坐标是灰度级，纵坐标是该灰度级出现的频率，是图像的最基本的统计特征。
 
 ### LBP
-**LBP(Local  Binary  Pattern，缩写为 LBP)是一种用来描述图像局部纹理特征的算子**；显然，它的作用是进行特征提取，而且，提取的特征是图像的纹理特征，并且，是局部的纹理特征。LBP 算子定义为 **在 $3\times 3$ 的窗口内，以窗口中心像素为阈值，将相邻的 8 个像素的灰度值与其进行比较，若周围像素值大于中心像素值，则该像素点的位置被标记为 1，否则为 0。这样，3*3 领域内的 8 个点可产生 8 bit 的无符号数，即得到该窗口的 LBP值，并用这个值来反映该区域的纹理信息**。
+**LBP(Local  Binary  Pattern，缩写为 LBP)是一种用来描述图像局部纹理特征的算子**；显然，它的作用是进行特征提取，而且，提取的特征是图像的纹理特征，并且，是局部的纹理特征。LBP 算子定义为 **在 $3\times 3$ 的窗口内，以窗口中心像素为阈值，将相邻的 8 个像素的灰度值与其进行比较，若周围像素值大于中心像素值，则该像素点的位置被标记为 1，否则为 0。这样，3*3 邻域内的 8 个点可产生 8 bit 的无符号数，即得到该窗口的 LBP值，并用这个值来反映该区域的纹理信息**。
 虽然 LBP 直方图和灰度直方图一样，只有 256 维，但由于灰度直方图是对图像的整体统计，而 LBP 是对图像的局部的特征描述，因此比灰度直方图有更好的特征表达能力。
 
 ### SIFT
@@ -85,3 +89,8 @@ SIFT 是一种提取局部特征的算法，在尺度空间寻找极值点，提
 梯度方向直方图（Histogram of Oriented Gradients，简称 HOG） 描述子是应用在计算机视觉和图像处理领域，用于目标检测的特征描述器。这项技术是用来计算局部图像梯度的方向信息的统计值。
 
 HOG 描述器最重要的思想是：在一副图像中，局部目标的表象和形状（Appearance and Shape）能够被梯度或边缘的方向密度分布很好地描述。具体的实现方法是：首先将图像分成小的连通区域，我们把它叫细胞单元。然后采集细胞单元中各像素点的梯度的或边缘的方向直方图。最后把这些直方图组合起来就可以构成特征描述器。为了提高性能，我们还可以把这些局部直方图在图像的更大的范围内（我们把它叫区间或 Block）进行对比度归一化（Contrast-Normalized），所采用的方法是：先计算各直方图在这个区间（Block）中的密度，然后根据这个密度对区间中的各个细胞单元做归一化。通过这个归一化后，能对光照变化和阴影获得更好的效果。与其他的特征描述方法相比，HOG 描述器后很多优点: **由于 HOG 方法是在图像的局部细胞单元上操作，所以它对图像几何的（Geometric）和光学的（Photometric）形变都能保持很好的不变性**。
+
+
+## Reference
+1. Joost van de Weijer, Cordelia Schmid, Jakob Verbeek, Diane Larlus. [Learning Color Names for Real-World Applications](https://hal.inria.fr/inria-00439284v2/document). IEEE Transactions on Image Processing, Institute of Electrical and Electronics Engineers, 2009, 18 (7), pp.1512-1523. 10.1109/TIP.2009.2019809. inria-00439284v2
+2. Navneet Dalal, Bill Triggs. [Histograms of Oriented Gradients for Human Detection](https://hal.inria.fr/docs/00/54/85/12/PDF/hog_cvpr2005.pdf). International Conference on Computer Vision & Pattern Recognition (CVPR ’05), Jun 2005, San Diego, United States. pp.886–893, 10.1109/CVPR.2005.177. inria-00548512
