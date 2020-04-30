@@ -25,9 +25,9 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 
 
 ## Projects
-* XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Python](https://github.com/lucasxlu/XCloud.git)] [[Java](https://github.com/lucasxlu/CVLH.git)] [[PDF](https://arxiv.org/pdf/1912.10344.pdf)]
+* XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Python](https://github.com/lucasxlu/XCloud.git)] [[Java](https://github.com/lucasxlu/CVLH.git)] [[Tech Report](https://arxiv.org/pdf/1912.10344.pdf)]
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
-  A repository for job data crawling and data analysis based on Python3. This repo has received over **230 stars** and **120+ forks**. Technical details can be read [here](https://www.zhihu.com/question/36132174/answer/94392659).
+  A repository for job data crawling and data analysis based on Python3. This repo has received over **230 stars** and **120+ forks**. Technical details can be read from [Zhihu Answer](https://www.zhihu.com/question/36132174/answer/94392659).
 * Software Copyright: Hot Topic Detection & Tracking System (2015SR165186) [[Code](https://github.com/xuludev/System.git)]
 
 <!-- 
@@ -67,14 +67,14 @@ Java/Web Spider Developer
 * English: (CET-6: 575/710); Proficiency in Reading and Writing    
 * Algorithm: Deep Learning/Machine Learning/Computer Vision/Data Mining/Data Analysis    
 * Programming: Java == Python > R > C++  
-* Framework: PyTorch/TensorFlow/Scikit-Learn/OpenCV  
-* Database: MongoDB/MySQL/Oracle  
+* Framework: PyTorch/TensorFlow/MXNet/Scikit-Learn/OpenCV  
+* Database: MongoDB/MySQL/Oracle/Redis  
 * Others: Web Crawler/Web Development/PPT/$\LaTeX$
 
 
 ## Professional Activities
 * Elsevier Journal Reviewer of [Neurocomputing (NEUCOM)](https://www.journals.elsevier.com/neurocomputing/)
-* Report about Deep Learning for Face Analysis [[Slides](./DL_for_Face_Analysis.pdf)]
+* Reviewer of [Indonesian Journal of Electrical Engineering and Computer Science](http://ijeecs.iaescore.com/index.php/IJEECS)
 * Academic Research Report (1st Prize). Deep Learning for Face Analysis and Fine-grained Visual Recognition. [[Slides](./DL_for_Face_Analysis_and_FGVC.pdf)]
 * Academic Research Report (1st Prize). Combining Machine Learning and Data-driven Approaches for AI Services. [[Slides](./Combining_ML_and_Data_driven_Approach_for_AI_Services​.pdf)]
 
