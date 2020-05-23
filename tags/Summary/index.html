@@ -3,28 +3,23 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>[cv] re-identification | LucasX</title>
+  <title>tag: summary | LucasX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="keywords" content="Machine LearningDeep LearningComputer VisionVisual SearchRe-identification" />
   
   
   
-  
-  <meta name="description" content="IntroductionReID可以看作是Visual Search的一个specific task，也在工业界有着非常广泛的应用场景。本文主要记录一些ReID领域比较insightful的paper。按照惯例，介绍某个新领域之前，首先得需要了解该领域的benchmark datasets以及performance evaluation metric。在ReID领域，主要有CMC、mAP和rank">
-<meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision,Visual Search,Re-identification">
-<meta property="og:type" content="article">
-<meta property="og:title" content="[CV] Re-identification">
-<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/03/05/cv-reid/index.html">
+  <meta name="description" content="To share something about ML/CV/Data Science">
+<meta name="keywords" content="Machine Learning; Computer Vision; Face Analysis">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LucasX">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/tags/Summary/index.html">
 <meta property="og:site_name" content="LucasX">
-<meta property="og:description" content="IntroductionReID可以看作是Visual Search的一个specific task，也在工业界有着非常广泛的应用场景。本文主要记录一些ReID领域比较insightful的paper。按照惯例，介绍某个新领域之前，首先得需要了解该领域的benchmark datasets以及performance evaluation metric。在ReID领域，主要有CMC、mAP和rank">
+<meta property="og:description" content="To share something about ML/CV/Data Science">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-reid/cmc_map.png">
-<meta property="og:updated_time" content="2020-03-05T04:36:33.403Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[CV] Re-identification">
-<meta name="twitter:description" content="IntroductionReID可以看作是Visual Search的一个specific task，也在工业界有着非常广泛的应用场景。本文主要记录一些ReID领域比较insightful的paper。按照惯例，介绍某个新领域之前，首先得需要了解该领域的benchmark datasets以及performance evaluation metric。在ReID领域，主要有CMC、mAP和rank">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-reid/cmc_map.png">
+<meta name="twitter:title" content="LucasX">
+<meta name="twitter:description" content="To share something about ML/CV/Data Science">
   
     <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
   
@@ -63,6 +58,8 @@
   
 
   
+    <link rel="stylesheet" href="/blog/css/archive.css" >
+  
   
   
     <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
@@ -72,7 +69,7 @@
 
 
 
-  <body data-spy="scroll" data-target="#toc" data-offset="50">
+  <body>
 
 
   
@@ -95,7 +92,7 @@
             
               <a class="brand" style="
                  margin-top: 0px;"  
-                href="#" data-toggle="modal" data-target="#myModal" >
+                 >
                   <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
               </a>
             
@@ -166,158 +163,43 @@
             
       <div id="content" class="outer">
         
-          <section id="main" style="float:none;"><article id="post-cv-reid" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="article-inner">
-    
-    
-      <header class="article-header">
-        
+          <section id="main" style="float:none;">
   
-    <h1 class="thumb" class="article-title" itemprop="name">
-      [CV] Re-identification
+  
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <h1><a href="/blog/archives/2020" class="archive-year">2020</a></h1>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+	<a href="/blog/2020/05/23/summary/" class="archive-article-date">
+	  <time datetime="2020-05-23T04:42:39.000Z" itemprop="datePublished">2020-05-23</time>
+	</a>
+
+      
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="archive-article-title" href="/blog/2020/05/23/summary/">[Summary] 杂谈2020-05</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-meta">
-      
-	<a href="/blog/2020/03/05/cv-reid/" class="article-date">
-	  <time datetime="2020-03-05T03:34:36.000Z" itemprop="datePublished">2020-03-05</time>
-	</a>
-
-      
-      
-	<a class="article-views">
-	<span id="busuanzi_container_page_pv">
-		PV:<span id="busuanzi_value_page_pv"></span>
-	</span>
-	</a>
-
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>ReID可以看作是Visual Search的一个specific task，也在工业界有着非常广泛的应用场景。本文主要记录一些ReID领域比较insightful的paper。按照惯例，介绍某个新领域之前，首先得需要了解该领域的benchmark datasets以及performance evaluation metric。在ReID领域，主要有<strong>CMC</strong>、<strong>mAP</strong>和<strong>rank1 Accuracy</strong>作为evaluation metric。</p>
-<ul>
-<li><p>CMC<br>The CMC curve shows the probability that a query identity appears in different-sized candidate lists. This evaluation measurement is valid only if there is only one ground truth match for a given query. In this case, precision and recall are the same issue. However, if multiple ground truths exist, the CMC curve is biased because “recall” is not considered.</p>
-</li>
-<li><p>mAP<br>For each query, we calculate the area under the Precision-Recall curve, which is known as average precision (AP). Then, the mean value of APs of all queries, i.e., mAP, is calculated, which considers both precision and recall of an algorithm, thus providing a more comprehensive evaluation. When average precision (AP) is used, rank lists in Fig. 3(b) and Fig. 3(c) are effectively distinguished.</p>
-</li>
-</ul>
-<p>下图直观展示了CMC和mAP的区别：</p>
-<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-reid/cmc_map.png" alt="CMC VS mAP"></p>
-<ul>
-<li>rank-N Accuracy<br>给定一个ID为m1的query probe，从gallery里返回M个retrieval list的前N个召回的retrieval结果里至少有一次hit包含ID为m1。</li>
-</ul>
-<p>Person ReID常用的有以下几个数据集：</p>
-<ul>
-<li><a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Zheng_Scalable_Person_Re-Identification_ICCV_2015_paper.pdf" target="_blank" rel="noopener">Market-1501</a><br>In our dataset, if the area ratio is larger than 50%, the DPM bbox is marked as “good” (a routine in object detection); if the ratio is smaller than 20%, the DPM bbox is marked as “distractor”; otherwise, the bbox is marked as “junk”, meaning that this image is of zero influence to re-id accuracy.</li>
-</ul>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
-<li>Zheng L, Shen L, Tian L, et al. <a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Zheng_Scalable_Person_Re-Identification_ICCV_2015_paper.pdf" target="_blank" rel="noopener">Scalable person re-identification: A benchmark</a>[C]//Proceedings of the IEEE international conference on computer vision. 2015: 1116-1124.</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div id="donation_div"></div>
-
-<script src="/blog/js/vdonate.js"></script>
-<script>
-var a = new Donate({
-  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
-  btnText: 'Donate', // 可选参数，打赏按钮文字
-  el: document.getElementById('donation_div'),
-  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
-  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
-});
-</script>
-      
-      
-      <div>
-        <ul class="post-copyright">
-          <li class="post-copyright-author">
-          <strong>Post author:  </strong>LucasX</a>
-          </li>
-          <li class="post-copyright-link">
-          <strong>Post link:  </strong>
-          <a href="/blog/2020/03/05/cv-reid/" target="_blank" title="[CV] Re-identification">https://lucasxlu.github.io/blog/2020/03/05/cv-reid/</a>
-          </li>
-          <li class="post-copyright-license">
-            <strong>Copyright Notice:   </strong>
-            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
-            unless stating additionally.
-          </li>
-         
-        </ul>
-<div>
-
-      
-      
-        
-	<div id="comment">
-		<!-- 来必力City版安装代码 -->
-		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
-		<script type="text/javascript">
-		   (function(d, s) {
-		       var j, e = d.getElementsByTagName(s)[0];
-
-		       if (typeof LivereTower === 'function') { return; }
-
-		       j = d.createElement(s);
-		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-		       j.async = true;
-
-		       e.parentNode.insertBefore(j, e);
-		   })(document, 'script');
-		</script>
-		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
-		</div>
-		<!-- City版安装代码已完成 -->
-	</div>
-
-
-
-      
-      
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/blog/2020/05/23/summary/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          [Summary] 杂谈2020-05
-        
-      </div>
-    </a>
-  
-  
-    <a href="/blog/2020/02/29/cv-classification/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">[CV] Classification</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+  
+  
+    </div></section>
+  
 
-<!-- Table of Contents -->
-
-  <aside id="toc-sidebar">
-    <div id="toc" class="toc-article">
-    <strong class="toc-title">Contents</strong>
-    
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">2.</span> <span class="nav-text">Reference</span></a></li></ol>
-    
-    </div>
-  </aside>
 
 </section>
         
@@ -417,8 +299,6 @@ var a = new Donate({
 
 
 
-  <script src="/blog/js/dialog.js"></script>
-
 
 
 
@@ -501,9 +381,7 @@ var a = new Donate({
 </div>
   
   <a id="rocket" href="#top" class=""></a>
-  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
-  
-    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 </body>
 </html>

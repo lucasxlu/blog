@@ -3,28 +3,26 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>[cv] re-identification | LucasX</title>
+  <title>[summary] 杂谈2020-05 | LucasX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="keywords" content="Machine LearningDeep LearningComputer VisionVisual SearchRe-identification" />
+  <meta name="keywords" content="SummaryNotes" />
   
   
   
   
-  <meta name="description" content="IntroductionReID可以看作是Visual Search的一个specific task，也在工业界有着非常广泛的应用场景。本文主要记录一些ReID领域比较insightful的paper。按照惯例，介绍某个新领域之前，首先得需要了解该领域的benchmark datasets以及performance evaluation metric。在ReID领域，主要有CMC、mAP和rank">
-<meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision,Visual Search,Re-identification">
+  <meta name="description" content="时间好快，转眼已经毕业工作近一年了。经历过互联网995工作式的福报。嗯，很荣幸，头没秃，肚子没圆，眼睛没近视，只是颈椎有点酸痛。（平常还是要多运动啊…）记录一下工作一年来的感悟与思考，希望对读到这篇文章的小朋友能有所启发。也欢迎前辈们指教！🤝🤝  技术 VS 业务相信对于每一位刚从校园踏入职场的技术同学来讲，一开始肯定是期望满满，想着终于有机会拿着自己搭建的算法模型到商业世界里大放异彩。然而，">
+<meta name="keywords" content="Summary,Notes">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[CV] Re-identification">
-<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/03/05/cv-reid/index.html">
+<meta property="og:title" content="[Summary] 杂谈2020-05">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/05/23/summary/index.html">
 <meta property="og:site_name" content="LucasX">
-<meta property="og:description" content="IntroductionReID可以看作是Visual Search的一个specific task，也在工业界有着非常广泛的应用场景。本文主要记录一些ReID领域比较insightful的paper。按照惯例，介绍某个新领域之前，首先得需要了解该领域的benchmark datasets以及performance evaluation metric。在ReID领域，主要有CMC、mAP和rank">
+<meta property="og:description" content="时间好快，转眼已经毕业工作近一年了。经历过互联网995工作式的福报。嗯，很荣幸，头没秃，肚子没圆，眼睛没近视，只是颈椎有点酸痛。（平常还是要多运动啊…）记录一下工作一年来的感悟与思考，希望对读到这篇文章的小朋友能有所启发。也欢迎前辈们指教！🤝🤝  技术 VS 业务相信对于每一位刚从校园踏入职场的技术同学来讲，一开始肯定是期望满满，想着终于有机会拿着自己搭建的算法模型到商业世界里大放异彩。然而，">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-reid/cmc_map.png">
-<meta property="og:updated_time" content="2020-03-05T04:36:33.403Z">
+<meta property="og:updated_time" content="2020-05-23T05:23:51.759Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[CV] Re-identification">
-<meta name="twitter:description" content="IntroductionReID可以看作是Visual Search的一个specific task，也在工业界有着非常广泛的应用场景。本文主要记录一些ReID领域比较insightful的paper。按照惯例，介绍某个新领域之前，首先得需要了解该领域的benchmark datasets以及performance evaluation metric。在ReID领域，主要有CMC、mAP和rank">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-reid/cmc_map.png">
+<meta name="twitter:title" content="[Summary] 杂谈2020-05">
+<meta name="twitter:description" content="时间好快，转眼已经毕业工作近一年了。经历过互联网995工作式的福报。嗯，很荣幸，头没秃，肚子没圆，眼睛没近视，只是颈椎有点酸痛。（平常还是要多运动啊…）记录一下工作一年来的感悟与思考，希望对读到这篇文章的小朋友能有所启发。也欢迎前辈们指教！🤝🤝  技术 VS 业务相信对于每一位刚从校园踏入职场的技术同学来讲，一开始肯定是期望满满，想着终于有机会拿着自己搭建的算法模型到商业世界里大放异彩。然而，">
   
     <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
   
@@ -166,7 +164,7 @@
             
       <div id="content" class="outer">
         
-          <section id="main" style="float:none;"><article id="post-cv-reid" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+          <section id="main" style="float:none;"><article id="post-summary" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="article-inner">
     
     
@@ -174,7 +172,7 @@
         
   
     <h1 class="thumb" class="article-title" itemprop="name">
-      [CV] Re-identification
+      [Summary] 杂谈2020-05
     </h1>
   
 
@@ -182,8 +180,8 @@
     
     <div class="article-meta">
       
-	<a href="/blog/2020/03/05/cv-reid/" class="article-date">
-	  <time datetime="2020-03-05T03:34:36.000Z" itemprop="datePublished">2020-03-05</time>
+	<a href="/blog/2020/05/23/summary/" class="article-date">
+	  <time datetime="2020-05-23T04:42:39.000Z" itemprop="datePublished">2020-05-23</time>
 	</a>
 
       
@@ -197,24 +195,24 @@
     </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>ReID可以看作是Visual Search的一个specific task，也在工业界有着非常广泛的应用场景。本文主要记录一些ReID领域比较insightful的paper。按照惯例，介绍某个新领域之前，首先得需要了解该领域的benchmark datasets以及performance evaluation metric。在ReID领域，主要有<strong>CMC</strong>、<strong>mAP</strong>和<strong>rank1 Accuracy</strong>作为evaluation metric。</p>
-<ul>
-<li><p>CMC<br>The CMC curve shows the probability that a query identity appears in different-sized candidate lists. This evaluation measurement is valid only if there is only one ground truth match for a given query. In this case, precision and recall are the same issue. However, if multiple ground truths exist, the CMC curve is biased because “recall” is not considered.</p>
-</li>
-<li><p>mAP<br>For each query, we calculate the area under the Precision-Recall curve, which is known as average precision (AP). Then, the mean value of APs of all queries, i.e., mAP, is calculated, which considers both precision and recall of an algorithm, thus providing a more comprehensive evaluation. When average precision (AP) is used, rank lists in Fig. 3(b) and Fig. 3(c) are effectively distinguished.</p>
-</li>
-</ul>
-<p>下图直观展示了CMC和mAP的区别：</p>
-<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-reid/cmc_map.png" alt="CMC VS mAP"></p>
-<ul>
-<li>rank-N Accuracy<br>给定一个ID为m1的query probe，从gallery里返回M个retrieval list的前N个召回的retrieval结果里至少有一次hit包含ID为m1。</li>
-</ul>
-<p>Person ReID常用的有以下几个数据集：</p>
-<ul>
-<li><a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Zheng_Scalable_Person_Re-Identification_ICCV_2015_paper.pdf" target="_blank" rel="noopener">Market-1501</a><br>In our dataset, if the area ratio is larger than 50%, the DPM bbox is marked as “good” (a routine in object detection); if the ratio is smaller than 20%, the DPM bbox is marked as “distractor”; otherwise, the bbox is marked as “junk”, meaning that this image is of zero influence to re-id accuracy.</li>
-</ul>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
-<li>Zheng L, Shen L, Tian L, et al. <a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Zheng_Scalable_Person_Re-Identification_ICCV_2015_paper.pdf" target="_blank" rel="noopener">Scalable person re-identification: A benchmark</a>[C]//Proceedings of the IEEE international conference on computer vision. 2015: 1116-1124.</li>
+        <p>时间好快，转眼已经毕业工作近一年了。经历过互联网995工作式的福报。嗯，很荣幸，头没秃，肚子没圆，眼睛没近视，只是颈椎有点酸痛。（平常还是要多运动啊…）记录一下工作一年来的感悟与思考，希望对读到这篇文章的小朋友能有所启发。也欢迎前辈们指教！🤝🤝</p>
+<ol>
+<li>技术 VS 业务<br>相信对于每一位刚从校园踏入职场的技术同学来讲，一开始肯定是期望满满，想着终于有机会拿着自己搭建的算法模型到商业世界里大放异彩。然而，不久之后你就会发现，蛤？什么鬼？整理数据+接口对接成了占用你时间最多的工作内容，很多时候也只是git clone跑一跑开源代码，交付模型即可。所以业内也常常戏称为是git clone工程师，调包工程师，调参工程师。长此以往，不少同学都会开始怀疑自己工作的技术含量与可替代性了。这里其实可以归为技术与业务的tradeoff，在工业界，很多时候并不会去follow顶会上的最新模型，而是优先以<code>稳定、成本低、已经被验证</code>的方案为主，如果贸然上了某个新技术，想一想某天半夜你在跟对象耳鬓厮磨，然后被线上报警电话打断的场景吧，那简直不要太酸爽。所以你常常会看到，5年前的模型ResNet/Faster RCNN到现在依然还是很多场景的首选，3年前的SphereFace/SENet也依然还是很多场景的首选。所以应用一个比较成熟的软件/算法的优势在于<strong>能够保证以最低的成本去探究这个需求的可行性，并输出一个数据还比较好看的baseline</strong>。工作本身就是一个输出的过程，决定你能不能升职加薪，对于绝大多数普通人来讲就是<strong>你做的事情产生了什么业务价值</strong>。如果你是技术同学，时常切换角色站在业务的视角去思考问题，往往会有更大的收获。<strong>只有梳理清晰业务，才能发现存在的痛点，然后针对该场景设计解决方案，最后才是开发实现</strong>。</li>
+</ol>
+<p>当然，前面强调了这么多“业务很重要”的观点并不是说技术就不重要了，恰恰相反，技术非常重要。如果说业务产出价值是你晋升的保障，那么技术水平的高低则是你作为工程师“可插拔性”的根本。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：因互联网行业人才流动性比较大，因此我一向认为，一个优秀的人才是不管在哪里都能够发光发热，即应像U盘一样，在window系统上work，mac/Linux上也work。“可插拔性”指的是人才在不依附其所属平台的情况下依然能发挥其最大价值。而且近些年互联网行业显然没有前些年势头好了，就算碰到公司裁员、倒闭、合并什么的，过硬的技术水平也能保障你能够很快地找到下家。</p>
+</blockquote>
+<p>而且近些年来，国内技术氛围也在慢慢变得浓厚，很多大公司在商业做得非常成功之后，也在开始关注业内的技术影响力。设立研究院，关注基础研究，发paper等等，这都是非常好的现象。作为技术同学，写技术blog、GitHub开源自己的repository，会是简历上非常加分的亮点。</p>
+<ol start="2">
+<li>大厂 VS 小厂<br>在校招的时候，很多同学往往会面临这样的选择，大厂的白菜价offer，和小厂的SP offer，后者在薪资上可能会有5~10W的增长。从概率上来讲，<strong>大厂镀金打基础，工作几年后跳去小厂变现</strong>依然是绝大多数互联网人性价比最高的做法。说到这里，很多同学可能会说，那我要是一下押中了下一个阿里巴巴、腾讯、美团、滴滴、字节跳动呢？其实也不是不可能，古人云，一命二运三风水，四积阴德五读书。但是前面也说了，概率，还是概率。前者从概率上来讲是一个非常稳妥的方案。</li>
+</ol>
+<p>近期公司入职了几个高T，几乎都是清一色 北大+百度 背景，在一个大平台认识的人脉，得到的系统性、专业性的学习，绝对不是很多小厂能比的。当然，小厂也并非一无是处，小厂一般是多面手型，写代码、做产品设计，有时候甚至还要负责去见客户、谈需求。如果选择小厂，那也应该是在行业某细分领域做到市场头部 or 独角兽企业。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：独角兽企业指的是估值超过10亿美金的未上市公司。</p>
+</blockquote>
+<ol start="3">
+<li>待续…</li>
 </ol>
 
       
@@ -242,7 +240,7 @@ var a = new Donate({
           </li>
           <li class="post-copyright-link">
           <strong>Post link:  </strong>
-          <a href="/blog/2020/03/05/cv-reid/" target="_blank" title="[CV] Re-identification">https://lucasxlu.github.io/blog/2020/03/05/cv-reid/</a>
+          <a href="/blog/2020/05/23/summary/" target="_blank" title="[Summary] 杂谈2020-05">https://lucasxlu.github.io/blog/2020/05/23/summary/</a>
           </li>
           <li class="post-copyright-license">
             <strong>Copyright Notice:   </strong>
@@ -288,19 +286,10 @@ var a = new Donate({
     
 <nav id="article-nav">
   
-    <a href="/blog/2020/05/23/summary/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          [Summary] 杂谈2020-05
-        
-      </div>
-    </a>
   
-  
-    <a href="/blog/2020/02/29/cv-classification/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/blog/2020/03/05/cv-reid/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">[CV] Classification</div>
+      <div class="article-nav-title">[CV] Re-identification</div>
     </a>
   
 </nav>
@@ -314,7 +303,7 @@ var a = new Donate({
     <div id="toc" class="toc-article">
     <strong class="toc-title">Contents</strong>
     
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">2.</span> <span class="nav-text">Reference</span></a></li></ol>
+        <ol class="nav">None</ol>
     
     </div>
   </aside>
