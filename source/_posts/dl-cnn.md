@@ -1,6 +1,6 @@
 ---
 title: "[DL] CNN"
-date: 2018-12-23 20:53:38
+date: 2020-06-20 13:45:38
 mathjax: true
 tags:
 - Machine Learning
@@ -28,6 +28,7 @@ catagories:
 无论采用什么样的Pooling，当输入做少量变动时，Pooling能够 __帮助输入的表示近似不变__。Shift Invariant指得是当我们对输入进行少量平移时，经过Pooling后的大多数输出并不会发生改变。例如MaxPooling中，Pooling只对周围的最大值比较敏感，而不是对精确的位置。
 * Average Pooling通过对邻域内特征数值求平均来实现，能够抑制由于邻域大小受限造成估计值方差增大的现象，```特点是对背景的保留效果更好```。
 * Max Pooling通过取邻域内特征最大值来实现，能够抑制网络参数误差造成估计均值偏移的现象，特点是```更好地提取纹理信息```。
+* Min Pooling通过取邻域内特征最小值来实现，能够提取所有类别中的通用特制，而非偏好某个category。Min Pooling在Image Quality Analysis以及Coarse and Fine Classification任务中经常被用到(例如[[4]](https://ieeexplore.ieee.org/abstract/document/8287700/)和[[5]](http://www.sungjuhwang.com/files/deepsemantic.pdf))。
 
 
 ## Variants of Convolution
@@ -53,3 +54,5 @@ Dilation conv允许我们在不损失resolution的情况下将multi-scale的info
 1. Goodfellow, Ian, et al. [Deep learning](https://www.deeplearningbook.org/contents/convnets.html). Vol. 1. Cambridge: MIT press, 2016.
 2. Yu, Fisher, and Vladlen Koltun. ["Multi-scale context aggregation by dilated convolutions."](https://arxiv.org/pdf/1511.07122v3.pdf)//ICLR 2016.
 3. Zagoruyko S, Komodakis N. [Wide residual networks](https://arxiv.org/pdf/1605.07146.pdf)[J]. BMVC, 2017.
+4. Lei J, Guo Z, Wang Y. [Weakly supervised image classification with coarse and fine labels](https://ieeexplore.ieee.org/abstract/document/8287700/)[C]//2017 14th Conference on Computer and Robot Vision (CRV). IEEE, 2017: 240-247.
+5. Goo W, Kim J, Kim G, et al. [Taxonomy-regularized semantic deep convolutional neural networks](http://www.sungjuhwang.com/files/deepsemantic.pdf)[C]//European Conference on Computer Vision. Springer, Cham, 2016: 86-101.
