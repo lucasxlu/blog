@@ -55,7 +55,7 @@ l_{sidei} = α_i L_{BCE}(Y, \hat{Y}_{side}^{(i)})
 $$
 
 $$
-L_{BCE} = -\frac{1}{n}\sum_{j=1}^n -y_j log\hat{y}_j - (1-y_j)log(1-\hat{y}_j)
+L_{BCE} = -\frac{1}{n}\sum_{j=1}^n (y_j log\hat{y}_j + (1-y_j)log(1-\hat{y}_j))
 $$
 
 Fuse loss定义为：

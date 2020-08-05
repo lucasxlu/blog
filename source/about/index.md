@@ -6,7 +6,7 @@ description: "Self introduction and personal information."
 header-img: "img/header_img/archive-bg.png"
 ---
 ## Self Introduction
-My research interests include Machine Learning and Computer Vision. I like reading and photography. You can find me from [Zhihu](https://www.zhihu.com/people/xulu-0620) and [Instagram](https://www.instagram.com/lucasx_xulu/).
+My research interests include Machine Learning and Computer Vision. I like reading and photography. You can find me from [Zhihu](https://www.zhihu.com/people/xulu-0620), [Instagram](https://www.instagram.com/lucasx_xulu/) and [LinkedIn](https://www.linkedin.com/in/lucas-xu/).
 
 ![LucasX](https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg)
 
@@ -29,38 +29,6 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
   A repository for job data crawling and data analysis based on Python3. This repo has received over **230 stars** and **120+ forks**. Technical details can be read from [Zhihu Answer](https://www.zhihu.com/question/36132174/answer/94392659).
 * Software Copyright: Hot Topic Detection & Tracking System (2015SR165186) [[Code](https://github.com/xuludev/System.git)]
-
-<!-- 
-## Experience
-* [Blibee](https://www.bianlifeng.com/) &emsp; 2019.02 – Present  
-Store Intelligent Decision-making Department  
-Vision Algorithm Engineer  
-
-  - Kanto Cooking (Discard) detection with 0.963 AP, and fine-grained recognition with 95.66% accuracy  
-  - Daily fresh food recognition with 0.920 AP and 99.09% accuracy
-  - Products Re-identification with 99.43% rank-1 accuracy
-  - Model deployment with RESTful API (Django + PyTorch + TensorRT + Nginx)
-
-
-* [DiDi](https://www.didiglobal.com/) &emsp; 2018.09 – 2019.01  
-Security Product & Technology  
-Deep Learning  
-
-  - License image quality recognition (reflection/blur) with 93.15% Precision and 98.35% Recall
-  - Facial beauty prediction with 0.89 Pearson Correlation
-  - License type recognition with 99.77% Precision and 99.76% Recall
-  - Scene recognition (in car/out of car) with 99.89% Precision 99.90% Recall
-  - License completeness recognition with 99.67% Precision and 99.68% Recall
-  - Complete the writing of 21 patents related to safety products
-
-
-* [Beijing Jiewen Technology Co.,Ltd.](http://www.aisino.com/) &emsp; 2015.06 – 2016.06  
-Huazhong R&D Center  
-Java/Web Spider Developer
-
-  - Develop and maintain web information system based on Java SSM framework and MySQL database
-  - Develop web crawlers to collect data from O2O websites (e.g. [Ctrip](http://www.ctrip.com/), [Dazhong Dianping](http://www.dianping.com/), [AMap](https://www.amap.com/)) based on Python/Java and MySQL/MongoDB
-  - Data statistics, analysis and visualization. It provides important data support for company offline product location -->
 
 
 ## Skills
@@ -90,4 +58,5 @@ Java/Web Spider Developer
 ## Contact
 * [Zhihu](https://www.zhihu.com/people/xulu-0620/activities)
 * [Github](https://github.com/lucasxlu)  
+* [LinkedIn](https://www.linkedin.com/in/lucas-xu/)
 * Email: xulu0620@gmail.com
