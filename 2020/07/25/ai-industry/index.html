@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[note] ai industry | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningBusinessArtificial Intelligence" />
+  
+  
+  
+  
+  <meta name="description" content="Introduction最近刷知乎，有看到这样一个问题“如何看待2021年秋招算法岗灰飞烟灭？”，虽然标题夸张，但确实反映了当前算法岗位内卷严重的真实情况。前面写了很多篇paper的阅读笔记，这篇就站在产业界的角度，来谈一谈AI在实际产业界的落地、商业模式以及对人才的要求吧。 What’s the Gap Between Academia and Industry?Emphasis在学术界，追求的">
+<meta name="keywords" content="Machine Learning,Deep Learning,Business,Artificial Intelligence">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] AI Industry">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/07/25/ai-industry/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Introduction最近刷知乎，有看到这样一个问题“如何看待2021年秋招算法岗灰飞烟灭？”，虽然标题夸张，但确实反映了当前算法岗位内卷严重的真实情况。前面写了很多篇paper的阅读笔记，这篇就站在产业界的角度，来谈一谈AI在实际产业界的落地、商业模式以及对人才的要求吧。 What’s the Gap Between Academia and Industry?Emphasis在学术界，追求的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-industry/Computer_Vision_Algorithm_Roadmap.png">
+<meta property="og:updated_time" content="2020-07-29T14:49:51.342Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Note] AI Industry">
+<meta name="twitter:description" content="Introduction最近刷知乎，有看到这样一个问题“如何看待2021年秋招算法岗灰飞烟灭？”，虽然标题夸张，但确实反映了当前算法岗位内卷严重的真实情况。前面写了很多篇paper的阅读笔记，这篇就站在产业界的角度，来谈一谈AI在实际产业界的落地、商业模式以及对人才的要求吧。 What’s the Gap Between Academia and Industry?Emphasis在学术界，追求的">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-industry/Computer_Vision_Algorithm_Roadmap.png">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-ai-industry" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [Note] AI Industry
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2020/07/25/ai-industry/" class="article-date">
+	  <time datetime="2020-07-25T03:55:16.000Z" itemprop="datePublished">2020-07-25</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>最近刷知乎，有看到这样一个问题<a href="https://www.zhihu.com/question/406974583/answer/1343041027" target="_blank" rel="noopener">“如何看待2021年秋招算法岗灰飞烟灭？”</a>，虽然标题夸张，但确实反映了当前算法岗位内卷严重的真实情况。前面写了很多篇paper的阅读笔记，这篇就站在产业界的角度，来谈一谈AI在实际产业界的落地、商业模式以及对人才的要求吧。</p>
+<h2 id="What’s-the-Gap-Between-Academia-and-Industry"><a href="#What’s-the-Gap-Between-Academia-and-Industry" class="headerlink" title="What’s the Gap Between Academia and Industry?"></a>What’s the Gap Between Academia and Industry?</h2><h3 id="Emphasis"><a href="#Emphasis" class="headerlink" title="Emphasis"></a>Emphasis</h3><p>在学术界，追求的普遍都是模型的<strong>创新</strong>与方法在某个数据集上的<strong>精度</strong>，因此常见的衡量标准就是Paper产出量以及Kaggle等比赛排名是否靠前。但是在工业界，却并非如此，工业界的第一诉求永远是<strong>能否以最低的成本来解决业务痛点</strong>，<strong>你的模型/策略能带来多大的商业价值</strong>？这个时候，模型的novelty其实并没有那么重要，选择业内成熟的方案，能够低成本稳定运行即可。以CV为例，现如今跑在很多公司服务器上的模型依然是ResNet/Faster RCNN/SphereFace等几年前的“老模型”。这些成熟模型虽然在很多时候其实是已经完全满足了业务需求（因为在工业界，<strong>高质量数据带来的提升远远比算法重要</strong>），但并不是说AI算法工程师就应该停留在舒适区止步不前了。尽管深度学习在近些年遇到了一些瓶颈，但每年依然有一些比较亮眼的工作出现。举个栗子，你现在做图像分类，A同学上来二话不说就是ResNet硬怼，你通过follow最新的research成果，用上了EfficientNet/ECAMobileNet/MobileNetV3等轻量级模型，在准召相近的情况下，你的线上serving只需要两块GPU就可以抗住对应的QPS，而A同学则需要4块GPS，这个时候你的优势是不是就体现出来了？另外就是，在当前AI行业如此内卷的大环境下，你如果能follow最新的paper，并及时赋能实际业务，也表明了你是一个热爱学习的人，面试官往往会觉得眼前一亮（有点“面向简历工作”的意思，哈哈）。<strong>不管什么时候，作为算法工程师，有高质量的paper及Top比赛排名，任何时候都是简历上非常加分的亮点</strong>。</p>
+<h3 id="Deeply-Understand-Your-Business"><a href="#Deeply-Understand-Your-Business" class="headerlink" title="Deeply Understand Your Business"></a>Deeply Understand Your Business</h3><p>企业的目的是赚钱，在企业上班的工程师的KPI是产生业务价值，因此绝大多数时候并不会去刻意追求模型的novelty。深入理解业务，了解该业务的上下游，你的模型对上下游的影响，你在整个业务线中处于一个什么样的角色，梳理清晰业务，并从中挖掘出业务上的痛点，并根据你的经验和专业技能提出<strong>低成本的解决方案</strong>。能到达这一步，你就基本达到专家工程师的高度了。很多同学有个错觉，就是觉得算法专家一定要是顶会paper等身才行，而根据我的观察，在企业业务部门，能解决业务痛点更重要。培养业务视角，平时可以多关注行业内大厂前辈们的分享，以及行业研究报告。</p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>最后，通过近2年的research经历与2年的工业界经历，我总结了一下视觉算法工程师应该要掌握的知识技能思维导图。感兴趣的同学可以参考，也希望大佬们提意见~</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-industry/Computer_Vision_Algorithm_Roadmap.png" alt="Computer Vision Algorithm Roadmap"></p>
+<h2 id="Business-Model-of-AI"><a href="#Business-Model-of-AI" class="headerlink" title="Business Model of AI"></a>Business Model of AI</h2><p>AI企业主要分为<strong>to B</strong>和<strong>to C</strong>，<br><strong>to B</strong>型AI公司主要有以下几种商业模型：</p>
+<ul>
+<li>为其他企业提供服务（例如SDK、API等），比较知名的有商汤、旷视</li>
+<li>虽然产品都是自己的，但客户主要是政府、物业等，比较知名的是海康、大华这种智能安防公司</li>
+<li>AI只是辅助功能，以极低的价格（甚至免费）卖调用次数，实际上是卖自己的云服务，例如阿里云、百度云等</li>
+<li>更有甚者通过开放接口采集数据来迭代自己的模型，形成数据闭环，然后通过迭代的更准确的模型去竞标2B/2G的单子，就不举例了</li>
+</ul>
+<p><strong>to C</strong>型AI公司的服务对象是广大的用户，它们其实并不像前者那样强调自己是AI公司，而是通过AI技术赋能自己的业务，带给用户更好的体验。常见的AI落地场景有：</p>
+<ul>
+<li>电商：例如淘宝/京东/拼多多的拍照购</li>
+<li>短视频：例如抖音的视频特效</li>
+<li>零售：例如AmazonGo的商品识别、根据人流量选址</li>
+<li>…</li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li>Sculley, David, et al. <a href="http://papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf" target="_blank" rel="noopener">“Hidden technical debt in machine learning systems.”</a> Advances in neural information processing systems. 2015.</li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzIwNzc2NTk0NQ==&amp;mid=2247494737&amp;idx=1&amp;sn=4ef70cdc11367d93721ad0c9687edf07&amp;chksm=970fc487a0784d91dcd606859c4304dfbb4b1fba223d3d419560e5e0761e4d92a26d407495f9&amp;mpshare=1&amp;scene=24&amp;srcid=0724mweUr2iz5ibmJF6l5Fhq&amp;sharer_sharetime=1595600155408&amp;sharer_shareid=d48f2a1eabae06a1f257160da72857e8&amp;key=ebb412db45555e1d4f384d204d3fde14a2505c7d0d7c375d3f24d88d975b26895cd39983bd24ea1a59ea57d5134381be2ee283a485a8aa96d3486b48772a549d45e26b74804e5de4bd74f1387e6b062b&amp;ascene=14&amp;uin=Mzk3MDE0Nzk1&amp;devicetype=Windows+10+x64&amp;version=62090070&amp;lang=zh_CN&amp;exportkey=ATaJ8%2FY7EqNukjBKQ8hKf8o%3D&amp;pass_ticket=FRSQxc4uErXQddW8g5y7qUbLuFiYNWcnK8QGv14FhMYTbFBI4IkHiIoJlbZJpI1C" target="_blank" rel="noopener">2021届秋招算法岗真的要灰飞烟灭了吗？</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2020/07/25/ai-industry/" target="_blank" title="[Note] AI Industry">https://lucasxlu.github.io/blog/2020/07/25/ai-industry/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/2020/08/05/ai-in-production/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          [Note] AI in Production
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/2020/06/20/dl-cnn/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DL] CNN</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What’s-the-Gap-Between-Academia-and-Industry"><span class="nav-number">2.</span> <span class="nav-text">What’s the Gap Between Academia and Industry?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Emphasis"><span class="nav-number">2.1.</span> <span class="nav-text">Emphasis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deeply-Understand-Your-Business"><span class="nav-number">2.2.</span> <span class="nav-text">Deeply Understand Your Business</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">3.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Business-Model-of-AI"><span class="nav-number">4.</span> <span class="nav-text">Business Model of AI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2020 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2020 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>

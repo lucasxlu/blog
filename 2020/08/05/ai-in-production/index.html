@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[note] ai in production | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningBusinessArtificial Intelligence" />
+  
+  
+  
+  
+  <meta name="description" content="AI in Production从AlexNet让深度神经网络重回视野，到AlphaGo被广为人知，AI得到了越来越多的关注。时间到了2020年，与前些年不少公司热衷于发paper、打比赛做PR不同，现在越来越看重AI落地。基于此背景，本文旨在记录AI在各行各业落地的一些行业解决方案、insightful Paper、以及笔者本人的一些思考，希望能给大家一些启发。 Geometry Supervi">
+<meta name="keywords" content="Machine Learning,Deep Learning,Business,Artificial Intelligence">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] AI in Production">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/08/05/ai-in-production/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="AI in Production从AlexNet让深度神经网络重回视野，到AlphaGo被广为人知，AI得到了越来越多的关注。时间到了2020年，与前些年不少公司热衷于发paper、打比赛做PR不同，现在越来越看重AI落地。基于此背景，本文旨在记录AI在各行各业落地的一些行业解决方案、insightful Paper、以及笔者本人的一些思考，希望能给大家一些启发。 Geometry Supervi">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_backbone.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_loss.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_sample.png">
+<meta property="og:updated_time" content="2020-08-05T13:09:00.996Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Note] AI in Production">
+<meta name="twitter:description" content="AI in Production从AlexNet让深度神经网络重回视野，到AlphaGo被广为人知，AI得到了越来越多的关注。时间到了2020年，与前些年不少公司热衷于发paper、打比赛做PR不同，现在越来越看重AI落地。基于此背景，本文旨在记录AI在各行各业落地的一些行业解决方案、insightful Paper、以及笔者本人的一些思考，希望能给大家一些启发。 Geometry Supervi">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_backbone.png">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/about">About</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/papers">Papers</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-ai-in-production" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [Note] AI in Production
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2020/08/05/ai-in-production/" class="article-date">
+	  <time datetime="2020-08-05T13:05:03.000Z" itemprop="datePublished">2020-08-05</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="AI-in-Production"><a href="#AI-in-Production" class="headerlink" title="AI in Production"></a>AI in Production</h2><p>从AlexNet让深度神经网络重回视野，到AlphaGo被广为人知，AI得到了越来越多的关注。时间到了2020年，与前些年不少公司热衷于发paper、打比赛做PR不同，现在越来越看重AI落地。基于此背景，本文旨在记录AI在各行各业落地的一些行业解决方案、insightful Paper、以及笔者本人的一些思考，希望能给大家一些启发。</p>
+<h2 id="Geometry-Supervised-Pose-Network-for-Accurate-Retail-Shelf-Pose-Estimation"><a href="#Geometry-Supervised-Pose-Network-for-Accurate-Retail-Shelf-Pose-Estimation" class="headerlink" title="Geometry Supervised Pose Network for Accurate Retail Shelf Pose Estimation"></a>Geometry Supervised Pose Network for Accurate Retail Shelf Pose Estimation</h2><blockquote>
+<p>Keywords: AI，CV，新零售，货架姿态估计</p>
+<p>Paper: <a href="https://ieeexplore.ieee.org/abstract/document/9112652/" target="_blank" rel="noopener">Geometry Supervised Pose Network for Accurate Retail Shelf Pose Estimation</a></p>
+<p>Code: <a href="https://github.com/AIKnowU/RSPD" target="_blank" rel="noopener">RSPD</a></p>
+</blockquote>
+<p>AI赋能零售行业，最常见的落地场景有以下几种：</p>
+<ol>
+<li>刷脸结算：能提高结算效率、方便零售商做VIP客源管理，熟客管理，以及提高趣味性、增强与用户之间的互动，且刷脸的屏幕也是很好的广告投放地点；涉及的主要技术点是<strong>人脸识别</strong>。</li>
+<li>商品识别：用于货架排面分析，竞品分析，主要motivation是这样的：所有生意都是基于流量的生意，对于电商这种线上流量，用户的每一次搜索，平台如何对商品进行排序，则会直接影响商家的转化率，而在线下呢，用户进店，商品如何摆放、摆在什么位置能促使顾客下单，是一个非常值得斟酌的点；涉及的主要技术是<strong>目标检测</strong>、<strong>货架姿态估计</strong>、<strong>分类</strong>、<strong>ReID</strong>等等。</li>
+<li>客流分析：主要还是转化率的问题，如果大家知道漏斗模型，就不难理解了。假设你开了一家便利店，开在某街道，这个地方每天的人流量是2W，到最终下单成交可能只有5%。那么扩大基数，也是保证交易额增加的要点！通俗点说，把门店开在热门地区，是大家的共识。当然，现在也有一些新零售公司，开店并没有选在热门地段（毕竟房租贵），而是选在稍微偏远的地段，然后通过打造品牌效应及外卖模式，也是可行的，这里涉及到商业模式的问题，不是本文讨论的重心；涉及的主要技术是<strong>Counting</strong>。</li>
+<li>动线：主要是对店内人群活动轨迹进行跟踪，生成热力图与活动轨迹，来辅助商家进行决策；涉及的主要技术是<strong>Visual Tracking</strong>和<strong>ReID</strong>。</li>
+<li>图搜：即以图搜图，线下逛商场看上了某裙子，掏出手机拍张照，搜同款，找到更便宜的再下单。涉及的主要技术是<strong>Image Retrieval</strong>和<strong>Metric Learning</strong>。</li>
+</ol>
+<p>回归主题吧，这篇paper主要介绍了一种单目3D货架姿态估计方法，network architecture和idea也非常简单，属于非常实用的类型，且作者也公开了code和dataset (目前只有GitHub地址)。</p>
+<p>货架姿态估计，与学术界常见的Head Pose Estimation，其实并没有本质区别，主要难点还是在于货架姿态的数据集和annotation相比于人体头部更难采集。算法层面，主流的方案还是基于DL regression的方法，即一个backbone (如ResNet/DenseNet/SENet等) 提取特征，然后输出3个branch，采用某种regression loss (例如MSE/L1/Smooth L1) 等去回归 yaw/roll/pitch angle。这里一个比较有代表性的工作是<a href="http://openaccess.thecvf.com/content_cvpr_2018_workshops/papers/w41/Ruiz_Fine-Grained_Head_Pose_CVPR_2018_paper.pdf" target="_blank" rel="noopener">HopeNet</a>。货架姿态估计在整个商品识别流程里主要起到reject low-quality images的作用，因为拍摄过于倾斜的货架会严重影响后续的排面分析准确性。</p>
+<blockquote>
+<p><a href="https://www.zhihu.com/people/xulu-0620" target="_blank" rel="noopener">@LucasX</a>注：工业界通常不会采用太复杂的模型，一是可解释性极差；二是复杂度极高，莫说跑在edge device了，就是跑在GPU server也扛不住。到最后一看，一顿操作猛如虎，上你算法带来的收益还抵不上维护V100机器的开支，那就尴尬了。所以我觉得很多顶会Workshop的paper还是非常有价值的，这些paper往往是又简单又work。</p>
+</blockquote>
+<h3 id="Network-Architecture"><a href="#Network-Architecture" class="headerlink" title="Network Architecture"></a>Network Architecture</h3><p>先看看网络结构：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_backbone.png" alt="GSPN Backbone"></p>
+<p>一张平平无奇的RGB image作为输入，VGG16作为backbone提取特征，并且将不同Conv layer的feature map进行降维、上采样（bilinear interpolation）、融合来获取multi-level &amp; multi-scale 信息。因高层的$FM_4$和$FM_5$包含了丰富的semantic meaning，因此用来做Pose Estimation。然而，包含太丰富的semantic information会增加redundant noise，基于此，作者设计了 adaptive geometric supervised learning (AGSL) 模块来辅助GSPN学习，其中，$GIM_{gt}$通过LSD算法生成，通过BCE Loss来从低层feature $FM_1$, $FM_2$, $FM_3$中学习geometric properties。</p>
+<h3 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h3><p>GSPN模型的loss如下如所示，也是常见的joint loss结构：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_loss.png" alt="GSPN Loss"><br>令$l_{side1}$, $l_{side2}$, $l_{side3}$分别为upsampling layers 1,2,3的loss，$\hat{Y}_{side}$是每个side的输出，$Y$是ground truth geometry information map $GIM_{gt}$，则有：<br>$$<br>\hat{Y}_{side}^{(i)}=\sigma (\hat{A}_{side}^{(i)})<br>$$</p>
+<p>$$<br>l_{sidei} = α_i L_{BCE}(Y, \hat{Y}_{side}^{(i)})<br>$$</p>
+<p>$$<br>L_{BCE} = -\frac{1}{n}\sum_{j=1}^n -y_j log\hat{y}_j - (1-y_j)log(1-\hat{y}_j)<br>$$</p>
+<p>Fuse loss定义为：<br>$$<br>l_{fuse}=L_{BCE}(Y, \hat{Y}_{fuse})<br>$$<br>其中<br>$$<br>\hat{Y}_{fuse}=\sigma (\sum_{i=1}^3h_i \hat{A}_{side}^{(i)})<br>$$</p>
+<p>此外，yaw/pitch/raw 3个角度的loss为L1 loss。</p>
+<p>最终的loss为：<br>$$<br>L_{RES}=\beta l_{LINEAR} + (1-\beta)l_{3D-POSE}<br>$$<br>其中：<br>$$<br>l_{LINEAR}=l_{fuse} + l_{side1} + l_{side2} + l_{side3}<br>$$</p>
+<p>$$<br>l_{3D-POSE}=l_{yaw} + l_{roll} + l_{pitch}<br>$$</p>
+<p>下图是3D shelf pose sample：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_sample.png" alt="GSPN Sample"></p>
+<p>这篇paper idea比较简单，但是却非常实用；算法方面主要创新点在于设计了AGSL模块，用$GIM_{gt}$作为supervision来更好的学习geometric信息，来提升shelf pose estimation的精度。Ablation study请阅读原文，另外就是作者构建shelf pose数据集——RSPD的做法很值得参考，详情可阅读原文，此处不赘述了。</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li>Mou Y, Huang Z, Lin L, et al. <a href="https://ieeexplore.ieee.org/abstract/document/9112652/" target="_blank" rel="noopener">Geometry Supervised Pose Network for Accurate Retail Shelf Pose Estimation</a>[J]. IEEE Transactions on Industrial Informatics, 2020.</li>
+<li>Ruiz N, Chong E, Rehg J M. <a href="http://openaccess.thecvf.com/content_cvpr_2018_workshops/papers/w41/Ruiz_Fine-Grained_Head_Pose_CVPR_2018_paper.pdf" target="_blank" rel="noopener">Fine-grained head pose estimation without keypoints</a>[C]//Proceedings of the IEEE conference on computer vision and pattern recognition workshops. 2018: 2074-2083.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2020/08/05/ai-in-production/" target="_blank" title="[Note] AI in Production">https://lucasxlu.github.io/blog/2020/08/05/ai-in-production/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2020/07/25/ai-industry/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[Note] AI Industry</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AI-in-Production"><span class="nav-number">1.</span> <span class="nav-text">AI in Production</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Geometry-Supervised-Pose-Network-for-Accurate-Retail-Shelf-Pose-Estimation"><span class="nav-number">2.</span> <span class="nav-text">Geometry Supervised Pose Network for Accurate Retail Shelf Pose Estimation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Network-Architecture"><span class="nav-number">2.1.</span> <span class="nav-text">Network Architecture</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Loss-Function"><span class="nav-number">2.2.</span> <span class="nav-text">Loss Function</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">3.</span> <span class="nav-text">References</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2020 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/about" class="mobile-nav-link">About</a>
+  
+    <a href="/blog/papers" class="mobile-nav-link">Papers</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2020 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>
