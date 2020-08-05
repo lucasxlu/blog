@@ -1,5 +1,5 @@
 ---
-title: "[Note] AI in Production"
+title: "[AI] AI in Production"
 date: 2020-08-05 21:05:03
 mathjax: true
 tags:
