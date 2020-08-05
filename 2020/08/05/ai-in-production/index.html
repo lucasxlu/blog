@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_backbone.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_loss.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_sample.png">
-<meta property="og:updated_time" content="2020-08-05T13:20:47.887Z">
+<meta property="og:updated_time" content="2020-08-05T15:13:19.623Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[AI] AI in Production">
 <meta name="twitter:description" content="AI in Production从AlexNet让深度神经网络重回视野，到AlphaGo被广为人知，AI得到了越来越多的关注。时间到了2020年，与前些年不少公司热衷于发paper、打比赛做PR不同，现在越来越看重AI落地。基于此背景，本文旨在记录AI在各行各业落地的一些行业解决方案、insightful Paper、以及笔者本人的一些思考，希望能给大家一些启发。 Geometry Supervi">
@@ -222,7 +222,7 @@
 <p>一张平平无奇的RGB image作为输入，VGG16作为backbone提取特征，并且将不同Conv layer的feature map进行降维、上采样（bilinear interpolation）、融合来获取multi-level &amp; multi-scale 信息。因高层的$FM_4$和$FM_5$包含了丰富的semantic meaning，因此用来做Pose Estimation。然而，包含太丰富的semantic information会增加redundant noise，基于此，作者设计了 adaptive geometric supervised learning (AGSL) 模块来辅助GSPN学习，其中，$GIM_{gt}$通过LSD算法生成，通过BCE Loss来从低层feature $FM_1$, $FM_2$, $FM_3$中学习geometric properties。</p>
 <h3 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h3><p>GSPN模型的loss如下如所示，也是常见的joint loss结构：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_loss.png" alt="GSPN Loss"><br>令$l_{side1}$, $l_{side2}$, $l_{side3}$分别为upsampling layers 1,2,3的loss，$\hat{Y}_{side}$是每个side的输出，$Y$是ground truth geometry information map $GIM_{gt}$，则有：<br>$$<br>\hat{Y}_{side}^{(i)}=\sigma (\hat{A}_{side}^{(i)})<br>$$</p>
 <p>$$<br>l_{sidei} = α_i L_{BCE}(Y, \hat{Y}_{side}^{(i)})<br>$$</p>
-<p>$$<br>L_{BCE} = -\frac{1}{n}\sum_{j=1}^n -y_j log\hat{y}_j - (1-y_j)log(1-\hat{y}_j)<br>$$</p>
+<p>$$<br>L_{BCE} = -\frac{1}{n}\sum_{j=1}^n (y_j log\hat{y}_j + (1-y_j)log(1-\hat{y}_j))<br>$$</p>
 <p>Fuse loss定义为：<br>$$<br>l_{fuse}=L_{BCE}(Y, \hat{Y}_{fuse})<br>$$<br>其中<br>$$<br>\hat{Y}_{fuse}=\sigma (\sum_{i=1}^3h_i \hat{A}_{side}^{(i)})<br>$$</p>
 <p>此外，yaw/pitch/raw 3个角度的loss为L1 loss。</p>
 <p>最终的loss为：<br>$$<br>L_{RES}=\beta l_{LINEAR} + (1-\beta)l_{3D-POSE}<br>$$<br>其中：<br>$$<br>l_{LINEAR}=l_{fuse} + l_{side1} + l_{side2} + l_{side3}<br>$$</p>
