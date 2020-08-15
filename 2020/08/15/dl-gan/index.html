@@ -3,23 +3,26 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>tag: data science | LucasX</title>
+  <title>[dl] gan | LucasX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
+  <meta name="keywords" content="Machine LearningDeep LearningData ScienceGAN" />
   
   
   
-  <meta name="description" content="To share something about ML/CV/Data Science">
-<meta name="keywords" content="Machine Learning; Computer Vision; Face Analysis">
-<meta property="og:type" content="website">
-<meta property="og:title" content="LucasX">
-<meta property="og:url" content="https://lucasxlu.github.io/blog/tags/Data-Science/page/3/index.html">
+  
+  <meta name="description" content="IntroductionGAN (Generative Adversarial Nets)是当前DL/CV方向的研究热门，在工业界也开始有一些比较成功的落地应用，例如TikTok上人脸卡通脸生成、变老特效等等。本文就来介绍一下GAN方向一些非常有代表性的paper。 GAN在GAN框架下，会同时训练一个generative model $G$（用来capture data distribution">
+<meta name="keywords" content="Machine Learning,Deep Learning,Data Science,GAN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[DL] GAN">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/08/15/dl-gan/index.html">
 <meta property="og:site_name" content="LucasX">
-<meta property="og:description" content="To share something about ML/CV/Data Science">
+<meta property="og:description" content="IntroductionGAN (Generative Adversarial Nets)是当前DL/CV方向的研究热门，在工业界也开始有一些比较成功的落地应用，例如TikTok上人脸卡通脸生成、变老特效等等。本文就来介绍一下GAN方向一些非常有代表性的paper。 GAN在GAN框架下，会同时训练一个generative model $G$（用来capture data distribution">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-08-15T06:43:16.895Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="LucasX">
-<meta name="twitter:description" content="To share something about ML/CV/Data Science">
+<meta name="twitter:title" content="[DL] GAN">
+<meta name="twitter:description" content="IntroductionGAN (Generative Adversarial Nets)是当前DL/CV方向的研究热门，在工业界也开始有一些比较成功的落地应用，例如TikTok上人脸卡通脸生成、变老特效等等。本文就来介绍一下GAN方向一些非常有代表性的paper。 GAN在GAN框架下，会同时训练一个generative model $G$（用来capture data distribution">
   
     <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
   
@@ -58,8 +61,6 @@
   
 
   
-    <link rel="stylesheet" href="/blog/css/archive.css" >
-  
   
   
     <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
@@ -69,7 +70,7 @@
 
 
 
-  <body>
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
 
 
   
@@ -92,7 +93,7 @@
             
               <a class="brand" style="
                  margin-top: 0px;"  
-                 >
+                href="#" data-toggle="modal" data-target="#myModal" >
                   <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
               </a>
             
@@ -163,90 +164,147 @@
             
       <div id="content" class="outer">
         
-          <section id="main" style="float:none;">
-  
-  
-  
+          <section id="main" style="float:none;"><article id="post-dl-gan" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
     
     
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <h1><a href="/blog/archives/2018" class="archive-year">2018</a></h1>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/blog/2018/07/19/ml-nb/" class="archive-article-date">
-	  <time datetime="2018-07-19T08:17:20.000Z" itemprop="datePublished">2018-07-19</time>
-	</a>
-
-      
+      <header class="article-header">
+        
   
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2018/07/19/ml-nb/">[ML] Naive Bayes</a>
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [DL] GAN
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
+    <div class="article-meta">
       
-	<a href="/blog/2018/07/19/ml-knn/" class="archive-article-date">
-	  <time datetime="2018-07-19T04:37:17.000Z" itemprop="datePublished">2018-07-19</time>
+	<a href="/blog/2020/08/15/dl-gan/" class="article-date">
+	  <time datetime="2020-08-15T04:59:50.000Z" itemprop="datePublished">2020-08-15</time>
 	</a>
 
       
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2018/07/19/ml-knn/">[ML] KNN</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
       
-	<a href="/blog/2018/07/18/ml-lm/" class="archive-article-date">
-	  <time datetime="2018-07-18T04:23:24.000Z" itemprop="datePublished">2018-07-18</time>
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
 	</a>
 
+    </div>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2018/07/18/ml-lm/">[ML] Linear Model</a>
-    </h1>
-  
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>GAN (Generative Adversarial Nets)是当前DL/CV方向的研究热门，在工业界也开始有一些比较成功的落地应用，例如TikTok上人脸卡通脸生成、变老特效等等。本文就来介绍一下GAN方向一些非常有代表性的paper。</p>
+<h2 id="GAN"><a href="#GAN" class="headerlink" title="GAN"></a>GAN</h2><p>在GAN框架下，会同时训练一个generative model $G$（用来capture data distribution）和discriminative model $D$（用来判断sample来自于真实数据而非$G$生成的），<strong>$G$网络的优化目标在于最大化$D$犯错的概率</strong>，有点类似于两者互相博弈，该模型存在唯一解，即$G$恰好完美拟合了真实数据分布，而$D$恰好无法判断数据到底来自于$G$生成，还是真实数据（分类器输出的softmax score=1/2）。在原始的GAN paper里，$G$和$D$都是MLP，后来经过一系列的改进，结构也变得越来越复杂（例如<code>DCGAN,StarGAN,BigGAN</code>）。</p>
+<p>为了学习generator distribution在数据集$z$上的分布$p_g$，定义input noise variables $p_z(z)$，input noise space到data space的mapping为$G(z;\theta_g)$；接下来定义discriminator $D$，$D(x)$代表$x$来自于真实数据而非$p_g$的概率。$D$的优化目标在于正确分类数据到底是来自于真实数据还是生成的数据、且最大化分类正确的概率。</p>
+<p>同时训练$G$来最小化$log(1 − D(G(z)))$，GAN的优化目标为：<br>$$<br>\min_{G}\max_{D}V(D, G)=\mathbb{E}_{x\sim p_{data}(x)}[logD(x)] + \mathbb{E}_{z\sim p_{z}(z)}[log(1-D(G(z)))]<br>$$<br>在实际训练中，会先训练$k$个epoch来优化$D$，再训练1个epoch来优化$G$，这样$D$会接近最优解，而$G$参数更新更平缓、稳定。</p>
+<h2 id="DCGAN"><a href="#DCGAN" class="headerlink" title="DCGAN"></a>DCGAN</h2><p>前面提到过，原始的GAN paper里，generator和discriminator都是MLP，而DCGAN则引入了CNN结构，作者发现，DCGAN中的generator和discriminator都学习到了hierarchy信息，且可以用作feature extractor。此外，作者对模型进行了如下改进：</p>
+<ul>
+<li>Replace any pooling layers with strided convolutions (discriminator) and fractional-strided convolutions (generator).</li>
+<li>Use batchnorm in both the generator and the discriminator.</li>
+<li>Remove fully connected hidden layers for deeper architectures. </li>
+<li>Use ReLU activation in generator for all layers except for the output, which uses Tanh. </li>
+<li>Use LeakyReLU activation in the discriminator for all layers.</li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li>Goodfellow I, Pouget-Abadie J, Mirza M, et al. <a href="http://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf" target="_blank" rel="noopener">Generative adversarial nets</a>[C]//Advances in neural information processing systems. 2014: 2672-2680.</li>
+<li>Radford A, Metz L, Chintala S. <a href="https://arxiv.org/pdf/1511.06434.pdf%C3" target="_blank" rel="noopener">Unsupervised representation learning with deep convolutional generative adversarial networks</a>[J]. arXiv preprint arXiv:1511.06434, 2015.</li>
+<li>Zhu J Y, Park T, Isola P, et al. <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Zhu_Unpaired_Image-To-Image_Translation_ICCV_2017_paper.pdf" target="_blank" rel="noopener">Unpaired image-to-image translation using cycle-consistent adversarial networks</a>[C]//Proceedings of the IEEE international conference on computer vision. 2017: 2223-2232.</li>
+</ol>
 
-    </header>
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2020/08/15/dl-gan/" target="_blank" title="[DL] GAN">https://lucasxlu.github.io/blog/2020/08/15/dl-gan/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
   </div>
-</article>
   
-  
-    </div></section>
-  
-
-
-  <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/blog/tags/Data-Science/page/2/">&laquo; Prev</a><a class="page-number" href="/blog/tags/Data-Science/">1</a><a class="page-number" href="/blog/tags/Data-Science/page/2/">2</a><span class="page-number current">3</span>
-  </nav>
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2020/08/15/dist-ml/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[ML] Distributed Machine Learning</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GAN"><span class="nav-number">2.</span> <span class="nav-text">GAN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DCGAN"><span class="nav-number">3.</span> <span class="nav-text">DCGAN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol>
+    
+    </div>
+  </aside>
 
 </section>
         
@@ -346,6 +404,8 @@
 
 
 
+  <script src="/blog/js/dialog.js"></script>
+
 
 
 
@@ -428,7 +488,9 @@
 </div>
   
   <a id="rocket" href="#top" class=""></a>
-  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 </body>
 </html>
