@@ -263,6 +263,58 @@
         
           <section id="main" style="float:none;">
   
+    <article id="post-algo-sort"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/2018/08/02/algo-sort/">[Algorithm] Sort</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2018/08/02/algo-sort/" class="article-date">
+	  <time datetime="2018-08-02T03:37:29.000Z" itemprop="datePublished">2018-08-02</time>
+	</a>
+
+      
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p class="article-excerpt-content">
+          初级排序算法选择排序首先找到数组中最小的那个元素，其次，将它和数组中的第一个元素交换位置（如果第一个元素就是最小元素就和自己交换）。再次，在剩下的元素中找到最小的元素，将它与数组中第二个元素交换位置。如此往复，直至将整个数组排序。这叫做 选择排序，因为它总是在不断选择剩余元素中最小的元素。
+
+对于长度为$N$的数组，选择排序需要大约$N^2/2$次比较与$N$次交换。
+
+1234567891011121314151617public int[] selectSort (int[] inpu...
+        </p>
+        <p class="article-more-link">
+          <a href="/blog/2018/08/02/algo-sort/#more">Read More</a>
+        </p>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+
+  
     <article id="post-ml-clustering"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="article-inner">
     
@@ -694,55 +746,6 @@ Naive Bayes通过训练数据集学习联合概率分布$P(X,Y)$。Naive Bayes�
         </p>
         <p class="article-more-link">
           <a href="/blog/2018/07/19/ml-nb/#more">Read More</a>
-        </p>
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-      
-      
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-
-  
-    <article id="post-ml-knn"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/2018/07/19/ml-knn/">[ML] KNN</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	<a href="/blog/2018/07/19/ml-knn/" class="article-date">
-	  <time datetime="2018-07-19T04:37:17.000Z" itemprop="datePublished">2018-07-19</time>
-	</a>
-
-      
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p class="article-excerpt-content">
-          介绍KNN是机器学习中一种非常常见的分类/回归算法。在 分类 时，根据majority voting来选择相应的预测Label；在 回归 时，可取K个距离最近点的mean作为预测值。K值的选择、Distance Metric、分类决策规则是KNN算法的关键。
-常用的 Distance Metric$L_p(x_i, x_j)=(\sum_{l=1}^n |x_i^{(l)}-x_j^{(l)}|^p)^{\frac{1}{p}}$当$p=\infty$时，它是各个坐标的极大值：$L_{\i...
-        </p>
-        <p class="article-more-link">
-          <a href="/blog/2018/07/19/ml-knn/#more">Read More</a>
         </p>
       
     </div>
