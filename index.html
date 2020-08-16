@@ -263,6 +263,55 @@
         
           <section id="main" style="float:none;">
   
+    <article id="post-dip-lsd"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/2020/08/16/dip-lsd/">[DIP] LSD</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2020/08/16/dip-lsd/" class="article-date">
+	  <time datetime="2020-08-16T08:33:37.000Z" itemprop="datePublished">2020-08-16</time>
+	</a>
+
+      
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p class="article-excerpt-content">
+          Line Segmentation DetectionLSD算法是一个直线提取算法，在opencv 中也有封装，它的主要思想是通过求导得到灰度的梯度，因为灰度梯度的方向的垂直方向就是线条的方向，将有相同方向的向量用矩形圈起来，再将举行精细化，最后就可以得到的一条线段了。
+首先，我们看下图，这里的图片首先根据梯度的垂线构造了一个level-line field，它把和梯度的垂直方向的线叫做level-line，所以这个field就是由这样的线组成的场。有了这个场，因为有直线的区域我们总能够找...
+        </p>
+        <p class="article-more-link">
+          <a href="/blog/2020/08/16/dip-lsd/#more">Read More</a>
+        </p>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+
+  
     <article id="post-dl-gan"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="article-inner">
     
@@ -689,54 +738,6 @@ Paper: mixup: Beyond Empirical Risk Minimi...
         </p>
         <p class="article-more-link">
           <a href="/blog/2019/11/30/dl-data-augmentation/#more">Read More</a>
-        </p>
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-      
-      
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-
-  
-    <article id="post-dl-architecture"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/2019/10/20/dl-architecture/">[DL] Architecture</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	<a href="/blog/2019/10/20/dl-architecture/" class="article-date">
-	  <time datetime="2019-10-20T04:08:00.000Z" itemprop="datePublished">2019-10-20</time>
-	</a>
-
-      
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p class="article-excerpt-content">
-          IntroductionDeep Learning有三宝：Network Architecture，Loss Function and Optimization。对于大多数人而言，Optimization门槛还是很高的（需要非常深厚的数学功底），所以绝大多数的Paper偏向还是设计更好的Network Architecture或者堆更加精巧的Loss Function。Ian Goodfellow大佬也曾说过：现如今Deep Learning的繁荣，网络结构探究的贡献度远远高于优化算法的贡...
-        </p>
-        <p class="article-more-link">
-          <a href="/blog/2019/10/20/dl-architecture/#more">Read More</a>
         </p>
       
     </div>

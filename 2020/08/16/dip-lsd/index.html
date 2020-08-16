@@ -3,26 +3,32 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>[dl] gan | LucasX</title>
+  <title>[dip] lsd | LucasX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="keywords" content="Machine LearningDeep LearningData ScienceGAN" />
+  <meta name="keywords" content="Computer VisionDigital Image ProcessingLine Segment Detection" />
   
   
   
   
-  <meta name="description" content="IntroductionGAN (Generative Adversarial Nets)是当前DL/CV方向的研究热门，在工业界也开始有一些比较成功的落地应用，例如TikTok上人脸卡通脸生成、变老特效等等。本文就来介绍一下GAN方向一些非常有代表性的paper。 GAN在GAN框架下，会同时训练一个generative model $G$（用来capture data distribution">
-<meta name="keywords" content="Machine Learning,Deep Learning,Data Science,GAN">
+  <meta name="description" content="Line Segmentation DetectionLSD算法是一个直线提取算法，在opencv 中也有封装，它的主要思想是通过求导得到灰度的梯度，因为灰度梯度的方向的垂直方向就是线条的方向，将有相同方向的向量用矩形圈起来，再将举行精细化，最后就可以得到的一条线段了。 首先，我们看下图，这里的图片首先根据梯度的垂线构造了一个level-line field，它把和梯度的垂直方向的线叫做level">
+<meta name="keywords" content="Computer Vision,Digital Image Processing,Line Segment Detection">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[DL] GAN">
-<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/08/15/dl-gan/index.html">
+<meta property="og:title" content="[DIP] LSD">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/08/16/dip-lsd/index.html">
 <meta property="og:site_name" content="LucasX">
-<meta property="og:description" content="IntroductionGAN (Generative Adversarial Nets)是当前DL/CV方向的研究热门，在工业界也开始有一些比较成功的落地应用，例如TikTok上人脸卡通脸生成、变老特效等等。本文就来介绍一下GAN方向一些非常有代表性的paper。 GAN在GAN框架下，会同时训练一个generative model $G$（用来capture data distribution">
+<meta property="og:description" content="Line Segmentation DetectionLSD算法是一个直线提取算法，在opencv 中也有封装，它的主要思想是通过求导得到灰度的梯度，因为灰度梯度的方向的垂直方向就是线条的方向，将有相同方向的向量用矩形圈起来，再将举行精细化，最后就可以得到的一条线段了。 首先，我们看下图，这里的图片首先根据梯度的垂线构造了一个level-line field，它把和梯度的垂直方向的线叫做level">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-08-15T06:43:16.895Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd_algo.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd_region_grow.png">
+<meta property="og:updated_time" content="2020-08-16T08:38:17.303Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[DL] GAN">
-<meta name="twitter:description" content="IntroductionGAN (Generative Adversarial Nets)是当前DL/CV方向的研究热门，在工业界也开始有一些比较成功的落地应用，例如TikTok上人脸卡通脸生成、变老特效等等。本文就来介绍一下GAN方向一些非常有代表性的paper。 GAN在GAN框架下，会同时训练一个generative model $G$（用来capture data distribution">
+<meta name="twitter:title" content="[DIP] LSD">
+<meta name="twitter:description" content="Line Segmentation DetectionLSD算法是一个直线提取算法，在opencv 中也有封装，它的主要思想是通过求导得到灰度的梯度，因为灰度梯度的方向的垂直方向就是线条的方向，将有相同方向的向量用矩形圈起来，再将举行精细化，最后就可以得到的一条线段了。 首先，我们看下图，这里的图片首先根据梯度的垂线构造了一个level-line field，它把和梯度的垂直方向的线叫做level">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd1.png">
   
     <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
   
@@ -164,7 +170,7 @@
             
       <div id="content" class="outer">
         
-          <section id="main" style="float:none;"><article id="post-dl-gan" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+          <section id="main" style="float:none;"><article id="post-dip-lsd" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="article-inner">
     
     
@@ -172,7 +178,7 @@
         
   
     <h1 class="thumb" class="article-title" itemprop="name">
-      [DL] GAN
+      [DIP] LSD
     </h1>
   
 
@@ -180,8 +186,8 @@
     
     <div class="article-meta">
       
-	<a href="/blog/2020/08/15/dl-gan/" class="article-date">
-	  <time datetime="2020-08-15T04:59:50.000Z" itemprop="datePublished">2020-08-15</time>
+	<a href="/blog/2020/08/16/dip-lsd/" class="article-date">
+	  <time datetime="2020-08-16T08:33:37.000Z" itemprop="datePublished">2020-08-16</time>
 	</a>
 
       
@@ -195,22 +201,43 @@
     </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>GAN (Generative Adversarial Nets)是当前DL/CV方向的研究热门，在工业界也开始有一些比较成功的落地应用，例如TikTok上人脸卡通脸生成、变老特效等等。本文就来介绍一下GAN方向一些非常有代表性的paper。</p>
-<h2 id="GAN"><a href="#GAN" class="headerlink" title="GAN"></a>GAN</h2><p>在GAN框架下，会同时训练一个generative model $G$（用来capture data distribution）和discriminative model $D$（用来判断sample来自于真实数据而非$G$生成的），<strong>$G$网络的优化目标在于最大化$D$犯错的概率</strong>，有点类似于两者互相博弈，该模型存在唯一解，即$G$恰好完美拟合了真实数据分布，而$D$恰好无法判断数据到底来自于$G$生成，还是真实数据（分类器输出的softmax score=1/2）。在原始的GAN paper里，$G$和$D$都是MLP，后来经过一系列的改进，结构也变得越来越复杂（例如<code>DCGAN,StarGAN,BigGAN</code>）。</p>
-<p>为了学习generator distribution在数据集$z$上的分布$p_g$，定义input noise variables $p_z(z)$，input noise space到data space的mapping为$G(z;\theta_g)$；接下来定义discriminator $D$，$D(x)$代表$x$来自于真实数据而非$p_g$的概率。$D$的优化目标在于正确分类数据到底是来自于真实数据还是生成的数据、且最大化分类正确的概率。</p>
-<p>同时训练$G$来最小化$log(1 − D(G(z)))$，GAN的优化目标为：<br>$$<br>\min_{G}\max_{D}V(D, G)=\mathbb{E}_{x\sim p_{data}(x)}[logD(x)] + \mathbb{E}_{z\sim p_{z}(z)}[log(1-D(G(z)))]<br>$$<br>在实际训练中，会先训练$k$个epoch来优化$D$，再训练1个epoch来优化$G$，这样$D$会接近最优解，而$G$参数更新更平缓、稳定。</p>
-<h2 id="DCGAN"><a href="#DCGAN" class="headerlink" title="DCGAN"></a>DCGAN</h2><p>前面提到过，原始的GAN paper里，generator和discriminator都是MLP，而DCGAN则引入了CNN结构，作者发现，DCGAN中的generator和discriminator都学习到了hierarchy信息，且可以用作feature extractor。此外，作者对模型进行了如下改进：</p>
-<ul>
-<li>Replace any pooling layers with strided convolutions (discriminator) and fractional-strided convolutions (generator).</li>
-<li>Use batchnorm in both the generator and the discriminator.</li>
-<li>Remove fully connected hidden layers for deeper architectures. </li>
-<li>Use ReLU activation in generator for all layers except for the output, which uses Tanh. </li>
-<li>Use LeakyReLU activation in the discriminator for all layers.</li>
+        <h2 id="Line-Segmentation-Detection"><a href="#Line-Segmentation-Detection" class="headerlink" title="Line Segmentation Detection"></a>Line Segmentation Detection</h2><p>LSD算法是一个直线提取算法，在opencv 中也有封装，它的主要思想是通过求导得到灰度的梯度，因为灰度梯度的方向的垂直方向就是线条的方向，将有相同方向的向量用矩形圈起来，再将举行精细化，最后就可以得到的一条线段了。</p>
+<p>首先，我们看下图，这里的图片首先根据梯度的垂线构造了一个level-line field，它把和梯度的垂直方向的线叫做level-line，所以这个field就是由这样的线组成的场。有了这个场，因为有直线的区域我们总能够找到，很多方向相同的level-line，这样我们就能得到右边这些颜色区域了，也就是所谓的line support region。<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd1.png" alt="LSD-1"></p>
+<p>如果把这个区域用举行圈起来的话就得到了如下图所示的矩形，注意这个举行我们是区分方向的。<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd2.png" alt="LSD-2"></p>
+<p>至于，是根据什么规则生成的矩形，就像之前说的，在直线的区域，自然地level-line(梯度方向的垂线）自然就会比较接近，因此，我们就给定一个阈值/𝑡𝑎𝑢，如果这些向量的夹角小于/𝑡𝑎𝑢且在这个区域内满足条件的向量足够多，我们就认为这个区域可能是直线，比如下图中，就只有8个符合条件的level-line，感觉是不足够多的，因此它可能不被看作是一个直线。具体地，这里使用了区域生长算法，即从某个点开始，找其领域内符合条件的点。<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd3.png" alt="LSD-3"></p>
+<p>LSD算法流程如下：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd_algo.png" alt="LSD-Algorithm"></p>
+<p>具体操作步骤为：</p>
+<ol>
+<li>缩放至80% (Guassian Subsampling)</li>
+<li>计算horizontal &amp; vertical方向的gradient</li>
+<li>gradient pseudo-ordering:<blockquote>
+<p>LSD is a greedy algorithm and the order in which pixels are processed has an impact on the result. Pixels with high gradient magnitude correspond to the more contrasted edges. In an edge, the central pixels usually have the highest gradient magnitude. So it makes sense to start looking for line segments at pixels with the highest gradient magnitude.</p>
+<p>Sorting algorithms usually require O(n log n) operations to sort n values. However,a simple pixel pseudo-ordering is possible in linear-time. To this aim, 1024 bins are created corresponding to equal gradient magnitude intervals between zero and the largest observed value on the image. Pixels are classied into the bins according to their gradient magnitude. LSD uses rst seed pixels from the bin of the largest gradient magnitudes; then it takes seed pixels from the second bin, and so on until exhaustion of all bins. 1024 bins are enough to sort almost strictly the gradient values when the gray level values are quantized in the integer range $[0,255]$.</p>
+</blockquote>
+</li>
+<li>gradient threshold:<blockquote>
+<p>Pixels with small gradient magnitude correspond to at zones or slow gradients. Also, they naturally present a higher error in the gradient computation due to the quantization of their values. In LSD the pixels with gradient magnitude smaller than  are therefore rejected and not used in the construction of line-support regions or rectangles.</p>
+</blockquote>
+</li>
+<li>region growing:<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dip-lsd/lsd_region_grow.png" alt="LSD-Region-Growing"></li>
+<li>rectangular approximation</li>
+<li><p>NFA computation:</p>
+<blockquote>
+<p>A key concept in the validation of a rectangle is that of $p$-aligned points, namely the pixels in the rectangle whose level-line angle is equal to the rectangle’s main orientation, up to a tolerance $p\pi$.</p>
+</blockquote>
+<p>$$<br>NFA = (NM)^{5/2}\gamma \sum_{j=k}^n \begin{pmatrix} n \ j \end{pmatrix}p^j (1-p)^{n-j}<br>$$</p>
+<p><strong>The rectangles with $NFA(r)\leq \epsilon$ are validated as detections.</strong></p>
+</li>
+<li>Aligned Points Density<ul>
+<li>reduce angle tolerance</li>
+<li>reduce region radius</li>
 </ul>
+</li>
+<li>rectangle improvement</li>
+</ol>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
-<li>Goodfellow I, Pouget-Abadie J, Mirza M, et al. <a href="http://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf" target="_blank" rel="noopener">Generative adversarial nets</a>[C]//Advances in neural information processing systems. 2014: 2672-2680.</li>
-<li>Radford A, Metz L, Chintala S. <a href="https://arxiv.org/pdf/1511.06434.pdf%C3" target="_blank" rel="noopener">Unsupervised representation learning with deep convolutional generative adversarial networks</a>[J]. arXiv preprint arXiv:1511.06434, 2015.</li>
-<li>Zhu J Y, Park T, Isola P, et al. <a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Zhu_Unpaired_Image-To-Image_Translation_ICCV_2017_paper.pdf" target="_blank" rel="noopener">Unpaired image-to-image translation using cycle-consistent adversarial networks</a>[C]//Proceedings of the IEEE international conference on computer vision. 2017: 2223-2232.</li>
+<li>Von Gioi R G, Jakubowicz J, Morel J M, et al. <a href="https://www.ipol.im/pub/art/2012/gjmr-lsd/article.pdf" target="_blank" rel="noopener">LSD: a line segment detector</a>[J]. Image Processing On Line, 2012, 2: 35-55.</li>
+<li>Von Gioi R G, Jakubowicz J, Morel J M, et al. <a href="https://ieeexplore.ieee.org/abstract/document/4731268/" target="_blank" rel="noopener">LSD: A fast line segment detector with a false detection control</a>[J]. IEEE transactions on pattern analysis and machine intelligence, 2008, 32(4): 722-732.</li>
 </ol>
 
       
@@ -238,7 +265,7 @@ var a = new Donate({
           </li>
           <li class="post-copyright-link">
           <strong>Post link:  </strong>
-          <a href="/blog/2020/08/15/dl-gan/" target="_blank" title="[DL] GAN">https://lucasxlu.github.io/blog/2020/08/15/dl-gan/</a>
+          <a href="/blog/2020/08/16/dip-lsd/" target="_blank" title="[DIP] LSD">https://lucasxlu.github.io/blog/2020/08/16/dip-lsd/</a>
           </li>
           <li class="post-copyright-license">
             <strong>Copyright Notice:   </strong>
@@ -284,19 +311,10 @@ var a = new Donate({
     
 <nav id="article-nav">
   
-    <a href="/blog/2020/08/16/dip-lsd/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          [DIP] LSD
-        
-      </div>
-    </a>
   
-  
-    <a href="/blog/2020/08/15/dist-ml/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/blog/2020/08/15/dl-gan/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">[ML] Distributed Machine Learning</div>
+      <div class="article-nav-title">[DL] GAN</div>
     </a>
   
 </nav>
@@ -310,7 +328,7 @@ var a = new Donate({
     <div id="toc" class="toc-article">
     <strong class="toc-title">Contents</strong>
     
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GAN"><span class="nav-number">2.</span> <span class="nav-text">GAN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DCGAN"><span class="nav-number">3.</span> <span class="nav-text">DCGAN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Line-Segmentation-Detection"><span class="nav-number">1.</span> <span class="nav-text">Line Segmentation Detection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">2.</span> <span class="nav-text">References</span></a></li></ol>
     
     </div>
   </aside>
