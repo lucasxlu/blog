@@ -3,24 +3,32 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>Papers | LucasX</title>
+  <title>[db] mongodb | LucasX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
+  <meta name="keywords" content="DatabaseNoSQLMongoDB" />
   
   
   
-  <meta name="description" content="Publications and tech reports about my projects.">
-<meta name="keywords" content="Machine Learning; Computer Vision; Face Analysis">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Papers">
-<meta property="og:url" content="https://lucasxlu.github.io/blog/papers/index.html">
+  
+  <meta name="description" content="MongoDBIntroductionMongoDB是一种典型的NoSQL数据库，与常用的RDBMS（例如MySQL）相比，MongoDB没有显式的shema定义，因此数据结构非常灵活。MongoDB的基本数据结构为BSON，是一种类JSON的结构，下表展示了MongoDB与MySQL的对比：    MongoDB MySQL     db db   collection table   docu">
+<meta name="keywords" content="Database,NoSQL,MongoDB">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[DB] MongoDB">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/09/25/db-mongodb/index.html">
 <meta property="og:site_name" content="LucasX">
-<meta property="og:description" content="Publications and tech reports about my projects.">
+<meta property="og:description" content="MongoDBIntroductionMongoDB是一种典型的NoSQL数据库，与常用的RDBMS（例如MySQL）相比，MongoDB没有显式的shema定义，因此数据结构非常灵活。MongoDB的基本数据结构为BSON，是一种类JSON的结构，下表展示了MongoDB与MySQL的对比：    MongoDB MySQL     db db   collection table   docu">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-09-25T13:01:26.138Z">
+<meta property="og:image" content="https://docs.mongodb.com/manual/_images/replica-set-read-write-operations-primary.bakedsvg.svg">
+<meta property="og:image" content="https://docs.mongodb.com/manual/_images/replica-set-primary-with-two-secondaries.bakedsvg.svg">
+<meta property="og:image" content="https://docs.mongodb.com/manual/_images/replica-set-primary-with-secondary-and-arbiter.bakedsvg.svg">
+<meta property="og:image" content="https://docs.mongodb.com/manual/_images/replica-set-trigger-election.bakedsvg.svg">
+<meta property="og:image" content="https://docs.mongodb.com/manual/_images/replica-set-read-preference-secondary.bakedsvg.svg">
+<meta property="og:updated_time" content="2020-09-25T13:09:14.492Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Papers">
-<meta name="twitter:description" content="Publications and tech reports about my projects.">
+<meta name="twitter:title" content="[DB] MongoDB">
+<meta name="twitter:description" content="MongoDBIntroductionMongoDB是一种典型的NoSQL数据库，与常用的RDBMS（例如MySQL）相比，MongoDB没有显式的shema定义，因此数据结构非常灵活。MongoDB的基本数据结构为BSON，是一种类JSON的结构，下表展示了MongoDB与MySQL的对比：    MongoDB MySQL     db db   collection table   docu">
+<meta name="twitter:image" content="https://docs.mongodb.com/manual/_images/replica-set-read-write-operations-primary.bakedsvg.svg">
   
     <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
   
@@ -59,8 +67,6 @@
   
 
   
-    <link rel="stylesheet" href="/blog/css/archive.css" >
-  
   
   
     <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
@@ -70,7 +76,7 @@
 
 
 
-  <body>
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
 
 
   
@@ -93,7 +99,7 @@
             
               <a class="brand" style="
                  margin-top: 0px;"  
-                 >
+                href="#" data-toggle="modal" data-target="#myModal" >
                   <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
               </a>
             
@@ -164,7 +170,7 @@
             
       <div id="content" class="outer">
         
-          <section id="main" style="float:none;"><article id="papers-"  class="article article-type-papers" itemscope itemprop="blogPost" >
+          <section id="main" style="float:none;"><article id="post-db-mongodb" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="article-inner">
     
     
@@ -172,7 +178,7 @@
         
   
     <h1 class="thumb" class="article-title" itemprop="name">
-      Papers
+      [DB] MongoDB
     </h1>
   
 
@@ -180,24 +186,75 @@
     
     <div class="article-meta">
       
-	<a href="/blog/papers/index.html" class="article-date">
-	  <time datetime="2020-01-27T12:00:00.000Z" itemprop="datePublished">2020-01-27</time>
+	<a href="/blog/2020/09/25/db-mongodb/" class="article-date">
+	  <time datetime="2020-09-25T13:08:37.000Z" itemprop="datePublished">2020-09-25</time>
 	</a>
 
       
       
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
     </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="Publications-and-Tech-Reports"><a href="#Publications-and-Tech-Reports" class="headerlink" title="Publications and Tech Reports"></a>Publications and Tech Reports</h1><ul>
-<li><strong>Xu L</strong>, Fan H, Xiang J. Hierarchical Multi-Task Network For Race, Gender and Facial Attractiveness Recognition[C]//2019 <a href="http://2019.ieeeicip.org/" target="_blank" rel="noopener">IEEE International Conference on Image Processing (ICIP)</a>. IEEE, 2019: 3861-3865. [<a href="https://ieeexplore.ieee.org/abstract/document/8803614" target="_blank" rel="noopener">Paper</a>] [<a href="https://github.com/lucasxlu/HMTNet.git" target="_blank" rel="noopener">Code</a>] [<a href="../about/ICIP19_HMTNet_Slides.pdf">Slides</a>]</li>
-<li>Fan H, <strong>Xu L</strong>, Xiang J. Complementary Siamese Networks for Robust Visual Tracking[C]//ICASSP 2019-2019 <a href="https://2019.ieeeicassp.org/" target="_blank" rel="noopener">IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)</a>. IEEE, 2019: 2247-2251. [<a href="https://ieeexplore.ieee.org/abstract/document/8682985/" target="_blank" rel="noopener">Paper</a>]</li>
-<li><strong>Xu L</strong>, Xiang J, Yuan X. CRNet: Classification and Regression Neural Network for Facial Beauty Prediction[C]//<a href="http://www.pcm2018.org/" target="_blank" rel="noopener">Pacific Rim Conference on Multimedia</a>. Springer, Cham, 2018: 661-671. [<a href="https://link.springer.com/chapter/10.1007/978-3-030-00764-5_61" target="_blank" rel="noopener">Paper</a>] [<a href="https://github.com/lucasxlu/CRNet.git" target="_blank" rel="noopener">Code</a>]</li>
-<li><strong>Xu L</strong>, Xiang J, Wang Y, et al. Data-Driven Approach for Quality Evaluation on Knowledge Sharing Platform[C]//2019<br><a href="http://www.icmlc.com/" target="_blank" rel="noopener">International Conference on Machine Learning and Cybernetics (ICMLC)</a>. IEEE, 2019: 1-6. [<a href="https://arxiv.org/abs/1903.00384" target="_blank" rel="noopener">arXiv</a>]  [<a href="https://ieeexplore.ieee.org/abstract/document/8949297" target="_blank" rel="noopener">Paper</a>]  [<a href="https://github.com/lucasxlu/ZhihuDataDriven.git" target="_blank" rel="noopener">Code</a>]   </li>
-<li><strong>Xu L</strong>, Xiang J, Yuan X. Transferring rich deep features for facial beauty prediction[J]. arXiv preprint arXiv:1803.07253, 2018. [<a href="https://arxiv.org/abs/1803.07253" target="_blank" rel="noopener">arXiv</a>] [<a href="https://github.com/lucasxlu/TransFBP.git" target="_blank" rel="noopener">Code</a>] [<a href="../about/Presentation_TransFBP.pdf">Slides</a>]</li>
-<li><strong>Xu L</strong>, Wang Y. XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service[J]. arXiv preprint arXiv:1912.10344, 2019. [<a href="https://arxiv.org/abs/1912.10344" target="_blank" rel="noopener">arXiv</a>] [<a href="https://github.com/lucasxlu/XCloud.git" target="_blank" rel="noopener">Code</a>]</li>
-<li>Research on Hot Topic Detection and Tracking based on Incremental Clustering [<a href="https://github.com/xuludev/System.git" target="_blank" rel="noopener">Code</a>]  </li>
-</ul>
+        <h1 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h1><h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>MongoDB是一种典型的<code>NoSQL</code>数据库，与常用的<code>RDBMS（例如MySQL）</code>相比，MongoDB没有显式的shema定义，因此数据结构非常灵活。MongoDB的基本数据结构为BSON，是一种类JSON的结构，下表展示了MongoDB与MySQL的对比：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">MongoDB</th>
+<th style="text-align:center">MySQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">db</td>
+<td style="text-align:center">db</td>
+</tr>
+<tr>
+<td style="text-align:center">collection</td>
+<td style="text-align:center">table</td>
+</tr>
+<tr>
+<td style="text-align:center">document</td>
+<td style="text-align:center">record</td>
+</tr>
+<tr>
+<td style="text-align:center">field</td>
+<td style="text-align:center">attribute</td>
+</tr>
+</tbody>
+</table>
+<p>MongoDB GUI管理工具有<a href="https://robomongo.org/" target="_blank" rel="noopener">Robo 3T</a>和<a href="https://www.mongodb.com/products/compass" target="_blank" rel="noopener">MongoDBCompass</a>，前者是商业软件，后者是MongoDB自己开发的，提供了基本的导入导出、CRUD语法转换等功能，强烈推荐<a href="https://www.mongodb.com/products/compass" target="_blank" rel="noopener">MongoDBCompass</a>。</p>
+<p>基本的CRUD操作在此不赘述，请参考<a href="https://docs.mongodb.com/manual/crud/" target="_blank" rel="noopener">MongoDB官方文档</a>即可。下面开启本文重点——MongoDB的副本&amp;集群搭建。</p>
+<h2 id="Build-MongoDB-Replica"><a href="#Build-MongoDB-Replica" class="headerlink" title="Build MongoDB Replica"></a>Build MongoDB Replica</h2><p>首先介绍一下什么是replica，MongoDB的官方文档是这么说的：</p>
+<blockquote>
+<p>A replica set in MongoDB is a group of mongod processes that maintain the same data set. Replica sets provide redundancy and high availability, and are the basis for all production deployments. </p>
+</blockquote>
+<p>MongoDB复制是将数据同步在多个服务器的过程。复制提供了数据的冗余备份，并在多个服务器上存储数据副本，提高了数据的可用性，并可以保证数据的安全性。复制还允许您从硬件故障和服务中断中恢复数据。摘录一些MongoDB官方文档里比较有价值的信息吧，原文比较长，有需要的话还是建议阅读<a href="https://docs.mongodb.com/manual/replication/" target="_blank" rel="noopener">原文</a>。</p>
+<p><code>Replica set</code>是保存了相同数据集的mongod instances，<strong>1个replica set包含多个data bearing nodes以及1个可选的arbiter node</strong>，只有1个data bearing node能作为primary node，其他的都是secondary node。</p>
+<blockquote>
+<p>A replica set is a group of mongod instances that maintain the same data set. A replica set contains several data bearing nodes and optionally one arbiter node. Of the data bearing nodes, <strong>one and only one member is deemed the primary node, while the other nodes are deemed secondary nodes.</strong></p>
+</blockquote>
+<p><img src="https://docs.mongodb.com/manual/_images/replica-set-read-write-operations-primary.bakedsvg.svg" alt="replica-set-read-write-operations"></p>
+<p>Primary node接受所有读写操作，并将所有操作记录在<code>oplog</code>，secondary node与primary node进行通信后，再异步地执行<code>oplog</code>记录，来使其与primary node保持data consistency。</p>
+<blockquote>
+<p>The primary node receives all write operations. A replica set can have only one primary capable of confirming writes with <code>{w: &quot;majority&quot;}</code> write concern. The secondaries replicate the primary’s oplog and apply the operations to their data sets such that the secondaries’ data sets reflect the primary’s data set. If the primary is unavailable, an eligible secondary will hold an election to elect itself the new primary.</p>
+</blockquote>
+<p><img src="https://docs.mongodb.com/manual/_images/replica-set-primary-with-two-secondaries.bakedsvg.svg" alt="replica-set-primary-with-two-secondaries"></p>
+<p>In some circumstances (such as you have a primary and a secondary but cost constraints prohibit adding another secondary), you may choose to add a mongod instance to a replica set as an arbiter. An arbiter participates in elections but does not hold data (i.e. does not provide data redundancy).</p>
+<p><img src="https://docs.mongodb.com/manual/_images/replica-set-primary-with-secondary-and-arbiter.bakedsvg.svg" alt="replica-set-primary-with-secondary-and-arbiter"></p>
+<p>An arbiter will always be an arbiter whereas a primary may step down and become a secondary and a secondary may become the primary during an election.</p>
+<p>When a primary does not communicate with the other members of the set for more than the configured electionTimeoutMillis period (10 seconds by default), an eligible secondary calls for an election to nominate itself as the new primary. The cluster attempts to complete the election of a new primary and resume normal operations.</p>
+<p><img src="https://docs.mongodb.com/manual/_images/replica-set-trigger-election.bakedsvg.svg" alt="replica-set-trigger-election"></p>
+<p>默认情况下，client通过primary node完成数据读写，但也可以通过显式指定直接从secondary node进行数据读取。<strong>需要注意的是：因为MongoDB中，primary node与secondary node之间的数据同步是异步的，所以显式从secondary node读取的数据可能与primary node存在data inconsistency的问题</strong>。</p>
+<blockquote>
+<p>By default, clients read from the primary, however, clients can specify a read preference to send read operations to secondaries. <strong>Asynchronous replication to secondaries means that reads from secondaries may return data that does not reflect the state of the data on the primary.</strong></p>
+</blockquote>
+<p><img src="https://docs.mongodb.com/manual/_images/replica-set-read-preference-secondary.bakedsvg.svg" alt="replica-set-read-preference-secondary"></p>
 
       
     </div>
@@ -224,7 +281,7 @@ var a = new Donate({
           </li>
           <li class="post-copyright-link">
           <strong>Post link:  </strong>
-          <a href="/blog/papers/index.html" target="_blank" title="Papers">https://lucasxlu.github.io/blog/papers/index.html</a>
+          <a href="/blog/2020/09/25/db-mongodb/" target="_blank" title="[DB] MongoDB">https://lucasxlu.github.io/blog/2020/09/25/db-mongodb/</a>
           </li>
           <li class="post-copyright-license">
             <strong>Copyright Notice:   </strong>
@@ -237,16 +294,60 @@ var a = new Donate({
 
       
       
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
       
 
     </footer>
   </div>
   
     
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2020/08/16/dip-lsd/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DIP] LSD</div>
+    </a>
+  
+</nav>
+
   
 </article>
 
 <!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MongoDB"><span class="nav-number">1.</span> <span class="nav-text">MongoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Build-MongoDB-Replica"><span class="nav-number">1.2.</span> <span class="nav-text">Build MongoDB Replica</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
 
 </section>
         
@@ -346,6 +447,8 @@ var a = new Donate({
 
 
 
+  <script src="/blog/js/dialog.js"></script>
+
 
 
 
@@ -428,7 +531,9 @@ var a = new Donate({
 </div>
   
   <a id="rocket" href="#top" class=""></a>
-  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 </body>
 </html>
