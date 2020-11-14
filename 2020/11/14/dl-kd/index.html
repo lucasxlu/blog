@@ -15,11 +15,11 @@
 <meta name="keywords" content="Machine Learning,Deep Learning,Data Science,Model Compression,Knowledge Distillation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[DL] Knowledge Distillation">
-<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/10/18/dl-kd/index.html">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2020/11/14/dl-kd/index.html">
 <meta property="og:site_name" content="LucasX">
 <meta property="og:description" content="Introduction自 AlexNet 以来，Deep Learning 在许多领域取得了突破性的成果。理论上来说，模型的容量（即参数量）越大，性能越好，更能拟合海量数据的分布。与学术界一味追求在某个 benchmark 上刷分突破 SOTA 不同，AI 落地则非常关注能耗与移动端推理。轻量级模型设计与模型压缩也成为了近些年学术界与工业级关注的重心。常见的模型压缩方法有：  Quantizat">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-10-18T09:42:24.326Z">
+<meta property="og:updated_time" content="2020-11-14T08:17:01.637Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[DL] Knowledge Distillation">
 <meta name="twitter:description" content="Introduction自 AlexNet 以来，Deep Learning 在许多领域取得了突破性的成果。理论上来说，模型的容量（即参数量）越大，性能越好，更能拟合海量数据的分布。与学术界一味追求在某个 benchmark 上刷分突破 SOTA 不同，AI 落地则非常关注能耗与移动端推理。轻量级模型设计与模型压缩也成为了近些年学术界与工业级关注的重心。常见的模型压缩方法有：  Quantizat">
@@ -180,8 +180,8 @@
     
     <div class="article-meta">
       
-	<a href="/blog/2020/10/18/dl-kd/" class="article-date">
-	  <time datetime="2020-10-17T16:08:34.000Z" itemprop="datePublished">2020-10-18</time>
+	<a href="/blog/2020/11/14/dl-kd/" class="article-date">
+	  <time datetime="2020-11-14T08:15:34.000Z" itemprop="datePublished">2020-11-14</time>
 	</a>
 
       
@@ -207,8 +207,22 @@
 <blockquote>
 <p>附加一份 Hinto 的 Slide <a href="https://www.ttic.edu/dl/dark14.pdf" target="_blank" rel="noopener">Dark Knowledge</a>。</p>
 </blockquote>
+<h2 id="Revisiting-Knowledge-Distillation-via-Label-Smoothing-Regularization"><a href="#Revisiting-Knowledge-Distillation-via-Label-Smoothing-Regularization" class="headerlink" title="Revisiting Knowledge Distillation via Label Smoothing Regularization"></a>Revisiting Knowledge Distillation via Label Smoothing Regularization</h2><blockquote>
+<p>Paper: <a href="http://openaccess.thecvf.com/content_CVPR_2020/papers/Yuan_Revisiting_Knowledge_Distillation_via_Label_Smoothing_Regularization_CVPR_2020_paper.pdf" target="_blank" rel="noopener">Revisiting Knowledge Distillation via Label Smoothing Regularization</a></p>
+</blockquote>
+<p>这篇 paper 主要探讨了 KD 与 Label Smoothing 的关系，并且通过实验表明了 teacher model 并非一定要比 student model 强，一个性能比较差的 teacher model 也能够带来 performance gain，甚至 student model 来 teach teacher model 也能给 teacher model 带来 performance gain。说明 teacher model 不仅仅能起到提供 similarity information 的作用，还能起到 <strong>regularization</strong> 的作用（即 learnable label smoothing regularization）。基于此，作者提出了一个 teacher-free 的 KD 框架，即 student model 以自己作为 teacher model (aka, self-training)，或者从任意一个 manually-designed regularization distribution 中进行学习，能取得比传统 KD 更佳的学习效果。作者也在 paper 中 challenge 了一把 <strong>a strong teacher model 的必要性</strong>。笔者认为本文还是具备比较高价值的参考意义，下面进行细致讲解。</p>
+<h3 id="LSR"><a href="#LSR" class="headerlink" title="LSR"></a>LSR</h3><p>先回顾一下 <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf" target="_blank" rel="noopener">Label Smoothing</a>:<br>一个分类网络在过 softmax layer 之后：<br>$$<br>p(k|x)=\frac{exp(z_k)}{\sum_{i=1}^K exp(z_i)}<br>$$<br>这里 $z_i$ 为 logit，网络预测 $x$ 为 label $k$ 的概率为 $p(k|x)$，groundtruth label over the distribution 为 $q(k|x)$。对于分类问题，我们通常采用 cross entropy loss 来进行训练: $H(q, p)=-\sum_{k=1}^K q(k|x)log(p(k|x))$，对于 groundtruth label $y$，$q(y|x)=1$；当 $k\neq y$ 时 $q(k|x)=0$。</p>
+<p>Label Smoothing 算法修改了 $q(k|x)$ 为 $q^{‘}(k|x)$：<br>$$<br>q^{‘}(k|x)=(1-\alpha)q(k|x) + \alpha u(k)<br>$$<br>即 $q^{‘}(k|x)$ 成了 $q(k|x)$ 与一个 fixed distribution $\alpha u(k)$ 的加权和。通常地，我们设定 $u(k)$ 为 uniform distribution，即 $u(k)=\frac{1}{K}$。因此，Label Smoothing Cross Entropy 定义为：<br>$$<br>H(q^{‘},p)=-\sum_{k=1}^K q^{‘}(k)log p(k)=(1-\alpha)H(q,p)+\alpha H(u,p)=(1-\alpha)H(q,p)+\alpha (D_{KL}(u,p) + H(u))<br>$$<br>$D_{KL}$ 代表 KL-divergence，$H(u)$ 代表 $u$ 的 entropy，是一个固定常数。因此，Label Smoothing 又可以写成：<br>$$<br>\mathcal{L}_{LS}=(1-\alpha)H(q,p)+\alpha D_{KL}(u,p)<br>$$</p>
+<p>同样地，在 KD 中，$p_{\tau}^t=softmax(z_k^t)=\frac{exp(z_k^t/\tau)}{\sum_{i=1}^K exp(z_i^t/\tau)}$，$z^t$ 是 teacher model 输出的 logit。KD 的目的就在于 让 student model 通过优化 cross entropy loss 以及 KL divergence 来学习 teacher model 的信息：<br>$$<br>\mathcal{L}_{KD}=(1-\alpha)H(q,p)+\alpha D_{KL}(p_{\tau}^t,p_{\tau})<br>$$</p>
+<p>重点来了，看看 $\mathcal{L}_{LS}$ 与 $\mathcal{L}_{KD}$，发现两者的唯一区别在于 $D_{KL}(p_{\tau}^t,p_{\tau})$ 中的 $p_{\tau}^t(k)$ 是来自 teacher model 的 distribution；而 $D_{KL}(u,p)$ 中的 $u(k)$ 是一个 predefined uniform distribution。因此，作者认为 <strong>LSR 是 KD 的一种special case</strong>。并且作者通过实验发现，temperature $\tau$ 越大，$p^t(k)$ 与 label smoothing 中的 uniform distribution $u(k)$ 越相似。</p>
+<h3 id="Self-training"><a href="#Self-training" class="headerlink" title="Self-training"></a>Self-training</h3><p>此外，若 teacher model is unavailable 时该如何做 KD 呢？作者还提出了一个 self-training 方案：对于一个模型 $S$，首先按常规方式训练一个pretrained model $S^p$，然后在第二阶段的 KD 过程中用于优化 cross entropy 与 KL divergence:<br>$$<br>\mathcal{L}_{self}=(1-\alpha)H(q,p)+\alpha D_{KL}(p_{\tau}^t,p_{\tau})<br>$$<br>其中 $p_{\tau}^t,p_{\tau}$ 分别代表模型 $S$ 和 $S^p$ 的 output probability。</p>
+<p>第二个 teacher-free KD 方案为手动设定一个100%准确的 virtual teacher model：<br>$$<br>p^d(k)=\left\{<br>\begin{aligned}<br>a,if &amp;&amp; k=c \\<br>(1-a)/(K-1),if &amp;&amp; k\neq c<br>\end{aligned}<br>\right.<br>$$<br>其中 $K$ 代表类别数量，$c$ 代表正确标签。此时 loss function 定义为：<br>$$<br>L_{reg}=(1-\alpha)H(q,p)+\alpha D_{KL}(p_{\tau}^d,p_{\tau})<br>$$</p>
+<blockquote>
+<p>这个算法我自己在项目里也试过，在一些分类任务上确实能带来比较明显的提升，具体实验数据在此不赘述了，请阅读原文。</p>
+</blockquote>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
 <li>Hinton G, Vinyals O, Dean J. <a href="https://arxiv.org/pdf/1503.02531" target="_blank" rel="noopener">Distilling the knowledge in a neural network</a>[J]. arXiv preprint arXiv:1503.02531, 2015.</li>
+<li>Yuan L, Tay F E H, Li G, et al. <a href="http://openaccess.thecvf.com/content_CVPR_2020/papers/Yuan_Revisiting_Knowledge_Distillation_via_Label_Smoothing_Regularization_CVPR_2020_paper.pdf" target="_blank" rel="noopener">Revisiting Knowledge Distillation via Label Smoothing Regularization</a>[C]//Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition. 2020: 3903-3911.</li>
 </ol>
 
       
@@ -236,7 +250,7 @@ var a = new Donate({
           </li>
           <li class="post-copyright-link">
           <strong>Post link:  </strong>
-          <a href="/blog/2020/10/18/dl-kd/" target="_blank" title="[DL] Knowledge Distillation">https://lucasxlu.github.io/blog/2020/10/18/dl-kd/</a>
+          <a href="/blog/2020/11/14/dl-kd/" target="_blank" title="[DL] Knowledge Distillation">https://lucasxlu.github.io/blog/2020/11/14/dl-kd/</a>
           </li>
           <li class="post-copyright-license">
             <strong>Copyright Notice:   </strong>
@@ -299,7 +313,7 @@ var a = new Donate({
     <div id="toc" class="toc-article">
     <strong class="toc-title">Contents</strong>
     
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-KD"><span class="nav-number">2.</span> <span class="nav-text">What is KD?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">3.</span> <span class="nav-text">References</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-KD"><span class="nav-number">2.</span> <span class="nav-text">What is KD?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Revisiting-Knowledge-Distillation-via-Label-Smoothing-Regularization"><span class="nav-number">3.</span> <span class="nav-text">Revisiting Knowledge Distillation via Label Smoothing Regularization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LSR"><span class="nav-number">3.1.</span> <span class="nav-text">LSR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Self-training"><span class="nav-number">3.2.</span> <span class="nav-text">Self-training</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol>
     
     </div>
   </aside>
