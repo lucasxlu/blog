@@ -1,6 +1,6 @@
 ---
 title: "[DL] Knowledge Distillation"
-date: 2020-10-18 00:08:34
+date: 2020-11-14 16:15:34
 mathjax: true
 tags:
 - Machine Learning
@@ -36,6 +36,63 @@ $$
 > 附加一份 Hinto 的 Slide [Dark Knowledge](https://www.ttic.edu/dl/dark14.pdf)。
 
 
+## Revisiting Knowledge Distillation via Label Smoothing Regularization
+> Paper: [Revisiting Knowledge Distillation via Label Smoothing Regularization](http://openaccess.thecvf.com/content_CVPR_2020/papers/Yuan_Revisiting_Knowledge_Distillation_via_Label_Smoothing_Regularization_CVPR_2020_paper.pdf)
+
+这篇 paper 主要探讨了 KD 与 Label Smoothing 的关系，并且通过实验表明了 teacher model 并非一定要比 student model 强，一个性能比较差的 teacher model 也能够带来 performance gain，甚至 student model 来 teach teacher model 也能给 teacher model 带来 performance gain。说明 teacher model 不仅仅能起到提供 similarity information 的作用，还能起到 **regularization** 的作用（即 learnable label smoothing regularization）。基于此，作者提出了一个 teacher-free 的 KD 框架，即 student model 以自己作为 teacher model (aka, self-training)，或者从任意一个 manually-designed regularization distribution 中进行学习，能取得比传统 KD 更佳的学习效果。作者也在 paper 中 challenge 了一把 **a strong teacher model 的必要性**。笔者认为本文还是具备比较高价值的参考意义，下面进行细致讲解。
+
+### LSR
+先回顾一下 [Label Smoothing](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf):
+一个分类网络在过 softmax layer 之后：
+$$
+p(k|x)=\frac{exp(z_k)}{\sum_{i=1}^K exp(z_i)}
+$$
+这里 $z_i$ 为 logit，网络预测 $x$ 为 label $k$ 的概率为 $p(k|x)$，groundtruth label over the distribution 为 $q(k|x)$。对于分类问题，我们通常采用 cross entropy loss 来进行训练: $H(q, p)=-\sum_{k=1}^K q(k|x)log(p(k|x))$，对于 groundtruth label $y$，$q(y|x)=1$；当 $k\neq y$ 时 $q(k|x)=0$。
+
+Label Smoothing 算法修改了 $q(k|x)$ 为 $q^{'}(k|x)$：
+$$
+q^{'}(k|x)=(1-\alpha)q(k|x) + \alpha u(k)
+$$
+即 $q^{'}(k|x)$ 成了 $q(k|x)$ 与一个 fixed distribution $\alpha u(k)$ 的加权和。通常地，我们设定 $u(k)$ 为 uniform distribution，即 $u(k)=\frac{1}{K}$。因此，Label Smoothing Cross Entropy 定义为：
+$$
+H(q^{'},p)=-\sum_{k=1}^K q^{'}(k)log p(k)=(1-\alpha)H(q,p)+\alpha H(u,p)=(1-\alpha)H(q,p)+\alpha (D_{KL}(u,p) + H(u))
+$$
+$D_{KL}$ 代表 KL-divergence，$H(u)$ 代表 $u$ 的 entropy，是一个固定常数。因此，Label Smoothing 又可以写成：
+$$
+\mathcal{L}_{LS}=(1-\alpha)H(q,p)+\alpha D_{KL}(u,p)
+$$
+
+同样地，在 KD 中，$p_{\tau}^t=softmax(z_k^t)=\frac{exp(z_k^t/\tau)}{\sum_{i=1}^K exp(z_i^t/\tau)}$，$z^t$ 是 teacher model 输出的 logit。KD 的目的就在于 让 student model 通过优化 cross entropy loss 以及 KL divergence 来学习 teacher model 的信息：
+$$
+\mathcal{L}_{KD}=(1-\alpha)H(q,p)+\alpha D_{KL}(p_{\tau}^t,p_{\tau})
+$$
+
+重点来了，看看 $\mathcal{L}_{LS}$ 与 $\mathcal{L}_{KD}$，发现两者的唯一区别在于 $D_{KL}(p_{\tau}^t,p_{\tau})$ 中的 $p_{\tau}^t(k)$ 是来自 teacher model 的 distribution；而 $D_{KL}(u,p)$ 中的 $u(k)$ 是一个 predefined uniform distribution。因此，作者认为 **LSR 是 KD 的一种special case**。并且作者通过实验发现，temperature $\tau$ 越大，$p^t(k)$ 与 label smoothing 中的 uniform distribution $u(k)$ 越相似。
+
+### Self-training
+此外，若 teacher model is unavailable 时该如何做 KD 呢？作者还提出了一个 self-training 方案：对于一个模型 $S$，首先按常规方式训练一个pretrained model $S^p$，然后在第二阶段的 KD 过程中用于优化 cross entropy 与 KL divergence:
+$$
+\mathcal{L}_{self}=(1-\alpha)H(q,p)+\alpha D_{KL}(p_{\tau}^t,p_{\tau})
+$$
+其中 $p_{\tau}^t,p_{\tau}$ 分别代表模型 $S$ 和 $S^p$ 的 output probability。
+
+第二个 teacher-free KD 方案为手动设定一个100%准确的 virtual teacher model：
+$$
+p^d(k)=\left\{
+\begin{aligned}
+a,if && k=c \\
+(1-a)/(K-1),if && k\neq c
+\end{aligned}
+\right.
+$$
+其中 $K$ 代表类别数量，$c$ 代表正确标签。此时 loss function 定义为：
+$$
+L_{reg}=(1-\alpha)H(q,p)+\alpha D_{KL}(p_{\tau}^d,p_{\tau})
+$$
+
+> 这个算法我自己在项目里也试过，在一些分类任务上确实能带来比较明显的提升，具体实验数据在此不赘述了，请阅读原文。
+
 
 ## References
 1. Hinton G, Vinyals O, Dean J. [Distilling the knowledge in a neural network](https://arxiv.org/pdf/1503.02531)[J]. arXiv preprint arXiv:1503.02531, 2015.
+2. Yuan L, Tay F E H, Li G, et al. [Revisiting Knowledge Distillation via Label Smoothing Regularization](http://openaccess.thecvf.com/content_CVPR_2020/papers/Yuan_Revisiting_Knowledge_Distillation_via_Label_Smoothing_Regularization_CVPR_2020_paper.pdf)[C]//Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition. 2020: 3903-3911.
