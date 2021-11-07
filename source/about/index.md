@@ -10,7 +10,6 @@ My research interests include Machine Learning and Computer Vision. I like readi
 
 ![LucasX](https://raw.githubusercontent.com/lucasxlu/blog/master/source/about/LucasX.jpg)
 
-__Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)] 
 
 
 ## Publications and Tech Reports
@@ -22,14 +21,13 @@ __Curriculum Vitae__: [[PDF](./CV_LuXu.pdf)]
 * **Xu L**, Xiang J, Yuan X. Transferring rich deep features for facial beauty prediction[J]. arXiv preprint arXiv:1803.07253, 2018. [[arXiv](https://arxiv.org/abs/1803.07253)] [[Code](https://github.com/lucasxlu/TransFBP.git)] [[Slides](./Presentation_TransFBP.pdf)]
 * **Xu L**, Wang Y. XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service[J]. arXiv preprint arXiv:1912.10344, 2019. [[arXiv](https://arxiv.org/abs/1912.10344)] [[Code](https://github.com/lucasxlu/XCloud.git)]
 * **Xu L**, Xiang J. ComboLoss for Facial Attractiveness Analysis with Squeeze-and-Excitation Networks[J]. arXiv preprint arXiv:2010.10721, 2020. [[arXiv](https://arxiv.org/pdf/2010.10721)] [[Code](https://github.com/lucasxlu/ComboLoss.git)]
-* Research on Hot Topic Detection and Tracking based on Incremental Clustering [[Code](https://github.com/xuludev/System.git)]  
 
 
 ## Projects
 * XCloud: Design and Implementation of AI Cloud Platform with RESTful API Service [[Python](https://github.com/lucasxlu/XCloud.git)] [[Java](https://github.com/lucasxlu/CVLH.git)] [[Tech Report](https://arxiv.org/pdf/1912.10344.pdf)]
 * [Lagou Job](https://github.com/lucasxlu/LagouJob.git)  
-  A repository for job data crawling and data analysis based on Python3. This repo has received over **230 stars** and **120+ forks**. Technical details can be read from [Zhihu Answer](https://www.zhihu.com/question/36132174/answer/94392659).
-* Software Copyright: Hot Topic Detection & Tracking System (2015SR165186) [[Code](https://github.com/xuludev/System.git)]
+  A repository for job data crawling and data analysis. This repo has received over **250 stars** and **130+ forks**. Technical details can be read from [Zhihu Answer](https://www.zhihu.com/question/36132174/answer/94392659).
+* Software Copyright: Hot Topic Detection & Tracking System (ID: 2015SR165186) [[Code](https://github.com/xuludev/System.git)]
 
 
 ## Skills
