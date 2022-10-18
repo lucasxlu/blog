@@ -5,8 +5,8 @@
 # Header Menu
 menu:
   Home: /
-  About: about
-  Papers: papers
+  # About: about
+  # Papers: papers
   Projects: projects
   Tags: tags
   Archives: archives
