@@ -259,6 +259,58 @@
         
           <section id="main" style="float:none;">
   
+    <article id="post-dl-faiss"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/2023/04/15/dl-faiss/">[DL] A Deeper Look At Faiss</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2023/04/15/dl-faiss/" class="article-date">
+	  <time datetime="2023-04-15T07:17:52.000Z" itemprop="datePublished">2023-04-15</time>
+	</a>
+
+      
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p class="article-excerpt-content">
+          IntroductionFaiss 是由 Facebook 开源的一款用于 ANN Search 的库，常用于大规模信息检索。其主要用到的算法如下：
+
+Faiss 的基础依赖
+Faiss 与计算资源之间需要一个外部依赖框架，这个框架是一个矩阵计算框架，官方默认配置安装的是 OpenBlas，另外也可以用 Intel 的 MKL，相比于 OpenBlas 使用 MKL 作为框架进行编译可以提高一定的稳定性。
+OpenMP：如果向量之间的相似性搜索是逐条进行的那计算效率会非常低，而Faiss内...
+        </p>
+        <p class="article-more-link">
+          <a href="/blog/2023/04/15/dl-faiss/#more">Read More</a>
+        </p>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+
+  
     <article id="post-dl-kd"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="article-inner">
     
@@ -731,54 +783,6 @@ CMCThe CMC curv...
 
 
   
-    <article id="post-cv-classification"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/2020/02/29/cv-classification/">[CV] Classification</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	<a href="/blog/2020/02/29/cv-classification/" class="article-date">
-	  <time datetime="2020-02-29T07:17:05.000Z" itemprop="datePublished">2020-02-29</time>
-	</a>
-
-      
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p class="article-excerpt-content">
-          IntroductionVisual Classification是CV领域最最重要的fundamental task，没有之一，并且是其他task (例如RCNN-based detection)的基础。关于分类，现如今主流方法是设计更加精巧的网络结构（请参阅DL-Architecture），或直接NAS搜一个，或设计更有效的Loss Function辅助model learning（请参阅ML-Loss Function）。尽管已经发展很成熟，但在实际应用场景中，依然会碰到许多非常ch...
-        </p>
-        <p class="article-more-link">
-          <a href="/blog/2020/02/29/cv-classification/#more">Read More</a>
-        </p>
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-      
-      
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-
-  
 
 
   <nav id="page-nav">
@@ -798,7 +802,7 @@ CMCThe CMC curv...
   <div class="container">
       	<div class="row">
 	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
-	      <p id="copyRightEn">Copyright &copy; 2018 - 2022 LucasX All Rights Reserved.</p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2023 LucasX All Rights Reserved.</p>
 	      
 	      
     		<p class="busuanzi_uv">
@@ -950,7 +954,7 @@ CMCThe CMC curv...
             LucasX
           </div>
           <div class="panel-body">
-            Copyright © 2022 LucasX All Rights Reserved.
+            Copyright © 2023 LucasX All Rights Reserved.
           </div>
         </div>
       </div>

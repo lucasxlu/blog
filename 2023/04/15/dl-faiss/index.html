@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[dl] a deeper look at faiss | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep LearningData AugmentationANN Search" />
+  
+  
+  
+  
+  <meta name="description" content="IntroductionFaiss 是由 Facebook 开源的一款用于 ANN Search 的库，常用于大规模信息检索。其主要用到的算法如下：  Faiss 的基础依赖 Faiss 与计算资源之间需要一个外部依赖框架，这个框架是一个矩阵计算框架，官方默认配置安装的是 OpenBlas，另外也可以用 Intel 的 MKL，相比于 OpenBlas 使用 MKL 作为框架进行编译可以提高一定的">
+<meta name="keywords" content="Machine Learning,Deep Learning,Data Augmentation,ANN Search">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[DL] A Deeper Look At Faiss">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2023/04/15/dl-faiss/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="IntroductionFaiss 是由 Facebook 开源的一款用于 ANN Search 的库，常用于大规模信息检索。其主要用到的算法如下：  Faiss 的基础依赖 Faiss 与计算资源之间需要一个外部依赖框架，这个框架是一个矩阵计算框架，官方默认配置安装的是 OpenBlas，另外也可以用 Intel 的 MKL，相比于 OpenBlas 使用 MKL 作为框架进行编译可以提高一定的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://lucasxlu.github.io/blog/2023/04/15/dl-faiss/dl-faiss/PQ_variants_Faiss_annotated.png">
+<meta property="og:image" content="https://lucasxlu.github.io/blog/2023/04/15/dl-faiss/dl-faiss/faiss_pipeline.jpeg">
+<meta property="og:updated_time" content="2023-04-15T07:49:59.369Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[DL] A Deeper Look At Faiss">
+<meta name="twitter:description" content="IntroductionFaiss 是由 Facebook 开源的一款用于 ANN Search 的库，常用于大规模信息检索。其主要用到的算法如下：  Faiss 的基础依赖 Faiss 与计算资源之间需要一个外部依赖框架，这个框架是一个矩阵计算框架，官方默认配置安装的是 OpenBlas，另外也可以用 Intel 的 MKL，相比于 OpenBlas 使用 MKL 作为框架进行编译可以提高一定的">
+<meta name="twitter:image" content="https://lucasxlu.github.io/blog/2023/04/15/dl-faiss/dl-faiss/PQ_variants_Faiss_annotated.png">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-dl-faiss" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [DL] A Deeper Look At Faiss
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2023/04/15/dl-faiss/" class="article-date">
+	  <time datetime="2023-04-15T07:17:52.000Z" itemprop="datePublished">2023-04-15</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p><a href="https://faiss.ai/" target="_blank" rel="noopener">Faiss</a> 是由 Facebook 开源的一款用于 <code>ANN Search</code> 的库，常用于大规模信息检索。其主要用到的算法如下：</p>
+<p><img src="./dl-faiss/PQ_variants_Faiss_annotated.png" alt="PQ_variants_Faiss_annotated"></p>
+<h3 id="Faiss-的基础依赖"><a href="#Faiss-的基础依赖" class="headerlink" title="Faiss 的基础依赖"></a>Faiss 的基础依赖</h3><ol>
+<li>Faiss 与计算资源之间需要一个外部依赖框架，这个框架是一个矩阵计算框架，官方默认配置安装的是 <code>OpenBlas</code>，另外也可以用 Intel 的 <code>MKL</code>，相比于 <code>OpenBlas</code> 使用 <code>MKL</code> 作为框架进行编译可以提高一定的稳定性。</li>
+<li>OpenMP：如果向量之间的相似性搜索是逐条进行的那计算效率会非常低，而Faiss内部实现使用了OpenMP，可以以batch的形式来进行搜素，实现计算效率的提升。</li>
+</ol>
+<h3 id="Faiss-工作数据流"><a href="#Faiss-工作数据流" class="headerlink" title="Faiss 工作数据流"></a>Faiss 工作数据流</h3><p>在使用 Faiss 进行 query 向量的相似性搜索之前，需要将原始的向量集构建封装成一个索引文件（index file）并缓存在内存中，提供实时的查询计算。在第一次构建索引文件的时候，需要经过 <code>train</code> 和 <code>add</code> 两个过程。后续如果有新的向量需要被添加到索引文件的话还可以有一个Add操作从而实现增量build索引。</p>
+<p><img src="./dl-faiss/faiss_pipeline.jpeg" alt="faiss_pipeline"></p>
+<h2 id="Details-of-Faiss"><a href="#Details-of-Faiss" class="headerlink" title="Details of Faiss"></a>Details of Faiss</h2><p>Faiss 本质上是一个向量（矢量）数据库。进行搜索时，基础是原始向量数据库，基本单位是单个向量，默认输入一个向量 <code>x</code>，返回和 <code>x</code> 最相似的 $k$ 个向量。其中的核心就是索引（index 对象），Index 继承了一组向量库，作用是对原始向量集进行预处理和封装，一般操作包括 <code>train</code> (<code>IndexFlatL2</code> 可以跳过该步骤) 和 <code>add</code>，可以建成一个索引对象缓存在计算机内存中。所有向量在建立前需要明确向量的维度 $d$，大多数的索引还需要训练阶段来分析向量的分布（除了IndexFlatL2）。当索引被建立就可以进行后续的 <code>search</code> 操作了。<strong>Faiss 只支持 32-bit floating point matrices</strong>，会用到 <code>xb</code> 和 <code>xq</code> 两个变量，分别代表 <code>database gallery</code> 和 <code>query</code>。</p>
+<ul>
+<li><code>xb</code> for the database, that contains all the vectors that must be indexed, and that we are going to search in. Its size is $nb\times d$</li>
+<li><code>xq</code> for the query vectors, for which we need to find the nearest neighbors. Its size is $nq\times d$. If we have a single query vector, $nq=1$</li>
+</ul>
+<h3 id="train"><a href="#train" class="headerlink" title="train"></a>train</h3><ul>
+<li>目的：生成原向量中心点，残差(向量中心点的差值)向量中心点，部分预计算的距离</li>
+<li>流程：<ul>
+<li>把原始向量分成 $M$ 个子空间，针对每个子空间训练中心点(如果每个子空间的中心点为 $n$，则 $pq$ 可表达 $n^M$ 个中心点)</li>
+<li>查找向量对应的中心点</li>
+<li>向量减去对应的中心点生成残差向量</li>
+<li>针对残差向量生成二级量化器</li>
+</ul>
+</li>
+</ul>
+<h2 id="search："><a href="#search：" class="headerlink" title="search："></a>search：</h2><p><code>search</code> 涉及实际的相似度计算，返回的检索结果包括两个矩阵，分别为 <code>xq</code> 中元素与近邻的距离 $D$ 和近邻向量的索引序号 $I$。</p>
+<p>Faiss 目前支持的索引：<a href="https://github.com/facebookresearch/faiss/wiki/Faiss-indexes" target="_blank" rel="noopener">Faiss Basic Index</a>，常见的有下几种：</p>
+<ul>
+<li><p><code>IndexFlatL2</code>: brute force L2 distance search</p>
+<p>  用法示例：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">d = 64                           # dimension</span><br><span class="line">nb = 100000                      # database size</span><br><span class="line">nq = 10000                       # nb of queries</span><br><span class="line">np.random.seed(1234)             # make reproducible</span><br><span class="line">xb = np.random.random((nb, d)).astype(&apos;float32&apos;)</span><br><span class="line">xb[:, 0] += np.arange(nb) / 1000.</span><br><span class="line">xq = np.random.random((nq, d)).astype(&apos;float32&apos;)</span><br><span class="line">xq[:, 0] += np.arange(nq) / 1000.</span><br><span class="line"></span><br><span class="line">quantizer = faiss.IndexFlatL2(d)</span><br><span class="line">index = faiss.IndexIVFFlat(quantizer, d, nlist, faiss.METRIC_L2)</span><br><span class="line">index.train(xb)</span><br><span class="line">index.add(xb)                 </span><br><span class="line">D, I = index.search(xq, k)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>IndexIVFFlat</code>: segment the dataset into pieces, we define Voronoi cells in the <code>d</code>-dimensional space, and each database vector falls in one of the cells. At search time, only the database vectors <code>y</code> contained in the cell the query <code>x</code> falls in and a few neighboring ones are compared against the query vector</p>
+<p>  用法示例：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">nlist = 100</span><br><span class="line">k = 4</span><br><span class="line">quantizer = faiss.IndexFlatL2(d)  # the other index</span><br><span class="line">index = faiss.IndexIVFFlat(quantizer, d, nlist)</span><br><span class="line">assert not index.is_trained</span><br><span class="line">index.train(xb)</span><br><span class="line">assert index.is_trained</span><br><span class="line"></span><br><span class="line">index.add(xb)                  # add may be a bit slower as well</span><br><span class="line">D, I = index.search(xq, k)     # actual search</span><br><span class="line">print(I[-5:])                  # neighbors of the 5 last queries</span><br><span class="line">index.nprobe = 10              # default nprobe is 1, try a few more</span><br><span class="line">D, I = index.search(xq, k)</span><br><span class="line">print(I[-5:])                  # neighbors of the 5 last queries</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>IndexIVFPQ</code>: <code>IndexFlatL2</code> and <code>IndexIVFFlat</code> both store the full vectors. To scale up to very large datasets, Faiss offers variants that compress the stored vectors with a lossy compression based on <a href="https://hal.inria.fr/file/index/docid/514462/filename/paper_hal.pdf" target="_blank" rel="noopener">product quantizers</a>. The vectors are still stored in Voronoi cells, but their size is reduced to a configurable number of bytes <code>m</code> (<code>d</code> must be a multiple of <code>m</code>)</p>
+<p>  用法示例：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">nlist = 100</span><br><span class="line">m = 8                             # number of subquantizers</span><br><span class="line">k = 4</span><br><span class="line">quantizer = faiss.IndexFlatL2(d)  # this remains the same</span><br><span class="line">index = faiss.IndexIVFPQ(quantizer, d, nlist, m, 8)</span><br><span class="line">                                    # 8 specifies that each sub-vector is encoded as 8 bits</span><br><span class="line">index.train(xb)</span><br><span class="line">index.add(xb)</span><br><span class="line">D, I = index.search(xb[:5], k) # sanity check</span><br><span class="line">print(I)</span><br><span class="line">print(D)</span><br><span class="line">index.nprobe = 10              # make comparable with experiment above</span><br><span class="line">D, I = index.search(xq, k)     # search</span><br><span class="line">print(I[-5:])</span><br></pre></td></tr></table></figure>
+<p>  Replace <code>PQ8</code> with <code>Flat</code> to get an <code>IndexFlat</code>. The factory is particularly useful when preprocessing (PCA) is applied to the input vectors. For example, the factory string to preprocess reduce the vectors to 32D by PCA projection is: <code>&quot;PCA32,IVF100,Flat&quot;</code>.</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.index_factory(d, &quot;IVF100,PQ8&quot;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a href="https://github.com/facebookresearch/faiss/wiki" target="_blank" rel="noopener">Faiss wiki</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/534004381" target="_blank" rel="noopener">faiss原理（Product Quantization）</a></li>
+<li><a href="https://blog.csdn.net/weixin_40375871/article/details/119119975" target="_blank" rel="noopener">算法工程-Faiss原理和使用总结</a></li>
+<li><a href="https://github.com/facebookresearch/faiss/wiki/Faiss-indexes" target="_blank" rel="noopener">Faiss Indexes</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2023/04/15/dl-faiss/" target="_blank" title="[DL] A Deeper Look At Faiss">https://lucasxlu.github.io/blog/2023/04/15/dl-faiss/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2020/11/14/dl-kd/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DL] Knowledge Distillation</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Faiss-的基础依赖"><span class="nav-number">1.1.</span> <span class="nav-text">Faiss 的基础依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Faiss-工作数据流"><span class="nav-number">1.2.</span> <span class="nav-text">Faiss 工作数据流</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Details-of-Faiss"><span class="nav-number">2.</span> <span class="nav-text">Details of Faiss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#train"><span class="nav-number">2.1.</span> <span class="nav-text">train</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#search："><span class="nav-number">3.</span> <span class="nav-text">search：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2023 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2023 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>
