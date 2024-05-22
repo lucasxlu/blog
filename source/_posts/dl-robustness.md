@@ -48,10 +48,12 @@ Adversarial training 能够 （1）提高模型应对恶意对抗样本时的鲁
 
 ![RegMixup](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/regmixup.png)
 
-### Using Self-Supervised Learning Can Improve Model Robustness and Uncertainty
+## Using Self-Supervised Learning Can Improve Model Robustness and Uncertainty
 以 rotation prediction 作为 pre-text task 进行 self-supervised training，能够很好地提升模型 robustness：
 
-### Unsupervised Adversarial Training (UAT)
+![RotNet](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/rotnet.png)
+
+## Unsupervised Adversarial Training (UAT)
 对抗 adversarial attack 的一个有效方法是增加更多的训练数据，但收集 labeled dataset 毕竟成本比较高。作者提出了一个基于 unsupervised learning 的方法来从海量无标签数据中进行学习，从而增强模型的 robustness。无监督 smooth loss 可以是以下两种形态：
 
 * Unsupervised Adversarial Training with Online Targets (UAT-OT)
@@ -78,7 +80,7 @@ Lazy training：网络在训练过程中的权重变化较小，使得网络在�
 
 ![WiSE-FT](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/wise_ft.png)
 
-Reference
+# Reference
 1. Zhang, Chiyuan, Samy Bengio, and Yoram Singer. "[Are all layers created equal?](https://www.jmlr.org/papers/volume23/20-069/20-069.pdf)." The Journal of Machine Learning Research 23.1 (2022): 2930-2957.
 2. Liu, Mengchen, et al. "[Analyzing the noise robustness of deep neural networks](https://ml.cs.tsinghua.edu.cn/~jun/pub/robust-dnn.pdf)." 2018 IEEE Conference on Visual Analytics Science and Technology (VAST). IEEE, 2018.
 3. https://neptune.ai/blog/adversarial-attacks-on-neural-networks-exploring-the-fast-gradient-sign-method
