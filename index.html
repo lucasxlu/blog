@@ -259,6 +259,58 @@
         
           <section id="main" style="float:none;">
   
+    <article id="post-dl-robustness"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/2024/05/22/dl-robustness/">[DL] Improving Robustness of Deep Learning Models</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2024/05/22/dl-robustness/" class="article-date">
+	  <time datetime="2024-05-22T03:00:00.000Z" itemprop="datePublished">2024-05-22</time>
+	</a>
+
+      
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p class="article-excerpt-content">
+          Background
+PyTorch 模型训练时的预处理环节与实车部署环节无法完全对齐，我们回灌 case 发现：PyTorch 模型表现正常，但 fp32 &amp; fp16 的 trt 模型存在线弯折、左右甩等异常现象。模型对上游的一些 perturbation 过于敏感，希望在训练过程中增强鲁棒性。
+不同初始化&amp;训练方式对模型的 robustness、generality 有较大的影响，需要在训练过程中选择最优的训练方式。
+
+MethodsAre All Layers Cr...
+        </p>
+        <p class="article-more-link">
+          <a href="/blog/2024/05/22/dl-robustness/#more">Read More</a>
+        </p>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+
+  
     <article id="post-llm-ft"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="article-inner">
     
@@ -731,56 +783,6 @@ What’s the Gap Between Academia and Industry?Emphasis在学术界，追求的�
 
 
   
-    <article id="post-dl-cnn"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/2020/06/20/dl-cnn/">[DL] CNN</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	<a href="/blog/2020/06/20/dl-cnn/" class="article-date">
-	  <time datetime="2020-06-20T05:45:38.000Z" itemprop="datePublished">2020-06-20</time>
-	</a>
-
-      
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p class="article-excerpt-content">
-          Introduction做Vision的同学们对Convolutional Neural Networks (CNN)一定不会陌生，可以毫不夸张的说，现如今绝大多数的视觉问题，都是由CNN驱动的。从LeNet到如今的ResNet、DenseNet、CliqueNet，CNN的结构发生了很大的变化。本文旨在记录CNN的基础构件。
-Basic of CNNConvolution
-VALID：无论怎样都不使用zero padding，并且filter只允许访问那些图像中能够完全包含整个核的位置。...
-        </p>
-        <p class="article-more-link">
-          <a href="/blog/2020/06/20/dl-cnn/#more">Read More</a>
-        </p>
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-      
-      
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-
-  
 
 
   <nav id="page-nav">
@@ -800,7 +802,7 @@ VALID：无论怎样都不使用zero padding，并且filter只允许访问那些
   <div class="container">
       	<div class="row">
 	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
-	      <p id="copyRightEn">Copyright &copy; 2018 - 2023 LucasX All Rights Reserved.</p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasX All Rights Reserved.</p>
 	      
 	      
     		<p class="busuanzi_uv">
@@ -952,7 +954,7 @@ VALID：无论怎样都不使用zero padding，并且filter只允许访问那些
             LucasX
           </div>
           <div class="panel-body">
-            Copyright © 2023 LucasX All Rights Reserved.
+            Copyright © 2024 LucasX All Rights Reserved.
           </div>
         </div>
       </div>

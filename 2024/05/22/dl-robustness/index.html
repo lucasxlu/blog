@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>[dl] improving robustness of deep learning models | LucasX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Machine LearningDeep Learning" />
+  
+  
+  
+  
+  <meta name="description" content="Background PyTorch 模型训练时的预处理环节与实车部署环节无法完全对齐，我们回灌 case 发现：PyTorch 模型表现正常，但 fp32 &amp;amp; fp16 的 trt 模型存在线弯折、左右甩等异常现象。模型对上游的一些 perturbation 过于敏感，希望在训练过程中增强鲁棒性。 不同初始化&amp;amp;训练方式对模型的 robustness、generality 有较大的">
+<meta name="keywords" content="Machine Learning,Deep Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[DL] Improving Robustness of Deep Learning Models">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2024/05/22/dl-robustness/index.html">
+<meta property="og:site_name" content="LucasX">
+<meta property="og:description" content="Background PyTorch 模型训练时的预处理环节与实车部署环节无法完全对齐，我们回灌 case 发现：PyTorch 模型表现正常，但 fp32 &amp;amp; fp16 的 trt 模型存在线弯折、左右甩等异常现象。模型对上游的一些 perturbation 过于敏感，希望在训练过程中增强鲁棒性。 不同初始化&amp;amp;训练方式对模型的 robustness、generality 有较大的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/fig1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/swa.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/swalp.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/greedy_soup.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/regmixup.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/uat_ot.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/uat_ft.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/wise_ft.png">
+<meta property="og:updated_time" content="2024-05-22T03:05:19.446Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[DL] Improving Robustness of Deep Learning Models">
+<meta name="twitter:description" content="Background PyTorch 模型训练时的预处理环节与实车部署环节无法完全对齐，我们回灌 case 发现：PyTorch 模型表现正常，但 fp32 &amp;amp; fp16 的 trt 模型存在线弯折、左右甩等异常现象。模型对上游的一些 perturbation 过于敏感，希望在训练过程中增强鲁棒性。 不同初始化&amp;amp;训练方式对模型的 robustness、generality 有较大的">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/fig1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+  
+
+  
+
+  <link rel="icon" href="/blog/css/images/mylogo.jpg">
+  <link rel="apple-touch-icon" href="/blog/css/images/mylogo.jpg">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+  <link rel="stylesheet" href="/blog/css/style.css">
+
+  <script src="/blog/js/jquery-3.1.1.min.js"></script>
+  <script src="/blog/js/bootstrap.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/blog/css/bootstrap.css" >
+
+  
+    <link rel="stylesheet" href="/blog/css/dialog.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/blog/css/header-post.css" >
+  
+
+  
+  
+  
+    <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      
+        <header>
+
+    <div id="allheader" class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-inner">
+          
+          <div class="container"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            
+              <a class="brand" style="
+                 margin-top: 0px;"  
+                href="#" data-toggle="modal" data-target="#myModal" >
+                  <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
+              </a>
+            
+            
+            <div class="navbar-collapse collapse">
+              <ul class="hnav navbar-nav">
+                
+                  <li> <a class="main-nav-link" href="/blog/">Home</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/projects">Projects</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/tags">Tags</a> </li>
+                
+                  <li> <a class="main-nav-link" href="/blog/archives">Archives</a> </li>
+                
+                  <li><div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/blog/',
+        CONTENT_URL: '/blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/blog/js/insight.js"></script>
+
+</div></li>
+            </div>
+          </div>
+                
+      </div>
+    </div>
+
+</header>
+
+
+
+      
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-dl-robustness" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [DL] Improving Robustness of Deep Learning Models
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/blog/2024/05/22/dl-robustness/" class="article-date">
+	  <time datetime="2024-05-22T03:00:00.000Z" itemprop="datePublished">2024-05-22</time>
+	</a>
+
+      
+      
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
+	</a>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><ul>
+<li>PyTorch 模型训练时的预处理环节与实车部署环节无法完全对齐，我们回灌 case 发现：PyTorch 模型表现正常，但 fp32 &amp; fp16 的 trt 模型存在线弯折、左右甩等异常现象。模型对上游的一些 perturbation 过于敏感，希望在训练过程中增强鲁棒性。</li>
+<li>不同初始化&amp;训练方式对模型的 robustness、generality 有较大的影响，需要在训练过程中选择最优的训练方式。</li>
+</ul>
+<h1 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h1><h2 id="Are-All-Layers-Created-Equal"><a href="#Are-All-Layers-Created-Equal" class="headerlink" title="Are All Layers Created Equal?"></a>Are All Layers Created Equal?</h2><p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/fig1.png" alt="Robustness results for FCN 3 × 256 on MNIST"></p>
+<p>主要结论：</p>
+<ul>
+<li>DL 模型中，不同 layer 的重要性其实是不同的，low-level layers 在训练过程中更新得更激进，high-level layers 相对缓和一些</li>
+<li>re-initialization 效果优于 re-randomization，paper 里验证了 re-initialization 的方式能提升模型鲁棒性</li>
+</ul>
+<h2 id="Fast-Gradient-Sign-Method"><a href="#Fast-Gradient-Sign-Method" class="headerlink" title="Fast Gradient Sign Method"></a>Fast Gradient Sign Method</h2><p>Adversarial training 能够 （1）提高模型应对恶意对抗样本时的鲁棒性；（2）作为一种 regularization，减少 overfitting，提高泛化能力。<a href="https://pytorch.org/tutorials/beginner/fgsm_tutorial.html#fast-gradient-sign-attack" target="_blank" rel="noopener">FGSM</a> 算法 pipeline 如下：</p>
+<ol>
+<li>Calculate the loss after forward propagation,</li>
+<li>Calculate the gradient with respect to the pixels of the image,</li>
+<li>Nudge the pixels of the image ever so slightly in the direction of the calculated gradients that maximize the loss calculated above</li>
+</ol>
+<h2 id="Averaging-Weights-Leads-to-Wider-Optima-and-Better-Generalization"><a href="#Averaging-Weights-Leads-to-Wider-Optima-and-Better-Generalization" class="headerlink" title="Averaging Weights Leads to Wider Optima and Better Generalization"></a>Averaging Weights Leads to Wider Optima and Better Generalization</h2><p>通过将训练过程中多个 snapshot 的 checkpoint 进行 weight averaging，得到 wider optima (&amp; better generalization)。这个 idea 属于 semi-supervised learning 里常用的 tricks 了，确实很 work。方法非常简单，并且 PyTorch 也集成了 SWA 和 EMA 的实现：</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/swa.png" alt="SWA"></p>
+<p>此外，也有论文验证了简单<a href="https://zhuanlan.zhihu.com/p/341190337" target="_blank" rel="noopener">将 SWA 应用在 object detection &amp; segmentation 任务</a>中，也能带来提升。</p>
+<p>以及…在 quantized training 过程中引入 SWA 也能使得模型对 quantization noise 更加鲁棒。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/swalp.png" alt="SWALP"></p>
+<h2 id="Model-Soups"><a href="#Model-Soups" class="headerlink" title="Model Soups"></a>Model Soups</h2><p>一共提出来 3 种 model soups 方案（uniform soup, greedy soup, learned soup），通过 averaging model weights 就能得到性能提升。其中最有效的是 greedy soup：</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/greedy_soup.png" alt="GreedySoup"></p>
+<h2 id="RegMixup"><a href="#RegMixup" class="headerlink" title="RegMixup"></a>RegMixup</h2><p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/regmixup.png" alt="RegMixup"></p>
+<h3 id="Using-Self-Supervised-Learning-Can-Improve-Model-Robustness-and-Uncertainty"><a href="#Using-Self-Supervised-Learning-Can-Improve-Model-Robustness-and-Uncertainty" class="headerlink" title="Using Self-Supervised Learning Can Improve Model Robustness and Uncertainty"></a>Using Self-Supervised Learning Can Improve Model Robustness and Uncertainty</h3><p>以 rotation prediction 作为 pre-text task 进行 self-supervised training，能够很好地提升模型 robustness：</p>
+<h3 id="Unsupervised-Adversarial-Training-UAT"><a href="#Unsupervised-Adversarial-Training-UAT" class="headerlink" title="Unsupervised Adversarial Training (UAT)"></a>Unsupervised Adversarial Training (UAT)</h3><p>对抗 adversarial attack 的一个有效方法是增加更多的训练数据，但收集 labeled dataset 毕竟成本比较高。作者提出了一个基于 unsupervised learning 的方法来从海量无标签数据中进行学习，从而增强模型的 robustness。无监督 smooth loss 可以是以下两种形态：</p>
+<ul>
+<li>Unsupervised Adversarial Training with Online Targets (UAT-OT)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/uat_ot.png" alt="UAT-OT"></p>
+<ul>
+<li>Unsupervised Adversarial Training with Fixed Targets (UAT-FT)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/uat_ft.png" alt="UAT-FT"></p>
+<h2 id="Adversarial-Robustness-is-at-Odds-with-Lazy-Training"><a href="#Adversarial-Robustness-is-at-Odds-with-Lazy-Training" class="headerlink" title="Adversarial Robustness is at Odds with Lazy Training"></a>Adversarial Robustness is at Odds with Lazy Training</h2><p>Lazy training 方式训练的 DL 模型容易受到 adversarial attack。<br>Lazy training：网络在训练过程中的权重变化较小，使得网络在初始化附近表现得像它的线性化。在懒惰训练下，神经网络容易受到对抗性攻击，因为网络在初始化附近的局部线性特性使得对抗性攻击更容易找到梯度上升路径，从而产生错误预测。<br>提高网络鲁棒性以应对对抗性攻击的方法：</p>
+<ol>
+<li>在训练过程中使用对抗训练：通过生成对抗性样本并将其与原始样本一起训练网络，可以提高网络的鲁棒性。</li>
+<li>使用更大的网络宽度：增加网络宽度可以提高网络的鲁棒性，但需要注意网络宽度与输入维度之间的平衡。</li>
+<li>探索更强的防御方法：研究新的防御方法可能有助于找到更有效的方法来抵御对抗性攻击。</li>
+</ol>
+<h2 id="Robust-fine-tuning-of-zero-shot-models"><a href="#Robust-fine-tuning-of-zero-shot-models" class="headerlink" title="Robust fine-tuning of zero-shot models"></a>Robust fine-tuning of zero-shot models</h2><p>主要分为两个步骤：</p>
+<ul>
+<li>首先正常 fine-tuning</li>
+<li>在 weight space 进行 interpolation 操作（和 SWA 其实没啥本质区别…）<br>这种方法充分利用了零样本模型在分布偏移下的鲁棒性，同时保留了微调模型在目标分布上的高性能。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-robustness/wise_ft.png" alt="WiSE-FT"></p>
+<p>Reference</p>
+<ol>
+<li>Zhang, Chiyuan, Samy Bengio, and Yoram Singer. “<a href="https://www.jmlr.org/papers/volume23/20-069/20-069.pdf" target="_blank" rel="noopener">Are all layers created equal?</a>.” The Journal of Machine Learning Research 23.1 (2022): 2930-2957.</li>
+<li>Liu, Mengchen, et al. “<a href="https://ml.cs.tsinghua.edu.cn/~jun/pub/robust-dnn.pdf" target="_blank" rel="noopener">Analyzing the noise robustness of deep neural networks</a>.” 2018 IEEE Conference on Visual Analytics Science and Technology (VAST). IEEE, 2018.</li>
+<li><a href="https://neptune.ai/blog/adversarial-attacks-on-neural-networks-exploring-the-fast-gradient-sign-method" target="_blank" rel="noopener">https://neptune.ai/blog/adversarial-attacks-on-neural-networks-exploring-the-fast-gradient-sign-method</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/91269728" target="_blank" rel="noopener">【炼丹技巧】功守道：NLP中的对抗训练 + PyTorch实现</a></li>
+<li>Izmailov, Pavel, et al. “<a href="https://arxiv.org/pdf/1803.05407" target="_blank" rel="noopener">Averaging weights leads to wider optima and better generalization</a>.” arXiv preprint arXiv:1803.05407 (2018).</li>
+<li>Zhang, Haoyang, et al. “<a href="https://arxiv.org/pdf/2012.12645" target="_blank" rel="noopener">Swa object detection</a>.” arXiv preprint arXiv:2012.12645 (2020).</li>
+<li>Wortsman, Mitchell, et al. “<a href="https://proceedings.mlr.press/v162/wortsman22a/wortsman22a.pdf" target="_blank" rel="noopener">Model soups: averaging weights of multiple fine-tuned models improves accuracy without increasing inference time</a>.” International Conference on Machine Learning. PMLR, 2022.</li>
+<li>Yang G, Zhang T, Kirichenko P, et al. <a href="https://proceedings.mlr.press/v97/yang19d/yang19d.pdf" target="_blank" rel="noopener">SWALP: Stochastic weight averaging in low precision training</a>[C]//International Conference on Machine Learning. PMLR, 2019: 7015-7024.</li>
+<li>Pinto, Francesco, et al. “<a href="https://arxiv.org/pdf/2206.14502" target="_blank" rel="noopener">Regmixup: Mixup as a regularizer can surprisingly improve accuracy and out distribution robustness</a>.” arXiv preprint arXiv:2206.14502 (2022).</li>
+<li>Pinto, Francesco, et al. “<a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/5ddcfaad1cb72ce6f1a365e8f1ecf791-Paper-Conference.pdf" target="_blank" rel="noopener">Using mixup as a regularizer can surprisingly improve accuracy &amp; out-of-distribution robustness</a>.” Advances in Neural Information Processing Systems 35 (2022): 14608-14622.</li>
+<li>Hendrycks, Dan, et al. “<a href="https://proceedings.neurips.cc/paper/2019/file/a2b15837edac15df90721968986f7f8e-Paper.pdf" target="_blank" rel="noopener">Using self-supervised learning can improve model robustness and uncertainty</a>.” Advances in neural information processing systems 32 (2019).</li>
+<li>Alayrac, Jean-Baptiste, et al. “<a href="https://proceedings.neurips.cc/paper_files/paper/2019/file/bea6cfd50b4f5e3c735a972cf0eb8450-Paper.pdf" target="_blank" rel="noopener">Are labels required for improving adversarial robustness?</a>.” Advances in Neural Information Processing Systems 32 (2019).</li>
+<li>Wang, Yunjuan, et al. “<a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/2aab664e0d1656e8b56c74f868e1ea69-Paper-Conference.pdf" target="_blank" rel="noopener">Adversarial robustness is at odds with lazy training</a>.” Advances in Neural Information Processing Systems 35 (2022): 6505-6516.</li>
+<li>Wortsman, Mitchell, et al. “<a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Wortsman_Robust_Fine-Tuning_of_Zero-Shot_Models_CVPR_2022_paper.pdf" target="_blank" rel="noopener">Robust fine-tuning of zero-shot models</a>.” Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition. 2022.</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2024/05/22/dl-robustness/" target="_blank" title="[DL] Improving Robustness of Deep Learning Models">https://lucasxlu.github.io/blog/2024/05/22/dl-robustness/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2023/12/02/llm-ft/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[LLM] Parameter Efficient Fine-tuning</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Background"><span class="nav-number">1.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Methods"><span class="nav-number">2.</span> <span class="nav-text">Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Are-All-Layers-Created-Equal"><span class="nav-number">2.1.</span> <span class="nav-text">Are All Layers Created Equal?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fast-Gradient-Sign-Method"><span class="nav-number">2.2.</span> <span class="nav-text">Fast Gradient Sign Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Averaging-Weights-Leads-to-Wider-Optima-and-Better-Generalization"><span class="nav-number">2.3.</span> <span class="nav-text">Averaging Weights Leads to Wider Optima and Better Generalization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Model-Soups"><span class="nav-number">2.4.</span> <span class="nav-text">Model Soups</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RegMixup"><span class="nav-number">2.5.</span> <span class="nav-text">RegMixup</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-Self-Supervised-Learning-Can-Improve-Model-Robustness-and-Uncertainty"><span class="nav-number">2.5.1.</span> <span class="nav-text">Using Self-Supervised Learning Can Improve Model Robustness and Uncertainty</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unsupervised-Adversarial-Training-UAT"><span class="nav-number">2.5.2.</span> <span class="nav-text">Unsupervised Adversarial Training (UAT)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adversarial-Robustness-is-at-Odds-with-Lazy-Training"><span class="nav-number">2.6.</span> <span class="nav-text">Adversarial Robustness is at Odds with Lazy Training</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Robust-fine-tuning-of-zero-shot-models"><span class="nav-number">2.7.</span> <span class="nav-text">Robust fine-tuning of zero-shot models</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+
+</section>
+        
+      </div>
+      
+      <footer id="footer">
+  
+
+  <div class="container">
+      	<div class="row">
+	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasX All Rights Reserved.</p>
+	      
+	      
+    		<p class="busuanzi_uv">
+				UV : <span id="busuanzi_value_site_uv"></span> |  
+				PV : <span id="busuanzi_value_site_pv"></span>
+		    </p>
+  		   
+		</div>
+
+		
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+    var allheader = document.getElementById("allheader");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight + "px";
+    if (allheader != null) {
+      contentdiv.style.minHeight = document.body.offsetHeight - allheader.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    } else {
+      contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    }
+</script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/blog/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/blog/js/scripts.js"></script>
+
+
+
+
+  <script src="/blog/js/dialog.js"></script>
+
+
+
+
+
+
+
+
+	<div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">设置</h2>
+      </div>
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+
+
+      <div class="modal-body">
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="javascript:setFontSize();" aria-expanded="true" aria-controls="collapseOne">
+              正文字号大小
+            </a>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            您已调整页面字体大小
+          </div>
+        </div>
+      
+
+
+          <div style="margin:6px;">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" onclick="javascript:setBackground();" aria-expanded="true" aria-controls="collapseTwo">
+              夜间护眼模式
+            </a>
+        </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            夜间模式已经开启，再次单击按钮即可关闭 
+          </div>
+        </div>
+
+        <div>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关 于&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+        </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            LucasX
+          </div>
+          <div class="panel-body">
+            Copyright © 2024 LucasX All Rights Reserved.
+          </div>
+        </div>
+      </div>
+
+
+      <hr style="margin-top:0px; margin-bottom:0px; width:80%; border-top: 1px solid #000;">
+      <hr style="margin-top:2px; margin-bottom:0px; width:80%; border-top: 3px solid #000;">
+      <div class="modal-footer">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</body>
+</html>
