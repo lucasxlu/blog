@@ -3,23 +3,26 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>tag: deep learning | LucasX</title>
+  <title>[aigc] evaluation | LucasX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
+  <meta name="keywords" content="Machine LearningDeep LearningAIGCDiffusion Model" />
   
   
   
-  <meta name="description" content="To share something about ML/CV/Data Science">
-<meta name="keywords" content="Machine Learning; Computer Vision; Face Analysis">
-<meta property="og:type" content="website">
-<meta property="og:title" content="LucasX">
-<meta property="og:url" content="https://lucasxlu.github.io/blog/tags/Deep-Learning/index.html">
+  
+  <meta name="description" content="IntroductionAIGC 在各行业得到了广泛的应用，相应的算法改进也层出不穷。本文重点不在于梳理具体的生成式模型，而在于如何对 AIGC 模型效果进行合理、科学的评价。 MethodsInception Score Paper: A note on the inception scoreThis metric is motivated by demonstrating that it pr">
+<meta name="keywords" content="Machine Learning,Deep Learning,AIGC,Diffusion Model">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[AIGC] Evaluation">
+<meta property="og:url" content="https://lucasxlu.github.io/blog/2024/06/22/aigc-eval/index.html">
 <meta property="og:site_name" content="LucasX">
-<meta property="og:description" content="To share something about ML/CV/Data Science">
+<meta property="og:description" content="IntroductionAIGC 在各行业得到了广泛的应用，相应的算法改进也层出不穷。本文重点不在于梳理具体的生成式模型，而在于如何对 AIGC 模型效果进行合理、科学的评价。 MethodsInception Score Paper: A note on the inception scoreThis metric is motivated by demonstrating that it pr">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2024-06-23T14:04:11.466Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="LucasX">
-<meta name="twitter:description" content="To share something about ML/CV/Data Science">
+<meta name="twitter:title" content="[AIGC] Evaluation">
+<meta name="twitter:description" content="IntroductionAIGC 在各行业得到了广泛的应用，相应的算法改进也层出不穷。本文重点不在于梳理具体的生成式模型，而在于如何对 AIGC 模型效果进行合理、科学的评价。 MethodsInception Score Paper: A note on the inception scoreThis metric is motivated by demonstrating that it pr">
   
     <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
   
@@ -58,8 +61,6 @@
   
 
   
-    <link rel="stylesheet" href="/blog/css/archive.css" >
-  
   
   
     <link rel="stylesheet" href="/blog/css/vdonate.css" ><!-- hexo-inject:begin --><!-- hexo-inject:end -->
@@ -69,7 +70,7 @@
 
 
 
-  <body>
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
 
 
   
@@ -92,7 +93,7 @@
             
               <a class="brand" style="
                  margin-top: 0px;"  
-                 >
+                href="#" data-toggle="modal" data-target="#myModal" >
                   <img width="124px" height="124px" alt="Hike News" src="/blog/css/images/mylogo.jpg">
               </a>
             
@@ -159,257 +160,153 @@
             
       <div id="content" class="outer">
         
-          <section id="main" style="float:none;">
-  
-  
-  
+          <section id="main" style="float:none;"><article id="post-aigc-eval" style="width: 75%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="article-inner">
     
     
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <h1><a href="/blog/archives/2024" class="archive-year">2024</a></h1>
-        </div>
-        <div class="archives">
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      [AIGC] Evaluation
+    </h1>
+  
+
+      </header>
     
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
+    <div class="article-meta">
       
-	<a href="/blog/2024/06/22/aigc-eval/" class="archive-article-date">
+	<a href="/blog/2024/06/22/aigc-eval/" class="article-date">
 	  <time datetime="2024-06-22T06:15:07.000Z" itemprop="datePublished">2024-06-22</time>
 	</a>
 
       
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2024/06/22/aigc-eval/">[AIGC] Evaluation</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
       
-	<a href="/blog/2024/05/22/dl-robustness/" class="archive-article-date">
-	  <time datetime="2024-05-22T03:00:00.000Z" itemprop="datePublished">2024-05-22</time>
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
 	</a>
 
+    </div>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2024/05/22/dl-robustness/">[DL] Improving Robustness of Deep Learning Models</a>
-    </h1>
-  
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>AIGC 在各行业得到了广泛的应用，相应的算法改进也层出不穷。本文重点不在于梳理具体的生成式模型，而在于如何对 AIGC 模型效果进行合理、科学的评价。</p>
+<h2 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h2><h3 id="Inception-Score"><a href="#Inception-Score" class="headerlink" title="Inception Score"></a>Inception Score</h3><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/1801.01973" target="_blank" rel="noopener">A note on the inception score</a><br>This metric is motivated by demonstrating that it prefers models that generate realistic and varied images and is correlated with visual quality. The <code>Inception Score</code> is a metric for automatically evaluating the quality of image generative models. This metric was shown to correlate well with human scoring of the realism of generated images from the CIFAR-10 dataset. The <code>IS</code> uses an Inception v3 Network pre-trained on ImageNet and calculates a statistic of the network’s outputs when applied to generated images.</p>
+</blockquote>
+<p>$$<br>IS(G)=exp(\mathbb{E}_{x\sim p_g}D_{KL}(p(y|x)||p(y)))<br>$$</p>
+<p>where $x\sim p_g$ indicates that x is an image sampled from $p_g$, $D_{KL}(p||q)$ is the KL-divergence between the distributions $p$ and $q$, $p(y|x)$ is the conditional class distribution, and $p(y) = \int_x p(y|x)p_g(x)$ is the marginal class distribution. The exp in the expression is there to make the values easier to compare, so it will be ignored and we will use $ln(IS(G))$ without loss of generality.</p>
+<p>In the general setting, the problems with the Inception Score fall into two categories:</p>
+<ol>
+<li>Suboptimalities of the Inception Score itself <ul>
+<li>Inception Score is sensitive to small changes in network weights that do not affect the final classification accuracy of the network</li>
+<li>score calculation and exponentiation</li>
+</ul>
+</li>
+<li>Problems with the popular usage of the Inception Score</li>
+</ol>
+<h3 id="CLIPScore"><a href="#CLIPScore" class="headerlink" title="CLIPScore"></a>CLIPScore</h3><blockquote>
+<p>Paper: <a href="https://arxiv.org/pdf/2104.08718" target="_blank" rel="noopener">Clipscore: A reference-free evaluation metric for image captioning</a></p>
+</blockquote>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Barratt, Shane, and Rishi Sharma. “<a href="https://arxiv.org/pdf/1801.01973" target="_blank" rel="noopener">A note on the inception score</a>.” arXiv preprint arXiv:1801.01973 (2018).</li>
+<li>Wang, Jianyi, Kelvin CK Chan, and Chen Change Loy. “<a href="https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125" target="_blank" rel="noopener">Exploring clip for assessing the look and feel of images</a>.” Proceedings of the AAAI Conference on Artificial Intelligence. Vol. 37. No. 2. 2023.</li>
+<li>Hessel, Jack, et al. “<a href="https://arxiv.org/pdf/2104.08718" target="_blank" rel="noopener">Clipscore: A reference-free evaluation metric for image captioning</a>.” arXiv preprint arXiv:2104.08718 (2021).</li>
+</ol>
 
-    </header>
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div id="donation_div"></div>
+
+<script src="/blog/js/vdonate.js"></script>
+<script>
+var a = new Donate({
+  title: '如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作!', // 可选参数，打赏标题
+  btnText: 'Donate', // 可选参数，打赏按钮文字
+  el: document.getElementById('donation_div'),
+  wechatImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/WeChatPay.png',
+  alipayImage: 'https://raw.githubusercontent.com/lucasxlu/blog/master/source/images/Alipay.jpg'
+});
+</script>
+      
+      
+      <div>
+        <ul class="post-copyright">
+          <li class="post-copyright-author">
+          <strong>Post author:  </strong>LucasX</a>
+          </li>
+          <li class="post-copyright-link">
+          <strong>Post link:  </strong>
+          <a href="/blog/2024/06/22/aigc-eval/" target="_blank" title="[AIGC] Evaluation">https://lucasxlu.github.io/blog/2024/06/22/aigc-eval/</a>
+          </li>
+          <li class="post-copyright-license">
+            <strong>Copyright Notice:   </strong>
+            All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+            unless stating additionally.
+          </li>
+         
+        </ul>
+<div>
+
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2024/05/22/dl-robustness/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[DL] Improving Robustness of Deep Learning Models</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <h1><a href="/blog/archives/2023" class="archive-year">2023</a></h1>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/blog/2023/12/02/llm-ft/" class="archive-article-date">
-	  <time datetime="2023-12-02T14:04:06.000Z" itemprop="datePublished">2023-12-02</time>
-	</a>
 
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2023/12/02/llm-ft/">[LLM] Parameter Efficient Fine-tuning</a>
-    </h1>
-  
+<!-- Table of Contents -->
 
-    </header>
-  </div>
-</article>
-  
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
     
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Methods"><span class="nav-number">2.</span> <span class="nav-text">Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Inception-Score"><span class="nav-number">2.1.</span> <span class="nav-text">Inception Score</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLIPScore"><span class="nav-number">2.2.</span> <span class="nav-text">CLIPScore</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol>
     
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/blog/2023/04/15/dl-faiss/" class="archive-article-date">
-	  <time datetime="2023-04-15T07:17:52.000Z" itemprop="datePublished">2023-04-15</time>
-	</a>
-
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2023/04/15/dl-faiss/">[DL] A Deeper Look At Faiss</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <h1><a href="/blog/archives/2020" class="archive-year">2020</a></h1>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/blog/2020/11/14/dl-kd/" class="archive-article-date">
-	  <time datetime="2020-11-14T08:15:34.000Z" itemprop="datePublished">2020-11-14</time>
-	</a>
-
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2020/11/14/dl-kd/">[DL] Knowledge Distillation</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/blog/2020/08/15/dl-gan/" class="archive-article-date">
-	  <time datetime="2020-08-15T04:59:50.000Z" itemprop="datePublished">2020-08-15</time>
-	</a>
-
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2020/08/15/dl-gan/">[DL] GAN</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/blog/2020/08/15/dist-ml/" class="archive-article-date">
-	  <time datetime="2020-08-15T02:20:09.000Z" itemprop="datePublished">2020-08-15</time>
-	</a>
-
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2020/08/15/dist-ml/">[ML] Distributed Machine Learning</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/blog/2020/08/05/ai-in-production/" class="archive-article-date">
-	  <time datetime="2020-08-05T13:05:03.000Z" itemprop="datePublished">2020-08-05</time>
-	</a>
-
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2020/08/05/ai-in-production/">[AI] AI in Production</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/blog/2020/07/25/ai-industry/" class="archive-article-date">
-	  <time datetime="2020-07-25T03:55:16.000Z" itemprop="datePublished">2020-07-25</time>
-	</a>
-
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2020/07/25/ai-industry/">[Note] AI Industry</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/blog/2020/06/20/dl-cnn/" class="archive-article-date">
-	  <time datetime="2020-06-20T05:45:38.000Z" itemprop="datePublished">2020-06-20</time>
-	</a>
-
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/blog/2020/06/20/dl-cnn/">[DL] CNN</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-
-  <nav id="page-nav">
-    
-    <span class="page-number current">1</span><a class="page-number" href="/blog/tags/Deep-Learning/page/2/">2</a><a class="page-number" href="/blog/tags/Deep-Learning/page/3/">3</a><a class="page-number" href="/blog/tags/Deep-Learning/page/4/">4</a><a class="extend next" rel="next" href="/blog/tags/Deep-Learning/page/2/">Next &raquo;</a>
-  </nav>
+    </div>
+  </aside>
 
 </section>
         
@@ -505,6 +402,8 @@
 
 
 
+  <script src="/blog/js/dialog.js"></script>
+
 
 
 
@@ -587,7 +486,9 @@
 </div>
   
   <a id="rocket" href="#top" class=""></a>
-  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 </body>
 </html>
