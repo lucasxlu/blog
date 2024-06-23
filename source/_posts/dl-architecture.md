@@ -17,7 +17,7 @@ catagories:
 ---
 ## Introduction
 Deep Learning有三宝：Network Architecture，Loss Function and Optimization。对于大多数人而言，Optimization门槛还是很高的（需要非常深厚的数学功底），所以绝大多数的Paper偏向还是设计更好的Network Architecture或者堆更加精巧的Loss Function。Ian Goodfellow大佬也曾说过：现如今Deep Learning的繁荣，网络结构探究的贡献度远远高于优化算法的贡献度。所以本文旨在梳理从AlexNet到CliqueNet这些经典的work。
-> [@LucasX](https://www.zhihu.com/people/xulu-0620)注：对于优化算法，可参考我的[这一篇文章](https://lucasxlu.github.io/blog/2018/07/20/dl-optimization/)。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620)注：对于优化算法，可参考我的[这一篇文章](https://lucasxlu.github.io/blog/2018/07/20/dl-optimization/)。
 
 ## AlexNet
 > Paper: [Imagenet classification with deep convolutional neural networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
@@ -387,7 +387,7 @@ Paper里也对一些identical mapping的变体进行了实验与探讨，反正s
 ### What is CliqueNet?
 前面已经提到了，skip connection现在俨然已成为CV/DCNN领域的神器，ResNet作者Kaiming He在最原始的ResNet中却对skip connection并未做过多的解释。所以最近的一些work中也有专门去分析shortcut的，有researcher认为ResNet可以看作是一系列小浅层网络的ensemble，也有人将skip connection解释为RNN/LSTM，在不同layers中weights被共享。
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620)注：如果读者有读过[HighwayNet](http://proceedings.mlr.press/v70/zilly17a/zilly17a.pdf)原文的话，就会深有体会了，是真的跟RNN很像啊。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620)注：如果读者有读过[HighwayNet](http://proceedings.mlr.press/v70/zilly17a/zilly17a.pdf)原文的话，就会深有体会了，是真的跟RNN很像啊。
 
 __Attention__ 也是在许多CV任务中被广泛应用的，其idea来源于人类的视觉系统，例如当人类在观察某样东西时，对当前眼睛里观察到的画面，注意力并非完全一致的，对某些物体总会施加过多的关注。而skip connection可以将高层语义信息带回到低层，并且可以re-weight这种focus，因此可以suppress一些背景/噪声信息，从而使得当前的feature map包含更多对分类更为discriminative的信息。
 

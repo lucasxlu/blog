@@ -16,7 +16,7 @@ catagories:
 ## Introduction
 Detection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN--SPPNet--Fast RCNN--Faster RCNN--FCN--Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
 ## RCNN (Region-based CNN)
 > Paper: [Rich feature hierarchies for accurate object detection and semantic segmentation](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf)
@@ -87,7 +87,7 @@ $$
 ### What is SPPNet?
 SPPNet(Spatial Pyramid Pooling)是基于RCNN进行改进的一个Object Detection算法。介绍SPPNet之前，我们不妨先来看一下RCNN有什么问题？RCNN，即Region-based CNN，它需要CNN作为base network去做特征提取，而传统CNN需要固定的squared input，而为了满足这个条件，就需要手工地对原图进行裁剪、变形等操作，而这样势必会丢失信息。作者意识到这种现象的原因不在于卷积层，而在于FC Layers需要固定的输入尺寸，因此通过在feature map的SSPlayer可以满足对多尺度的feature map裁剪，从而concatenate得到固定尺寸的特征输入。取得了很好的效果，在detection任务上，**region proposal直接在feature map上生成，而不是在原图上生成，因此可以仅仅通过一次特征提取**，而不需要像RCNN那样提取2000次(2000个 Region Proposal)，这大大加速了检测效率。
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：现如今的Deep Architecture比较多采用Fully Convolutional Architecture(全卷积结构)，而不含Fully Connected Layers，在最后做分类或回归任务时，采用Global Average Pooling即可。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：现如今的Deep Architecture比较多采用Fully Convolutional Architecture(全卷积结构)，而不含Fully Connected Layers，在最后做分类或回归任务时，采用Global Average Pooling即可。
 
 ![Crop/Warp VS SPP](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/cw_vs_spp.jpg)
 
@@ -185,7 +185,7 @@ smooth_{L_1}(x)=
 \end{cases}
 $$
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：想详细了解Machine Learning中的Loss，请参考我的[另一篇文章](https://lucasxlu.github.io/blog/2018/07/24/ml-loss/)。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：想详细了解Machine Learning中的Loss，请参考我的[另一篇文章](https://lucasxlu.github.io/blog/2018/07/24/ml-loss/)。
 
 ##### Mini-batch sampling
 在Fine-tuning阶段，每个mini-batch随机采样自$N=2$类image，每一类都是64个sample，与groundtruth bbox $IOU\geq 0.5$的设为foreground samples[$u=1$]，反之为background samples[$u=0$]。

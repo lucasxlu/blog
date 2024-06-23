@@ -18,7 +18,7 @@ catagories:
 ## Introduction
 segmentation也是Computer Vision领域一个非常重要的研究方向，和Classification，Detection一起是high-level vision里最重要的方向。我不是主要做Segmentation的，但由于Segmentation的广泛的应用方向(例如自动驾驶的场景感知)和研究热点，本文旨在梳理近些年CV顶会上一些非常有代表性的work。
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
 ## Fully Convolutional Networks for Semantic Segmentation
 > Paper: [Fully Convolutional Networks for Semantic Segmentation](http://openaccess.thecvf.com/content_cvpr_2015/papers/Long_Fully_Convolutional_Networks_2015_CVPR_paper.pdf)

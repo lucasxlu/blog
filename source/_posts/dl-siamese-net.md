@@ -15,7 +15,7 @@ catagories:
 ---
 ## Introduction
 Siamese Network也是一个比较有意思的网络结构，并且在许多领域都有了非常成功的应用，本文主要记录这些具体的application中一些代表性的paper。
-> [@LucasX](https://www.zhihu.com/people/xulu-0620)注：对网络结构感兴趣的可以阅读我的另外一篇文章[Architecture](https://lucasxlu.github.io/blog/2018/11/18/dl-architecture/)。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620)注：对网络结构感兴趣的可以阅读我的另外一篇文章[Architecture](https://lucasxlu.github.io/blog/2018/11/18/dl-architecture/)。
 
 ## Siamese Network
 > Paper: [Signature verification using a "siamese" time delay neural network](http://papers.nips.cc/paper/769-signature-verification-using-a-siamese-time-delay-neural-network.pdf)

@@ -33,7 +33,7 @@ catagories:
 
 ## Variants of Convolution
 除了传统的卷积，其实还有很多种卷积方式(例如DW Conv/Dilation Conv)，在这里就对笔者认为比较insightful的Conv Filter进行一下讲解。
-> [@LucasX](https://www.zhihu.com/people/xulu-0620)注：对于CNN主流的网络结构，可参考我的[这一篇文章](https://lucasxlu.github.io/blog/2018/11/18/dl-architecture/)。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620)注：对于CNN主流的网络结构，可参考我的[这一篇文章](https://lucasxlu.github.io/blog/2018/11/18/dl-architecture/)。
 
 ### Dilation Convolution
 Dilation conv允许我们在不损失resolution的情况下将multi-scale的information做融合，而multi-scale information对于Classification/Detection/Segmentation都是非常重要的。

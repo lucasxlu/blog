@@ -22,7 +22,7 @@ Retrieval (图搜) 也是CV领域一个应用非常广泛的方向，在安防�
 
 本文主要分享一些读过的顶会/顶刊上的paper。
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
 
 ## Supervised Deep Hashing for Scalable Face Image Retrieval

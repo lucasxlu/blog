@@ -21,7 +21,7 @@ Facial Landmarks Localization，也称为Face Alignment，是人脸一个非常�
 * [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose.git)
 * [AlphaPose](https://github.com/MVIG-SJTU/AlphaPose.git)
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
 
 ## Stacked hourglass networks for human pose estimation

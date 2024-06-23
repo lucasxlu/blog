@@ -17,7 +17,7 @@ Counting是近年来CV领域一个受到关注越来越多的方向，它主要�
 Counting的Metric通常为MAE和MSE，MAE评判counting heads的accuracy，MSE评判robustness。
 
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
 
 ## Multi-Column CNN

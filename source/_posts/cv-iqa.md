@@ -33,7 +33,7 @@ PLCC=\frac{\sum_{i=1}^n (s_i-\bar{s})(q_i-\bar{q})}{\sqrt{\sum_{i=1}^n (s_i-\bar
 $$
 where $d_i$ is the rank-order difference between the i-th image indeces in the sorted lists of the subjective ground truth and predicted scores.
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
 
 ## Convolutional neural networks for no-reference image quality assessment

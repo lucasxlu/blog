@@ -16,7 +16,7 @@ catagories:
 ## Introduction
 医疗AI是现如今工业界和学术界都非常火热的方向，也是AI落地非常有价值的方向。因毕业论文需要涉及Medical Image Analysis相关的方向，所以本文旨在收集并梳理Deep Learning在Medical Image Analysis领域一些具有代表性的Paper以及Report。
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
 ## CNN for Medical Image Analysis. Full Training or Fine Tuning?
 > Paper: [Convolutional neural networks for medical image analysis: Full training or fine tuning?](https://arxiv.org/pdf/1706.00712.pdf)

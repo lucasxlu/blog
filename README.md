@@ -1,2 +1,2 @@
-# Welcome to LucasX's blog.
+# Welcome to LucasXU's blog.
 [Let's go](https://lucasxlu.github.io/blog/)!

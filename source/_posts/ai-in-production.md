@@ -34,7 +34,7 @@ AI赋能零售行业，最常见的落地场景有以下几种：
 
 货架姿态估计，与学术界常见的Head Pose Estimation，其实并没有本质区别，主要难点还是在于货架姿态的数据集和annotation相比于人体头部更难采集。算法层面，主流的方案还是基于DL regression的方法，即一个backbone (如ResNet/DenseNet/SENet等) 提取特征，然后输出3个branch，采用某种regression loss (例如MSE/L1/Smooth L1) 等去回归 yaw/roll/pitch angle。这里一个比较有代表性的工作是[HopeNet](http://openaccess.thecvf.com/content_cvpr_2018_workshops/papers/w41/Ruiz_Fine-Grained_Head_Pose_CVPR_2018_paper.pdf)。货架姿态估计在整个商品识别流程里主要起到reject low-quality images的作用，因为拍摄过于倾斜的货架会严重影响后续的排面分析准确性。
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620)注：工业界通常不会采用太复杂的模型，一是可解释性极差；二是复杂度极高，莫说跑在edge device了，就是跑在GPU server也扛不住。到最后一看，一顿操作猛如虎，上你算法带来的收益还抵不上维护V100机器的开支，那就尴尬了。所以我觉得很多顶会Workshop的paper还是非常有价值的，这些paper往往是又简单又work。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620)注：工业界通常不会采用太复杂的模型，一是可解释性极差；二是复杂度极高，莫说跑在edge device了，就是跑在GPU server也扛不住。到最后一看，一顿操作猛如虎，上你算法带来的收益还抵不上维护V100机器的开支，那就尴尬了。所以我觉得很多顶会Workshop的paper还是非常有价值的，这些paper往往是又简单又work。
 
 ### Network Architecture
 先看看网络结构：

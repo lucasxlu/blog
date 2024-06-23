@@ -16,7 +16,7 @@ catagories:
 ## Introduction
 人脸识别(Face Recognition)是工业界和学术界都非常火热的一个方向，并且已经催生出许多成功的应用落地场景，比如刷脸支付、安检等。而Face Recognition最大的突破也是由Deep Learning Architecture + 一系列精巧的Loss Function带来的。本文旨在对Face Recognition领域里的一些经典Paper进行梳理，详情请参阅Reference部分的Paper原文。
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：本文长期更新。
 
 
 ## Face Recognition as N-Categories Classification Problems
@@ -59,7 +59,7 @@ Triplet Loss确定了，那么下一步就是如何选择合适的Triplets。
 ### Triplet Selection
 **为了保证快速收敛，我们需要violate triplet的constraint，即挑选anchor $x_i^a$，来挑选hard positive $x_i^p$来满足$\mathop{argmax} \limits_{x_i^p}||f(x_i^a)-f(x_i^p)||_2^2$，以及hard negative $x_i^n$来满足$\mathop{argmin} \limits_{x_i^p}||f(x_i^a)-f(x_i^n)||_2^2$**。
 
-> [@LucasX](https://www.zhihu.com/people/xulu-0620/activities)注：读者仔细体会一下这里和triplet loss definition的区别，为啥是相反的？这里可视为一种[hard negative mining](http://cs.brown.edu/people/pfelzens/papers/lsvm-pami.pdf)。
+> [@LucasXU](https://www.zhihu.com/people/xulu-0620/activities)注：读者仔细体会一下这里和triplet loss definition的区别，为啥是相反的？这里可视为一种[hard negative mining](http://cs.brown.edu/people/pfelzens/papers/lsvm-pami.pdf)。
 
 在整个training set上计算$argmax$和$argmin$是不太现实的，文中采取了两个做法：
 * 训练每$n$步离线来生成triplets，使用most recent network checkpoint和dataset的子集来计算$argmax$和$argmin$。
