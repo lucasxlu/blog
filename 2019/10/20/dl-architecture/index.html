@@ -3,7 +3,7 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>[dl] architecture | LucasX</title>
+  <title>[dl] architecture | LucasXU</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   <meta name="keywords" content="Machine LearningDeep LearningComputer VisionImage ClassificationNetwork Architecture" />
@@ -16,7 +16,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="[DL] Architecture">
 <meta property="og:url" content="https://lucasxlu.github.io/blog/2019/10/20/dl-architecture/index.html">
-<meta property="og:site_name" content="LucasX">
+<meta property="og:site_name" content="LucasXU">
 <meta property="og:description" content="IntroductionDeep Learning有三宝：Network Architecture，Loss Function and Optimization。对于大多数人而言，Optimization门槛还是很高的（需要非常深厚的数学功底），所以绝大多数的Paper偏向还是设计更好的Network Architecture或者堆更加精巧的Loss Function。Ian Goodfellow">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/nin.jpg">
@@ -46,13 +46,13 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/snn_training.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/mix-conv.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/sknet.jpg">
-<meta property="og:updated_time" content="2020-07-29T14:49:51.488Z">
+<meta property="og:updated_time" content="2024-06-23T14:58:26.777Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[DL] Architecture">
 <meta name="twitter:description" content="IntroductionDeep Learning有三宝：Network Architecture，Loss Function and Optimization。对于大多数人而言，Optimization门槛还是很高的（需要非常深厚的数学功底），所以绝大多数的Paper偏向还是设计更好的Network Architecture或者堆更加精巧的Loss Function。Ian Goodfellow">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/nin.jpg">
   
-    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="LucasXU" type="application/atom+xml">
   
 
   
@@ -221,7 +221,7 @@
       
         <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Deep Learning有三宝：Network Architecture，Loss Function and Optimization。对于大多数人而言，Optimization门槛还是很高的（需要非常深厚的数学功底），所以绝大多数的Paper偏向还是设计更好的Network Architecture或者堆更加精巧的Loss Function。Ian Goodfellow大佬也曾说过：现如今Deep Learning的繁荣，网络结构探究的贡献度远远高于优化算法的贡献度。所以本文旨在梳理从AlexNet到CliqueNet这些经典的work。</p>
 <blockquote>
-<p><a href="https://www.zhihu.com/people/xulu-0620" target="_blank" rel="noopener">@LucasX</a>注：对于优化算法，可参考我的<a href="https://lucasxlu.github.io/blog/2018/07/20/dl-optimization/">这一篇文章</a>。</p>
+<p><a href="https://www.zhihu.com/people/xulu-0620" target="_blank" rel="noopener">@LucasXU</a>注：对于优化算法，可参考我的<a href="https://lucasxlu.github.io/blog/2018/07/20/dl-optimization/">这一篇文章</a>。</p>
 </blockquote>
 <h2 id="AlexNet"><a href="#AlexNet" class="headerlink" title="AlexNet"></a>AlexNet</h2><blockquote>
 <p>Paper: <a href="http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf" target="_blank" rel="noopener">Imagenet classification with deep convolutional neural networks</a></p>
@@ -456,7 +456,7 @@
 <p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/dl-architecture/clique_block.jpg" alt="Clique Block"></p>
 <h3 id="What-is-CliqueNet"><a href="#What-is-CliqueNet" class="headerlink" title="What is CliqueNet?"></a>What is CliqueNet?</h3><p>前面已经提到了，skip connection现在俨然已成为CV/DCNN领域的神器，ResNet作者Kaiming He在最原始的ResNet中却对skip connection并未做过多的解释。所以最近的一些work中也有专门去分析shortcut的，有researcher认为ResNet可以看作是一系列小浅层网络的ensemble，也有人将skip connection解释为RNN/LSTM，在不同layers中weights被共享。</p>
 <blockquote>
-<p><a href="https://www.zhihu.com/people/xulu-0620" target="_blank" rel="noopener">@LucasX</a>注：如果读者有读过<a href="http://proceedings.mlr.press/v70/zilly17a/zilly17a.pdf" target="_blank" rel="noopener">HighwayNet</a>原文的话，就会深有体会了，是真的跟RNN很像啊。</p>
+<p><a href="https://www.zhihu.com/people/xulu-0620" target="_blank" rel="noopener">@LucasXU</a>注：如果读者有读过<a href="http://proceedings.mlr.press/v70/zilly17a/zilly17a.pdf" target="_blank" rel="noopener">HighwayNet</a>原文的话，就会深有体会了，是真的跟RNN很像啊。</p>
 </blockquote>
 <p><strong>Attention</strong> 也是在许多CV任务中被广泛应用的，其idea来源于人类的视觉系统，例如当人类在观察某样东西时，对当前眼睛里观察到的画面，注意力并非完全一致的，对某些物体总会施加过多的关注。而skip connection可以将高层语义信息带回到低层，并且可以re-weight这种focus，因此可以suppress一些背景/噪声信息，从而使得当前的feature map包含更多对分类更为discriminative的信息。</p>
 <p>在CliqueNet中，信息是这样传递的：<br>前几层的feature map被concatenate来更新下一层，然后新update的层又被concatenate用来更新前面的层，因此information flow和feedback mechanism都可以被最大化。(读者可能有点绕，不太明白的话，可以看看上面那个图Clique Block，它是环状结构。)</p>
@@ -653,7 +653,7 @@ var a = new Donate({
       <div>
         <ul class="post-copyright">
           <li class="post-copyright-author">
-          <strong>Post author:  </strong>LucasX</a>
+          <strong>Post author:  </strong>LucasXU</a>
           </li>
           <li class="post-copyright-link">
           <strong>Post link:  </strong>
@@ -744,7 +744,7 @@ var a = new Donate({
   <div class="container">
       	<div class="row">
 	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
-	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasX All Rights Reserved.</p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasXU All Rights Reserved.</p>
 	      
 	      
     		<p class="busuanzi_uv">
@@ -893,10 +893,10 @@ var a = new Donate({
         </div>
          <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
           <div class="panel-body">
-            LucasX
+            LucasXU
           </div>
           <div class="panel-body">
-            Copyright © 2024 LucasX All Rights Reserved.
+            Copyright © 2024 LucasXU All Rights Reserved.
           </div>
         </div>
       </div>

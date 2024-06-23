@@ -3,7 +3,7 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>[cv] detection | LucasX</title>
+  <title>[cv] detection | LucasXU</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   <meta name="keywords" content="Machine LearningDeep LearningComputer VisionObject Detection" />
@@ -11,13 +11,13 @@
   
   
   
-  <meta name="description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasX注：">
+  <meta name="description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasXU注">
 <meta name="keywords" content="Machine Learning,Deep Learning,Computer Vision,Object Detection">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[CV] Detection">
 <meta property="og:url" content="https://lucasxlu.github.io/blog/2019/07/20/cv-detection/index.html">
-<meta property="og:site_name" content="LucasX">
-<meta property="og:description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasX注：">
+<meta property="og:site_name" content="LucasXU">
+<meta property="og:description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasXU注">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rcnn.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/cw_vs_spp.jpg">
@@ -45,13 +45,13 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/imbalance_libra_rcnn.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/iou_balanced_sampling.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/balanced_feature_pyramid.png">
-<meta property="og:updated_time" content="2020-07-29T14:49:51.387Z">
+<meta property="og:updated_time" content="2024-06-23T14:58:26.776Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[CV] Detection">
-<meta name="twitter:description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasX注：">
+<meta name="twitter:description" content="IntroductionDetection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。  @LucasXU注">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/rcnn.png">
   
-    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="LucasXU" type="application/atom+xml">
   
 
   
@@ -220,7 +220,7 @@
       
         <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Detection是Computer Vision领域一个非常火热的研究方向。并且在工业界也有着十分广泛的应用(例如人脸检测、无人驾驶的行人/车辆检测等等)。本文质旨在梳理RCNN–SPPNet–Fast RCNN–Faster RCNN–FCN–Grid RCNN，YOLO v1/2/3, SSD等Object Detection这些非常经典的工作。</p>
 <blockquote>
-<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：本文长期更新。</p>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasXU</a>注：本文长期更新。</p>
 </blockquote>
 <h2 id="RCNN-Region-based-CNN"><a href="#RCNN-Region-based-CNN" class="headerlink" title="RCNN (Region-based CNN)"></a>RCNN (Region-based CNN)</h2><blockquote>
 <p>Paper: <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf" target="_blank" rel="noopener">Rich feature hierarchies for accurate object detection and semantic segmentation</a></p>
@@ -247,7 +247,7 @@
 </blockquote>
 <h3 id="What-is-SPPNet"><a href="#What-is-SPPNet" class="headerlink" title="What is SPPNet?"></a>What is SPPNet?</h3><p>SPPNet(Spatial Pyramid Pooling)是基于RCNN进行改进的一个Object Detection算法。介绍SPPNet之前，我们不妨先来看一下RCNN有什么问题？RCNN，即Region-based CNN，它需要CNN作为base network去做特征提取，而传统CNN需要固定的squared input，而为了满足这个条件，就需要手工地对原图进行裁剪、变形等操作，而这样势必会丢失信息。作者意识到这种现象的原因不在于卷积层，而在于FC Layers需要固定的输入尺寸，因此通过在feature map的SSPlayer可以满足对多尺度的feature map裁剪，从而concatenate得到固定尺寸的特征输入。取得了很好的效果，在detection任务上，<strong>region proposal直接在feature map上生成，而不是在原图上生成，因此可以仅仅通过一次特征提取</strong>，而不需要像RCNN那样提取2000次(2000个 Region Proposal)，这大大加速了检测效率。</p>
 <blockquote>
-<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：现如今的Deep Architecture比较多采用Fully Convolutional Architecture(全卷积结构)，而不含Fully Connected Layers，在最后做分类或回归任务时，采用Global Average Pooling即可。</p>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasXU</a>注：现如今的Deep Architecture比较多采用Fully Convolutional Architecture(全卷积结构)，而不含Fully Connected Layers，在最后做分类或回归任务时，采用Global Average Pooling即可。</p>
 </blockquote>
 <p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-detection/cw_vs_spp.jpg" alt="Crop/Warp VS SPP"></p>
 <h3 id="Why-SPPNet"><a href="#Why-SPPNet" class="headerlink" title="Why SPPNet?"></a>Why SPPNet?</h3><p>SPPNet创新点在于：</p>
@@ -305,7 +305,7 @@
 <p>我们再来看看Loss Function的第二部分(即regression loss)，$[u\geq 1]$代表只有满足$u\geq 1$时这个式子才为1，否则为0。在我们的setting中，background的$[u\geq 1]$自然而然就设为0啦。我们接着分析regression loss，既然是regression，惯常的手法是使用MSE Loss对不对？但是MSE Loss属于Cost-sensitive Loss啊，对outliers非常的敏感，因此Ross使用了更加柔和的$Smooth L_1 Loss$。<br>$$<br>L_{loc}(t^u,v)\sum_{i\in \{x,y,w,h\}} smooth_{L_1}(t_i^u-v_i)<br>$$</p>
 <p>Smooth L1 Loss写得详细一点呢，就是这样的：<br>$$<br>smooth_{L_1}(x)=<br>\begin{cases}<br>0.5x^2 &amp; if |x|&lt;1\\<br>|x|-0.5 &amp; otherwise<br>\end{cases}<br>$$</p>
 <blockquote>
-<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：想详细了解Machine Learning中的Loss，请参考我的<a href="https://lucasxlu.github.io/blog/2018/07/24/ml-loss/">另一篇文章</a>。</p>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasXU</a>注：想详细了解Machine Learning中的Loss，请参考我的<a href="https://lucasxlu.github.io/blog/2018/07/24/ml-loss/">另一篇文章</a>。</p>
 </blockquote>
 <h5 id="Mini-batch-sampling"><a href="#Mini-batch-sampling" class="headerlink" title="Mini-batch sampling"></a>Mini-batch sampling</h5><p>在Fine-tuning阶段，每个mini-batch随机采样自$N=2$类image，每一类都是64个sample，与groundtruth bbox $IOU\geq 0.5$的设为foreground samples[$u=1$]，反之为background samples[$u=0$]。</p>
 <h3 id="Fast-R-CNN-detection"><a href="#Fast-R-CNN-detection" class="headerlink" title="Fast R-CNN detection"></a>Fast R-CNN detection</h3><p>因为Fully Connected Layers的计算太费时，而FC Layers的计算显然就是大矩阵相乘，因此很容易联想到用truncated SVD来进行加速。</p>
@@ -758,7 +758,7 @@ var a = new Donate({
       <div>
         <ul class="post-copyright">
           <li class="post-copyright-author">
-          <strong>Post author:  </strong>LucasX</a>
+          <strong>Post author:  </strong>LucasXU</a>
           </li>
           <li class="post-copyright-link">
           <strong>Post link:  </strong>
@@ -849,7 +849,7 @@ var a = new Donate({
   <div class="container">
       	<div class="row">
 	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
-	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasX All Rights Reserved.</p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasXU All Rights Reserved.</p>
 	      
 	      
     		<p class="busuanzi_uv">
@@ -998,10 +998,10 @@ var a = new Donate({
         </div>
          <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
           <div class="panel-body">
-            LucasX
+            LucasXU
           </div>
           <div class="panel-body">
-            Copyright © 2024 LucasX All Rights Reserved.
+            Copyright © 2024 LucasXU All Rights Reserved.
           </div>
         </div>
       </div>

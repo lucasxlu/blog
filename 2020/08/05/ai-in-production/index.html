@@ -3,7 +3,7 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>[ai] ai in production | LucasX</title>
+  <title>[ai] ai in production | LucasXU</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   <meta name="keywords" content="Machine LearningDeep LearningBusinessArtificial Intelligence" />
@@ -16,19 +16,19 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="[AI] AI in Production">
 <meta property="og:url" content="https://lucasxlu.github.io/blog/2020/08/05/ai-in-production/index.html">
-<meta property="og:site_name" content="LucasX">
+<meta property="og:site_name" content="LucasXU">
 <meta property="og:description" content="AI in Production从AlexNet让深度神经网络重回视野，到AlphaGo被广为人知，AI得到了越来越多的关注。时间到了2020年，与前些年不少公司热衷于发paper、打比赛做PR不同，现在越来越看重AI落地。基于此背景，本文旨在记录AI在各行各业落地的一些行业解决方案、insightful Paper、以及笔者本人的一些思考，希望能给大家一些启发。 Geometry Supervi">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_backbone.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_loss.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_sample.png">
-<meta property="og:updated_time" content="2020-08-05T15:13:19.623Z">
+<meta property="og:updated_time" content="2024-06-23T14:58:26.930Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[AI] AI in Production">
 <meta name="twitter:description" content="AI in Production从AlexNet让深度神经网络重回视野，到AlphaGo被广为人知，AI得到了越来越多的关注。时间到了2020年，与前些年不少公司热衷于发paper、打比赛做PR不同，现在越来越看重AI落地。基于此背景，本文旨在记录AI在各行各业落地的一些行业解决方案、insightful Paper、以及笔者本人的一些思考，希望能给大家一些启发。 Geometry Supervi">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_backbone.png">
   
-    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="LucasXU" type="application/atom+xml">
   
 
   
@@ -212,7 +212,7 @@
 <p>回归主题吧，这篇paper主要介绍了一种单目3D货架姿态估计方法，network architecture和idea也非常简单，属于非常实用的类型，且作者也公开了code和dataset (目前只有GitHub地址)。</p>
 <p>货架姿态估计，与学术界常见的Head Pose Estimation，其实并没有本质区别，主要难点还是在于货架姿态的数据集和annotation相比于人体头部更难采集。算法层面，主流的方案还是基于DL regression的方法，即一个backbone (如ResNet/DenseNet/SENet等) 提取特征，然后输出3个branch，采用某种regression loss (例如MSE/L1/Smooth L1) 等去回归 yaw/roll/pitch angle。这里一个比较有代表性的工作是<a href="http://openaccess.thecvf.com/content_cvpr_2018_workshops/papers/w41/Ruiz_Fine-Grained_Head_Pose_CVPR_2018_paper.pdf" target="_blank" rel="noopener">HopeNet</a>。货架姿态估计在整个商品识别流程里主要起到reject low-quality images的作用，因为拍摄过于倾斜的货架会严重影响后续的排面分析准确性。</p>
 <blockquote>
-<p><a href="https://www.zhihu.com/people/xulu-0620" target="_blank" rel="noopener">@LucasX</a>注：工业界通常不会采用太复杂的模型，一是可解释性极差；二是复杂度极高，莫说跑在edge device了，就是跑在GPU server也扛不住。到最后一看，一顿操作猛如虎，上你算法带来的收益还抵不上维护V100机器的开支，那就尴尬了。所以我觉得很多顶会Workshop的paper还是非常有价值的，这些paper往往是又简单又work。</p>
+<p><a href="https://www.zhihu.com/people/xulu-0620" target="_blank" rel="noopener">@LucasXU</a>注：工业界通常不会采用太复杂的模型，一是可解释性极差；二是复杂度极高，莫说跑在edge device了，就是跑在GPU server也扛不住。到最后一看，一顿操作猛如虎，上你算法带来的收益还抵不上维护V100机器的开支，那就尴尬了。所以我觉得很多顶会Workshop的paper还是非常有价值的，这些paper往往是又简单又work。</p>
 </blockquote>
 <h3 id="Network-Architecture"><a href="#Network-Architecture" class="headerlink" title="Network Architecture"></a>Network Architecture</h3><p>先看看网络结构：<br><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/ai-in-production/gspn_backbone.png" alt="GSPN Backbone"></p>
 <p>一张平平无奇的RGB image作为输入，VGG16作为backbone提取特征，并且将不同Conv layer的feature map进行降维、上采样（bilinear interpolation）、融合来获取multi-level &amp; multi-scale 信息。因高层的$FM_4$和$FM_5$包含了丰富的semantic meaning，因此用来做Pose Estimation。然而，包含太丰富的semantic information会增加redundant noise，基于此，作者设计了 adaptive geometric supervised learning (AGSL) 模块来辅助GSPN学习，其中，$GIM_{gt}$通过LSD算法生成，通过BCE Loss来从低层feature $FM_1$, $FM_2$, $FM_3$中学习geometric properties。</p>
@@ -251,7 +251,7 @@ var a = new Donate({
       <div>
         <ul class="post-copyright">
           <li class="post-copyright-author">
-          <strong>Post author:  </strong>LucasX</a>
+          <strong>Post author:  </strong>LucasXU</a>
           </li>
           <li class="post-copyright-link">
           <strong>Post link:  </strong>
@@ -342,7 +342,7 @@ var a = new Donate({
   <div class="container">
       	<div class="row">
 	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
-	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasX All Rights Reserved.</p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasXU All Rights Reserved.</p>
 	      
 	      
     		<p class="busuanzi_uv">
@@ -491,10 +491,10 @@ var a = new Donate({
         </div>
          <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
           <div class="panel-body">
-            LucasX
+            LucasXU
           </div>
           <div class="panel-body">
-            Copyright © 2024 LucasX All Rights Reserved.
+            Copyright © 2024 LucasXU All Rights Reserved.
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
-  <title>[cv] face recognition | LucasX</title>
+  <title>[cv] face recognition | LucasXU</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   <meta name="keywords" content="Machine LearningDeep LearningComputer VisionFace Recognition" />
@@ -16,7 +16,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="[CV] Face Recognition">
 <meta property="og:url" content="https://lucasxlu.github.io/blog/2019/01/06/cv-face-rec/index.html">
-<meta property="og:site_name" content="LucasX">
+<meta property="og:site_name" content="LucasXU">
 <meta property="og:description" content="Introduction人脸识别(Face Recognition)是工业界和学术界都非常火热的一个方向，并且已经催生出许多成功的应用落地场景，比如刷脸支付、安检等。而Face Recognition最大的突破也是由Deep Learning Architecture + 一系列精巧的Loss Function带来的。本文旨在对Face Recognition领域里的一些经典Paper进行梳理，详">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/deepid.jpg">
@@ -26,13 +26,13 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/loss_vis.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/loss_decision_boundary.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/geo_int.jpg">
-<meta property="og:updated_time" content="2020-07-29T14:49:51.421Z">
+<meta property="og:updated_time" content="2024-06-23T14:58:26.776Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[CV] Face Recognition">
 <meta name="twitter:description" content="Introduction人脸识别(Face Recognition)是工业界和学术界都非常火热的一个方向，并且已经催生出许多成功的应用落地场景，比如刷脸支付、安检等。而Face Recognition最大的突破也是由Deep Learning Architecture + 一系列精巧的Loss Function带来的。本文旨在对Face Recognition领域里的一些经典Paper进行梳理，详">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/cv-face-rec/deepid.jpg">
   
-    <link rel="alternate" href="/atom.xml" title="LucasX" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="LucasXU" type="application/atom+xml">
   
 
   
@@ -201,7 +201,7 @@
       
         <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>人脸识别(Face Recognition)是工业界和学术界都非常火热的一个方向，并且已经催生出许多成功的应用落地场景，比如刷脸支付、安检等。而Face Recognition最大的突破也是由Deep Learning Architecture + 一系列精巧的Loss Function带来的。本文旨在对Face Recognition领域里的一些经典Paper进行梳理，详情请参阅Reference部分的Paper原文。</p>
 <blockquote>
-<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：本文长期更新。</p>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasXU</a>注：本文长期更新。</p>
 </blockquote>
 <h2 id="Face-Recognition-as-N-Categories-Classification-Problems"><a href="#Face-Recognition-as-N-Categories-Classification-Problems" class="headerlink" title="Face Recognition as N-Categories Classification Problems"></a>Face Recognition as N-Categories Classification Problems</h2><p>在Metric Learning里的一系列优秀的Loss还未被引入Face Recognition之前，Face Verification/Identification一个非常直观的想法就是直接train 一个 n-categories classifier。然后将最后一层的输出作为input image的特征，再选取合适的distance metric来决定这两张脸是否属于同一个人。这种做法的一些经典工作就是<a href="http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf" target="_blank" rel="noopener">DeepID</a>。这篇Paper发表在CVPR2014上面，属于非常古董的模型了，鉴于近年来已经几乎不这么做了，所以本文仅仅象征性地回顾一下这几篇具有代表性的Paper。我们会把讨论重心放在Metric Learning的一系列Loss上。</p>
 <blockquote>
@@ -219,7 +219,7 @@
 <h3 id="Details-of-Triplet-Loss"><a href="#Details-of-Triplet-Loss" class="headerlink" title="Details of Triplet Loss"></a>Details of Triplet Loss</h3><p>Triplet Embedding是通过一个Network将输入$x$映射到$d$-维输出$f(x)\in \mathbb{R}^d$，文章中将其做了一个Normalization，即$||f(x)||_2=1$。Triplet Loss的目的就是为了找到一个person的anchor $x_i^a$，使得它与相同identity的positive images $x_i^p$更加地close，而与不同identity的negative images更加地separate。写成公式就是：<br>$$<br>||x_i^a-x_i^p||_2^2 + \alpha &lt; ||x_i^a-x_i^n||_2^2 \quad \forall (x_i^a,x_i^p,x_i^n)\in \mathcal{T}<br>$$<br>$\alpha$就代表margin，那么Minimization of Triplet Loss就是：<br>$$<br>\sum_{i}^N [||f(x_i^a)-f(x_i^p)||_2^2 - ||f(x_i^a)-f(x_i^n)||_2^2 + \alpha ]_+<br>$$<br>Triplet Loss确定了，那么下一步就是如何选择合适的Triplets。</p>
 <h3 id="Triplet-Selection"><a href="#Triplet-Selection" class="headerlink" title="Triplet Selection"></a>Triplet Selection</h3><p><strong>为了保证快速收敛，我们需要violate triplet的constraint，即挑选anchor $x_i^a$，来挑选hard positive $x_i^p$来满足$\mathop{argmax} \limits_{x_i^p}||f(x_i^a)-f(x_i^p)||_2^2$，以及hard negative $x_i^n$来满足$\mathop{argmin} \limits_{x_i^p}||f(x_i^a)-f(x_i^n)||_2^2$</strong>。</p>
 <blockquote>
-<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasX</a>注：读者仔细体会一下这里和triplet loss definition的区别，为啥是相反的？这里可视为一种<a href="http://cs.brown.edu/people/pfelzens/papers/lsvm-pami.pdf" target="_blank" rel="noopener">hard negative mining</a>。</p>
+<p><a href="https://www.zhihu.com/people/xulu-0620/activities" target="_blank" rel="noopener">@LucasXU</a>注：读者仔细体会一下这里和triplet loss definition的区别，为啥是相反的？这里可视为一种<a href="http://cs.brown.edu/people/pfelzens/papers/lsvm-pami.pdf" target="_blank" rel="noopener">hard negative mining</a>。</p>
 </blockquote>
 <p>在整个training set上计算$argmax$和$argmin$是不太现实的，文中采取了两个做法：</p>
 <ul>
@@ -344,7 +344,7 @@ var a = new Donate({
       <div>
         <ul class="post-copyright">
           <li class="post-copyright-author">
-          <strong>Post author:  </strong>LucasX</a>
+          <strong>Post author:  </strong>LucasXU</a>
           </li>
           <li class="post-copyright-link">
           <strong>Post link:  </strong>
@@ -435,7 +435,7 @@ var a = new Donate({
   <div class="container">
       	<div class="row">
 	      <p> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/iTimeTraveler/hexo-theme-hiker" target="_blank">Hexo-theme-hiker</a> </p>
-	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasX All Rights Reserved.</p>
+	      <p id="copyRightEn">Copyright &copy; 2018 - 2024 LucasXU All Rights Reserved.</p>
 	      
 	      
     		<p class="busuanzi_uv">
@@ -584,10 +584,10 @@ var a = new Donate({
         </div>
          <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
           <div class="panel-body">
-            LucasX
+            LucasXU
           </div>
           <div class="panel-body">
-            Copyright © 2024 LucasX All Rights Reserved.
+            Copyright © 2024 LucasXU All Rights Reserved.
           </div>
         </div>
       </div>
