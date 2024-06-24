@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="LucasXU">
 <meta property="og:description" content="IntroductionAIGC 在各行业得到了广泛的应用，相应的算法改进也层出不穷。本文重点不在于梳理具体的生成式模型，而在于如何对 AIGC 模型效果进行合理、科学的评价。 MethodsInception Score Paper: A note on the inception scoreThis metric is motivated by demonstrating that it pr">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2024-06-23T14:04:11.466Z">
+<meta property="og:updated_time" content="2024-06-24T02:08:09.677Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[AIGC] Evaluation">
 <meta name="twitter:description" content="IntroductionAIGC 在各行业得到了广泛的应用，相应的算法改进也层出不穷。本文重点不在于梳理具体的生成式模型，而在于如何对 AIGC 模型效果进行合理、科学的评价。 MethodsInception Score Paper: A note on the inception scoreThis metric is motivated by demonstrating that it pr">
@@ -206,11 +206,15 @@
 </li>
 <li>Problems with the popular usage of the Inception Score</li>
 </ol>
+<h2 id="Frechet-Inception-Distance"><a href="#Frechet-Inception-Distance" class="headerlink" title="Fréchet Inception Distance"></a>Fréchet Inception Distance</h2><blockquote>
+<p>Paper: <a href="https://proceedings.neurips.cc/paper/2017/file/8a1d694707eb0fefe65871369074926d-Paper.pdf" target="_blank" rel="noopener">Gans trained by a two time-scale update rule converge to a local nash equilibrium</a><br><code>FID</code> measures the average distance between generated images and reference real images, and thus fails to encompass human preference that is crucial to text-to-image synthesis in evaluation. The author claims that <code>FID</code> captures the similarity of generated images to real ones better than the <code>Inception Score</code>.</p>
+</blockquote>
 <h3 id="CLIPScore"><a href="#CLIPScore" class="headerlink" title="CLIPScore"></a>CLIPScore</h3><blockquote>
 <p>Paper: <a href="https://arxiv.org/pdf/2104.08718" target="_blank" rel="noopener">Clipscore: A reference-free evaluation metric for image captioning</a></p>
 </blockquote>
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
 <li>Barratt, Shane, and Rishi Sharma. “<a href="https://arxiv.org/pdf/1801.01973" target="_blank" rel="noopener">A note on the inception score</a>.” arXiv preprint arXiv:1801.01973 (2018).</li>
+<li>Heusel, Martin, et al. “<a href="https://proceedings.neurips.cc/paper/2017/file/8a1d694707eb0fefe65871369074926d-Paper.pdf" target="_blank" rel="noopener">Gans trained by a two time-scale update rule converge to a local nash equilibrium</a>.” Advances in neural information processing systems 30 (2017).</li>
 <li>Wang, Jianyi, Kelvin CK Chan, and Chen Change Loy. “<a href="https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125" target="_blank" rel="noopener">Exploring clip for assessing the look and feel of images</a>.” Proceedings of the AAAI Conference on Artificial Intelligence. Vol. 37. No. 2. 2023.</li>
 <li>Hessel, Jack, et al. “<a href="https://arxiv.org/pdf/2104.08718" target="_blank" rel="noopener">Clipscore: A reference-free evaluation metric for image captioning</a>.” arXiv preprint arXiv:2104.08718 (2021).</li>
 </ol>
@@ -303,7 +307,7 @@ var a = new Donate({
     <div id="toc" class="toc-article">
     <strong class="toc-title">Contents</strong>
     
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Methods"><span class="nav-number">2.</span> <span class="nav-text">Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Inception-Score"><span class="nav-number">2.1.</span> <span class="nav-text">Inception Score</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLIPScore"><span class="nav-number">2.2.</span> <span class="nav-text">CLIPScore</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Methods"><span class="nav-number">2.</span> <span class="nav-text">Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Inception-Score"><span class="nav-number">2.1.</span> <span class="nav-text">Inception Score</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Frechet-Inception-Distance"><span class="nav-number">3.</span> <span class="nav-text">Fréchet Inception Distance</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CLIPScore"><span class="nav-number">3.1.</span> <span class="nav-text">CLIPScore</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol>
     
     </div>
   </aside>
