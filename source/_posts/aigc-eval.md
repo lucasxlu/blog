@@ -34,14 +34,36 @@ In the general setting, the problems with the Inception Score fall into two cate
 2. Problems with the popular usage of the Inception Score
 
 
-## Fréchet Inception Distance
+### Fréchet Inception Distance
 > Paper: [Gans trained by a two time-scale update rule converge to a local nash equilibrium](https://proceedings.neurips.cc/paper/2017/file/8a1d694707eb0fefe65871369074926d-Paper.pdf)
 `FID` measures the average distance between generated images and reference real images, and thus fails to encompass human preference that is crucial to text-to-image synthesis in evaluation. The author claims that `FID` captures the similarity of generated images to real ones better than the `Inception Score`.
 
 
 ### CLIPScore
-> Paper: [Clipscore: A reference-free evaluation metric for image captioning](https://arxiv.org/pdf/2104.08718)
+#### [Clipscore: A reference-free evaluation metric for image captioning](https://arxiv.org/pdf/2104.08718)
 
+We hypothesize that the relationships learned by pretrained vision+language models (e.g., `ALIGN` (Jia et al., 2021) and `CLIP` (Radford et al., 2021)) could similarly support reference-free evaluation in the image captioning case. Indeed, they can: we show that a relatively direct application of `CLIP` to (image, generated caption) pairs results in surprisingly high correlation with human judgments on a suite of standard image description benchmarks (e.g., MSCOCO (Lin et al., 2014)). We call this process `CLIPScore` (abbreviated to `CLIP-S`). Beyond direct correlation with human judgments, an information gain analysis reveals that `CLIP-S` is complementary both to commonly reported metrics (like BLEU-4, SPICE, and CIDEr) and to newly proposed reference-based metrics (e.g., ViLBERTScore-F(Lee et al., 2020)).
+
+To assess the quality of a candidate generation, we pass both the image and the candidate caption through their respective feature extractors. Then, we compute the cosine similarity of the resultant embeddings. For an image with visual `CLIP` embedding $v$ and a candidate caption with textual `CLIP` embedding $c$, we set $w=2.5$ and compute `CLIP-S` as:
+
+$$
+CLIP-S(c, v)=w\times max(cosine(c, v), 0)
+$$
+
+`CLIP-S` can additionally be extended to incorporate references, if they are available. We extract vector representations of each available reference by passing them through `CLIP`'s text transformer; the result is the set of vector representation of all references, $R$. Then, `RefCLIPScore` is computed as a harmonic mean of `CLIP-S`, and the maximal reference cosine similarity, i.e.,
+
+$$
+RefCLIP-S(c, R, v)=H-Mean(CLIP-S(c, v), max(max_{r\in R} cos(c, r), 0))
+$$
+
+
+#### [Exploring clip for assessing the look and feel of images](https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125)
+
+The term **look** represents **image quality**, **feel** stands for **image aesthetic**.
+
+作者提出了一种直接利用 CLIP 模型来表达 image aesthetic & image quality 的方法：直接用 good photo 和 bad photo 作为 prompt，得到 prompt text embedding $t_i$，再计算其与 image embedding $x$ 的 cosine similarity $s_i, i\in \{0, 1\}$，再计算 $s_i$ 的 softmax probability 即可得到最终结果。
+
+![Look and Feel](https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/aigc-eval/aigc_eval_look_and_feel_fig1.png)
 
 
 ## Reference
@@ -49,3 +71,4 @@ In the general setting, the problems with the Inception Score fall into two cate
 2. Heusel, Martin, et al. "[Gans trained by a two time-scale update rule converge to a local nash equilibrium](https://proceedings.neurips.cc/paper/2017/file/8a1d694707eb0fefe65871369074926d-Paper.pdf)." Advances in neural information processing systems 30 (2017).
 3. Wang, Jianyi, Kelvin CK Chan, and Chen Change Loy. "[Exploring clip for assessing the look and feel of images](https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125)." Proceedings of the AAAI Conference on Artificial Intelligence. Vol. 37. No. 2. 2023.
 4. Hessel, Jack, et al. "[Clipscore: A reference-free evaluation metric for image captioning](https://arxiv.org/pdf/2104.08718)." arXiv preprint arXiv:2104.08718 (2021).
+5. Wang, Jianyi, Kelvin CK Chan, and Chen Change Loy. "[Exploring clip for assessing the look and feel of images](https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125)." Proceedings of the AAAI Conference on Artificial Intelligence. Vol. 37. No. 2. 2023.
