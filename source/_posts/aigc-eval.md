@@ -33,6 +33,12 @@ In the general setting, the problems with the Inception Score fall into two cate
    * score calculation and exponentiation
 2. Problems with the popular usage of the Inception Score
 
+
+## Fréchet Inception Distance
+> Paper: [Gans trained by a two time-scale update rule converge to a local nash equilibrium](https://proceedings.neurips.cc/paper/2017/file/8a1d694707eb0fefe65871369074926d-Paper.pdf)
+`FID` measures the average distance between generated images and reference real images, and thus fails to encompass human preference that is crucial to text-to-image synthesis in evaluation. The author claims that `FID` captures the similarity of generated images to real ones better than the `Inception Score`.
+
+
 ### CLIPScore
 > Paper: [Clipscore: A reference-free evaluation metric for image captioning](https://arxiv.org/pdf/2104.08718)
 
@@ -40,5 +46,6 @@ In the general setting, the problems with the Inception Score fall into two cate
 
 ## Reference
 1. Barratt, Shane, and Rishi Sharma. "[A note on the inception score](https://arxiv.org/pdf/1801.01973)." arXiv preprint arXiv:1801.01973 (2018).
-2. Wang, Jianyi, Kelvin CK Chan, and Chen Change Loy. "[Exploring clip for assessing the look and feel of images](https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125)." Proceedings of the AAAI Conference on Artificial Intelligence. Vol. 37. No. 2. 2023.
-3. Hessel, Jack, et al. "[Clipscore: A reference-free evaluation metric for image captioning](https://arxiv.org/pdf/2104.08718)." arXiv preprint arXiv:2104.08718 (2021).
+2. Heusel, Martin, et al. "[Gans trained by a two time-scale update rule converge to a local nash equilibrium](https://proceedings.neurips.cc/paper/2017/file/8a1d694707eb0fefe65871369074926d-Paper.pdf)." Advances in neural information processing systems 30 (2017).
+3. Wang, Jianyi, Kelvin CK Chan, and Chen Change Loy. "[Exploring clip for assessing the look and feel of images](https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125)." Proceedings of the AAAI Conference on Artificial Intelligence. Vol. 37. No. 2. 2023.
+4. Hessel, Jack, et al. "[Clipscore: A reference-free evaluation metric for image captioning](https://arxiv.org/pdf/2104.08718)." arXiv preprint arXiv:2104.08718 (2021).
