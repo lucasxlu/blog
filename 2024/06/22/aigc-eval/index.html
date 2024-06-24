@@ -19,10 +19,12 @@
 <meta property="og:site_name" content="LucasXU">
 <meta property="og:description" content="IntroductionAIGC 在各行业得到了广泛的应用，相应的算法改进也层出不穷。本文重点不在于梳理具体的生成式模型，而在于如何对 AIGC 模型效果进行合理、科学的评价。 MethodsInception Score Paper: A note on the inception scoreThis metric is motivated by demonstrating that it pr">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2024-06-24T02:08:09.677Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/aigc-eval/aigc_eval_look_and_feel_fig1.png">
+<meta property="og:updated_time" content="2024-06-24T06:43:49.132Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[AIGC] Evaluation">
 <meta name="twitter:description" content="IntroductionAIGC 在各行业得到了广泛的应用，相应的算法改进也层出不穷。本文重点不在于梳理具体的生成式模型，而在于如何对 AIGC 模型效果进行合理、科学的评价。 MethodsInception Score Paper: A note on the inception scoreThis metric is motivated by demonstrating that it pr">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/aigc-eval/aigc_eval_look_and_feel_fig1.png">
   
     <link rel="alternate" href="/atom.xml" title="LucasXU" type="application/atom+xml">
   
@@ -206,17 +208,23 @@
 </li>
 <li>Problems with the popular usage of the Inception Score</li>
 </ol>
-<h2 id="Frechet-Inception-Distance"><a href="#Frechet-Inception-Distance" class="headerlink" title="Fréchet Inception Distance"></a>Fréchet Inception Distance</h2><blockquote>
+<h3 id="Frechet-Inception-Distance"><a href="#Frechet-Inception-Distance" class="headerlink" title="Fréchet Inception Distance"></a>Fréchet Inception Distance</h3><blockquote>
 <p>Paper: <a href="https://proceedings.neurips.cc/paper/2017/file/8a1d694707eb0fefe65871369074926d-Paper.pdf" target="_blank" rel="noopener">Gans trained by a two time-scale update rule converge to a local nash equilibrium</a><br><code>FID</code> measures the average distance between generated images and reference real images, and thus fails to encompass human preference that is crucial to text-to-image synthesis in evaluation. The author claims that <code>FID</code> captures the similarity of generated images to real ones better than the <code>Inception Score</code>.</p>
 </blockquote>
-<h3 id="CLIPScore"><a href="#CLIPScore" class="headerlink" title="CLIPScore"></a>CLIPScore</h3><blockquote>
-<p>Paper: <a href="https://arxiv.org/pdf/2104.08718" target="_blank" rel="noopener">Clipscore: A reference-free evaluation metric for image captioning</a></p>
-</blockquote>
+<h3 id="CLIPScore"><a href="#CLIPScore" class="headerlink" title="CLIPScore"></a>CLIPScore</h3><h4 id="Clipscore-A-reference-free-evaluation-metric-for-image-captioning"><a href="#Clipscore-A-reference-free-evaluation-metric-for-image-captioning" class="headerlink" title="Clipscore: A reference-free evaluation metric for image captioning"></a><a href="https://arxiv.org/pdf/2104.08718" target="_blank" rel="noopener">Clipscore: A reference-free evaluation metric for image captioning</a></h4><p>We hypothesize that the relationships learned by pretrained vision+language models (e.g., <code>ALIGN</code> (Jia et al., 2021) and <code>CLIP</code> (Radford et al., 2021)) could similarly support reference-free evaluation in the image captioning case. Indeed, they can: we show that a relatively direct application of <code>CLIP</code> to (image, generated caption) pairs results in surprisingly high correlation with human judgments on a suite of standard image description benchmarks (e.g., MSCOCO (Lin et al., 2014)). We call this process <code>CLIPScore</code> (abbreviated to <code>CLIP-S</code>). Beyond direct correlation with human judgments, an information gain analysis reveals that <code>CLIP-S</code> is complementary both to commonly reported metrics (like BLEU-4, SPICE, and CIDEr) and to newly proposed reference-based metrics (e.g., ViLBERTScore-F(Lee et al., 2020)).</p>
+<p>To assess the quality of a candidate generation, we pass both the image and the candidate caption through their respective feature extractors. Then, we compute the cosine similarity of the resultant embeddings. For an image with visual <code>CLIP</code> embedding $v$ and a candidate caption with textual <code>CLIP</code> embedding $c$, we set $w=2.5$ and compute <code>CLIP-S</code> as:</p>
+<p>$$<br>CLIP-S(c, v)=w\times max(cosine(c, v), 0)<br>$$</p>
+<p><code>CLIP-S</code> can additionally be extended to incorporate references, if they are available. We extract vector representations of each available reference by passing them through <code>CLIP</code>‘s text transformer; the result is the set of vector representation of all references, $R$. Then, <code>RefCLIPScore</code> is computed as a harmonic mean of <code>CLIP-S</code>, and the maximal reference cosine similarity, i.e.,</p>
+<p>$$<br>RefCLIP-S(c, R, v)=H-Mean(CLIP-S(c, v), max(max_{r\in R} cos(c, r), 0))<br>$$</p>
+<h4 id="Exploring-clip-for-assessing-the-look-and-feel-of-images"><a href="#Exploring-clip-for-assessing-the-look-and-feel-of-images" class="headerlink" title="Exploring clip for assessing the look and feel of images"></a><a href="https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125" target="_blank" rel="noopener">Exploring clip for assessing the look and feel of images</a></h4><p>The term <strong>look</strong> represents <strong>image quality</strong>, <strong>feel</strong> stands for <strong>image aesthetic</strong>.</p>
+<p>作者提出了一种直接利用 CLIP 模型来表达 image aesthetic &amp; image quality 的方法：直接用 good photo 和 bad photo 作为 prompt，得到 prompt text embedding $t_i$，再计算其与 image embedding $x$ 的 cosine similarity $s_i, i\in \{0, 1\}$，再计算 $s_i$ 的 softmax probability 即可得到最终结果。</p>
+<p><img src="https://raw.githubusercontent.com/lucasxlu/blog/master/source/_posts/aigc-eval/aigc_eval_look_and_feel_fig1.png" alt="Look and Feel"></p>
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
 <li>Barratt, Shane, and Rishi Sharma. “<a href="https://arxiv.org/pdf/1801.01973" target="_blank" rel="noopener">A note on the inception score</a>.” arXiv preprint arXiv:1801.01973 (2018).</li>
 <li>Heusel, Martin, et al. “<a href="https://proceedings.neurips.cc/paper/2017/file/8a1d694707eb0fefe65871369074926d-Paper.pdf" target="_blank" rel="noopener">Gans trained by a two time-scale update rule converge to a local nash equilibrium</a>.” Advances in neural information processing systems 30 (2017).</li>
 <li>Wang, Jianyi, Kelvin CK Chan, and Chen Change Loy. “<a href="https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125" target="_blank" rel="noopener">Exploring clip for assessing the look and feel of images</a>.” Proceedings of the AAAI Conference on Artificial Intelligence. Vol. 37. No. 2. 2023.</li>
 <li>Hessel, Jack, et al. “<a href="https://arxiv.org/pdf/2104.08718" target="_blank" rel="noopener">Clipscore: A reference-free evaluation metric for image captioning</a>.” arXiv preprint arXiv:2104.08718 (2021).</li>
+<li>Wang, Jianyi, Kelvin CK Chan, and Chen Change Loy. “<a href="https://ojs.aaai.org/index.php/AAAI/article/view/25353/25125" target="_blank" rel="noopener">Exploring clip for assessing the look and feel of images</a>.” Proceedings of the AAAI Conference on Artificial Intelligence. Vol. 37. No. 2. 2023.</li>
 </ol>
 
       
@@ -307,7 +315,7 @@ var a = new Donate({
     <div id="toc" class="toc-article">
     <strong class="toc-title">Contents</strong>
     
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Methods"><span class="nav-number">2.</span> <span class="nav-text">Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Inception-Score"><span class="nav-number">2.1.</span> <span class="nav-text">Inception Score</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Frechet-Inception-Distance"><span class="nav-number">3.</span> <span class="nav-text">Fréchet Inception Distance</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CLIPScore"><span class="nav-number">3.1.</span> <span class="nav-text">CLIPScore</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Methods"><span class="nav-number">2.</span> <span class="nav-text">Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Inception-Score"><span class="nav-number">2.1.</span> <span class="nav-text">Inception Score</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Frechet-Inception-Distance"><span class="nav-number">2.2.</span> <span class="nav-text">Fréchet Inception Distance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLIPScore"><span class="nav-number">2.3.</span> <span class="nav-text">CLIPScore</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Clipscore-A-reference-free-evaluation-metric-for-image-captioning"><span class="nav-number">2.3.1.</span> <span class="nav-text">Clipscore: A reference-free evaluation metric for image captioning</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Exploring-clip-for-assessing-the-look-and-feel-of-images"><span class="nav-number">2.3.2.</span> <span class="nav-text">Exploring clip for assessing the look and feel of images</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol>
     
     </div>
   </aside>
